@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SlideShare/SlideShare.iml" filepath="$PROJECT_DIR$/SlideShare/SlideShare.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
       <module fileurl="file://$PROJECT_DIR$/slideshare.iml" filepath="$PROJECT_DIR$/slideshare.iml" />
     </modules>
   </component>
