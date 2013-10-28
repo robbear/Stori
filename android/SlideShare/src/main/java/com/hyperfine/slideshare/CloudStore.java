@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.hyperfine.slideshare.cloudproviders.ICloudProvider;
+import com.hyperfine.slideshare.cloudproviders.WindowsAzureProvider;
+
 import java.util.concurrent.RejectedExecutionException;
 
 import static com.hyperfine.slideshare.Config.D;
@@ -12,7 +15,7 @@ import static com.hyperfine.slideshare.Config.E;
 public class CloudStore {
     public final static String TAG = "CloudStore";
 
-    CloudProviders m_cloudProvider;
+    Config.CloudStorageProviders m_cloudProvider;
     Context m_context;
     String m_slideShareName;
     ICloudStoreCallback m_callback;
@@ -26,16 +29,11 @@ public class CloudStore {
     public enum SaveErrors {
         None,
         Error_LoadJSON,
+        Error_UploadFile,
+        Error_OutOfMemory,
         Error_Unknown
     };
     public SaveErrors[] SaveErrorsValues = SaveErrors.values();
-
-    public enum CloudProviders {
-        Azure,
-        S3
-    };
-    // Cache TransitionEffects.values() for doing enum-to-int conversions
-    public CloudProviders[] CloudProvidersValues = CloudProviders.values();
 
     protected class SaveTask extends AsyncTask<Object, Void, SaveErrors> {
 
@@ -43,15 +41,32 @@ public class CloudStore {
         protected SaveErrors doInBackground(Object... params) {
             if(D)Log.d(TAG, "CloudStore.SaveTask.doInBackground");
 
+            SaveErrors se = SaveErrors.None;
+
             try {
                 String[] imageFileNames = m_ssj.getImageFileNames();
                 String[] audioFileNames = m_ssj.getAudioFileNames();
 
+                ICloudProvider icp;
+
+                switch (Config.CLOUD_STORAGE_PROVIDER) {
+                    default:
+                    case Azure:
+                        icp = new WindowsAzureProvider(m_context);
+                        break;
+
+                    case AWS:
+                        icp = null;
+                        break;
+                }
+
+                icp.initializeProvider(m_slideShareName);
+
                 for (String fileName : imageFileNames) {
-                    // Save the image file
+                    icp.uploadFile(m_slideShareName, fileName);
                 }
                 for (String fileName : audioFileNames) {
-                    // Save the audio file
+                    icp.uploadFile(m_slideShareName, fileName);
                 }
 
                 // Save the json file
@@ -59,13 +74,17 @@ public class CloudStore {
             catch (Exception e) {
                 if(E)Log.e(TAG, "CloudStore.SaveTask.doInBackground", e);
                 e.printStackTrace();
+
+                se = SaveErrors.Error_UploadFile;
             }
             catch (OutOfMemoryError e) {
                 if(E)Log.e(TAG, "CloudStore.SaveTask.doInBackground", e);
                 e.printStackTrace();
+
+                se = SaveErrors.Error_OutOfMemory;
             }
 
-            return SaveErrors.None;
+            return se;
         }
 
         @Override
@@ -76,7 +95,7 @@ public class CloudStore {
         }
     }
 
-    public CloudStore(Context context, String slideShareName, CloudProviders cloudProvider, ICloudStoreCallback callback) {
+    public CloudStore(Context context, String slideShareName, Config.CloudStorageProviders cloudProvider, ICloudStoreCallback callback) {
         if(D)Log.d(TAG, String.format("CloudStore.CloudStore(%s)", cloudProvider));
 
         m_context = context;

@@ -116,7 +116,7 @@ public class TestImagePickerActivity extends FragmentActivity implements ViewSwi
         try {
             ssj = new SlideShareJSON();
             if(D)Log.d(TAG, String.format("Default SlideShareJSON: %s", ssj.toString()));
-            String urlBase = Config.baseSlideShareUrl + userUuid.toString() + "/" + slideShareName + "/";
+            String urlBase = Config.baseCloudUrl + userUuid.toString() + "/" + slideShareName + "/";
 
             String lastSlideUuid = "";
             for (int i = 0; i < 5; i++) {

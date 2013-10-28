@@ -1,0 +1,8 @@
+package com.hyperfine.slideshare.cloudproviders;
+
+public class WindowsAzureConnectionStrings {
+    public static final String storageConnectionString =
+            "DefaultEndpointsProtocol=http;" +
+                    "AccountName=your_storage_account_name;" +
+                    "AccountKey=your_storage_account_key";
+}

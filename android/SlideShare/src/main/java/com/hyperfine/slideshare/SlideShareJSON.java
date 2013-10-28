@@ -289,7 +289,7 @@ public class SlideShareJSON extends JSONObject {
             }
         }
 
-        return (String[])imageFileNames.toArray();
+        return imageFileNames.toArray(new String[imageFileNames.size()]);
     }
 
     public String[] getAudioFileNames() throws JSONException, MalformedURLException {
@@ -307,7 +307,7 @@ public class SlideShareJSON extends JSONObject {
             }
         }
 
-        return (String[])audioFileNames.toArray();
+        return audioFileNames.toArray(new String[audioFileNames.size()]);
     }
 
     public String getPreviousSlideUuid(String uuidSlide) throws JSONException {

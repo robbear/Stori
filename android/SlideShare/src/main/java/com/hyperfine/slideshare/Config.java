@@ -25,8 +25,29 @@ public class Config
     // Use cache space rather than files space
     public static final boolean USE_CACHE = true;
 
-    // Default base url
-    public static final String baseSlideShareUrl = "http://hyperfine.com/slideshare/";
+    // Default cloud storage provider
+    public static final CloudStorageProviders CLOUD_STORAGE_PROVIDER = CloudStorageProviders.Azure;
+    public static final String baseCloudUrl = getBaseCloudUrl();
+
+    //
+    // Base cloud urls - support for CLOUD_STORAGE_PROVIDER setting
+    //
+    public static final String baseAzureStorageUrl = "http://slideshare.blob.core.windows.net/";
+    public static final String baseAWSStorageUrl = "http://aws.something.com";
+    public enum CloudStorageProviders {
+        Azure,
+        AWS
+    }
+    private static String getBaseCloudUrl() {
+        switch (CLOUD_STORAGE_PROVIDER) {
+            default:
+            case Azure:
+                return baseAzureStorageUrl;
+            case AWS:
+                return baseAWSStorageUrl;
+        }
+    }
+    // End base cloud urls
 
     // Standard SlideShareJSON file name
     public static final String slideShareJSONFilename = "slideshare.json";

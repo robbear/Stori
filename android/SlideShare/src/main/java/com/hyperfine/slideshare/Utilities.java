@@ -313,6 +313,6 @@ public class Utilities {
             return null;
         }
 
-        return Config.baseSlideShareUrl + userUuid.toString() + "/" + slideShareName + "/" + fileName;
+        return Config.baseCloudUrl + userUuid.toString() + "/" + slideShareName + "/" + fileName;
     }
 }
