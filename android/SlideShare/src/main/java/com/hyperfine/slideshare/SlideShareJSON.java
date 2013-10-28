@@ -7,6 +7,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+
 import static com.hyperfine.slideshare.Config.D;
 import static com.hyperfine.slideshare.Config.E;
 
@@ -269,6 +272,42 @@ public class SlideShareJSON extends JSONObject {
         else {
             return getOrder().getString(index + 1);
         }
+    }
+
+    public String[] getImageFileNames() throws JSONException, MalformedURLException {
+        if(D)Log.d(TAG, "SlideShareJSON.getImageFileNames");
+
+        ArrayList<String> imageFileNames = new ArrayList<String>();
+        SlideJSON sj;
+
+        int count = getSlideCount();
+        for (int i = 0; i < count; i++) {
+            sj = getSlide(i);
+            String fileName = sj.getImageFilename();
+            if (fileName != null) {
+                imageFileNames.add(fileName);
+            }
+        }
+
+        return (String[])imageFileNames.toArray();
+    }
+
+    public String[] getAudioFileNames() throws JSONException, MalformedURLException {
+        if(D)Log.d(TAG, "SlideShareJSON.getAudioFileNames");
+
+        ArrayList<String> audioFileNames = new ArrayList<String>();
+        SlideJSON sj;
+
+        int count = getSlideCount();
+        for (int i = 0; i < count; i++) {
+            sj = getSlide(i);
+            String fileName = sj.getAudioFilename();
+            if (fileName != null) {
+                audioFileNames.add(fileName);
+            }
+        }
+
+        return (String[])audioFileNames.toArray();
     }
 
     public String getPreviousSlideUuid(String uuidSlide) throws JSONException {
