@@ -7,6 +7,7 @@ import android.util.Log;
 import com.hyperfine.slideshare.cloudproviders.ICloudProvider;
 import com.hyperfine.slideshare.cloudproviders.WindowsAzureProvider;
 
+import java.util.HashMap;
 import java.util.concurrent.RejectedExecutionException;
 
 import static com.hyperfine.slideshare.Config.D;
@@ -18,6 +19,7 @@ public class CloudStore {
     Config.CloudStorageProviders m_cloudProvider;
     Context m_context;
     String m_slideShareName;
+    String m_userUuid;
     ICloudStoreCallback m_callback;
     SlideShareJSON m_ssj;
     boolean m_saveInProgress = false;
@@ -60,16 +62,25 @@ public class CloudStore {
                         break;
                 }
 
-                icp.initializeProvider(m_slideShareName);
+                icp.initializeProvider(m_userUuid);
+                icp.deleteVirtualDirectory(m_slideShareName);
+
+                HashMap<String, String> metaDataImage = new HashMap<String, String>();
+                HashMap<String, String> metaDataAudio = new HashMap<String, String>();
+                HashMap<String, String> metaDataJSON = new HashMap<String, String>();
+
+                metaDataImage.put("Content-Type", "image/jpeg");
+                metaDataAudio.put("Content-Type", "audio/3gpp");
+                metaDataJSON.put("Content-Type", "application/json");
 
                 for (String fileName : imageFileNames) {
-                    icp.uploadFile(m_slideShareName, fileName);
+                    icp.uploadFile(m_slideShareName, fileName, metaDataImage);
                 }
                 for (String fileName : audioFileNames) {
-                    icp.uploadFile(m_slideShareName, fileName);
+                    icp.uploadFile(m_slideShareName, fileName, metaDataAudio);
                 }
 
-                // Save the json file
+                icp.uploadFile(m_slideShareName, Config.slideShareJSONFilename, metaDataJSON);
             }
             catch (Exception e) {
                 if(E)Log.e(TAG, "CloudStore.SaveTask.doInBackground", e);
@@ -95,10 +106,11 @@ public class CloudStore {
         }
     }
 
-    public CloudStore(Context context, String slideShareName, Config.CloudStorageProviders cloudProvider, ICloudStoreCallback callback) {
-        if(D)Log.d(TAG, String.format("CloudStore.CloudStore(%s)", cloudProvider));
+    public CloudStore(Context context, String userUuid, String slideShareName, Config.CloudStorageProviders cloudProvider, ICloudStoreCallback callback) {
+        if(D)Log.d(TAG, String.format("CloudStore.CloudStore: userUuid=%s, slideShareName=%s, cloudProvider=%s", userUuid, slideShareName, cloudProvider));
 
         m_context = context;
+        m_userUuid = userUuid;
         m_slideShareName = slideShareName;
         m_cloudProvider = cloudProvider;
         m_callback = callback;

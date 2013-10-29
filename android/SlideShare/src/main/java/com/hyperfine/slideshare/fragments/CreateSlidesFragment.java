@@ -21,6 +21,7 @@ import android.widget.ImageSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.hyperfine.slideshare.CloudStore;
 import com.hyperfine.slideshare.Config;
 import com.hyperfine.slideshare.R;
 import com.hyperfine.slideshare.SSPreferences;
@@ -34,7 +35,7 @@ import java.util.UUID;
 import static com.hyperfine.slideshare.Config.D;
 import static com.hyperfine.slideshare.Config.E;
 
-public class CreateSlidesFragment extends Fragment {
+public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudStoreCallback {
     public final static String TAG = "CreateSlidesFragment";
 
     private final static int REQUEST_IMAGE = 1;
@@ -61,6 +62,7 @@ public class CreateSlidesFragment extends Fragment {
     private Button m_buttonRecord;
     private Button m_buttonPlayStop;
     private Button m_buttonPrev;
+    private Button m_buttonPublish;
     private Button m_buttonDelete;
     private Button m_buttonNext;
     private TextView m_textViewCount;
@@ -391,6 +393,19 @@ public class CreateSlidesFragment extends Fragment {
             }
         });
 
+        m_buttonPublish = (Button)view.findViewById(R.id.control_publish);
+        m_buttonPublish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(D)Log.d(TAG, "CreateSlidesFragment.onPublishButtonClicked");
+
+                CloudStore cloudStore = new CloudStore(m_activityParent, m_userUuid,
+                        m_slideShareName, Config.CLOUD_STORAGE_PROVIDER, CreateSlidesFragment.this);
+
+                cloudStore.saveAsync();
+            }
+        });
+
         m_buttonDelete = (Button)view.findViewById(R.id.control_deleteslide);
         m_buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -496,6 +511,10 @@ public class CreateSlidesFragment extends Fragment {
         else {
             super.onActivityResult(requestCode, resultCode, intent);
         }
+    }
+
+    public void onSaveComplete(CloudStore.SaveErrors se) {
+        if(D)Log.d(TAG, String.format("CreateSlidesFragment.onSaveComplete: se=%s", se));
     }
 
     private void updateSlideShareJSON() {

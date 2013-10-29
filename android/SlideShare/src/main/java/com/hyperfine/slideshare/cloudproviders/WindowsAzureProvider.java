@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.hyperfine.slideshare.Config.D;
 import static com.hyperfine.slideshare.Config.E;
@@ -32,6 +33,7 @@ public class WindowsAzureProvider implements ICloudProvider {
         m_context = context;
     }
 
+    // Note: containerName is the userUuid string
     public void initializeProvider(String containerName) throws Exception {
         if(D)Log.d(TAG, String.format("WindowsAzureProvider.initializeProvider: containerName=%s", containerName));
 
@@ -62,13 +64,29 @@ public class WindowsAzureProvider implements ICloudProvider {
         }
     }
 
-    public void uploadFile(String folder, String fileName) throws Exception {
+    public void deleteVirtualDirectory(String directoryName) throws Exception {
+        if(D)Log.d(TAG, String.format("WindowsAzureProvider.deleteVirtualDirectory: directoryName=%s", directoryName));
+
+        if (m_cloudBlobContainer == null) {
+            throw new Exception("CloudBloblContainer not initialized");
+        }
+
+        CloudBlobDirectory cloudDir = m_cloudBlobContainer.getDirectoryReference(directoryName);
+        for (ListBlobItem item : cloudDir.listBlobs()) {
+            String uriPath = item.getUri().toString();
+            if(D)Log.d(TAG, String.format("WindowsAzureProvider.deleteVirtualDirectory - deleting %s", uriPath));
+            CloudBlockBlob blob = m_cloudBlobContainer.getBlockBlobReference(uriPath);
+            blob.delete();
+        }
+    }
+
+    public void uploadFile(String folder, String fileName, HashMap<String, String> metaData) throws Exception {
         if(D)Log.d(TAG, String.format("WindowsAzureProvider.uploadFile: folder=%s, fileName=%s"));
 
         Exception ex = null;
 
         try {
-            uploadBlob(folder, fileName);
+            uploadBlob(folder, fileName, metaData);
         }
         catch (Exception e) {
             if(E)Log.e(TAG, "WindowsAzureProvider.uploadFile", e);
@@ -112,7 +130,7 @@ public class WindowsAzureProvider implements ICloudProvider {
         m_cloudBlobContainer.uploadPermissions(perms);
     }
 
-    private void uploadBlob(String folder, String fileName)
+    private void uploadBlob(String folder, String fileName, HashMap<String, String> metaData)
             throws URISyntaxException, StorageException, FileNotFoundException, IOException {
 
         if(D)Log.d(TAG, String.format("WindowsAzureProvider.uploadBlob: folder=%s, fileName=%s", folder, fileName));
@@ -121,9 +139,10 @@ public class WindowsAzureProvider implements ICloudProvider {
             throw new IOException("CloudBlobContainer not initialized");
         }
 
-        CloudBlockBlob blob = m_cloudBlobContainer.getBlockBlobReference(fileName);
+        CloudBlockBlob blob = m_cloudBlobContainer.getBlockBlobReference(folder + "/" + fileName);
         File sourceFile = new File(Utilities.getAbsoluteFilePath(m_context, folder, fileName));
         blob.upload(new FileInputStream(sourceFile), sourceFile.length());
+        blob.setMetadata(metaData);
     }
 
     private URI[] listBlobItems() throws IOException {
