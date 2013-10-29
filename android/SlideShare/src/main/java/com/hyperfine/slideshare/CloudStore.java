@@ -58,8 +58,8 @@ public class CloudStore {
                         break;
 
                     case AWS:
-                        icp = null;
-                        break;
+                        se = SaveErrors.Error_Unknown;
+                        return se;
                 }
 
                 icp.initializeProvider(m_userUuid);
