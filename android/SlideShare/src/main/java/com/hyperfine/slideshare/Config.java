@@ -26,14 +26,14 @@ public class Config
     public static final boolean USE_CACHE = true;
 
     // Default cloud storage provider
-    public static final CloudStorageProviders CLOUD_STORAGE_PROVIDER = CloudStorageProviders.Azure;
+    public static final CloudStorageProviders CLOUD_STORAGE_PROVIDER = CloudStorageProviders.AWS;
     public static final String baseCloudUrl = getBaseCloudUrl();
 
     //
     // Base cloud urls - support for CLOUD_STORAGE_PROVIDER setting
     //
     public static final String baseAzureStorageUrl = "http://slideshare.blob.core.windows.net/";
-    public static final String baseAWSStorageUrl = "http://aws.something.com";
+    public static final String baseAWSStorageUrl = "https://s3-us-west-2.amazonaws.com/hfslideshare/";
     public enum CloudStorageProviders {
         Azure,
         AWS
