@@ -7,6 +7,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -69,6 +70,7 @@ public class AWSS3Provider implements ICloudProvider {
         om.setContentType(contentType);
 
         por.setMetadata(om);
+        por.setCannedAcl(CannedAccessControlList.PublicRead);
 
         m_s3Client.putObject(por);
     }
