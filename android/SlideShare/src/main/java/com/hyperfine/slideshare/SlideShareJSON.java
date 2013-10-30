@@ -321,6 +321,28 @@ public class SlideShareJSON extends JSONObject {
         return getOrder().getString(index - 1);
     }
 
+    @Override
+    public String toString() {
+        return toUnescapedString();
+    }
+
+    @Override
+    public String toString(int indent) throws JSONException {
+        return toUnescapedString(indent);
+    }
+
+    public String toUnescapedString() {
+        if(D)Log.d(TAG, "SlideShareJSON.toUnescapedString");
+
+        return super.toString().replace("\\", "");
+    }
+
+    public String toUnescapedString(int indent) throws JSONException {
+        if(D)Log.d(TAG, String.format("SlideShareJSON.toUnescapedString(%d)", indent));
+
+        return super.toString(indent).replace("\\", "");
+    }
+
     public boolean save(Context context, String folder, String fileName) {
         if(D)Log.d(TAG, String.format("SlideShareJSON.save: folder=%s, fileName=%s", folder, fileName));
 

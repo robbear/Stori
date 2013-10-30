@@ -313,6 +313,9 @@ public class Utilities {
             return null;
         }
 
-        return Config.baseCloudUrl + userUuid.toString() + "/" + slideShareName + "/" + fileName;
+        String urlString = Config.baseCloudUrl + userUuid.toString() + "/" + slideShareName + "/" + fileName;
+        if(D)Log.d(TAG, String.format("Utilities.buildResourceUrlString: %s", urlString));
+
+        return urlString;
     }
 }
