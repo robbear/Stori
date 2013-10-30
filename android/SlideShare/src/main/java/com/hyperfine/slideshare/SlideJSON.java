@@ -37,34 +37,46 @@ public class SlideJSON extends JSONObject {
 
         if(D)Log.d(TAG, "SlideJSON.SlidJSON constructed from JSONObject");
 
-        put(SlideShareJSON.KEY_IMAGE, slide.getString(SlideShareJSON.KEY_IMAGE));
-        put(SlideShareJSON.KEY_AUDIO, slide.getString(SlideShareJSON.KEY_AUDIO));
+        put(SlideShareJSON.KEY_IMAGE, slide.has(SlideShareJSON.KEY_IMAGE) ? slide.getString(SlideShareJSON.KEY_IMAGE) : null);
+        put(SlideShareJSON.KEY_AUDIO, slide.has(SlideShareJSON.KEY_AUDIO) ? slide.getString(SlideShareJSON.KEY_AUDIO) : null);
     }
 
     public String getImageUrlString() throws JSONException {
-        String s = getString(SlideShareJSON.KEY_IMAGE);
+        String s = null;
+        if (has(SlideShareJSON.KEY_IMAGE)) {
+            s = getString(SlideShareJSON.KEY_IMAGE);
+        }
         if(D)Log.d(TAG, String.format("SlideJSON.getImageUrlString returns %s", s));
         return s;
     }
 
     public String getImageFilename() throws JSONException, MalformedURLException {
-        String s = getImageUrlString();
-        Uri uri = Uri.parse(s);
-        String fileName = uri.getLastPathSegment();
+        String fileName = null;
+        if (has(SlideShareJSON.KEY_IMAGE)) {
+            String s = getImageUrlString();
+            Uri uri = Uri.parse(s);
+            fileName = uri.getLastPathSegment();
+        }
         if(D)Log.d(TAG, String.format("SlideJSON.getImageFilename returns %s", fileName));
         return fileName;
     }
 
     public String getAudioUrlString() throws JSONException {
-        String s = getString(SlideShareJSON.KEY_AUDIO);
+        String s = null;
+        if (has(SlideShareJSON.KEY_AUDIO)) {
+            s = getString(SlideShareJSON.KEY_AUDIO);
+        }
         if(D)Log.d(TAG, String.format("SlideJSON.getAudioUrlString returns %s", s));
         return s;
     }
 
     public String getAudioFilename() throws JSONException, MalformedURLException {
-        String s = getAudioUrlString();
-        Uri uri = Uri.parse(s);
-        String fileName = uri.getLastPathSegment();
+        String fileName = null;
+        if (has(SlideShareJSON.KEY_AUDIO)) {
+            String s = getAudioUrlString();
+            Uri uri = Uri.parse(s);
+            fileName = uri.getLastPathSegment();
+        }
         if(D)Log.d(TAG, String.format("SlideJSON.getAudioFilename returns %s", fileName));
         return fileName;
     }
