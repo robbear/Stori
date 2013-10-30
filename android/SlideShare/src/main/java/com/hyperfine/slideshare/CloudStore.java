@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.hyperfine.slideshare.cloudproviders.AWSS3Provider;
 import com.hyperfine.slideshare.cloudproviders.ICloudProvider;
 import com.hyperfine.slideshare.cloudproviders.WindowsAzureProvider;
 
@@ -58,29 +59,21 @@ public class CloudStore {
                         break;
 
                     case AWS:
-                        se = SaveErrors.Error_Unknown;
-                        return se;
+                        icp = new AWSS3Provider(m_context);
+                        break;
                 }
 
                 icp.initializeProvider(m_userUuid);
                 icp.deleteVirtualDirectory(m_slideShareName);
 
-                HashMap<String, String> metaDataImage = new HashMap<String, String>();
-                HashMap<String, String> metaDataAudio = new HashMap<String, String>();
-                HashMap<String, String> metaDataJSON = new HashMap<String, String>();
-
-                metaDataImage.put("Content-Type", "image/jpeg");
-                metaDataAudio.put("Content-Type", "audio/3gpp");
-                metaDataJSON.put("Content-Type", "application/json");
-
                 for (String fileName : imageFileNames) {
-                    icp.uploadFile(m_slideShareName, fileName, metaDataImage);
+                    icp.uploadFile(m_slideShareName, fileName, "image/jpeg");
                 }
                 for (String fileName : audioFileNames) {
-                    icp.uploadFile(m_slideShareName, fileName, metaDataAudio);
+                    icp.uploadFile(m_slideShareName, fileName, "audio/3gpp");
                 }
 
-                icp.uploadFile(m_slideShareName, Config.slideShareJSONFilename, metaDataJSON);
+                icp.uploadFile(m_slideShareName, Config.slideShareJSONFilename, "application/json");
             }
             catch (Exception e) {
                 if(E)Log.e(TAG, "CloudStore.SaveTask.doInBackground", e);

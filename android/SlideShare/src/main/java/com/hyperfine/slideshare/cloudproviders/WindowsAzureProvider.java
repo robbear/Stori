@@ -91,13 +91,13 @@ public class WindowsAzureProvider implements ICloudProvider {
         */
     }
 
-    public void uploadFile(String folder, String fileName, HashMap<String, String> metaData) throws Exception {
+    public void uploadFile(String folder, String fileName, String contentType) throws Exception {
         if(D)Log.d(TAG, String.format("WindowsAzureProvider.uploadFile: folder=%s, fileName=%s"));
 
         Exception ex = null;
 
         try {
-            uploadBlob(folder, fileName, metaData);
+            uploadBlob(folder, fileName, contentType);
         }
         catch (Exception e) {
             if(E)Log.e(TAG, "WindowsAzureProvider.uploadFile", e);
@@ -145,10 +145,10 @@ public class WindowsAzureProvider implements ICloudProvider {
         */
     }
 
-    private void uploadBlob(String folder, String fileName, HashMap<String, String> metaData)
+    private void uploadBlob(String folder, String fileName, String contentType)
             throws URISyntaxException, FileNotFoundException, IOException {
 
-        if(D)Log.d(TAG, String.format("WindowsAzureProvider.uploadBlob: folder=%s, fileName=%s", folder, fileName));
+        if(D)Log.d(TAG, String.format("WindowsAzureProvider.uploadBlob: folder=%s, fileName=%s, contentType=%s", folder, fileName, contentType));
 
         /* NEVER
         if (m_cloudBlobContainer == null) {
@@ -158,6 +158,9 @@ public class WindowsAzureProvider implements ICloudProvider {
         CloudBlockBlob blob = m_cloudBlobContainer.getBlockBlobReference(folder + "/" + fileName);
         File sourceFile = new File(Utilities.getAbsoluteFilePath(m_context, folder, fileName));
         blob.upload(new FileInputStream(sourceFile), sourceFile.length());
+
+        HashMap<String, String> metaData = new HashMap<String, String>();
+        metaData.put("Content-Type", contentType);
         blob.setMetadata(metaData);
         */
     }
