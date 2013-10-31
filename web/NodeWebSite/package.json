@@ -1,0 +1,25 @@
+{
+    "name": "slidesharedotcom",
+    "version": "1.0.0",
+    "author": "Hyperfine Software <info@hyperfine.com>",
+    "description": "SlideShare web site",
+    "dependencies": {
+	"bunyan": "0.20.0",
+	"connect": "2.9.0",
+	"express": "3.4.0",
+	"hogan.js": "2.0.0",
+	"locale": "0.0.8",
+	"node-uuid": "1.4.0"
+    },
+    "engines": {
+	"node": "0.8.x"
+    },
+    "scripts": {
+	"start": "node server.js"
+    },
+    "domains": [
+	"slideshare.com",
+	"www.slideshare.com"
+    ],
+    "subdomain": "slidesharedotcom"
+}

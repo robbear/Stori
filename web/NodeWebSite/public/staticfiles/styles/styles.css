@@ -1,0 +1,22 @@
+a img{border:none}
+a{color:#900;text-decoration:none}
+a:hover{color:#900;text-decoration:underline}
+#ContentDiv{padding:0 20px;margin-top:40px;}
+.banner{height:464px;display:block}
+.footer{border-top:solid 1px #000;margin-top:50px;font-size:smaller;padding:0 5px;text-align:right}
+.footer a{margin-left:20px}
+.hidden{display:none}
+.obfu{direction:rtl;unicode-bidi:bidi-override;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select:none;-o-user-select: none;user-select: none;cursor:default}
+.logo{width:227px;height:54px;background-image:url(../images/hyperfine.png);display:inline-block}
+.menu{position:relative}
+.menu div{margin-bottom:20px;}
+.menu img{-webkit-border-radius:10px;-moz-border-radius:10px;border-radius:10px}
+.menu p{color:#333;margin:0 15px 15px 15px;line-height:150%;text-align:left;text-decoration:none}
+.menu h3{margin:5px 15px 5px 15px;font-size:16px;line-height:normal;text-align:left;font-family:Arial, Helvetica, sans-serif;color:#C4323C}
+.menu a, .men a:hover{text-decoration:none}
+.nav{position:relative;padding:18px 30px 11px 16px}
+.slab{margin-left:auto;margin-right:auto;margin-top:20px;background-image:url(../images/hyperfine-branch.png);background-repeat:no-repeat;background-position:0px 20px;}
+body{color:#111;font-family:Verdana, Arial, Helvetica, sans-serif;font-size:90%;line-height:160%;margin:0}
+li{margin-bottom:5px}
+p{margin-bottom:25px}
+.mug{float:left;margin:6px 10px 6px 0;height:110px;width:110px}
