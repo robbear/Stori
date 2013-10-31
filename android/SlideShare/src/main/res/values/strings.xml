@@ -3,5 +3,8 @@
 
     <string name="app_name">SlideShare</string>
     <string name="hello_world">Hello world!</string>
+    <string name="upload_dialog_title">Uploading...</string>
+    <string name="upload_dialog_complete_title">Upload complete</string>
+    <string name="ok_text">Ok</string>
 
 </resources>

@@ -30,7 +30,7 @@ public class CloudStore {
     }
 
     public enum SaveErrors {
-        None,
+        Success,
         Error_LoadJSON,
         Error_UploadFile,
         Error_OutOfMemory,
@@ -44,7 +44,7 @@ public class CloudStore {
         protected SaveErrors doInBackground(Object... params) {
             if(D)Log.d(TAG, "CloudStore.SaveTask.doInBackground");
 
-            SaveErrors se = SaveErrors.None;
+            SaveErrors se = SaveErrors.Success;
 
             try {
                 String[] imageFileNames = m_ssj.getImageFileNames();

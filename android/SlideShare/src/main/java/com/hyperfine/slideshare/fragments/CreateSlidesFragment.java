@@ -1,6 +1,9 @@
 package com.hyperfine.slideshare.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -67,6 +70,7 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
     private Button m_buttonNext;
     private TextView m_textViewCount;
     private TextView m_textViewIndex;
+    private ProgressDialog m_progressDialog = null;
 
     private static CreateSlidesFragment newInstance(String slideShareName) {
         if(D)Log.d(TAG, "CreateSlidesFragment.newInstance");
@@ -403,6 +407,12 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
                         m_slideShareName, Config.CLOUD_STORAGE_PROVIDER, CreateSlidesFragment.this);
 
                 cloudStore.saveAsync();
+
+                m_progressDialog = new ProgressDialog(m_activityParent);
+                m_progressDialog.setTitle(m_activityParent.getString(R.string.upload_dialog_title));
+                m_progressDialog.setCancelable(false);
+                m_progressDialog.setIndeterminate(true);
+                m_progressDialog.show();
             }
         });
 
@@ -515,6 +525,25 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
 
     public void onSaveComplete(CloudStore.SaveErrors se) {
         if(D)Log.d(TAG, String.format("CreateSlidesFragment.onSaveComplete: se=%s", se));
+
+        if (m_progressDialog != null) {
+            m_progressDialog.dismiss();
+            m_progressDialog = null;
+        }
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
+        adb.setTitle(m_activityParent.getString(R.string.upload_dialog_complete_title));
+        adb.setCancelable(false);
+        adb.setMessage("Upload returned: " + se.toString());
+        adb.setPositiveButton(m_activityParent.getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
     }
 
     private void updateSlideShareJSON() {
