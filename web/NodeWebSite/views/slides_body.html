@@ -1,0 +1,14 @@
+<div>Slides</div>
+<div>Address:</div>
+<div id="slideShareAddress"></div>
+<div>JSON:</div>
+<div id="ssj"></div>
+<div>Number of slides:</div>
+<div id="numSlides"></div>
+
+<script type="text/javascript" src="/{{StaticFiles}}/scripts/slideshow.js"></script>
+<script type="text/javascript">
+    slideShow.setSSJUrl({{{SSJ_URL}}});
+    slideShow.initializePage();
+    slideShow.fetchSlideShareJSON();
+</script>

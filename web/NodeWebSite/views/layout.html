@@ -2,11 +2,12 @@
 <html xmlns="http://www.w3.org/1999/html">
 <head>
     <meta name='viewport' content='width=device-width; initial-scale=1.0; maximum-scale=1.0;' />
-    <link media="screen and (min-width:600px)" href="/{{StaticFiles}}/styles/styles_large.css" rel="stylesheet" type="text/css" />
+    <link media="screen and (min-width:600px)" href="/{{StaticFiles}}/styles/styles.css" rel="stylesheet" type="text/css" />
     <link media='handheld, screen and (max-width:600px), screen and (max-device-width:600px)' href='/{{StaticFiles}}/styles/styles_small.css' rel='stylesheet' type='text/css' />
 
     <title>{{PageTitle}}</title>
 
+    <script type="text/javascript" src="/{{StaticFiles}}/lib/jquery/jquery-1.8.3.min.js"></script>
     <script type="text/javascript" src="/{{StaticFiles}}/scripts/hflog.js"></script>
     <script type="text/javascript">
         hFLog.enableLogging({{EnableClientLogging}});
@@ -15,13 +16,8 @@
     {{> HeaderContent}}
 </head>
 <body>
-    <div class="slab">
-        <div class="nav">
-            <a class="logo" href="/"></a>
-        </div>
-        <div id="ContentDiv">
-            {{> BodyContent}}
-        </div>
+    <div>
+        {{> BodyContent}}
     </div>
 
     <!--

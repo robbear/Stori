@@ -12,10 +12,11 @@ var express = require('express'),
 
 // Routes
 var routes = [
-    './controllers/index',
-    './controllers/version',
-    './controllers/notfound',
-    './controllers/error'
+    './controllers/index',      // /
+    './controllers/slides',     // /:user/:slidesharename
+    './controllers/version',    // /version
+    './controllers/notfound',   // /notfound
+    './controllers/error'       // /error
 ];
 
 // We need the 404 and error routes specifically, so reference it here
