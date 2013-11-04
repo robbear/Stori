@@ -2,16 +2,16 @@
 
 var hFLog = (function () {
 
-	var isLoggingOn = false;
+	var m_isLoggingOn = true;
 
 	return {
 		enableLogging: function (enable) {
-			isLoggingOn = enable;
-			return isLoggingOn;
+			m_isLoggingOn = enable;
+			return m_isLoggingOn;
 		},
 
 		log: function (message) {
-			if (!isLoggingOn) {
+			if (!m_isLoggingOn) {
 				return;
 			}
 
