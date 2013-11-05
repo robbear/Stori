@@ -10,6 +10,7 @@ var slideShow = (function() {
     var m_imageControl = $('#slideImage');
     var m_prevButton = $('#prevButton');
     var m_nextButton = $('#nextButton');
+    var m_jPlayerDiv = $('#jquery_jplayer_1');
     var m_orderArray = null;
 
     function _initializePage(ssjUrl) {
@@ -41,8 +42,30 @@ var slideShow = (function() {
         });
     }
 
+    function _playAudio(url) {
+        hFLog.log("_playAudio: " + url);
+        m_jPlayerDiv.jPlayer({
+            ready: function() {
+                hFLog.log("_playAudio.jPlayer.ready");
+                $(this).jPlayer("setMedia", { mp3: url });
+                $(this).jPlayer("play");
+            },
+            supplied: "mp3",
+            swfPath: "/" + hfUtilities.getVersionString() + "/lib/jQuery.jPlayer.2.4.0/Jplayer.swf",
+            solution: "html, flash",
+            errorAlerts: true,
+            warningAlerts: false
+        });
+    }
+
     function _onImageControlLoadComplete() {
         hFLog.log("_onImageControlLoadComplete");
+
+        var audioUrl = _getCurrentAudioUrl();
+        hFLog.log("audioUrl = " + audioUrl);
+        if (audioUrl) {
+            _playAudio(audioUrl);
+        }
     }
 
     function _onFetchSlideShareJSONComplete(json) {

@@ -70,7 +70,7 @@ public class CloudStore {
                     icp.uploadFile(m_slideShareName, fileName, "image/jpeg");
                 }
                 for (String fileName : audioFileNames) {
-                    icp.uploadFile(m_slideShareName, fileName, "audio/3gpp");
+                    icp.uploadFile(m_slideShareName, fileName, "audio/mpeg");
                 }
 
                 icp.uploadFile(m_slideShareName, Config.slideShareJSONFilename, "application/json");

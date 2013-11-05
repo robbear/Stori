@@ -631,8 +631,10 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
 
         m_recorder = new MediaRecorder();
         m_recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        m_recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        m_recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        m_recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        //m_recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        m_recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        //m_recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         m_recorder.setOutputFile(Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_audioFileName));
 
         try {
@@ -744,6 +746,6 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
     }
 
     private static String getNewAudioFileName() {
-        return UUID.randomUUID().toString() + ".3gp";
+        return UUID.randomUUID().toString() + ".mp4";
     }
 }
