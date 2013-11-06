@@ -50,12 +50,11 @@ createBuildDirectory()
   echo "Creating build directory"
   mkdir ./build/
   mkdir ./build/NodeWebSite/
-  cp -R ./NodeWebSite/config/ ./build/NodeWebSite/config/
-  cp -R ./NodeWebSite/languages/ ./build/NodeWebSite/languages/
+  cp -R ./NodeWebSite/controllers ./build/NodeWebSite/controllers/
   cp -R ./NodeWebSite/logger/ ./build/NodeWebSite/logger/
   cp -R ./NodeWebSite/public/ ./build/NodeWebSite/public/
-  cp -R ./NodeWebSite/routes/ ./build/NodeWebSite/routes/
   cp -R ./NodeWebSite/views/ ./build/NodeWebSite/views/
+  cp -R ./NodeWebSite/utilities/ ./build/NodeWebSite/utilities/
   cp ./NodeWebSite/*.js ./build/NodeWebSite/
   cp ./NodeWebSite/package.json ./build/NodeWebSite/
   cp ./NodeWebSite/version.txt ./build/NodeWebSite/
@@ -76,7 +75,7 @@ runStylesCacheBuster()
   echo "Running sed to cache-bust image files in styles"
   timeStamp=$(cat ./build/NodeWebSite/timestamp.txt)
 
-  DIRS="./build/NodeWebSite/public/styles/ ./build/NodeWebSite/public/rfi/styles/ ./build/NodeWebSite/public/ct/styles/"
+  DIRS="./build/NodeWebSite/public/staticfiles/styles/"
 
   for d in $DIRS
   do
@@ -96,6 +95,14 @@ fixPackageJsonForDeployment()
   sed -e "s/\"name\": \"slidesharecom\"/\"name\": \"$SUBDOMAIN_NAME\"/g" -e "s/\"subdomain\": \"slidesharedotcom\"/\"subdomain\": \"$SUBDOMAIN_NAME\"/g" -e "s/\"domains\"/\"$DOMAINS_KEY\"/g" <./build/NodeWebSite/package.json >./build/temp.json
   rm ./build/NodeWebSite/package.json
   mv ./build/temp.json ./build/NodeWebSite/package.json
+}
+
+renameStaticfiles()
+{
+  echo "---"
+  echo "Renaming staticfiles directory"
+  versionString=$(cat ./build/NodeWebSite/version.txt)
+  mv ./build/NodeWebSite/public/staticfiles ./build/NodeWebSite/public/$versionString
 }
 
 #
@@ -140,5 +147,6 @@ createBuildDirectory
 runTimeStamper
 runStylesCacheBuster
 fixPackageJsonForDeployment
+renameStaticfiles
 echo "Done!"
 exit 0
