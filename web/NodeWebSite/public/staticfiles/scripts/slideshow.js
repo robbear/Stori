@@ -10,15 +10,18 @@ var slideShow = (function() {
     var m_imageControl = $('#slideImage');
     var m_prevButton = $('#prevButton');
     var m_nextButton = $('#nextButton');
+    var m_startButton = $('#startButton');
     var m_jPlayerDiv = $('#jquery_jplayer_1');
     var m_isPlayerConstructed = false;
     var m_orderArray = null;
+    var m_showStarted = false;
 
     function _initializePage(ssjUrl) {
         m_ssjUrl = ssjUrl;
 
         m_prevButton.on('click', _onPrevButtonClicked);
         m_nextButton.on('click', _onNextButtonClicked);
+        m_startButton.on('click', _onStartButtonClicked);
 
         _fetchSlideShareJSON();
     }
@@ -71,7 +74,7 @@ var slideShow = (function() {
 
         var audioUrl = _getCurrentAudioUrl();
         hFLog.log("audioUrl = " + audioUrl);
-        if (audioUrl) {
+        if (audioUrl && m_showStarted) {
             _playAudio(audioUrl);
         }
     }
@@ -119,6 +122,19 @@ var slideShow = (function() {
         m_currentSlideIndex++;
         var url = _getCurrentImageUrl();
         _loadImage(url);
+    }
+
+    function _onStartButtonClicked() {
+        m_showStarted = true;
+
+        m_startButton.addClass("hidden");
+        m_prevButton.removeClass("hidden");
+        m_nextButton.removeClass("hidden");
+
+        var url = _getCurrentAudioUrl();
+        if (url) {
+            _playAudio(url);
+        }
     }
 
     // Public methods

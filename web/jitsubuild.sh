@@ -34,7 +34,7 @@ createVersionFile()
 {
   echo "---"
   echo "Building version.txt file"
-  git rev-parse HEAD > ./NodeWebSite/version.txt
+  git rev-parse HEAD > ./build/NodeWebSite/version.txt
 }
 
 removeOldBuildTree()
@@ -57,7 +57,6 @@ createBuildDirectory()
   cp -R ./NodeWebSite/utilities/ ./build/NodeWebSite/utilities/
   cp ./NodeWebSite/*.js ./build/NodeWebSite/
   cp ./NodeWebSite/package.json ./build/NodeWebSite/
-  cp ./NodeWebSite/version.txt ./build/NodeWebSite/
   mkdir ./build/NodeWebSite/logfiles/
   cp ./NodeWebSite/logfiles/readme.txt ./build/NodeWebSite/logfiles/
 }
@@ -141,9 +140,9 @@ BUILD_TARGET=$1
 echo "SUBDOMAIN_NAME is set to $SUBDOMAIN_NAME"
 echo "BUILD_TARGET is set to $BUILD_TARGET"
 
-createVersionFile
 removeOldBuildTree
 createBuildDirectory
+createVersionFile
 runTimeStamper
 runStylesCacheBuster
 fixPackageJsonForDeployment
