@@ -523,8 +523,12 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
         }
     }
 
-    public void onSaveComplete(CloudStore.SaveErrors se) {
+    public void onSaveComplete(CloudStore.SaveErrors se, SlideShareJSON ssj) {
         if(D)Log.d(TAG, String.format("CreateSlidesFragment.onSaveComplete: se=%s", se));
+
+        if (ssj != null) {
+            m_ssj = ssj;
+        }
 
         if (m_progressDialog != null) {
             m_progressDialog.dismiss();

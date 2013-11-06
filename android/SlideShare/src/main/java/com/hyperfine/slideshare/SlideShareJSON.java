@@ -19,6 +19,7 @@ import static com.hyperfine.slideshare.Config.E;
 //  {
 //      title: "Title text",
 //      description: "Description text",
+//      version: 1,
 //      transitionEffect: 0,
 //      slides: {
 //          guidval1: { image: "http://foo.com/1.jpg", audio: "http://foo.com/1.3gp" },
@@ -34,6 +35,7 @@ public class SlideShareJSON extends JSONObject {
 
     public final static String KEY_TITLE = "title";
     public final static String KEY_DESCRIPTION = "description";
+    public final static String KEY_VERSION = "version";
     public final static String KEY_TRANSITIONEFFECT = "transitionEffect";
     public final static String KEY_SLIDES = "slides";
     public final static String KEY_IMAGE = "image";
@@ -51,6 +53,7 @@ public class SlideShareJSON extends JSONObject {
 
         put(KEY_TITLE, "Untitled");
         put(KEY_DESCRIPTION, "No description");
+        put(KEY_VERSION, 1);
         put(KEY_TRANSITIONEFFECT, TransitionEffects.None.ordinal());
 
         JSONObject slides = new JSONObject();
@@ -82,6 +85,14 @@ public class SlideShareJSON extends JSONObject {
 
     public String getDescription() throws JSONException {
         return getString(KEY_DESCRIPTION);
+    }
+
+    public void setVersion(int version) throws JSONException {
+        put(KEY_VERSION, version);
+    }
+
+    public int getVersion() throws JSONException {
+        return getInt(KEY_VERSION);
     }
 
     public void setTransitionEffect(TransitionEffects effect) throws JSONException {

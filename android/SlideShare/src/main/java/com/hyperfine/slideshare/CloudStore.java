@@ -26,7 +26,7 @@ public class CloudStore {
     boolean m_saveInProgress = false;
 
     public interface ICloudStoreCallback {
-        public void onSaveComplete(SaveErrors err);
+        public void onSaveComplete(SaveErrors err, SlideShareJSON ssj);
     }
 
     public enum SaveErrors {
@@ -95,7 +95,24 @@ public class CloudStore {
         protected void onPostExecute(SaveErrors saveErrors) {
             if(D)Log.d(TAG, String.format("CloudStore.SaveTask.onPostExecute: %s", saveErrors));
 
-            m_callback.onSaveComplete(saveErrors);
+            // Update the version value and save the JSON locally
+            try {
+                int curVersion = m_ssj.getVersion();
+                m_ssj.setVersion(curVersion + 1);
+                m_ssj.save(m_context, m_slideShareName, Config.slideShareJSONFilename);
+                if(D)Log.d(TAG, "SlideShareJSON after publish:");
+                Utilities.printSlideShareJSON(m_ssj);
+            }
+            catch (Exception e) {
+                if(E)Log.e(TAG, "CloudStore.SaveTask.onPostExecute", e);
+                e.printStackTrace();
+            }
+            catch (OutOfMemoryError e) {
+                if(E)Log.e(TAG, "CloudStore.SaveTask.onPostExecute", e);
+                e.printStackTrace();
+            }
+
+            m_callback.onSaveComplete(saveErrors, m_ssj);
         }
     }
 
@@ -114,7 +131,7 @@ public class CloudStore {
 
         m_ssj = SlideShareJSON.load(m_context, m_slideShareName, Config.slideShareJSONFilename);
         if (m_ssj == null) {
-            m_callback.onSaveComplete(SaveErrors.Error_LoadJSON);
+            m_callback.onSaveComplete(SaveErrors.Error_LoadJSON, null);
             return;
         }
 

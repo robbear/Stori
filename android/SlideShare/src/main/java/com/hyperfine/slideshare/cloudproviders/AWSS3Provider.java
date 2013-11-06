@@ -69,6 +69,7 @@ public class AWSS3Provider implements ICloudProvider {
         ObjectMetadata om = new ObjectMetadata();
         om.setContentType(contentType);
         om.setHeader("Access-Control-Allow-Origin", "*");
+        om.setCacheControl("If-None_Match");
 
         por.setMetadata(om);
         por.setCannedAcl(CannedAccessControlList.PublicRead);
