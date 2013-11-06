@@ -11,13 +11,11 @@ var slideShow = (function() {
     var m_prevButton = $('#prevButton');
     var m_nextButton = $('#nextButton');
     var m_jPlayerDiv = $('#jquery_jplayer_1');
+    var m_isPlayerConstructed = false;
     var m_orderArray = null;
 
     function _initializePage(ssjUrl) {
         m_ssjUrl = ssjUrl;
-
-        // BUGBUG - remove
-        $('#slideShareAddress').html(m_ssjUrl);
 
         m_prevButton.on('click', _onPrevButtonClicked);
         m_nextButton.on('click', _onNextButtonClicked);
@@ -44,18 +42,28 @@ var slideShow = (function() {
 
     function _playAudio(url) {
         hFLog.log("_playAudio: " + url);
-        m_jPlayerDiv.jPlayer({
-            ready: function() {
-                hFLog.log("_playAudio.jPlayer.ready");
-                $(this).jPlayer("setMedia", { mp3: url });
-                $(this).jPlayer("play");
-            },
-            supplied: "mp3",
-            swfPath: "/" + hfUtilities.getVersionString() + "/lib/jQuery.jPlayer.2.4.0/Jplayer.swf",
-            solution: "html, flash",
-            errorAlerts: true,
-            warningAlerts: false
-        });
+
+        if (!m_isPlayerConstructed) {
+            hFLog.log("Constructing player");
+            m_jPlayerDiv.jPlayer({
+                ready: function() {
+                    hFLog.log("_playAudio.jPlayer.ready");
+                    m_isPlayerConstructed = true;
+                    $(this).jPlayer("setMedia", { mp3: url });
+                    $(this).jPlayer("play");
+                },
+                supplied: "mp3",
+                swfPath: "/" + hfUtilities.getVersionString() + "/lib/jQuery.jPlayer.2.4.0/Jplayer.swf",
+                solution: "html, flash",
+                errorAlerts: true,
+                warningAlerts: false
+            });
+        }
+        else {
+            hFLog.log("Player constructed - setting the media and playing");
+            m_jPlayerDiv.jPlayer("setMedia", { mp3: url });
+            m_jPlayerDiv.jPlayer("play");
+        }
     }
 
     function _onImageControlLoadComplete() {
@@ -75,10 +83,6 @@ var slideShow = (function() {
 
         var imageUrl = _getCurrentImageUrl();
         _loadImage(imageUrl);
-
-        // BUGBUG - remove
-        $('#ssj').html(JSON.stringify(m_ssj));
-        $('#numSlides').html(m_slideCount);
     }
 
     function _getCurrentImageUrl() {
