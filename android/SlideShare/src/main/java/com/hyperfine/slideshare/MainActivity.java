@@ -28,6 +28,7 @@ public class MainActivity extends Activity {
     private Button m_buttonCreate;
     private Button m_buttonEdit;
     private Button m_buttonPreview;
+    private String m_slideShareTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +98,7 @@ public class MainActivity extends Activity {
                     ad.show();
                 }
                 else {
-                    launchCreateSlideShareActivity(null);
+                    launchCreateSlideShareActivity(m_slideShareTitle);
                 }
             }
         });
@@ -108,8 +109,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 if(D)Log.d(TAG, "MainActivity.onEditButtonClicked");
 
-                Intent intent = new Intent(MainActivity.this, CreateSlidesActivity.class);
-                MainActivity.this.startActivity(intent);
+                launchCreateSlideShareActivity(m_slideShareTitle);
             }
         });
 
@@ -153,13 +153,16 @@ public class MainActivity extends Activity {
         super.onResume();
 
         String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
-        String slideShareTitle = SlideShareJSON.getSlideShareTitle(this, slideShareName);
+        m_slideShareTitle = SlideShareJSON.getSlideShareTitle(this, slideShareName);
+        if(D)Log.d(TAG, String.format("MainActivity.onResume: m_slideShareTitle = %s", m_slideShareTitle));
+
+        String title = m_slideShareTitle == null ? getString(R.string.default_slideshare_title) : m_slideShareTitle;
 
         m_buttonEdit.setVisibility(slideShareName == null ? View.GONE : View.VISIBLE);
-        m_buttonEdit.setText(String.format(getString(R.string.main_edit_button_format), slideShareTitle));
+        m_buttonEdit.setText(String.format(getString(R.string.main_edit_button_format), title));
 
         m_buttonPreview.setVisibility(slideShareName == null ? View.GONE : View.VISIBLE);
-        m_buttonPreview.setText(String.format(getString(R.string.main_preview_button_format), slideShareTitle));
+        m_buttonPreview.setText(String.format(getString(R.string.main_preview_button_format), title));
     }
 
     @Override
@@ -182,6 +185,7 @@ public class MainActivity extends Activity {
 
         final EditText titleText = new EditText(this);
         titleText.setHint(getString(R.string.main_new_title_hint));
+        titleText.setSingleLine();
 
         AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
         adb.setTitle(getString(R.string.main_new_title_title));

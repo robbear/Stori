@@ -41,6 +41,7 @@ public class CreateSlidesActivity extends FragmentActivity implements ViewSwitch
 
         Intent intent = getIntent();
         m_slideShareTitle = intent.getStringExtra(EXTRA_TITLE);
+        getActionBar().setTitle(m_slideShareTitle == null ? getString(R.string.default_slideshare_title) : m_slideShareTitle);
 
         String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
 
