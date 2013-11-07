@@ -3,8 +3,12 @@
 
     <string name="app_name">SlideShare</string>
     <string name="hello_world">Hello world!</string>
+    <string name="publish_dialog_title">Publish</string>
+    <string name="publish_dialog_message">Ok to publish?</string>
     <string name="upload_dialog_title">Uploading...</string>
     <string name="upload_dialog_complete_title">Upload complete</string>
     <string name="ok_text">Ok</string>
+    <string name="yes_text">Yes</string>
+    <string name="no_text">No</string>
 
 </resources>

@@ -403,16 +403,36 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
             public void onClick(View v) {
                 if(D)Log.d(TAG, "CreateSlidesFragment.onPublishButtonClicked");
 
-                CloudStore cloudStore = new CloudStore(m_activityParent, m_userUuid,
-                        m_slideShareName, Config.CLOUD_STORAGE_PROVIDER, CreateSlidesFragment.this);
+                AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
+                adb.setTitle(m_activityParent.getString(R.string.publish_dialog_title));
+                adb.setCancelable(true);
+                adb.setMessage(m_activityParent.getString(R.string.publish_dialog_message));
+                adb.setPositiveButton(m_activityParent.getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
 
-                cloudStore.saveAsync();
+                        CloudStore cloudStore = new CloudStore(m_activityParent, m_userUuid,
+                                m_slideShareName, Config.CLOUD_STORAGE_PROVIDER, CreateSlidesFragment.this);
 
-                m_progressDialog = new ProgressDialog(m_activityParent);
-                m_progressDialog.setTitle(m_activityParent.getString(R.string.upload_dialog_title));
-                m_progressDialog.setCancelable(false);
-                m_progressDialog.setIndeterminate(true);
-                m_progressDialog.show();
+                        cloudStore.saveAsync();
+
+                        m_progressDialog = new ProgressDialog(m_activityParent);
+                        m_progressDialog.setTitle(m_activityParent.getString(R.string.upload_dialog_title));
+                        m_progressDialog.setCancelable(false);
+                        m_progressDialog.setIndeterminate(true);
+                        m_progressDialog.show();
+                    }
+                });
+                adb.setNegativeButton(m_activityParent.getString(R.string.no_text), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog ad = adb.create();
+                ad.show();
             }
         });
 
