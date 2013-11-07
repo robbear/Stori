@@ -2,7 +2,17 @@
 <resources>
 
     <string name="app_name">SlideShare</string>
+    <string name="cancel_text">Cancel</string>
+    <string name="default_slideshare_title">My Slides</string>
+    <string name="default_slideshare_description">My SlideShare slides</string>
     <string name="hello_world">Hello world!</string>
+    <string name="main_edit_button_format">Edit %s</string>
+    <string name="main_preview_button_format">Preview %s</string>
+    <string name="main_create_alert_title">Create new?</string>
+    <string name="main_create_alert_message">If you have not yet published your previous work, it will be lost</string>
+    <string name="main_create_button">Create new</string>
+    <string name="main_new_title_title">Slideshow Title</string>
+    <string name="main_new_title_hint">Enter your new slideshow title</string>
     <string name="publish_dialog_title">Publish</string>
     <string name="publish_dialog_message">Ok to publish?</string>
     <string name="upload_dialog_title">Uploading...</string>

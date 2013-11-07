@@ -48,11 +48,17 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         setContentView(R.layout.activity_playslides);
 
         m_slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+        if (m_slideShareName == null) {
+            if(D)Log.d(TAG, "PlaySlidesActivity.onCreate - m_slideShareName is null, meaning we'll have no SSJ. Bailing.");
+            finish();
+            return;
+        }
 
         // BUGBUG TODO: Replace with dialog to create/fetch SlideShare name
         m_slideShareDirectory = Utilities.createOrGetSlideShareDirectory(this, m_slideShareName);
         if (m_slideShareDirectory == null) {
             if(D)Log.d(TAG, "PlaySlidesActivity.onCreate - m_slideShareDirectory is null. Bad!!!");
+            finish();
             return;
         }
 

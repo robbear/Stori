@@ -11,6 +11,7 @@ import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -54,6 +55,31 @@ public class Utilities {
         editor.commit();
 
         return slideShareDirectory;
+    }
+
+    private static void recursiveDelete(File f) {
+        if(D)Log.d(TAG, String.format("recursiveDelete: %s", f.getAbsolutePath()));
+        if (f.isDirectory()) {
+            for (File file : f.listFiles()) {
+                recursiveDelete(file);
+            }
+        }
+
+        boolean retVal = f.delete();
+        if(D)Log.d(TAG, String.format("recursiveDelete f.delete() returns %b for %s", retVal, f.getAbsolutePath()));
+    }
+
+    public static void deleteSlideShareDirectory(Context context, String slideShareName) {
+        if(D)Log.d(TAG, String.format("Utilities.deleteSlideShareDirectory: dirName=%s", slideShareName));
+
+        File rootDir = getRootFilesDirectory(context);
+
+        File slideShareDirectory = new File(rootDir.getAbsolutePath() + "/" + slideShareName);
+        if (slideShareDirectory.exists()) {
+            recursiveDelete(slideShareDirectory);
+
+            if(D)Log.d(TAG, String.format("Utilities.deleteSlideShareDirectory: slideShareDirectory.exists() returns %b", slideShareDirectory.exists()));
+        }
     }
 
     private static File createFile(File directory, String fileName) {

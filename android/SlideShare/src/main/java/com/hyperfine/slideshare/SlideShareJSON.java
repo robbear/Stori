@@ -42,17 +42,21 @@ public class SlideShareJSON extends JSONObject {
     public final static String KEY_AUDIO = "audio";
     public final static String KEY_ORDER = "order";
 
+    private Context m_context;
+
     public enum TransitionEffects {
         None;
     };
     // Cache TransitionEffects.values() for doing enum-to-int conversions
     public TransitionEffects[] TransitionEffectsValues = TransitionEffects.values();
 
-    public SlideShareJSON() throws JSONException {
+    public SlideShareJSON(Context context) throws JSONException {
         if(D)Log.d(TAG, "SlideShareJSON.SlideShareJSON");
 
-        put(KEY_TITLE, "Untitled");
-        put(KEY_DESCRIPTION, "No description");
+        m_context = context;
+
+        put(KEY_TITLE, m_context.getString(R.string.default_slideshare_title));
+        put(KEY_DESCRIPTION, m_context.getString(R.string.default_slideshare_description));
         put(KEY_VERSION, 1);
         put(KEY_TRANSITIONEFFECT, TransitionEffects.None.ordinal());
 
@@ -65,8 +69,10 @@ public class SlideShareJSON extends JSONObject {
         if(D)Log.d(TAG, String.format("SlideShareJSON: initial JSON = %s", this.toString()));
     }
 
-    public SlideShareJSON(String json) throws JSONException {
+    public SlideShareJSON(Context context, String json) throws JSONException {
         super(json);
+
+        m_context = context;
 
         if(D)Log.d(TAG, String.format("SlideShareJSON.SlideShareJSON constructed from string: %s", json));
     }
@@ -371,7 +377,7 @@ public class SlideShareJSON extends JSONObject {
         }
 
         try {
-            ssj = new SlideShareJSON(json);
+            ssj = new SlideShareJSON(context, json);
         }
         catch (Exception e) {
             if(E)Log.e(TAG, "SlideShareJSON.load", e);
@@ -383,5 +389,30 @@ public class SlideShareJSON extends JSONObject {
         }
 
         return ssj;
+    }
+
+    public static String getSlideShareTitle(Context context, String folder) {
+        if(D)Log.d(TAG, "SlideShareJSON.getSlideShareTitle");
+
+        SlideShareJSON ssj = load(context, folder, Config.slideShareJSONFilename);
+        if (ssj == null) {
+            return null;
+        }
+
+        String title = null;
+
+        try {
+            title = ssj.getTitle();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "SlideShareJSON.getSlideShareTitle", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "SlideShareJSON.getSlideShareTitle", e);
+            e.printStackTrace();
+        }
+
+        return title;
     }
 }

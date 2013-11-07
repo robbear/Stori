@@ -95,6 +95,25 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
         initializeSlideShareJSON();
     }
 
+    public void setSlideShareTitle(String title) {
+        if(D)Log.d(TAG, String.format("CreateSlidesFragment.setSlideShareTitle: %s", title));
+
+        if (title != null) {
+            try {
+                m_ssj.setTitle(title);
+                m_ssj.save(m_activityParent, m_slideShareName, Config.slideShareJSONFilename);
+            }
+            catch (Exception e) {
+                if(E)Log.e(TAG, "CreateSlidesFragment.setSlideShareTitle", e);
+                e.printStackTrace();
+            }
+            catch (OutOfMemoryError e) {
+                if(E)Log.e(TAG, "CreateSlidesFragment.setSlideShareTitle", e);
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void setImageFileName(String fileName) {
         if(D)Log.d(TAG, String.format("CreateSlidesFragment.setImageFileName: %s", fileName));
 
@@ -211,7 +230,7 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
         m_ssj = SlideShareJSON.load(m_activityParent, m_slideShareName, Config.slideShareJSONFilename);
         if (m_ssj == null) {
             try {
-                m_ssj = new SlideShareJSON();
+                m_ssj = new SlideShareJSON(m_activityParent);
                 m_ssj.save(m_activityParent, m_slideShareName, Config.slideShareJSONFilename);
             }
             catch (Exception e) {
