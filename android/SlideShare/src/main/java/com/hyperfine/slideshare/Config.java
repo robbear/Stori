@@ -25,6 +25,10 @@ public class Config
     // Use cache space rather than files space
     public static final boolean USE_CACHE = true;
 
+    // Default web site base url
+    public static final String baseWebUrl = "http://slidesharedotcom.jit.su/";
+    public static final String baseWebSlidesUrl = baseWebUrl + "slides/";
+
     // Default cloud storage provider
     public static final CloudStorageProviders CLOUD_STORAGE_PROVIDER = CloudStorageProviders.AWS;
     public static final String baseCloudUrl = getBaseCloudUrl();

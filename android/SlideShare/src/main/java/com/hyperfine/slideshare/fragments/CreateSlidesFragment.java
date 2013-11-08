@@ -423,10 +423,10 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
                 if(D)Log.d(TAG, "CreateSlidesFragment.onPublishButtonClicked");
 
                 AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
-                adb.setTitle(m_activityParent.getString(R.string.publish_dialog_title));
+                adb.setTitle(getString(R.string.publish_dialog_title));
                 adb.setCancelable(true);
-                adb.setMessage(m_activityParent.getString(R.string.publish_dialog_message));
-                adb.setPositiveButton(m_activityParent.getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+                adb.setMessage(getString(R.string.publish_dialog_message));
+                adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -437,13 +437,13 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
                         cloudStore.saveAsync();
 
                         m_progressDialog = new ProgressDialog(m_activityParent);
-                        m_progressDialog.setTitle(m_activityParent.getString(R.string.upload_dialog_title));
+                        m_progressDialog.setTitle(getString(R.string.upload_dialog_title));
                         m_progressDialog.setCancelable(false);
                         m_progressDialog.setIndeterminate(true);
                         m_progressDialog.show();
                     }
                 });
-                adb.setNegativeButton(m_activityParent.getString(R.string.no_text), new DialogInterface.OnClickListener() {
+                adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -575,15 +575,36 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
         }
 
         AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
-        adb.setTitle(m_activityParent.getString(R.string.upload_dialog_complete_title));
         adb.setCancelable(false);
-        adb.setMessage("Upload returned: " + se.toString());
-        adb.setPositiveButton(m_activityParent.getString(R.string.ok_text), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+
+        if (se == CloudStore.SaveErrors.Success) {
+            adb.setTitle(getString(R.string.upload_dialog_complete_title));
+            adb.setMessage(getString(R.string.upload_dialog_complete_message_format));
+            adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+
+                    Utilities.shareShow(m_activityParent, m_userUuid, m_slideShareName);
+                }
+            });
+            adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
+        else {
+            adb.setTitle(getString(R.string.upload_dialog_failure_title));
+            adb.setMessage(String.format(getString(R.string.upload_dialog_failure_message_format), se.toString()));
+            adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
 
         AlertDialog ad = adb.create();
         ad.show();

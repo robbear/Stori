@@ -28,6 +28,7 @@ public class MainActivity extends Activity {
     private Button m_buttonCreate;
     private Button m_buttonEdit;
     private Button m_buttonPreview;
+    private Button m_buttonShare;
     private String m_slideShareTitle;
 
     @Override
@@ -123,6 +124,19 @@ public class MainActivity extends Activity {
                 MainActivity.this.startActivity(intent);
             }
         });
+
+        m_buttonShare = (Button)findViewById(R.id.share_button);
+        m_buttonShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userUuid = m_prefs.getString(SSPreferences.PREFS_USERUUID, null);
+                String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, null);
+
+                if (userUuid != null && slideShareName != null) {
+                    Utilities.shareShow(MainActivity.this, userUuid, slideShareName);
+                }
+            }
+        });
     }
 
     @Override
@@ -163,6 +177,10 @@ public class MainActivity extends Activity {
 
         m_buttonPreview.setVisibility(slideShareName == null ? View.GONE : View.VISIBLE);
         m_buttonPreview.setText(String.format(getString(R.string.main_preview_button_format), title));
+
+        boolean isPublished = SlideShareJSON.isSlideSharePublished(this, slideShareName);
+        m_buttonShare.setVisibility(slideShareName == null || !isPublished ? View.GONE : View.VISIBLE);
+        m_buttonShare.setText(String.format(getString(R.string.main_share_button_format), title));
     }
 
     @Override

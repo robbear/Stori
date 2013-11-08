@@ -101,6 +101,12 @@ public class SlideShareJSON extends JSONObject {
         return getInt(KEY_VERSION);
     }
 
+    public boolean isPublished() throws JSONException {
+        int version = getVersion();
+
+        return (version > 1);
+    }
+
     public void setTransitionEffect(TransitionEffects effect) throws JSONException {
         put(KEY_TRANSITIONEFFECT, effect.ordinal());
     }
@@ -414,5 +420,30 @@ public class SlideShareJSON extends JSONObject {
         }
 
         return title;
+    }
+
+    public static boolean isSlideSharePublished(Context context, String folder) {
+        if(D)Log.d(TAG, "SlideShareJSON.isSlideSharePublished");
+
+        SlideShareJSON ssj = load(context, folder, Config.slideShareJSONFilename);
+        if (ssj == null) {
+            return false;
+        }
+
+        boolean isPublished = false;
+
+        try {
+            isPublished = ssj.isPublished();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "SlideShareJSON.isSlideSharePublished", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "SlideShareJSON.isSlideSharePublished", e);
+            e.printStackTrace();
+        }
+
+        return isPublished;
     }
 }

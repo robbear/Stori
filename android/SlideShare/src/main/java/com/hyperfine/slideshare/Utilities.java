@@ -325,13 +325,29 @@ public class Utilities {
             if(D)Log.d(TAG, ssj.toString(JSON_INDENT_SPACES));
         }
         catch (Exception e) {
-            if(E)Log.e(TAG, "Utilities.pringSlideShareJSON", e);
+            if(E)Log.e(TAG, "Utilities.printSlideShareJSON", e);
             e.printStackTrace();
         }
         catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "Utilities.pringSlideShareJSON", e);
+            if(E)Log.e(TAG, "Utilities.printSlideShareJSON", e);
             e.printStackTrace();
         }
+    }
+
+    public static void shareShow(Context context, String userUuid, String slideShareName) {
+        if(D)Log.d(TAG, "Utilities.shareShow");
+
+        String appName = context.getString(R.string.app_name);
+        String url = Utilities.buildShowWebPageUrlString(userUuid, slideShareName);
+        String message = String.format(context.getString(R.string.share_email_body_format), appName, url);
+        String subject = String.format(context.getString(R.string.share_email_subject_format), appName);
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, message);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.setType("text/plain");
+        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_dialog_title)));
     }
 
     public static String buildResourceUrlString(String userUuid, String slideShareName, String fileName) {
@@ -341,6 +357,12 @@ public class Utilities {
 
         String urlString = Config.baseCloudUrl + userUuid.toString() + "/" + slideShareName + "/" + fileName;
         if(D)Log.d(TAG, String.format("Utilities.buildResourceUrlString: %s", urlString));
+
+        return urlString;
+    }
+
+    public static String buildShowWebPageUrlString(String userUuid, String slideShareName) {
+        String urlString = Config.baseWebSlidesUrl + userUuid.toString() + "/" + slideShareName;
 
         return urlString;
     }
