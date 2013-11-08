@@ -7,10 +7,7 @@ var slideShow = (function() {
     var m_ssj = null;
     var m_currentSlideIndex = 0;
     var m_slideCount = 0;
-    var m_imageControl = $('#slideImage');
-    var m_prevButton = $('#prevButton');
-    var m_nextButton = $('#nextButton');
-    var m_startButton = $('#startButton');
+    var m_slidesjsDiv = $('#slides');
     var m_jPlayerDiv = $('#jquery_jplayer_1');
     var m_isPlayerConstructed = false;
     var m_orderArray = null;
@@ -19,28 +16,13 @@ var slideShow = (function() {
     function _initializePage(ssjUrl) {
         m_ssjUrl = ssjUrl;
 
-        m_prevButton.on('click', _onPrevButtonClicked);
-        m_nextButton.on('click', _onNextButtonClicked);
-        m_startButton.on('click', _onStartButtonClicked);
+        m_slidesjsDiv.on('click', null, {prop: true}, _onImageClicked);
 
         _fetchSlideShareJSON();
     }
 
     function _fetchSlideShareJSON() {
         $.getJSON(m_ssjUrl, _onFetchSlideShareJSONComplete);
-    }
-
-    function _loadImage(url) {
-        m_imageControl.one('load', function(){
-            _onImageControlLoadComplete();
-        })
-        .attr('src', url)
-        .each(function() {
-            // Cache fix for browsers that don't trigger .load()
-            if (this.complete) {
-                $(this).trigger('load');
-            }
-        });
     }
 
     function _playAudio(url) {
@@ -69,30 +51,55 @@ var slideShow = (function() {
         }
     }
 
-    function _onImageControlLoadComplete() {
-        hFLog.log("_onImageControlLoadComplete");
-
-        var audioUrl = _getCurrentAudioUrl();
-        hFLog.log("audioUrl = " + audioUrl);
-        if (audioUrl && m_showStarted) {
-            _playAudio(audioUrl);
-        }
-    }
-
     function _onFetchSlideShareJSONComplete(json) {
         m_ssj = json;
         m_orderArray = m_ssj.order;
         m_slideCount = m_orderArray.length;
 
-        var imageUrl = _getCurrentImageUrl();
-        _loadImage(imageUrl);
+        var html = "";
+        for (var i = 0; i < m_slideCount; i++) {
+            var url = _getImageUrl(i);
+            html += '<img src="' + url + '"/>'
+        }
+
+        m_slidesjsDiv.html(html);
+        m_slidesjsDiv.slidesjs({
+            width: 100,
+            height: 200,
+            callback: {
+                loaded: function(number) {
+                    hFLog.log("slides.loaded: number=" + number);
+                    m_currentSlideIndex = number - 1;
+
+                    // Hide navigation and pagination
+                    $('.slidesjs-navigation, .slidesjs-pagination').hide(0);
+                },
+                start: function(number) {
+                    hFLog.log("slides.start: number=" + number);
+                },
+                complete: function(number) {
+                    hFLog.log("slides.complete: number=" + number);
+                    m_currentSlideIndex = number - 1;
+
+                    var audioUrl = _getCurrentAudioUrl();
+                    hFLog.log("audioUrl = " + audioUrl);
+                    if (audioUrl && m_showStarted) {
+                        _playAudio(audioUrl);
+                    }
+                }
+            }
+        });
     }
 
-    function _getCurrentImageUrl() {
-        var slideUuid = m_orderArray[m_currentSlideIndex];
+    function _getImageUrl(index) {
+        var slideUuid = m_orderArray[index];
         var sj = m_ssj.slides[slideUuid];
 
         return sj.image;
+    }
+
+    function _getCurrentImageUrl() {
+        return _getImageUrl(m_currentSlideIndex);
     }
 
     function _getCurrentAudioUrl() {
@@ -102,39 +109,27 @@ var slideShow = (function() {
         return sj.audio;
     }
 
-    function _onPrevButtonClicked() {
-        if (m_currentSlideIndex <= 0) {
-            m_currentSlideIndex = 0;
+    function _onImageClicked(e) {
+        e.preventDefault();
+
+        hFLog.log("_onImageClicked");
+
+        if (!m_showStarted) {
+            m_showStarted = true;
+            var audioUrl = _getCurrentAudioUrl();
+            _playAudio(audioUrl);
             return;
         }
 
-        m_currentSlideIndex--;
-        var url = _getCurrentImageUrl();
-        _loadImage(url);
-    }
-
-    function _onNextButtonClicked() {
-        if (m_currentSlideIndex >= m_slideCount - 1) {
-            m_currentSlideIndex = m_slideCount - 1;
-            return;
+        if (e.data && e.data.prop) {
+            e.data.prop = false;
+            m_slidesjsDiv.find('.slidesjs-next').trigger('click');
+        }
+        else {
+            e.data.prop = true;
         }
 
-        m_currentSlideIndex++;
-        var url = _getCurrentImageUrl();
-        _loadImage(url);
-    }
-
-    function _onStartButtonClicked() {
-        m_showStarted = true;
-
-        m_startButton.addClass("hidden");
-        m_prevButton.removeClass("hidden");
-        m_nextButton.removeClass("hidden");
-
-        var url = _getCurrentAudioUrl();
-        if (url) {
-            _playAudio(url);
-        }
+        return false;
     }
 
     // Public methods
