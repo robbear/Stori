@@ -12,6 +12,7 @@ var slideShow = (function() {
     var m_isPlayerConstructed = false;
     var m_orderArray = null;
     var m_showStarted = false;
+    var m_audioPlaying = false;
 
     function _initializePage(ssjUrl) {
         m_ssjUrl = ssjUrl;
@@ -36,6 +37,11 @@ var slideShow = (function() {
                     m_isPlayerConstructed = true;
                     $(this).jPlayer("setMedia", { mp3: url });
                     $(this).jPlayer("play");
+                    m_audioPlaying = true;
+                },
+                ended: function() {
+                    hFLog.log("_playAudio.jPlayer has stopped playing");
+                    m_audioPlaying = false;
                 },
                 supplied: "mp3",
                 swfPath: "/" + hfUtilities.getVersionString() + "/lib/jQuery.jPlayer.2.4.0/Jplayer.swf",
@@ -48,6 +54,7 @@ var slideShow = (function() {
             hFLog.log("Player constructed - setting the media and playing");
             m_jPlayerDiv.jPlayer("setMedia", { mp3: url });
             m_jPlayerDiv.jPlayer("play");
+            m_audioPlaying = true;
         }
     }
 
@@ -115,19 +122,52 @@ var slideShow = (function() {
         hFLog.log("_onImageClicked");
 
         if (!m_showStarted) {
+            // Initial click to play audio on first visible slide after page load
+            hFLog.log("m_showStarted is false, so playing the audio for the first slide");
             m_showStarted = true;
             var audioUrl = _getCurrentAudioUrl();
             _playAudio(audioUrl);
             return;
         }
 
-        if (e.data && e.data.prop) {
-            e.data.prop = false;
-            m_slidesjsDiv.find('.slidesjs-next').trigger('click');
+        var width = m_slidesjsDiv.width();
+        var clickX = e.offsetX;
+        hFLog.log("width=" + width + " and clickX=" + clickX);
+
+        if (clickX < (width / 3)) {
+            // Previous slide
+            if (e.data && e.data.prop) {
+                e.data.prop = false;
+                m_slidesjsDiv.find('.slidesjs-previous').trigger('click');
+            }
+            else {
+                e.data.prop = true;
+            }
+        }
+        else if (clickX > ((2 * width) / 3)) {
+            // Next slide
+            if (e.data && e.data.prop) {
+                e.data.prop = false;
+                m_slidesjsDiv.find('.slidesjs-next').trigger('click');
+            }
+            else {
+                e.data.prop = true;
+            }
         }
         else {
+            // Toggle audio
             e.data.prop = true;
+            if (m_audioPlaying) {
+                m_jPlayerDiv.jPlayer("stop");
+                m_audioPlaying = false;
+            }
+            else {
+                var url = _getCurrentAudioUrl();
+                _playAudio(url);
+                m_audioPlaying = true;
+            }
         }
+
 
         return false;
     }
