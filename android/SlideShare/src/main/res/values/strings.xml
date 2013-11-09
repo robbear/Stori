@@ -17,7 +17,7 @@
     <string name="publish_dialog_title">Publish</string>
     <string name="publish_dialog_message">Ok to publish?</string>
     <string name="share_dialog_title">Share this show</string>
-    <string name="share_email_body_format">I want to share a %1$s slide show with you! Make sure either to wear headphones or to be in an environment where sound playback through your device\'s speakers is acceptable. To view the show, click on %2$s or paste the address into your browser. Make sure to tap on the Start button.\n\nInstall the %1$s application (coming soon!):\n\n iOS: {App Store application address}\nAndroid: {Google Play application address}</string>
+    <string name="share_email_body_format">I want to share a %1$s slide show with you! Make sure either to wear headphones or to be in an environment where sound playback through your device\'s speakers is acceptable. To view the show, click on %2$s or paste the address into your browser. Tap on the center of the first image to start the show.\n\nRemember, tap on the center of the first image to begin hearing audio. Swipe the image left or right to navigate, or click with your mouse on the left or right sides of the image. Tap in the center of the image to toggle audio.\n\nInstall the %1$s application (coming soon!):\n\n iOS: {App Store application address}\nAndroid: {Google Play application address}</string>
     <string name="share_email_subject_format">You have a new %1$s show to view!</string>
     <string name="upload_dialog_title">Uploading...</string>
     <string name="upload_dialog_complete_title">Upload complete</string>

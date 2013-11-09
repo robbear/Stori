@@ -51,6 +51,7 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
     private final static String INSTANCE_STATE_AUDIOFILE = "instance_state_audiofile";
     private final static String INSTANCE_STATE_SLIDEUUID = "instance_state_slideuuid";
     private final static String INSTANCE_STATE_CURRENTSLIDEINDEX = "instance_state_currentslideindex";
+    private final static String INSTANCE_STATE_CURRENTCAMERAPHOTOFILEPATH = "instance_state_currentcameraphotofilepath";
 
     private SharedPreferences m_prefs = null;
     private SlideShareJSON m_ssj = null;
@@ -266,6 +267,7 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
             setImageFileName(savedInstanceState.getString(INSTANCE_STATE_IMAGEFILE));
             setAudioFileName(savedInstanceState.getString(INSTANCE_STATE_AUDIOFILE));
             setSlideUuid(savedInstanceState.getString(INSTANCE_STATE_SLIDEUUID));
+            m_currentCameraPhotoFilePath = savedInstanceState.getString(INSTANCE_STATE_CURRENTCAMERAPHOTOFILEPATH);
             m_currentSlideIndex = savedInstanceState.getInt(INSTANCE_STATE_CURRENTSLIDEINDEX);
         }
 
@@ -285,6 +287,7 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
         savedInstanceState.putString(INSTANCE_STATE_IMAGEFILE, m_imageFileName);
         savedInstanceState.putString(INSTANCE_STATE_AUDIOFILE, m_audioFileName);
         savedInstanceState.putString(INSTANCE_STATE_SLIDEUUID, m_slideUuid);
+        savedInstanceState.putString(INSTANCE_STATE_CURRENTCAMERAPHOTOFILEPATH, m_currentCameraPhotoFilePath);
         savedInstanceState.putInt(INSTANCE_STATE_CURRENTSLIDEINDEX, m_currentSlideIndex);
     }
 
@@ -595,6 +598,11 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
         else if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
             if(D)Log.d(TAG, String.format("CreateSlidesFragment.onActivityResult for REQUEST_CAMERA: m_currentCameraPhotoFilePath=%s", m_currentCameraPhotoFilePath));
 
+            if (m_currentCameraPhotoFilePath == null) {
+                if(D)Log.d(TAG, "CreateSlidesFragment.onActivityResult - m_currentCameraPhotoFilePath is null. This shouldn't happen. Bailing.");
+                return;
+            }
+
             // Inform the gallery of the new photo
             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             File f = new File(m_currentCameraPhotoFilePath);
@@ -608,6 +616,7 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
             }
 
             boolean success = Utilities.copyExternalStorageImageToJPG(m_activityParent, m_slideShareName, imageFileName, m_currentCameraPhotoFilePath);
+            m_currentCameraPhotoFilePath = null;
 
             if (success) {
                 // Display the image only upon successful save
