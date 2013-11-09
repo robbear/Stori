@@ -4,18 +4,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.hyperfine.slideshare.Config.D;
 import static com.hyperfine.slideshare.Config.E;
@@ -269,6 +273,59 @@ public class Utilities {
         }
     }
 
+    public static boolean copyExternalStorageImageToJPG(Context context, String slideShareName, String fileName, String imageFilePath) {
+        if(D)Log.d(TAG, String.format("Utilities.copyExternalStorageImageToJPG: slideShareName=%s, fileName=%s, imageFilePath=%s", slideShareName, fileName, imageFilePath));
+
+        boolean success = false;
+        OutputStream outStream = null;
+        File slideShareDirectory = createOrGetSlideShareDirectory(context, slideShareName);
+
+        if (slideShareDirectory == null) {
+            if(D)Log.d(TAG, "Utilities.copyExternalStorageImageToJPG - failed to retrieve slideShareDirectory. Bailing");
+            return false;
+        }
+
+        try {
+            ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
+
+            File f = new File(imageFilePath);
+            Uri uri = Uri.fromFile(f);
+            Bitmap bitmapImage = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri));
+            if (bitmapImage.compress(Bitmap.CompressFormat.JPEG, Config.jpgCompressionLevel, outputBuffer)) {
+                File file = createFile(context, slideShareName, fileName);
+                outStream = new FileOutputStream(file);
+
+                outputBuffer.writeTo(outStream);
+                success = true;
+            }
+            else {
+                if(D)Log.d(TAG, "Utilities.copyExternalStorageImageToJPG failed");
+            }
+        }
+        catch (IOException e) {
+            if(E)Log.e(TAG, "Utilities.copyExternalStorageImageToJPG", e);
+            e.printStackTrace();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "Utilities.copyExternalStorageImageToJPG", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "Utilities.copyExternalStorageImageToJPG", e);
+            e.printStackTrace();
+        }
+        finally {
+            if (outStream != null) {
+                try {
+                    outStream.close();
+                }
+                catch (Exception e) {}
+            }
+        }
+
+        return success;
+    }
+
     public static boolean copyGalleryImageToJPG(Context context, String slideShareName, String fileName, Intent intent) {
         if(D)Log.d(TAG, String.format("Utilities.copyGalleryImageToJPG: slideShareName=%s, fileName=%s", slideShareName, fileName));
 
@@ -332,6 +389,21 @@ public class Utilities {
             if(E)Log.e(TAG, "Utilities.printSlideShareJSON", e);
             e.printStackTrace();
         }
+    }
+
+    public static boolean isCameraAvailable(Context context) {
+        if(D)Log.d(TAG, "Utilities.isCameraAvailable");
+
+        final PackageManager pm = context.getPackageManager();
+
+        if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            return false;
+        }
+
+        final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        List<ResolveInfo> list = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+
+        return list.size() > 0;
     }
 
     public static void shareShow(Context context, String userUuid, String slideShareName) {

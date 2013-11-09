@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +35,7 @@ import com.hyperfine.slideshare.SlideJSON;
 import com.hyperfine.slideshare.SlideShareJSON;
 import com.hyperfine.slideshare.Utilities;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -42,6 +46,7 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
     public final static String TAG = "CreateSlidesFragment";
 
     private final static int REQUEST_IMAGE = 1;
+    private final static int REQUEST_CAMERA = 2;
     private final static String INSTANCE_STATE_IMAGEFILE = "instance_state_imagefile";
     private final static String INSTANCE_STATE_AUDIOFILE = "instance_state_audiofile";
     private final static String INSTANCE_STATE_SLIDEUUID = "instance_state_slideuuid";
@@ -61,6 +66,7 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
     private String m_imageFileName = null;
     private String m_audioFileName = null;
     private Button m_buttonSelectImage;
+    private Button m_buttonCamera;
     private ImageSwitcher m_imageSwitcherSelected;
     private Button m_buttonRecord;
     private Button m_buttonPlayStop;
@@ -71,6 +77,7 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
     private TextView m_textViewCount;
     private TextView m_textViewIndex;
     private ProgressDialog m_progressDialog = null;
+    private String m_currentCameraPhotoFilePath = null;
 
     private static CreateSlidesFragment newInstance(String slideShareName) {
         if(D)Log.d(TAG, "CreateSlidesFragment.newInstance");
@@ -335,11 +342,39 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
         m_textViewCount = (TextView)view.findViewById(R.id.text_slide_count);
         m_textViewIndex = (TextView)view.findViewById(R.id.text_slide_index);
 
+        m_buttonCamera = (Button)view.findViewById(R.id.control_camera);
+        m_buttonCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(D)Log.d(TAG, "CreateSlidesFragment.onCameraButtonClicked");
+
+                String imageFileName = getNewImageFileName();
+                String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/SlideShare";
+                File pictureDirPath = new File(path);
+                if (!pictureDirPath.exists()) {
+                    if(D)Log.d(TAG, "****** creating directory");
+                    pictureDirPath.mkdir();
+                }
+
+                m_currentCameraPhotoFilePath = pictureDirPath + "/" + imageFileName;
+                if(D)Log.d(TAG, String.format("CreateSlidesFragment.onCameraButtonClicked: m_currentCameraPhotoFilePath=%s", m_currentCameraPhotoFilePath));
+
+                File imageFile = new File(m_currentCameraPhotoFilePath);
+
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
+                startActivityForResult(intent, REQUEST_CAMERA);
+            }
+        });
+        if (!Utilities.isCameraAvailable(m_activityParent)) {
+            m_buttonCamera.setVisibility(View.GONE);
+        }
+
         m_buttonSelectImage = (Button)view.findViewById(R.id.control_selectimage);
         m_buttonSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (D) Log.d(TAG, "CreateSlidesFragment.onSelectImageButtonClicked");
+                if(D)Log.d(TAG, "CreateSlidesFragment.onSelectImageButtonClicked");
 
                 Intent intent = new Intent();
                 intent.setType("image/*");
@@ -543,6 +578,36 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
             }
 
             boolean success = Utilities.copyGalleryImageToJPG(m_activityParent, m_slideShareName, imageFileName, intent);
+
+            if (success) {
+                // Display the image only upon successful save
+                m_imageFileName = imageFileName;
+                fillImage();
+            }
+            else {
+                // Clean up - remove the image file
+                Utilities.deleteFile(m_activityParent, m_slideShareName, imageFileName);
+                m_imageFileName = null;
+            }
+
+            updateSlideShareJSON();
+        }
+        else if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+            if(D)Log.d(TAG, String.format("CreateSlidesFragment.onActivityResult for REQUEST_CAMERA: m_currentCameraPhotoFilePath=%s", m_currentCameraPhotoFilePath));
+
+            // Inform the gallery of the new photo
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            File f = new File(m_currentCameraPhotoFilePath);
+            Uri contentUri = Uri.fromFile(f);
+            mediaScanIntent.setData(contentUri);
+            m_activityParent.sendBroadcast(mediaScanIntent);
+
+            String imageFileName = m_imageFileName;
+            if (imageFileName == null) {
+                imageFileName = getNewImageFileName();
+            }
+
+            boolean success = Utilities.copyExternalStorageImageToJPG(m_activityParent, m_slideShareName, imageFileName, m_currentCameraPhotoFilePath);
 
             if (success) {
                 // Display the image only upon successful save
