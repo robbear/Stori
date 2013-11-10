@@ -176,6 +176,22 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
         View view = inflater.inflate(R.layout.fragment_playslides, container, false);
 
         m_imageSwitcher = (ImageSwitcher)view.findViewById(R.id.current_image);
+        m_imageSwitcher.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if(D)Log.d(TAG, String.format("************ onLayoutChange for m_imageSwitcher: left=%d, top=%d, right=%d, bottom=%d", left, top, right, bottom));
+                if ((left == 0 && right == 0 && top == 0 && bottom == 0) ||
+                    (left == oldLeft && right == oldRight && top == oldTop && bottom == oldBottom)) {
+                    return;
+                }
+
+                // Wait for onLayoutChange for the Image Switcher, seeded with a black png drawable, so
+                // that we have the dimensions of the control inflated. We need non-zero control dimensions
+                // so we can scale the in-memory bitmap to something reasonable, based on the control's
+                // dimensions.
+                renderImage();
+            }
+        });
         m_imageSwitcher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -203,7 +219,9 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
 
         m_imageSwitcher.setFactory((ViewSwitcher.ViewFactory)m_activityParent);
 
-        renderImage();
+        // Seed the ImageSwitcher with a black background in order to inflate it
+        // to non-zero dimensions.
+        m_imageSwitcher.setImageResource(R.drawable.ic_black);
 
         if (savedInstanceState == null) {
             AsyncTaskTimer.startAsyncTaskTimer(1, Config.audioDelayMillis, this);
@@ -244,7 +262,30 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
         }
         else {
             try {
-                Bitmap bitmap = BitmapFactory.decodeFile(Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName));
+                int targetW = m_imageSwitcher.getWidth();
+                int targetH = m_imageSwitcher.getHeight();
+
+                if(D)Log.d(TAG, String.format("PlaySlidesFragment.renderImage: targetW=%d, targetH=%d", targetW, targetH));
+
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName), options);
+                int photoW = options.outWidth;
+                int photoH = options.outHeight;
+                if(D)Log.d(TAG, String.format("PlaySlidesFragment.renderImage: photoW=%d, photoH=%d", photoW, photoH));
+
+                if (targetW == 0) targetW = photoW;
+                if (targetH == 0) targetH = photoH;
+
+                // Determine how much to scale down the image
+                int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+                // Decode the image file into a Bitmap sized to fill the View
+                options.inJustDecodeBounds = false;
+                options.inSampleSize = scaleFactor;
+                options.inPurgeable = true;
+
+                Bitmap bitmap = BitmapFactory.decodeFile(Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName), options);
                 Drawable drawableImage = new BitmapDrawable(m_activityParent.getResources(), bitmap);
                 m_imageSwitcher.setImageDrawable(drawableImage);
             }
