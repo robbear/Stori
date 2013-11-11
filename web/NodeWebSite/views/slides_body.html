@@ -1,6 +1,19 @@
 <div id="slides"></div>
 <div id="jquery_jplayer_1"></div>
 
+<div id="opening-dialog" title="Welcome to SlideShare">
+    <p id="dialog-welcome-text">
+        Welcome to SlideShare. Swipe on the images to navigate through the slides, or click with your mouse
+        on the left or right sides of the image. Tap or click in the middle of the image to toggle the audio.
+    </p>
+    <p>
+        Adjust your speaker volume before proceeding.
+    </p>
+    <p id="dialog-not-supported-text">
+        SlideShare doesn't currently support this browser. Please try Chrome or Safari, instead.
+    </p>
+</div>
+
 <script type="text/javascript" src="/{{StaticFiles}}/scripts/slideshow.js"></script>
 <script type="text/javascript">
     slideShow.initializePage({{{SSJ_URL}}});

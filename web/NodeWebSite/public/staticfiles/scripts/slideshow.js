@@ -19,6 +19,25 @@ var slideShow = (function() {
 
         m_slidesjsDiv.on('click', null, {prop: true}, _onImageClicked);
 
+        // Test for audio support
+        if (Modernizr.audio.mp3) {
+            $('#dialog-not-supported-text').hide();
+        }
+        else {
+            $('#dialog-welcome-text').hide();
+        }
+        $("#opening-dialog").dialog({
+            modal: true,
+            buttons: {
+                Ok: function() {
+                    $(this).dialog("close");
+                    m_showStarted = true;
+                    var audioUrl = _getCurrentAudioUrl();
+                    _playAudio(audioUrl);
+                }
+            }
+        });
+
         _fetchSlideShareJSON();
     }
 
@@ -58,10 +77,23 @@ var slideShow = (function() {
         }
     }
 
+    function _prefetchAudio() {
+        if (m_ssj == null) return;
+
+        for (var i = 0; i < m_slideCount; i++) {
+            var url = _getAudioUrl(i);
+            $.ajax({url: url, success: function() {
+                hFLog.log("Prefetched " + url);
+            }});
+        }
+    }
+
     function _onFetchSlideShareJSONComplete(json) {
         m_ssj = json;
         m_orderArray = m_ssj.order;
         m_slideCount = m_orderArray.length;
+
+        _prefetchAudio();
 
         var html = "";
         for (var i = 0; i < m_slideCount; i++) {
@@ -103,6 +135,13 @@ var slideShow = (function() {
         var sj = m_ssj.slides[slideUuid];
 
         return sj.image;
+    }
+
+    function _getAudioUrl(index) {
+        var slideUuid = m_orderArray[index];
+        var sj = m_ssj.slides[slideUuid];
+
+        return sj.audio;
     }
 
     function _getCurrentImageUrl() {
