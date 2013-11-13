@@ -884,6 +884,6 @@ public class CreateSlidesFragment extends Fragment implements CloudStore.ICloudS
     }
 
     private static String getNewAudioFileName() {
-        return UUID.randomUUID().toString() + ".mp4";
+        return UUID.randomUUID().toString() + ".m4a";
     }
 }
