@@ -11,13 +11,12 @@ var slideShow = (function() {
     var m_jPlayerDiv = $('#jquery_jplayer_1');
     var m_isPlayerConstructed = false;
     var m_orderArray = null;
-    var m_showStarted = false;
     var m_audioPlaying = false;
 
     function _initializePage(ssjUrl) {
         m_ssjUrl = ssjUrl;
 
-        m_slidesjsDiv.on('click', null, {prop: true}, _onImageClicked);
+        m_slidesjsDiv.on('click', _onImageClicked);
 
         // Test for audio support
         if (Modernizr.audio.mp3) {
@@ -31,7 +30,6 @@ var slideShow = (function() {
             buttons: {
                 Ok: function() {
                     $(this).dialog("close");
-                    m_showStarted = true;
                     var audioUrl = _getCurrentAudioUrl();
                     _playAudio(audioUrl);
                 }
@@ -108,10 +106,13 @@ var slideShow = (function() {
             callback: {
                 loaded: function(number) {
                     hFLog.log("slides.loaded: number=" + number);
+                    $('.slidesjs-next').html("");
+                    $('.slidesjs-previous').html("");
+
                     m_currentSlideIndex = number - 1;
 
-                    // Hide navigation and pagination
-                    $('.slidesjs-navigation, .slidesjs-pagination').hide(0);
+                    // Hide pagination
+                    $('.slidesjs-pagination').hide(0);
                 },
                 start: function(number) {
                     hFLog.log("slides.start: number=" + number);
@@ -122,7 +123,7 @@ var slideShow = (function() {
 
                     var audioUrl = _getCurrentAudioUrl();
                     hFLog.log("audioUrl = " + audioUrl);
-                    if (audioUrl && m_showStarted) {
+                    if (audioUrl) {
                         _playAudio(audioUrl);
                     }
                 }
@@ -160,53 +161,22 @@ var slideShow = (function() {
 
         hFLog.log("_onImageClicked");
 
-        if (!m_showStarted) {
-            // Initial click to play audio on first visible slide after page load
-            hFLog.log("m_showStarted is false, so playing the audio for the first slide");
-            m_showStarted = true;
-            var audioUrl = _getCurrentAudioUrl();
-            _playAudio(audioUrl);
-            return;
-        }
-
         var width = m_slidesjsDiv.width();
         var clickX = e.offsetX;
-        hFLog.log("width=" + width + " and clickX=" + clickX);
+        hFLog.log("_onImageClicked: width=" + width + " and clickX=" + clickX);
 
-        if (clickX < (width / 3)) {
-            // Previous slide
-            if (e.data && e.data.prop) {
-                e.data.prop = false;
-                m_slidesjsDiv.find('.slidesjs-previous').trigger('click');
-            }
-            else {
-                e.data.prop = true;
-            }
-        }
-        else if (clickX > ((2 * width) / 3)) {
-            // Next slide
-            if (e.data && e.data.prop) {
-                e.data.prop = false;
-                m_slidesjsDiv.find('.slidesjs-next').trigger('click');
-            }
-            else {
-                e.data.prop = true;
-            }
+        // Toggle audio
+        if (m_audioPlaying) {
+            hFLog.log("_onImageClicked: middle click, m_audioPlaying==true, so calling jPlayer(stop)");
+            m_jPlayerDiv.jPlayer("stop");
+            m_audioPlaying = false;
         }
         else {
-            // Toggle audio
-            e.data.prop = true;
-            if (m_audioPlaying) {
-                m_jPlayerDiv.jPlayer("stop");
-                m_audioPlaying = false;
-            }
-            else {
-                var url = _getCurrentAudioUrl();
-                _playAudio(url);
-                m_audioPlaying = true;
-            }
+            hFLog.log("_onImageClicked: middle click, m_audioPlaying==false, so calling _playAudio");
+            var url = _getCurrentAudioUrl();
+            _playAudio(url);
+            m_audioPlaying = true;
         }
-
 
         return false;
     }
