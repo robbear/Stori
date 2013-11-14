@@ -1,1 +1,19 @@
 @import url(styles.css);
+
+
+#slides .slidesjs-previous {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 5%;
+    height: 100%;
+    z-index: 10;
+}
+#slides .slidesjs-next {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 5%;
+    height: 100%;
+    z-index: 10;
+}

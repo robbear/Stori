@@ -20,3 +20,21 @@ body{color:#111;font-family:Verdana, Arial, Helvetica, sans-serif;font-size:90%;
 li{margin-bottom:5px}
 p{margin-bottom:25px}
 .mug{float:left;margin:6px 10px 6px 0;height:110px;width:110px}
+
+
+#slides .slidesjs-previous {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 33%;
+    height: 100%;
+    z-index: 10;
+}
+#slides .slidesjs-next {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 33%;
+    height: 100%;
+    z-index: 10;
+}
