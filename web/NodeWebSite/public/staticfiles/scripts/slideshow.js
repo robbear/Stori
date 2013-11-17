@@ -100,6 +100,7 @@ var slideShow = (function() {
         }
 
         m_slidesjsDiv.html(html);
+        hFLog.log("Initializing slidesjs");
         m_slidesjsDiv.slidesjs({
             width: 100,
             height: 200,
@@ -112,7 +113,7 @@ var slideShow = (function() {
                     m_currentSlideIndex = number - 1;
 
                     // Hide pagination
-                    $('.slidesjs-pagination').hide(0);
+                    $('.slidesjs-navigation, .slidesjs-pagination').hide(0);
                 },
                 start: function(number) {
                     hFLog.log("slides.start: number=" + number);
@@ -165,17 +166,27 @@ var slideShow = (function() {
         var clickX = e.offsetX;
         hFLog.log("_onImageClicked: width=" + width + " and clickX=" + clickX);
 
-        // Toggle audio
-        if (m_audioPlaying) {
-            hFLog.log("_onImageClicked: middle click, m_audioPlaying==true, so calling jPlayer(stop)");
-            m_jPlayerDiv.jPlayer("stop");
-            m_audioPlaying = false;
+        if (clickX < (width / 3)) {
+            hFLog.log("_onImageClicked: left click - previous");
+            m_slidesjsDiv.slidesjs.previous();
+        }
+        else if (clickX > ((2 * width) / 3)) {
+            hFLog.log("_onImageClicked: right click - next");
+            m_slidesjsDiv.slidesjs.next();
         }
         else {
-            hFLog.log("_onImageClicked: middle click, m_audioPlaying==false, so calling _playAudio");
-            var url = _getCurrentAudioUrl();
-            _playAudio(url);
-            m_audioPlaying = true;
+            // Toggle audio
+            if (m_audioPlaying) {
+                hFLog.log("_onImageClicked: middle click, m_audioPlaying==true, so calling jPlayer(stop)");
+                m_jPlayerDiv.jPlayer("stop");
+                m_audioPlaying = false;
+            }
+            else {
+                hFLog.log("_onImageClicked: middle click, m_audioPlaying==false, so calling _playAudio");
+                var url = _getCurrentAudioUrl();
+                _playAudio(url);
+                m_audioPlaying = true;
+            }
         }
 
         return false;
