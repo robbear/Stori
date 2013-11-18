@@ -12,8 +12,25 @@ var slideShow = (function() {
     var m_isPlayerConstructed = false;
     var m_orderArray = null;
     var m_audioPlaying = false;
+    var m_supportsTouch = false;
+    var m_isInternetExplorer = false;
+
+    function isInternetExplorer() {
+        var index = navigator.userAgent.indexOf("Trident");
+        return (index >= 0);
+    }
+
+    function supportsTouch() {
+        return Modernizr.touch;
+    }
 
     function _initializePage(ssjUrl) {
+        m_supportsTouch = supportsTouch();
+        hFLog.log("m_supportsTouch is " + m_supportsTouch);
+
+        m_isInternetExplorer = isInternetExplorer();
+        hFLog.log("m_isInternetExplorer is " + m_isInternetExplorer);
+
         m_ssjUrl = ssjUrl;
 
         m_slidesjsDiv.on('click', _onImageClicked);
@@ -112,8 +129,18 @@ var slideShow = (function() {
 
                     m_currentSlideIndex = number - 1;
 
-                    // Hide pagination
-                    $('.slidesjs-navigation, .slidesjs-pagination').hide(0);
+                    //
+                    // If the browser supports touch, then we hide the sliderjs
+                    // navigation controls and manage the right/left side of the
+                    // image click detection directly. Otherwise, we style and
+                    // show the navigation controls for mouse-based browsers.
+                    //
+                    if (m_supportsTouch) {
+                        $('.slidesjs-navigation, .slidesjs-pagination').hide(0);
+                    }
+                    else {
+                        $('.slidesjs-pagination').hide(0);
+                    }
                 },
                 start: function(number) {
                     hFLog.log("slides.start: number=" + number);
@@ -166,11 +193,16 @@ var slideShow = (function() {
         var clickX = e.offsetX;
         hFLog.log("_onImageClicked: width=" + width + " and clickX=" + clickX);
 
-        if (clickX < (width / 3)) {
+        //
+        // IE11 (and probably downlevel versions of IE) can't deal with
+        // non-native click events on the slidesjs object. So we turn
+        // that feature off for IE.
+        //
+        if (!m_isInternetExplorer && clickX < (width / 3)) {
             hFLog.log("_onImageClicked: left click - previous");
             m_slidesjsDiv.slidesjs.previous();
         }
-        else if (clickX > ((2 * width) / 3)) {
+        else if (!m_isInternetExplorer && clickX > ((2 * width) / 3)) {
             hFLog.log("_onImageClicked: right click - next");
             m_slidesjsDiv.slidesjs.next();
         }

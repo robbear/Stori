@@ -53,9 +53,6 @@
       return Plugin;
 
     })();
-    Plugin.prototype.internalTestFunction = function() {
-        console.log("In internalTestFunction!!");
-    };
     Plugin.prototype.init = function() {
       var $element, nextButton, pagination, playButton, prevButton, stopButton,
         _this = this;
@@ -594,18 +591,18 @@
 
         // Public methods
         $.fn.slidesjs.next = function() {
-            console.log("slidesjs.next");
             _this.each(function() {
                 if ($.data(this, "plugin_slidesjs")) {
+                    $.data(this, "plugin_slidesjs").stop();
                     $.data(this, "plugin_slidesjs").next();
                 }
             });
         };
 
         $.fn.slidesjs.previous = function() {
-            console.log("slidesjs.previous");
             _this.each(function() {
                 if ($.data(this, "plugin_slidesjs")) {
+                    $.data(this, "plugin_slidesjs").stop();
                     $.data(this, "plugin_slidesjs").previous();
                 }
             });
