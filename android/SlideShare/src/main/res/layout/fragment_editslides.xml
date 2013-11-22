@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_editslides"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <Gallery
+        android:id="@+id/photo_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".25"
+        android:background="#a0a0a0"/>
+
+    <ImageSwitcher
+        android:id="@+id/selected_image"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".60"
+        android:background="#ffffff" />
+
+    <LinearLayout
+        android:id="@+id/audio_panel"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".15"
+        android:background="#a0a0a0" >
+
+        <Button
+            android:id="@+id/control_record"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Record" />
+        <Button
+            android:id="@+id/control_playback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play"/>
+        <Button
+            android:id="@+id/control_deleterecording"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete recording" />
+    </LinearLayout>
+
+</LinearLayout>

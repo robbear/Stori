@@ -232,6 +232,17 @@ public class MainActivity extends Activity {
         super.onCreateOptionsMenu(menu);
 
         // BUGBUG
+        MenuItem es = menu.add("EditSlidesActivity");
+        es.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(MainActivity.this, EditSlidesActivity.class);
+                MainActivity.this.startActivity(intent);
+                return true;
+            }
+        });
+
+        // BUGBUG
         MenuItem csa = menu.add("Create slides");
         csa.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
