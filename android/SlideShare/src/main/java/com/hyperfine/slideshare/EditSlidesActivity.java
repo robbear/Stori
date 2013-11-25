@@ -1,5 +1,6 @@
 package com.hyperfine.slideshare;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
@@ -16,16 +17,19 @@ import android.widget.ViewSwitcher;
 import com.hyperfine.slideshare.fragments.EditSlidesFragment;
 
 import java.io.File;
+import java.util.UUID;
 
 import static com.hyperfine.slideshare.Config.D;
 import static com.hyperfine.slideshare.Config.E;
 
 public class EditSlidesActivity extends FragmentActivity implements ViewSwitcher.ViewFactory {
     public final static String TAG = "EditSlidesActivity";
+    public final static String EXTRA_TITLE = "extra_title";
 
     private SharedPreferences m_prefs;
     private EditSlidesFragment m_editSlidesFragment;
     private File m_slideShareDirectory;
+    private String m_slideShareTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +38,26 @@ public class EditSlidesActivity extends FragmentActivity implements ViewSwitcher
         super.onCreate(savedInstanceState);
         m_prefs = getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
 
+        Intent intent = getIntent();
+        m_slideShareTitle = intent.getStringExtra(EXTRA_TITLE);
+        getActionBar().setTitle(m_slideShareTitle == null ? getString(R.string.default_slideshare_title) : m_slideShareTitle);
+
         String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
 
-        // BUGBUG TODO: Replace with dialog to create/fetch SlideShare name
+        if (slideShareName == null) {
+            if(D)Log.d(TAG, "EditSlidesActivity.onCreate - null slideShareName. Creating one and saving it to prefs.");
+            slideShareName = UUID.randomUUID().toString();
+
+            SharedPreferences.Editor edit = m_prefs.edit();
+            edit.putString(SSPreferences.PREFS_SSNAME, slideShareName);
+            edit.commit();
+        }
+
         m_slideShareDirectory = Utilities.createOrGetSlideShareDirectory(this, slideShareName);
         if (m_slideShareDirectory == null) {
-            if(D)Log.d(TAG, "TestImagePickerActivity.onCreate - m_slideShareDirectory is null. Bad!!!");
+            if(D)Log.d(TAG, "EditSlidesActivity.onCreate - m_slideShareDirectory is null. Bad!!!");
+            finish();
+            return;
         }
 
         setContentView(R.layout.activity_editslides);
@@ -60,6 +78,7 @@ public class EditSlidesActivity extends FragmentActivity implements ViewSwitcher
             String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
             m_editSlidesFragment = (EditSlidesFragment)fragment;
             m_editSlidesFragment.setSlideShareName(slideShareName);
+            m_editSlidesFragment.setSlideShareTitle(m_slideShareTitle);
         }
     }
 

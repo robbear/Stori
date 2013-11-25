@@ -237,6 +237,7 @@ public class MainActivity extends Activity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Intent intent = new Intent(MainActivity.this, EditSlidesActivity.class);
+                intent.putExtra(EditSlidesActivity.EXTRA_TITLE, m_slideShareTitle);
                 MainActivity.this.startActivity(intent);
                 return true;
             }

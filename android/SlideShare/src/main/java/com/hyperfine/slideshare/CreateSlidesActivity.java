@@ -56,7 +56,7 @@ public class CreateSlidesActivity extends FragmentActivity implements ViewSwitch
 
         m_slideShareDirectory = Utilities.createOrGetSlideShareDirectory(this, slideShareName);
         if (m_slideShareDirectory == null) {
-            if(D)Log.d(TAG, "TestImagePickerActivity.onCreate - m_slideShareDirectory is null. Bad!!!");
+            if(D)Log.d(TAG, "CreateSlidesActivity.onCreate - m_slideShareDirectory is null. Bad!!!");
             finish();
             return;
         }
