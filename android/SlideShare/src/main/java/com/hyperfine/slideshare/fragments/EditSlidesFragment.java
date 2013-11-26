@@ -5,8 +5,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +20,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.Gallery;
 import android.widget.ImageSwitcher;
 import android.widget.ViewSwitcher;
 
@@ -33,6 +33,7 @@ import com.hyperfine.slideshare.SSPreferences;
 import com.hyperfine.slideshare.SlideJSON;
 import com.hyperfine.slideshare.SlideShareJSON;
 import com.hyperfine.slideshare.Utilities;
+import com.hyperfine.slideshare.adapters.ImageGalleryAdapter;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,8 +66,10 @@ public class EditSlidesFragment extends Fragment {
     private String m_slideUuid = null;
     private String m_imageFileName = null;
     private String m_audioFileName = null;
+    private ImageGalleryAdapter m_imageGalleryAdapter;
     private Button m_buttonRecord;
     private Button m_buttonPlayStop;
+    private Gallery m_gallery;
     private ImageSwitcher m_imageSwitcherSelected;
     private ProgressDialog m_progressDialog = null;
     private String m_currentCameraPhotoFilePath = null;
@@ -333,6 +336,25 @@ public class EditSlidesFragment extends Fragment {
         if(D)Log.d(TAG, "EditSlidesFragment.onCreateView");
 
         View view = inflater.inflate(R.layout.fragment_editslides, container, false);
+
+        m_imageGalleryAdapter = new ImageGalleryAdapter();
+        m_imageGalleryAdapter.setContext(m_activityParent);
+        m_imageGalleryAdapter.setSlideShareJSON(m_ssj);
+        m_imageGalleryAdapter.setSlideShareName(m_slideShareName);
+
+        m_gallery = (Gallery)view.findViewById(R.id.photo_gallery);
+        m_gallery.setAdapter(m_imageGalleryAdapter);
+        m_gallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(D)Log.d(TAG, String.format("EditSlidesFragment.onGalleryItemSelected: position=%d", position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                if(D)Log.d(TAG, String.format("EditSlidesFragment.onGalleryNothingSelected"));
+            }
+        });
 
         /* BUGBUG
         m_buttonCamera = (Button)view.findViewById(R.id.control_camera);
