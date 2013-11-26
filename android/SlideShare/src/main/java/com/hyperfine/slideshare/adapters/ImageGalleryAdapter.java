@@ -1,18 +1,18 @@
 package com.hyperfine.slideshare.adapters;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Gallery;
 import android.widget.ImageView;
 
+import com.hyperfine.slideshare.R;
 import com.hyperfine.slideshare.SlideJSON;
 import com.hyperfine.slideshare.SlideShareJSON;
 import com.hyperfine.slideshare.Utilities;
@@ -26,6 +26,7 @@ public class ImageGalleryAdapter extends BaseAdapter {
     private SlideShareJSON m_ssj;
     private String m_slideShareName;
     private Context m_context;
+    private LayoutInflater m_inflater;
 
     public ImageGalleryAdapter() {
         super();
@@ -49,6 +50,8 @@ public class ImageGalleryAdapter extends BaseAdapter {
         if(D)Log.d(TAG, "ImageGalleryAdapter.setContext");
 
         m_context = context;
+
+        m_inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -72,7 +75,7 @@ public class ImageGalleryAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return position;
+        return null;
     }
 
     @Override
@@ -82,9 +85,11 @@ public class ImageGalleryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView = null;
         SlideJSON sj = null;
         String imageFileName = null;
+
+        View viewItem = m_inflater.inflate(R.layout.item_gallery, parent, false);
+        ImageView imageView = (ImageView)viewItem.findViewById(R.id.gallery_image);
 
         try {
             sj = m_ssj.getSlide(position);
@@ -101,7 +106,6 @@ public class ImageGalleryAdapter extends BaseAdapter {
 
         if(D)Log.d(TAG, String.format("ImageGalleryAdapter.getView: position=%d, parent.width=%d, parent.height=%d", position, parent.getWidth(), parent.getHeight()));
 
-        imageView = new ImageView(m_context);
         /* BUGBUG
         imageView.setId(position);
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -111,11 +115,9 @@ public class ImageGalleryAdapter extends BaseAdapter {
             }
         });
         */
-        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        //imageView.setAdjustViewBounds(true);
         renderImage(imageView, imageFileName, parent.getHeight());
 
-        return imageView;
+        return viewItem;
     }
 
     private void renderImage(ImageView imageView, String imageFileName, int parentHeight) {

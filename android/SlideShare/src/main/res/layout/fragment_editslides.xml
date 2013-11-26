@@ -7,18 +7,18 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <Gallery
+    <com.hyperfine.slideshare.HorizontalListView
         android:id="@+id/photo_gallery"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".25"
-        android:background="#a0a0a0"/>
+        android:layout_weight=".20"
+        android:background="#a0a0a0" />
 
     <ImageSwitcher
         android:id="@+id/selected_image"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".60"
+        android:layout_weight=".65"
         android:background="#ffffff" />
 
     <LinearLayout

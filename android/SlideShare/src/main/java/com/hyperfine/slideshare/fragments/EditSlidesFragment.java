@@ -22,12 +22,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.Gallery;
 import android.widget.ImageSwitcher;
 import android.widget.ViewSwitcher;
 
 import com.hyperfine.slideshare.CloudStore;
 import com.hyperfine.slideshare.Config;
+import com.hyperfine.slideshare.HorizontalListView;
 import com.hyperfine.slideshare.R;
 import com.hyperfine.slideshare.SSPreferences;
 import com.hyperfine.slideshare.SlideJSON;
@@ -69,7 +69,7 @@ public class EditSlidesFragment extends Fragment {
     private ImageGalleryAdapter m_imageGalleryAdapter;
     private Button m_buttonRecord;
     private Button m_buttonPlayStop;
-    private Gallery m_gallery;
+    private HorizontalListView m_horizontalListView;
     private ImageSwitcher m_imageSwitcherSelected;
     private ProgressDialog m_progressDialog = null;
     private String m_currentCameraPhotoFilePath = null;
@@ -342,17 +342,34 @@ public class EditSlidesFragment extends Fragment {
         m_imageGalleryAdapter.setSlideShareJSON(m_ssj);
         m_imageGalleryAdapter.setSlideShareName(m_slideShareName);
 
-        m_gallery = (Gallery)view.findViewById(R.id.photo_gallery);
-        m_gallery.setAdapter(m_imageGalleryAdapter);
-        m_gallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        m_horizontalListView = (HorizontalListView)view.findViewById(R.id.photo_gallery);
+        m_horizontalListView.setAdapter(m_imageGalleryAdapter);
+        m_horizontalListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(D)Log.d(TAG, String.format("EditSlidesFragment.onGalleryItemSelected: position=%d", position));
+                if(D)Log.d(TAG, String.format("EditSlidesFragment.onHorizontalListViewItemSelected: position=%d", position));
+
+                m_currentSlideIndex = position;
+
+                String uuidSlide = null;
+                try {
+                    uuidSlide = m_ssj.getSlideUuidByOrderIndex(m_currentSlideIndex);
+                }
+                catch (Exception e) {
+                    if(D)Log.d(TAG, "EditSlidesFragment.onItemSelected", e);
+                    e.printStackTrace();
+                }
+                catch (OutOfMemoryError e) {
+                    if(D)Log.d(TAG, "EditSlidesFragment.onItemSelected", e);
+                    e.printStackTrace();
+                }
+
+                initializeSlide(uuidSlide);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                if(D)Log.d(TAG, String.format("EditSlidesFragment.onGalleryNothingSelected"));
+                if(D)Log.d(TAG, "EditSlidesFragment.onHorizontalListViewNothingSelected");
             }
         });
 
@@ -728,47 +745,38 @@ public class EditSlidesFragment extends Fragment {
 
         if(D)Log.d(TAG, "After update:");
         Utilities.printSlideShareJSON(m_ssj);
-
-        setDiagnosticOutput(count, m_currentSlideIndex);
-    }
-
-    private void setDiagnosticOutput(int count, int index) {
-        if(D)Log.d(TAG, "EditSlidesFragment.setDiagnosticOutput");
-
-        /* BUGBUG
-        m_textViewCount.setText(String.format("Count: %d", count));
-        m_textViewIndex.setText(String.format("Index: %d", index));
-        */
     }
 
     private void fillImage() {
         if(D)Log.d(TAG, "EditSlidesFragment.fillImage");
-
-        // BUGBUG - TEST
-        if (m_ssj == null) {
-            setDiagnosticOutput(0, -1);
-        }
-        else {
-            try {
-                int count = m_ssj.getSlideCount();
-                setDiagnosticOutput(count, m_currentSlideIndex);
-            }
-            catch (Exception e) {
-                if(E)Log.e(TAG, "EditSlidesFragment.fillImage", e);
-                e.printStackTrace();
-            }
-            catch (OutOfMemoryError e) {
-                if(E)Log.e(TAG, "EditSlidesFragment.fillImage", e);
-                e.printStackTrace();
-            }
-        }
 
         if (m_imageFileName == null) {
             m_imageSwitcherSelected.setImageDrawable(null);
             return;
         }
 
-        Bitmap bitmap = BitmapFactory.decodeFile(Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName));
+        int targetW = m_imageSwitcherSelected.getWidth();
+        int targetH = m_imageSwitcherSelected.getHeight();
+
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.fillImage: targetW=%d, targetH=%d", targetW, targetH));
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName), options);
+        int photoW = options.outWidth;
+        int photoH = options.outHeight;
+
+        if (targetW == 0) targetW = photoW;
+        if (targetH == 0) targetH = photoH;
+
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.fillImage: scaleFactor=%d", scaleFactor));
+
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = scaleFactor;
+        options.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName), options);
         Drawable drawableImage = new BitmapDrawable(m_activityParent.getResources(), bitmap);
         m_imageSwitcherSelected.setImageDrawable(drawableImage);
     }
