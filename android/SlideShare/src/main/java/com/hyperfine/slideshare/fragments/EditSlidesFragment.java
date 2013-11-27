@@ -47,7 +47,7 @@ import java.util.UUID;
 import static com.hyperfine.slideshare.Config.D;
 import static com.hyperfine.slideshare.Config.E;
 
-public class EditSlidesFragment extends Fragment {
+public class EditSlidesFragment extends Fragment implements CloudStore.ICloudStoreCallback {
     public final static String TAG = "EditSlidesFragment";
 
     private final static int REQUEST_IMAGE = 1;
@@ -637,6 +637,14 @@ public class EditSlidesFragment extends Fragment {
                 return true;
             }
         });
+
+        menu.getItem(5).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                publishSlides();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -716,6 +724,41 @@ public class EditSlidesFragment extends Fragment {
         else {
             super.onActivityResult(requestCode, resultCode, intent);
         }
+    }
+
+    public void publishSlides() {
+        if(D)Log.d(TAG, "EditSlidesFragment.publishSlides");
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
+        adb.setTitle(getString(R.string.publish_dialog_title));
+        adb.setCancelable(true);
+        adb.setMessage(getString(R.string.publish_dialog_message));
+        adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                CloudStore cloudStore = new CloudStore(m_activityParent, m_userUuid,
+                        m_slideShareName, Config.CLOUD_STORAGE_PROVIDER, EditSlidesFragment.this);
+
+                cloudStore.saveAsync();
+
+                m_progressDialog = new ProgressDialog(m_activityParent);
+                m_progressDialog.setTitle(getString(R.string.upload_dialog_title));
+                m_progressDialog.setCancelable(false);
+                m_progressDialog.setIndeterminate(true);
+                m_progressDialog.show();
+            }
+        });
+        adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
     }
 
     public void deleteCurrentSlide() {

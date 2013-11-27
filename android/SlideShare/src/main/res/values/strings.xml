@@ -18,7 +18,8 @@
     <string name="menu_slide_delete">Remove slide</string>
     <string name="menu_slide_insertbefore">New slide before</string>
     <string name="menu_slide_insertafter">New slide after</string>
-    <string name="menu_slide_selectfromgallery">Gallery image...</string>
+    <string name="menu_slide_publish">Publish slides</string>
+    <string name="menu_slide_selectfromgallery">Choose gallery image...</string>
     <string name="publish_dialog_title">Publish</string>
     <string name="publish_dialog_message">Ok to publish?</string>
     <string name="share_dialog_title">Share this show</string>
