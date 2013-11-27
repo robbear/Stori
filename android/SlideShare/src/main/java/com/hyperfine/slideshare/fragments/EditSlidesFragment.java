@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +20,9 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -56,7 +61,7 @@ public class EditSlidesFragment extends Fragment {
     private SharedPreferences m_prefs = null;
     private SlideShareJSON m_ssj = null;
     private String m_userUuid = null;
-    private int m_currentSlideIndex = -1;
+    private int m_currentSlideIndex = 0;
     private boolean m_isRecording = false;
     private boolean m_isPlaying = false;
     private MediaRecorder m_recorder;
@@ -134,18 +139,23 @@ public class EditSlidesFragment extends Fragment {
         m_slideUuid = s;
     }
 
-    private void initializeNewSlide() {
-        if(D)Log.d(TAG, "EditSlidesFragment.initializeNewSlide");
+    private void initializeNewSlide(int newIndex) {
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.initializeNewSlide: newIndex=%d", newIndex));
 
-        m_currentSlideIndex = -1;
+        if (newIndex < 0) {
+            m_currentSlideIndex = 0;
+        }
+        else {
+            m_currentSlideIndex = newIndex;
+        }
 
         m_imageFileName = null;
         m_audioFileName = null;
+        m_slideUuid = UUID.randomUUID().toString();
+
+        updateSlideShareJSON();
 
         m_buttonPlayStop.setEnabled(false);
-        fillImage();
-
-        m_slideUuid = UUID.randomUUID().toString();
     }
 
     private void initializeSlide(String uuidSlide) {
@@ -256,6 +266,8 @@ public class EditSlidesFragment extends Fragment {
 
         super.onCreate(savedInstanceState);
 
+        setHasOptionsMenu(true);
+
         if (savedInstanceState != null) {
             if(D)Log.d(TAG, "EditSlidesFragment.onCreate - populating from savedInstanceState");
 
@@ -305,6 +317,8 @@ public class EditSlidesFragment extends Fragment {
         if(D)Log.d(TAG, "EditSlidesFragment.onResume");
 
         super.onResume();
+
+        selectSlide(m_currentSlideIndex);
     }
 
     @Override
@@ -348,23 +362,7 @@ public class EditSlidesFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(D)Log.d(TAG, String.format("EditSlidesFragment.onHorizontalListViewItemSelected: position=%d", position));
-
-                m_currentSlideIndex = position;
-
-                String uuidSlide = null;
-                try {
-                    uuidSlide = m_ssj.getSlideUuidByOrderIndex(m_currentSlideIndex);
-                }
-                catch (Exception e) {
-                    if(D)Log.d(TAG, "EditSlidesFragment.onItemSelected", e);
-                    e.printStackTrace();
-                }
-                catch (OutOfMemoryError e) {
-                    if(D)Log.d(TAG, "EditSlidesFragment.onItemSelected", e);
-                    e.printStackTrace();
-                }
-
-                initializeSlide(uuidSlide);
+                selectSlide(position);
             }
 
             @Override
@@ -592,6 +590,56 @@ public class EditSlidesFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if(D)Log.d(TAG, "EditSlidesFragment.onCreateOptionsMenu");
+
+        inflater.inflate(R.menu.menu_slide, menu);
+        if (!Utilities.isCameraAvailable(m_activityParent)) {
+            menu.removeItem(R.id.menu_slide_item_camera);
+        }
+
+        menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                selectImageFromGallery();
+                return true;
+            }
+        });
+
+        menu.getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                selectImageFromCamera();
+                return true;
+            }
+        });
+
+        menu.getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                deleteCurrentSlide();
+                return true;
+            }
+        });
+
+        menu.getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                initializeNewSlide(m_currentSlideIndex - 1);
+                return true;
+            }
+        });
+
+        menu.getItem(4).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                initializeNewSlide(m_currentSlideIndex + 1);
+                return true;
+            }
+        });
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         if(D)Log.d(TAG, "EditSlidesFragment.onActivityCreated");
 
@@ -670,6 +718,90 @@ public class EditSlidesFragment extends Fragment {
         }
     }
 
+    public void deleteCurrentSlide() {
+        if(D)Log.d(TAG, "EditSlidesFragment.deleteCurrentSlide: position");
+
+        // Deletes the slide and sets the current slide to the same index or
+        // creates a new slide if at the end of the order array.
+
+        try {
+            int oldIndex = m_ssj.getOrderIndex(m_slideUuid);
+            deleteSlide();
+
+            String slideUuid = m_ssj.getSlideUuidByOrderIndex(oldIndex);
+
+            if (slideUuid == null) {
+                initializeNewSlide(0);
+            }
+            else {
+                initializeSlide(slideUuid);
+            }
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.onDeleteButtonClicked", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.onDeleteButtonClicked", e);
+            e.printStackTrace();
+        }
+
+        m_imageGalleryAdapter.notifyDataSetChanged();
+        fillImage();
+    }
+
+    public void selectSlide(int position) {
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.selectSlide: position=%d", position));
+
+        m_currentSlideIndex = position;
+
+        String uuidSlide = null;
+        try {
+            uuidSlide = m_ssj.getSlideUuidByOrderIndex(m_currentSlideIndex);
+        }
+        catch (Exception e) {
+            if(D)Log.d(TAG, "EditSlidesFragment.onItemSelected", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(D)Log.d(TAG, "EditSlidesFragment.onItemSelected", e);
+            e.printStackTrace();
+        }
+
+        initializeSlide(uuidSlide);
+    }
+
+    public void selectImageFromGallery() {
+        if(D)Log.d(TAG, "EditSlidesFragment.selectImageFromGallery");
+
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(intent, REQUEST_IMAGE);
+    }
+
+    public void selectImageFromCamera() {
+        if(D)Log.d(TAG, "EditSlidesFragment.selectImageFromCamera");
+
+        String imageFileName = getNewImageFileName();
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/SlideShare";
+        File pictureDirPath = new File(path);
+        if (!pictureDirPath.exists()) {
+            if(D)Log.d(TAG, "****** creating directory");
+            pictureDirPath.mkdir();
+        }
+
+        m_currentCameraPhotoFilePath = pictureDirPath + "/" + imageFileName;
+        if(D)Log.d(TAG, String.format("CreateSlidesFragment.selectImageFromCamera: m_currentCameraPhotoFilePath=%s", m_currentCameraPhotoFilePath));
+
+        File imageFile = new File(m_currentCameraPhotoFilePath);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
+        startActivityForResult(intent, REQUEST_CAMERA);
+    }
+
     public void onSaveComplete(CloudStore.SaveErrors se, SlideShareJSON ssj) {
         if(D)Log.d(TAG, String.format("CreateSlidesFragment.onSaveComplete: se=%s", se));
 
@@ -743,6 +875,9 @@ public class EditSlidesFragment extends Fragment {
             e.printStackTrace();
         }
 
+        m_imageGalleryAdapter.notifyDataSetChanged();
+        fillImage();
+
         if(D)Log.d(TAG, "After update:");
         Utilities.printSlideShareJSON(m_ssj);
     }
@@ -751,7 +886,7 @@ public class EditSlidesFragment extends Fragment {
         if(D)Log.d(TAG, "EditSlidesFragment.fillImage");
 
         if (m_imageFileName == null) {
-            m_imageSwitcherSelected.setImageDrawable(null);
+            m_imageSwitcherSelected.setImageResource(R.drawable.ic_defaultslideimage);
             return;
         }
 

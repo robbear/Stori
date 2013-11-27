@@ -14,6 +14,11 @@
     <string name="main_new_title_hint">Enter your new slideshow title</string>
     <string name="main_preview_button_format">Preview %1$s</string>
     <string name="main_share_button_format">Share %1$s</string>
+    <string name="menu_slide_camera">Camera...</string>
+    <string name="menu_slide_delete">Remove slide</string>
+    <string name="menu_slide_insertbefore">New slide before</string>
+    <string name="menu_slide_insertafter">New slide after</string>
+    <string name="menu_slide_selectfromgallery">Gallery image...</string>
     <string name="publish_dialog_title">Publish</string>
     <string name="publish_dialog_message">Ok to publish?</string>
     <string name="share_dialog_title">Share this show</string>

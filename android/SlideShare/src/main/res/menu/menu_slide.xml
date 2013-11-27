@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_slide_item_selectimage"
+        android:title="@string/menu_slide_selectfromgallery" />
+    <item
+        android:id="@+id/menu_slide_item_camera"
+        android:title="@string/menu_slide_camera" />
+    <item
+        android:id="@+id/menu_slide_item_delete"
+        android:title="@string/menu_slide_delete" />
+    <item
+        android:id="@+id/menu_slide_item_insertbefore"
+        android:title="@string/menu_slide_insertbefore" />
+    <item
+        android:id="@+id/menu_slide_item_insertafter"
+        android:title="@string/menu_slide_insertafter" />
+</menu>

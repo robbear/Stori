@@ -124,7 +124,7 @@ public class ImageGalleryAdapter extends BaseAdapter {
         if(D)Log.d(TAG, String.format("ImageGalleryAdapter.renderImage: %s", imageFileName));
 
         if (imageFileName == null) {
-            imageView.setImageDrawable(null);
+            imageView.setImageResource(R.drawable.ic_defaultslideimage);
         }
         else {
             try {
