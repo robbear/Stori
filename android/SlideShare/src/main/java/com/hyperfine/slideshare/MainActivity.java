@@ -193,8 +193,8 @@ public class MainActivity extends Activity {
     private void launchCreateSlideShareActivity(String title) {
         if(D)Log.d(TAG, "MainActivity.launchCreateSlideShareActivity");
 
-        Intent intent = new Intent(this, CreateSlidesActivity.class);
-        intent.putExtra(CreateSlidesActivity.EXTRA_TITLE, title);
+        Intent intent = new Intent(this, EditSlidesActivity.class);
+        intent.putExtra(EditSlidesActivity.EXTRA_TITLE, title);
         startActivity(intent);
     }
 

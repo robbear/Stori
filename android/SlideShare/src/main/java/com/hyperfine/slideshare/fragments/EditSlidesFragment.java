@@ -362,6 +362,11 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(D)Log.d(TAG, String.format("EditSlidesFragment.onHorizontalListViewItemSelected: position=%d", position));
+
+                if (position != m_currentSlideIndex) {
+                    stopPlaying();
+                }
+
                 selectSlide(position);
             }
 
@@ -370,52 +375,6 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
                 if(D)Log.d(TAG, "EditSlidesFragment.onHorizontalListViewNothingSelected");
             }
         });
-
-        /* BUGBUG
-        m_buttonCamera = (Button)view.findViewById(R.id.control_camera);
-        m_buttonCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(D)Log.d(TAG, "CreateSlidesFragment.onCameraButtonClicked");
-
-                String imageFileName = getNewImageFileName();
-                String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/SlideShare";
-                File pictureDirPath = new File(path);
-                if (!pictureDirPath.exists()) {
-                    if(D)Log.d(TAG, "****** creating directory");
-                    pictureDirPath.mkdir();
-                }
-
-                m_currentCameraPhotoFilePath = pictureDirPath + "/" + imageFileName;
-                if(D)Log.d(TAG, String.format("CreateSlidesFragment.onCameraButtonClicked: m_currentCameraPhotoFilePath=%s", m_currentCameraPhotoFilePath));
-
-                File imageFile = new File(m_currentCameraPhotoFilePath);
-
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
-                startActivityForResult(intent, REQUEST_CAMERA);
-            }
-        });
-        if (!Utilities.isCameraAvailable(m_activityParent)) {
-            m_buttonCamera.setVisibility(View.GONE);
-        }
-        */
-
-        /* BUGBUG
-        m_buttonSelectImage = (Button)view.findViewById(R.id.control_selectimage);
-        m_buttonSelectImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (D) Log.d(TAG, "EditSlidesFragment.onSelectImageButtonClicked");
-
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                startActivityForResult(intent, REQUEST_IMAGE);
-            }
-        });
-        */
 
         m_imageSwitcherSelected = (ImageSwitcher)view.findViewById(R.id.selected_image);
 
@@ -450,142 +409,6 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             }
         });
 
-        /* BUGBUG
-        m_buttonPrev = (Button)view.findViewById(R.id.control_prev);
-        m_buttonPrev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(D)Log.d(TAG, "EditSlidesFragment.onPrevButtonClicked");
-
-                String uuidSlidePrev = null;
-                try {
-                    if (m_currentSlideIndex < 0) {
-                        uuidSlidePrev = m_ssj.getSlideUuidByOrderIndex(m_ssj.getSlideCount() - 1);
-                    }
-                    else {
-                        uuidSlidePrev = m_ssj.getPreviousSlideUuid(m_slideUuid);
-                    }
-                }
-                catch (Exception e) {
-                    if(D)Log.d(TAG, "EditSlidesFragment.onPrevButtonClicked, e");
-                    e.printStackTrace();
-                }
-                catch (OutOfMemoryError e) {
-                    if(D)Log.d(TAG, "EditSlidesFragment.onPrevButtonClicked, e");
-                    e.printStackTrace();
-                }
-
-                if (uuidSlidePrev == null) {
-                    if(D)Log.d(TAG, "EditSlidesFragment.onPrevButtonClicked - already at first slide. The button should have been disabled. Doing nothing.");
-                    return;
-                }
-                else {
-                    initializeSlide(uuidSlidePrev);
-                }
-            }
-        });
-
-        m_buttonPublish = (Button)view.findViewById(R.id.control_publish);
-        m_buttonPublish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(D)Log.d(TAG, "CreateSlidesFragment.onPublishButtonClicked");
-
-                AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
-                adb.setTitle(getString(R.string.publish_dialog_title));
-                adb.setCancelable(true);
-                adb.setMessage(getString(R.string.publish_dialog_message));
-                adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-
-                        CloudStore cloudStore = new CloudStore(m_activityParent, m_userUuid,
-                                m_slideShareName, Config.CLOUD_STORAGE_PROVIDER, CreateSlidesFragment.this);
-
-                        cloudStore.saveAsync();
-
-                        m_progressDialog = new ProgressDialog(m_activityParent);
-                        m_progressDialog.setTitle(getString(R.string.upload_dialog_title));
-                        m_progressDialog.setCancelable(false);
-                        m_progressDialog.setIndeterminate(true);
-                        m_progressDialog.show();
-                    }
-                });
-                adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-                AlertDialog ad = adb.create();
-                ad.show();
-            }
-        });
-
-        m_buttonDelete = (Button)view.findViewById(R.id.control_deleteslide);
-        m_buttonDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(D)Log.d(TAG, "EditSlidesFragment.onDeleteButtonClicked");
-
-                // Deletes the slide and sets the current slide to the same index or
-                // creates a new slide if at the end of the order array.
-
-                try {
-                    int oldIndex = m_ssj.getOrderIndex(m_slideUuid);
-                    deleteSlide();
-
-                    String slideUuid = m_ssj.getSlideUuidByOrderIndex(oldIndex);
-
-                    if (slideUuid == null) {
-                        initializeNewSlide();
-                    }
-                    else {
-                        initializeSlide(slideUuid);
-                    }
-                }
-                catch (Exception e) {
-                    if(E)Log.e(TAG, "EditSlidesFragment.onDeleteButtonClicked", e);
-                    e.printStackTrace();
-                }
-                catch (OutOfMemoryError e) {
-                    if(E)Log.e(TAG, "EditSlidesFragment.onDeleteButtonClicked", e);
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        m_buttonNext = (Button)view.findViewById(R.id.control_next);
-        m_buttonNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(D)Log.d(TAG, "EditSlidesFragment.onNextButtonClicked");
-
-                String uuidSlideNext = null;
-                try {
-                    uuidSlideNext = m_ssj.getNextSlideUuid(m_slideUuid);
-                }
-                catch (Exception e) {
-                    if(E)Log.e(TAG, "EditSlidesFragment.onNextButtonClicked.e");
-                    e.printStackTrace();
-                }
-                catch (OutOfMemoryError e) {
-                    if(E)Log.e(TAG, "EditSlidesFragment.onNextButtonClicked.e");
-                    e.printStackTrace();
-                }
-
-                if (uuidSlideNext == null) {
-                    initializeNewSlide();
-                }
-                else {
-                    initializeSlide(uuidSlideNext);
-                }
-            }
-        });
-        */
-
         return view;
     }
 
@@ -598,6 +421,8 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             menu.removeItem(R.id.menu_slide_item_camera);
         }
 
+        // BUGBUG - is there a better way to base the menus off
+        // identifiers rather than knowing the index order?
         menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -811,7 +636,12 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             e.printStackTrace();
         }
 
-        initializeSlide(uuidSlide);
+        if (uuidSlide == null) {
+            initializeNewSlide(m_currentSlideIndex);
+        }
+        else {
+            initializeSlide(uuidSlide);
+        }
     }
 
     public void selectImageFromGallery() {
