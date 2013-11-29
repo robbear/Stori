@@ -166,6 +166,6 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         }
 
         if(D)Log.d(TAG, "PlaySlidesActivity.initializeSlideShareJSON: here is the JSON:");
-        Utilities.printSlideShareJSON(m_ssj);
+        Utilities.printSlideShareJSON(TAG, m_ssj);
     }
 }

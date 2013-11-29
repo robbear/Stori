@@ -210,7 +210,7 @@ public class SlideShareJSON extends JSONObject {
             // without the item.
             for (int i = 0; i < orderArray.length(); i++) {
                 String item = orderArray.getString(i);
-                if (!uuidString.equals(item)) {
+                if (!uuidString.equalsIgnoreCase(item)) {
                     newOrderArray.put(item);
                 }
             }
@@ -249,7 +249,7 @@ public class SlideShareJSON extends JSONObject {
         JSONArray order = getOrder();
 
         for (int i = 0; i < order.length(); i++) {
-            if (uuidSlide == (String)order.get(i)) {
+            if (uuidSlide.equalsIgnoreCase((String)order.get(i))) {
                 if(D)Log.d(TAG, String.format("SlideShareJSON.getOrderIndex returning %d", i));
                 return i;
             }

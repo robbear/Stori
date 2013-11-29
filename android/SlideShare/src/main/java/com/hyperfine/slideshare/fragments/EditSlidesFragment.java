@@ -171,23 +171,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             m_audioFileName = sj.getAudioFilename();
             m_slideUuid = uuidSlide;
 
-            int count = m_ssj.getSlideCount();
-            int index = m_ssj.getOrderIndex(uuidSlide);
-
-            if (index == 0) {
-                // BUGBUG
-                //m_buttonPrev.setEnabled(false);
-            }
-            else if (index < 0 || index == count - 1) {
-                // BUGBUG
-                //m_buttonPrev.setEnabled(true);
-            }
-            else {
-                // BUGBUG
-                //m_buttonPrev.setEnabled(true);
-            }
-
-            m_currentSlideIndex = index;
+            m_currentSlideIndex = m_ssj.getOrderIndex(uuidSlide);
             if(D)Log.d(TAG, String.format("EditSlidesFragment.initializeSlide: m_currentSlideIndex=%d", m_currentSlideIndex));
 
             m_buttonPlayStop.setEnabled(hasAudio());
@@ -206,7 +190,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
     private void deleteSlide() {
         if(D)Log.d(TAG, "EditSlidesFragment.deleteSlide");
         if(D)Log.d(TAG, "Before slide deletion:");
-        Utilities.printSlideShareJSON(m_ssj);
+        Utilities.printSlideShareJSON(TAG, m_ssj);
 
         if (m_imageFileName != null) {
             Utilities.deleteFile(m_activityParent, m_slideShareName, m_imageFileName);
@@ -234,7 +218,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         m_slideUuid = null;
 
         if(D)Log.d(TAG, "After slide deletion:");
-        Utilities.printSlideShareJSON(m_ssj);
+        Utilities.printSlideShareJSON(TAG, m_ssj);
     }
 
     private void initializeSlideShareJSON() {
@@ -257,7 +241,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         }
 
         if(D)Log.d(TAG, "EditSlidesFragment.initializeSlideShareJSON: here is the current JSON:");
-        Utilities.printSlideShareJSON(m_ssj);
+        Utilities.printSlideShareJSON(TAG, m_ssj);
     }
 
     @Override
@@ -450,7 +434,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         menu.getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                initializeNewSlide(m_currentSlideIndex - 1);
+                initializeNewSlide(m_currentSlideIndex);
                 return true;
             }
         });
@@ -726,9 +710,8 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
     private void updateSlideShareJSON() {
         if(D)Log.d(TAG, "EditSlidesFragment.updateSlideShareJSON");
         if(D)Log.d(TAG, "Current JSON:");
-        Utilities.printSlideShareJSON(m_ssj);
+        Utilities.printSlideShareJSON(TAG, m_ssj);
 
-        int count = 0;
         try {
             String imageUrl = Utilities.buildResourceUrlString(m_userUuid, m_slideShareName, m_imageFileName);
             String audioUrl = Utilities.buildResourceUrlString(m_userUuid, m_slideShareName, m_audioFileName);
@@ -737,7 +720,6 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             m_ssj.save(m_activityParent, m_slideShareName, Config.slideShareJSONFilename);
 
             m_currentSlideIndex = m_ssj.getOrderIndex(m_slideUuid);
-            count = m_ssj.getSlideCount();
         }
         catch (Exception e) {
             if(E)Log.e(TAG, "EditSlidesFragment.updateSlideShareJSON", e);
@@ -752,7 +734,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         fillImage();
 
         if(D)Log.d(TAG, "After update:");
-        Utilities.printSlideShareJSON(m_ssj);
+        Utilities.printSlideShareJSON(TAG, m_ssj);
     }
 
     private void fillImage() {

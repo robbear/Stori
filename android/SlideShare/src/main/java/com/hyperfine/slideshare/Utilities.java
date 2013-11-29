@@ -377,16 +377,16 @@ public class Utilities {
         return success;
     }
 
-    public static void printSlideShareJSON(SlideShareJSON ssj) {
+    public static void printSlideShareJSON(String tag, SlideShareJSON ssj) {
         try {
-            if(D)Log.d(TAG, ssj.toString(JSON_INDENT_SPACES));
+            if(D)Log.d(tag, ssj.toString(JSON_INDENT_SPACES));
         }
         catch (Exception e) {
-            if(E)Log.e(TAG, "Utilities.printSlideShareJSON", e);
+            if(E)Log.e(tag, "Utilities.printSlideShareJSON", e);
             e.printStackTrace();
         }
         catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "Utilities.printSlideShareJSON", e);
+            if(E)Log.e(tag, "Utilities.printSlideShareJSON", e);
             e.printStackTrace();
         }
     }

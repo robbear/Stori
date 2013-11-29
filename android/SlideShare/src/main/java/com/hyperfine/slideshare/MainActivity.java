@@ -216,7 +216,7 @@ public class MainActivity extends Activity {
 
                 dialog.dismiss();
 
-                // Switch to CreateSlidesActivity
+                // Switch to EditSlidesActivity
                 launchCreateSlideShareActivity(title);
             }
         });
@@ -238,17 +238,6 @@ public class MainActivity extends Activity {
             public boolean onMenuItemClick(MenuItem item) {
                 Intent intent = new Intent(MainActivity.this, EditSlidesActivity.class);
                 intent.putExtra(EditSlidesActivity.EXTRA_TITLE, m_slideShareTitle);
-                MainActivity.this.startActivity(intent);
-                return true;
-            }
-        });
-
-        // BUGBUG
-        MenuItem csa = menu.add("Create slides");
-        csa.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(MainActivity.this, CreateSlidesActivity.class);
                 MainActivity.this.startActivity(intent);
                 return true;
             }

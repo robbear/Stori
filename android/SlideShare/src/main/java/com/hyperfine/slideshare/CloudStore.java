@@ -101,7 +101,7 @@ public class CloudStore {
                 m_ssj.setVersion(curVersion + 1);
                 m_ssj.save(m_context, m_slideShareName, Config.slideShareJSONFilename);
                 if(D)Log.d(TAG, "SlideShareJSON after publish:");
-                Utilities.printSlideShareJSON(m_ssj);
+                Utilities.printSlideShareJSON(TAG, m_ssj);
             }
             catch (Exception e) {
                 if(E)Log.e(TAG, "CloudStore.SaveTask.onPostExecute", e);
