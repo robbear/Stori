@@ -22,6 +22,11 @@
         android:layout_height="wrap_content"
         android:text="@string/main_preview_button_format"/>
     <Button
+        android:id="@+id/publish_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_publish_button_format"/>
+    <Button
         android:id="@+id/share_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

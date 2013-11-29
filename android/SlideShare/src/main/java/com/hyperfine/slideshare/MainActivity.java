@@ -1,6 +1,7 @@
 package com.hyperfine.slideshare;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,10 +18,12 @@ import android.widget.EditText;
 
 import java.util.UUID;
 
+import com.hyperfine.slideshare.CloudStore;
+
 import static com.hyperfine.slideshare.Config.D;
 import static com.hyperfine.slideshare.Config.E;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements CloudStore.ICloudStoreCallback {
 
     public final static String TAG = "MainActivity";
 
@@ -29,7 +32,9 @@ public class MainActivity extends Activity {
     private Button m_buttonEdit;
     private Button m_buttonPreview;
     private Button m_buttonShare;
+    private Button m_buttonPublish;
     private String m_slideShareTitle;
+    private ProgressDialog m_progressDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +142,19 @@ public class MainActivity extends Activity {
                 }
             }
         });
+
+        m_buttonPublish = (Button)findViewById(R.id.publish_button);
+        m_buttonPublish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userUuid = m_prefs.getString(SSPreferences.PREFS_USERUUID, null);
+                String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, null);
+
+                if (userUuid != null && slideShareName != null) {
+                    publishSlides(userUuid, slideShareName);
+                }
+            }
+        });
     }
 
     @Override
@@ -181,6 +199,9 @@ public class MainActivity extends Activity {
         boolean isPublished = SlideShareJSON.isSlideSharePublished(this, slideShareName);
         m_buttonShare.setVisibility(slideShareName == null || !isPublished ? View.GONE : View.VISIBLE);
         m_buttonShare.setText(String.format(getString(R.string.main_share_button_format), title));
+
+        m_buttonPublish.setVisibility(slideShareName == null ? View.GONE : View.VISIBLE);
+        m_buttonPublish.setText(String.format(getString(R.string.main_publish_button_format), title));
     }
 
     @Override
@@ -277,5 +298,90 @@ public class MainActivity extends Activity {
         });
 
         return true;
+    }
+
+    public void publishSlides(String userUuid, String slideShareName) {
+        if(D)Log.d(TAG, "MainActivity.publishSlides");
+
+        final String _slideShareName = slideShareName;
+        final String _userUuid = userUuid;
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle(getString(R.string.publish_dialog_title));
+        adb.setCancelable(true);
+        adb.setMessage(getString(R.string.publish_dialog_message));
+        adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                CloudStore cloudStore = new CloudStore(MainActivity.this, _userUuid,
+                        _slideShareName, Config.CLOUD_STORAGE_PROVIDER, MainActivity.this);
+
+                cloudStore.saveAsync();
+
+                m_progressDialog = new ProgressDialog(MainActivity.this);
+                m_progressDialog.setTitle(getString(R.string.upload_dialog_title));
+                m_progressDialog.setCancelable(false);
+                m_progressDialog.setIndeterminate(true);
+                m_progressDialog.show();
+            }
+        });
+        adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
+    }
+
+    public void onSaveComplete(CloudStore.SaveErrors se, SlideShareJSON ssj) {
+        if(D)Log.d(TAG, String.format("CreateSlidesFragment.onSaveComplete: se=%s", se));
+
+        final String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+        final String userUuid = m_prefs.getString(SSPreferences.PREFS_USERUUID, null);
+
+        if (m_progressDialog != null) {
+            m_progressDialog.dismiss();
+            m_progressDialog = null;
+        }
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setCancelable(false);
+
+        if (se == CloudStore.SaveErrors.Success) {
+            adb.setTitle(getString(R.string.upload_dialog_complete_title));
+            adb.setMessage(getString(R.string.upload_dialog_complete_message_format));
+            adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+
+                    Utilities.shareShow(MainActivity.this, userUuid, slideShareName);
+                }
+            });
+            adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
+        else {
+            adb.setTitle(getString(R.string.upload_dialog_failure_title));
+            adb.setMessage(String.format(getString(R.string.upload_dialog_failure_message_format), se.toString()));
+            adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
+
+        AlertDialog ad = adb.create();
+        ad.show();
     }
 }

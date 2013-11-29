@@ -1,6 +1,9 @@
 package com.hyperfine.slideshare;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 
 import org.json.JSONArray;

@@ -13,6 +13,7 @@
     <string name="main_new_title_title">Slideshow Title</string>
     <string name="main_new_title_hint">Enter your new slideshow title</string>
     <string name="main_preview_button_format">Preview %1$s</string>
+    <string name="main_publish_button_format">Publish %1$s</string>
     <string name="main_share_button_format">Share %1$s</string>
     <string name="menu_slide_camera">Camera...</string>
     <string name="menu_slide_delete">Remove slide</string>
