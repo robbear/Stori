@@ -228,7 +228,9 @@ public class Utilities {
         if(D)Log.d(TAG, String.format("Utilities.getAbsoluteFilePath: folder=%s, fileName=%s", folder, fileName));
 
         File dir = getRootFilesDirectory(context);
-        return dir.getAbsolutePath() + "/" + folder + "/" + fileName;
+        String path = dir.getAbsolutePath() + "/" + folder + "/" + fileName;
+        if(D)Log.d(TAG, String.format("Utilities.getAbsoluteFilePath returning %s", path));
+        return path;
     }
 
     public static File getRootFilesDirectory(Context context) {
