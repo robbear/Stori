@@ -41,6 +41,7 @@ import com.hyperfine.slideshare.Utilities;
 import com.hyperfine.slideshare.adapters.ImageGalleryAdapter;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -66,6 +67,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
     private boolean m_isPlaying = false;
     private MediaRecorder m_recorder;
     private MediaPlayer m_player;
+    private FileInputStream m_fileInputStream;
     private Activity m_activityParent;
     private String m_slideShareName;
     private String m_slideUuid = null;
@@ -784,13 +786,14 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             updateSlideShareJSON();
         }
 
+        String filePath = Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_audioFileName);
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.startRecording: filePath=%s", filePath));
+
         m_recorder = new MediaRecorder();
         m_recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         m_recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        //m_recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         m_recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        //m_recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        m_recorder.setOutputFile(Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_audioFileName));
+        m_recorder.setOutputFile(filePath);
 
         try {
             m_recorder.prepare();
@@ -848,7 +851,15 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         });
 
         try {
-            m_player.setDataSource(Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_audioFileName));
+            String filePath = Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_audioFileName);
+            if(D)Log.d(TAG, String.format("EditSlidesFragment.startPlaying: filePath=%s", filePath));
+
+            File file = new File(filePath);
+            boolean retVal = file.setReadable(true, false);
+            if(D)Log.d(TAG, String.format("EditSlidesFragment.startPlaying - set readable permissions on audio file returns %b", retVal));
+            m_fileInputStream = new FileInputStream(file);
+
+            m_player.setDataSource(m_fileInputStream.getFD());
             m_player.prepare();
             m_player.start();
 
@@ -875,6 +886,23 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         if (!m_isPlaying) {
             if(D)Log.d(TAG, "EditSlidesFragment.stopPlaying - m_isPlaying is false, so bailing");
             return;
+        }
+
+        try {
+            if (m_fileInputStream != null) {
+                m_fileInputStream.close();
+            }
+        }
+        catch (Exception e) {
+            if(E)Log.d(TAG, "EditSlidesFragment.stopPlaying", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.d(TAG, "EditSlidesFragment.stopPlaying", e);
+            e.printStackTrace();
+        }
+        finally {
+            m_fileInputStream = null;
         }
 
         m_player.release();
