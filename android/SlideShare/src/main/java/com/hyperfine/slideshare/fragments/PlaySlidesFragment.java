@@ -21,6 +21,8 @@ import com.hyperfine.slideshare.R;
 import com.hyperfine.slideshare.SlideJSON;
 import com.hyperfine.slideshare.Utilities;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import static com.hyperfine.slideshare.Config.D;
@@ -44,6 +46,7 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
     private String m_imageFileName;
     private String m_audioFileName;
     private MediaPlayer m_player;
+    private FileInputStream m_fileInputStream;
     private boolean m_isPlaying = false;
     private boolean m_ignoreAudio = false;
 
@@ -332,7 +335,15 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
         });
 
         try {
-            m_player.setDataSource(Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_audioFileName));
+            String filePath = Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_audioFileName);
+            if(D)Log.d(TAG, String.format("PlaySlidesFragment.startPlaying: filePath=%s", filePath));
+
+            File file = new File(filePath);
+            boolean retVal = file.setReadable(true, false);
+            if(D)Log.d(TAG, String.format("PlaySlidesFragment.startPlaying - set readable permissions on audio file returns %b", retVal));
+            m_fileInputStream = new FileInputStream(file);
+
+            m_player.setDataSource(m_fileInputStream.getFD());
             m_player.prepare();
             m_player.start();
 
@@ -358,6 +369,23 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
         if (!m_isPlaying) {
             if(D)Log.d(TAG, "PlaySlidesFragment.stopPlaying - m_isPlaying is false, so bailing");
             return;
+        }
+
+        try {
+            if (m_fileInputStream != null) {
+                m_fileInputStream.close();
+            }
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "PlaySlidesFragment.stopPlaying", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "PlaySlidesFragment.stopPlaying", e);
+            e.printStackTrace();
+        }
+        finally {
+            m_fileInputStream = null;
         }
 
         if (m_player != null) {
