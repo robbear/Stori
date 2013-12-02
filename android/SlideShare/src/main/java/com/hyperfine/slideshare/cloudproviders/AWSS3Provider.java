@@ -21,7 +21,7 @@ import static com.hyperfine.slideshare.Config.E;
 
 public class AWSS3Provider implements ICloudProvider {
     public final static String TAG = "AWSS3Provider";
-    public final static String BUCKET_NAME = "hfslideshare";
+    public final static String BUCKET_NAME = "hfneodori";
 
     private AmazonS3Client m_s3Client;
     private Context m_context;

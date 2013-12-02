@@ -37,7 +37,7 @@ public class Config
     // Base cloud urls - support for CLOUD_STORAGE_PROVIDER setting
     //
     public static final String baseAzureStorageUrl = "http://slideshare.blob.core.windows.net/";
-    public static final String baseAWSStorageUrl = "https://s3-us-west-2.amazonaws.com/hfslideshare/";
+    public static final String baseAWSStorageUrl = "https://s3-us-west-2.amazonaws.com/hfneodori/";
     public enum CloudStorageProviders {
         Azure,
         AWS
