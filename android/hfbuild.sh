@@ -45,6 +45,7 @@ copyTrunkTreeToBuildTree()
     cp -R proguard/ build/proguard/
     cp -R SlideShare/src/main/res/ build/res/
     cp -R SlideShare/src/main/java/ build/src/
+    cp -R ../google-play-services_lib build
     cp ./.classpath build
     cp ./.project build
     cp ./SlideShare/src/main/AndroidManifest.xml build

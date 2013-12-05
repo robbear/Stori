@@ -18,7 +18,8 @@ import android.widget.EditText;
 
 import java.util.UUID;
 
-import com.hyperfine.slideshare.CloudStore;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import static com.hyperfine.slideshare.Config.D;
 import static com.hyperfine.slideshare.Config.E;
@@ -26,6 +27,7 @@ import static com.hyperfine.slideshare.Config.E;
 public class MainActivity extends Activity implements CloudStore.ICloudStoreCallback {
 
     public final static String TAG = "MainActivity";
+    public final static int RESULT_GOOGLE_PLAY_SERVICES = 1;
 
     private SharedPreferences m_prefs;
     private Button m_buttonCreate;
@@ -183,6 +185,16 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
         if(D)Log.d(TAG, "MainActivity.onResume");
 
         super.onResume();
+
+        if (Config.USE_GOOGLE_PLAY_SERVICES) {
+            int retVal = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+            if (retVal != ConnectionResult.SUCCESS) {
+                if(D)Log.d(TAG, String.format("MainActivity.onResume - isGooglePlayServicesAvailable failed with %d", retVal));
+                GooglePlayServicesUtil.getErrorDialog(retVal, this, RESULT_GOOGLE_PLAY_SERVICES);
+                if(D)Log.d(TAG, "MainActivity.onResume - called GooglePlayServicesUtil.getErrorDialog, and now exiting");
+                finish();
+            }
+        }
 
         String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
         m_slideShareTitle = SlideShareJSON.getSlideShareTitle(this, slideShareName);

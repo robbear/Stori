@@ -25,6 +25,9 @@ public class Config
     // Use cache space rather than files space
     public static final boolean USE_CACHE = true;
 
+    // Use Google Play Services
+    public static final boolean USE_GOOGLE_PLAY_SERVICES = true;
+
     // Default web site base url
     public static final String baseWebUrl = "http://slidesharedotcom.jit.su/";
     public static final String baseWebSlidesUrl = baseWebUrl + "slides/";
