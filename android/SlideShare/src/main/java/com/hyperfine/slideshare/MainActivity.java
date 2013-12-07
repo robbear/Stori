@@ -20,6 +20,7 @@ import java.util.UUID;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.hyperfine.slideshare.cloudproviders.AmazonClientManager;
 
 import static com.hyperfine.slideshare.Config.D;
 import static com.hyperfine.slideshare.Config.E;
@@ -194,6 +195,11 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
                 if(D)Log.d(TAG, "MainActivity.onResume - called GooglePlayServicesUtil.getErrorDialog, and now exiting");
                 finish();
             }
+
+            // BUGBUG - TEST
+            AmazonClientManager clientManager = new AmazonClientManager(m_prefs);
+            boolean hasCredentials = clientManager.hasCredentials();
+            if(D)Log.d(TAG, String.format("MainActivity.onResume - clientManager.hasCredentials returns %b", hasCredentials));
         }
 
         String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);

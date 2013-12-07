@@ -37,10 +37,19 @@ public class Config
     public static final String baseCloudUrl = getBaseCloudUrl();
 
     //
+    // Amazon S3 settings
+    //
+    public static final String AWS_BUCKET_NAME = "hfneodori";
+    public static final String FB_ROLE_ARN = "ROLE_ARN";
+    public static final String GOOGLE_ROLE_ARN = "ROLE_ARN";
+    public static final String AMAZON_ROLE_ARN = "ROLE_ARN";
+    public static final String GOOGLE_CLIENT_ID = "";
+
+    //
     // Base cloud urls - support for CLOUD_STORAGE_PROVIDER setting
     //
     public static final String baseAzureStorageUrl = "http://slideshare.blob.core.windows.net/";
-    public static final String baseAWSStorageUrl = "https://s3-us-west-2.amazonaws.com/hfneodori/";
+    public static final String baseAWSStorageUrl = "https://s3-us-west-2.amazonaws.com/" + AWS_BUCKET_NAME + "/";
     public enum CloudStorageProviders {
         Azure,
         AWS
