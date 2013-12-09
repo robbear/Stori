@@ -21,6 +21,7 @@ import java.util.UUID;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.hyperfine.slideshare.cloudproviders.AmazonClientManager;
+import com.hyperfine.slideshare.cloudproviders.GoogleLogin;
 
 import static com.hyperfine.slideshare.Config.D;
 import static com.hyperfine.slideshare.Config.E;
@@ -38,6 +39,8 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
     private Button m_buttonPublish;
     private String m_slideShareTitle;
     private ProgressDialog m_progressDialog = null;
+
+    public static AmazonClientManager s_amazonClientManager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,21 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
         }
         else {
             if(D)Log.d(TAG, String.format("MainActivity.onCreate - USERUUID=%s", userUuidString));
+        }
+
+        if (Config.USE_GOOGLE_PLAY_SERVICES) {
+            int retVal = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+            if (retVal != ConnectionResult.SUCCESS) {
+                if(D)Log.d(TAG, String.format("MainActivity.onCreate - isGooglePlayServicesAvailable failed with %d", retVal));
+                GooglePlayServicesUtil.getErrorDialog(retVal, this, RESULT_GOOGLE_PLAY_SERVICES);
+                if(D)Log.d(TAG, "MainActivity.onCreate - called GooglePlayServicesUtil.getErrorDialog, and now exiting");
+                finish();
+            }
+
+            // BUGBUG - TEST
+            s_amazonClientManager = new AmazonClientManager(m_prefs);
+            boolean hasCredentials = s_amazonClientManager.hasCredentials();
+            if(D)Log.d(TAG, String.format("MainActivity.onCreate - clientManager.hasCredentials returns %b", hasCredentials));
         }
 
         String currentSlideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
@@ -187,21 +205,6 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
 
         super.onResume();
 
-        if (Config.USE_GOOGLE_PLAY_SERVICES) {
-            int retVal = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-            if (retVal != ConnectionResult.SUCCESS) {
-                if(D)Log.d(TAG, String.format("MainActivity.onResume - isGooglePlayServicesAvailable failed with %d", retVal));
-                GooglePlayServicesUtil.getErrorDialog(retVal, this, RESULT_GOOGLE_PLAY_SERVICES);
-                if(D)Log.d(TAG, "MainActivity.onResume - called GooglePlayServicesUtil.getErrorDialog, and now exiting");
-                finish();
-            }
-
-            // BUGBUG - TEST
-            AmazonClientManager clientManager = new AmazonClientManager(m_prefs);
-            boolean hasCredentials = clientManager.hasCredentials();
-            if(D)Log.d(TAG, String.format("MainActivity.onResume - clientManager.hasCredentials returns %b", hasCredentials));
-        }
-
         String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
         m_slideShareTitle = SlideShareJSON.getSlideShareTitle(this, slideShareName);
         if(D)Log.d(TAG, String.format("MainActivity.onResume: m_slideShareTitle = %s", m_slideShareTitle));
@@ -269,6 +272,26 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
         if(D)Log.d(TAG, "MainActivity.onCreateOptionsMenu");
 
         super.onCreateOptionsMenu(menu);
+
+        MenuItem li = menu.add("Login");
+        li.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(MainActivity.this, GoogleLogin.class);
+                MainActivity.this.startActivity(intent);
+                return true;
+            }
+        });
+
+        MenuItem lo = menu.add("Logout");
+        lo.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                s_amazonClientManager.clearCredentials();
+                s_amazonClientManager.wipe();
+                return true;
+            }
+        });
 
         // BUGBUG
         MenuItem es = menu.add("EditSlidesActivity");

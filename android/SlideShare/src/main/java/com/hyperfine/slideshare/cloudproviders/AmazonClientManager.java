@@ -124,8 +124,10 @@ public class AmazonClientManager {
         if(D)Log.d(TAG, "AmazonClientManager.clearCredentials");
 
         m_s3Client = null;
-        m_idp.logout();
-        m_idp = null;
+        if (m_idp != null) {
+            m_idp.logout();
+            m_idp = null;
+        }
     }
 
 
