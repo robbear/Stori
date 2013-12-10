@@ -32,6 +32,7 @@ public class AmazonSharedPreferencesWrapper {
     private static final String AWS_DEVICE_UID = "AWS_DEVICE_UID";
     private static final String AWS_DEVICE_KEY = "AWS_DEVICE_KEY";
     private static final String AWS_DEVICE_USERNAME = "AWS_DEVICE_USERNAME";
+    private static final String AWS_USER_EMAIL = "AWS_USER_EMAIL";
 
     /**
      * Set all of the Shared Preferences used by the Token Vending Machine to null.
@@ -41,6 +42,7 @@ public class AmazonSharedPreferencesWrapper {
         AmazonSharedPreferencesWrapper.storeValueInSharedPreferences( sharedPreferences, AWS_DEVICE_UID, null );
         AmazonSharedPreferencesWrapper.storeValueInSharedPreferences( sharedPreferences, AWS_DEVICE_KEY, null );
         AmazonSharedPreferencesWrapper.storeValueInSharedPreferences( sharedPreferences, AWS_DEVICE_USERNAME, null );
+        AmazonSharedPreferencesWrapper.storeValueInSharedPreferences( sharedPreferences, AWS_USER_EMAIL, null );
         AmazonSharedPreferencesWrapper.storeValueInSharedPreferences( sharedPreferences, AWS_ACCESS_KEY, null );
         AmazonSharedPreferencesWrapper.storeValueInSharedPreferences( sharedPreferences, AWS_SECRET_KEY, null );
         AmazonSharedPreferencesWrapper.storeValueInSharedPreferences( sharedPreferences, AWS_SECURITY_TOKEN, null );
@@ -59,6 +61,20 @@ public class AmazonSharedPreferencesWrapper {
      */       
     public static String getUsername( SharedPreferences sharedPreferences ) {
         return AmazonSharedPreferencesWrapper.getValueFromSharedPreferences( sharedPreferences, AWS_DEVICE_USERNAME );
+    }
+
+    /**
+     * Stores the user email that was registered in the Shared Preferences.
+     */
+    public static void storeUserEmail( SharedPreferences sharedPreferences, String userEmail ) {
+        AmazonSharedPreferencesWrapper.storeValueInSharedPreferences( sharedPreferences, AWS_USER_EMAIL, userEmail );
+    }
+
+    /**
+     * Returns the current user email stored in Shared Preferences.
+     */
+    public static String getUserEmail( SharedPreferences sharedPreferences ) {
+        return AmazonSharedPreferencesWrapper.getValueFromSharedPreferences( sharedPreferences, AWS_USER_EMAIL );
     }
 
     /**

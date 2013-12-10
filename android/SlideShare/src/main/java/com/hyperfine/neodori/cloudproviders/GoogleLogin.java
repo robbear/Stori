@@ -36,10 +36,11 @@ public class GoogleLogin extends AlertActivity {
         if(D)Log.d(TAG, "GoogleLogin.onCreate");
 
         m_prefs = getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
-        m_userAccountEmail = m_prefs.getString(SSPreferences.PREFS_USERACCOUNT, null);
+        m_userAccountEmail = AmazonSharedPreferencesWrapper.getUserEmail(m_prefs);
+        if(D)Log.d(TAG, String.format("GoogleLogin.onCreate - m_userAccountEmail=%s", m_userAccountEmail));
 
         if (m_userAccountEmail == null) {
-            if(D)Log.d(TAG, "GoogleLogin.onCreate - calling AccountPicker");
+            if(D)Log.d(TAG, "GoogleLogin.onCreate - m_userAccountEmail is null so calling AccountPicker");
             Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[] {GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
             startActivityForResult(intent, ACCOUNT_PICKER_RESULT);
             return;
@@ -55,6 +56,7 @@ public class GoogleLogin extends AlertActivity {
         if (requestCode == ACCOUNT_PICKER_RESULT && resultCode == RESULT_OK) {
             m_userAccountEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             if(D)Log.d(TAG, String.format("GoogleLogin.onActivityResult: m_userAccountEmail=%s", m_userAccountEmail));
+            AmazonSharedPreferencesWrapper.storeUserEmail(m_prefs, m_userAccountEmail);
 
             getAndUseAuthTokenInAsyncTask();
         }
@@ -80,7 +82,6 @@ public class GoogleLogin extends AlertActivity {
                         new GooglePlayServicesNotAvailableException(result));
             }
 
-            //String scope = "audience:server:client_id:" + MainActivity.s_amazonClientManager.getGoogleClientID() + ":api_scope:" + Scopes.PLUS_LOGIN;
             String scope = "audience:server:client_id:" + MainActivity.s_amazonClientManager.getGoogleClientID();
             if(D)Log.d(TAG, String.format("GoogleLogin.getAndUseAuthTokenBlocking - scope=%s", scope));
 

@@ -72,17 +72,21 @@ public class AmazonClientManager {
         new AsyncTask<Void, Void, Throwable>() {
             @Override
             protected Throwable doInBackground(Void... arg0) {
-
                 try {
+                    if(D)Log.d(TAG, "AmazonClientManager.login.doInBackground - calling WIF.refresh");
                     m_wif.refresh();
-                } catch (Throwable t) {
+                }
+                catch (Throwable t) {
                     return t;
                 }
+
                 return null;
             }
 
             @Override
             protected void onPostExecute(Throwable t) {
+                if(D)Log.d(TAG, "AmazonClientManager.login.onPostExecute");
+
                 if (t != null) {
                     if(E)Log.e(TAG, "AmazonClientManager.login - Unable to login.", t);
                     activity.setResult(Activity.RESULT_CANCELED);
@@ -132,7 +136,6 @@ public class AmazonClientManager {
             m_idp = null;
         }
     }
-
 
     public void wipe() {
         if(D)Log.d(TAG, "AmazonClientManager.wipe");
