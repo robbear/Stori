@@ -64,7 +64,9 @@ public class AmazonClientManager {
         if(D)Log.d(TAG, "AmazonClientManager.login");
 
         m_idp = wifIDP;
-        m_wif = new WebIdentityFederationSessionCredentialsProvider(m_idp.getToken(),m_idp.getProviderID(), m_idp.getRoleARN());
+        m_wif = new WebIdentityFederationSessionCredentialsProvider(m_idp.getToken(), m_idp.getProviderID(), m_idp.getRoleARN());
+
+        if(D)Log.d(TAG, String.format("AmazonClientManger.login: token=%s, providerID=%s, roleARN=%s", m_idp.getToken(), m_idp.getProviderID(), m_idp.getRoleARN()));
 
         //call refresh to login
         new AsyncTask<Void, Void, Throwable>() {
@@ -85,13 +87,14 @@ public class AmazonClientManager {
                     if(E)Log.e(TAG, "AmazonClientManager.login - Unable to login.", t);
                     activity.setResult(Activity.RESULT_CANCELED);
                     activity.alertUser(t);
-                } else {
+                }
+                else {
                     m_s3Client = new AmazonS3Client(m_wif);
                     AmazonSharedPreferencesWrapper.storeUsername(m_sharedPreferences, m_wif.getSubjectFromWIF());
                     if(D)Log.d(TAG, String.format("AmazonClientManager.login - Logged in with user id %s", m_wif.getSubjectFromWIF()));
                     activity.setResult(Activity.RESULT_OK);
+                    activity.finish();
                 }
-                activity.finish();
             }
         }.execute();
     }
