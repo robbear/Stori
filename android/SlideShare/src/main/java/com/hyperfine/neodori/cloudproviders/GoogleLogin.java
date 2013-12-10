@@ -80,18 +80,22 @@ public class GoogleLogin extends AlertActivity {
                         new GooglePlayServicesNotAvailableException(result));
             }
 
-            String token = GoogleAuthUtil.getToken(getApplicationContext(), m_userAccountEmail,
-                    "oauth2:audience:server:client_id:" + MainActivity.s_amazonClientManager.getGoogleClientID() + ":api_scope:" + Scopes.PLUS_LOGIN);
+            //String scope = "audience:server:client_id:" + MainActivity.s_amazonClientManager.getGoogleClientID() + ":api_scope:" + Scopes.PLUS_LOGIN;
+            String scope = "audience:server:client_id:" + MainActivity.s_amazonClientManager.getGoogleClientID();
+            if(D)Log.d(TAG, String.format("GoogleLogin.getAndUseAuthTokenBlocking - scope=%s", scope));
 
+            String token = GoogleAuthUtil.getToken(getApplicationContext(), m_userAccountEmail, scope);
             if(D)Log.d(TAG, String.format("GoogleLogin.getAndUseAuthTokenBlocking - using token for login: %s", token));
 
             MainActivity.s_amazonClientManager.login(new GoogleIDP(getApplicationContext(), token), this);
         }
         catch (UserRecoverableAuthException e) {
-            if(D)Log.d(TAG, "GoogleLogin.getAndUserAuthTokenBlocking - app hasn't been authorized by user");
+            if(D)Log.d(TAG, "GoogleLogin.getAndUseAuthTokenBlocking - app hasn't been authorized by user");
             startActivityForResult(e.getIntent(), USER_AUTHORIZATION_RESULT);
         }
         catch (Exception e) {
+            if(E)Log.e(TAG, "GoogleLogin.getAndUseAuthTokenBlocking", e);
+            e.printStackTrace();
             alertUser(e);
         }
     }

@@ -43,7 +43,7 @@ public class Config
     public static final String FB_ROLE_ARN = "ROLE_ARN";
     public static final String GOOGLE_ROLE_ARN = "arn:aws:iam::226207118720:role/GoogleWIFS3FileStore";
     public static final String AMAZON_ROLE_ARN = "ROLE_ARN";
-    public static final String GOOGLE_CLIENT_ID = "577074179012-vk2hu41gejhb88itupfg71i61o4g8g89.apps.googleusercontent.com";
+    public static final String GOOGLE_CLIENT_ID = "577074179012-7rn9q34trpofjfjesjcm7kad7ta06rmd.apps.googleusercontent.com";
 
     //
     // Base cloud urls - support for CLOUD_STORAGE_PROVIDER setting
