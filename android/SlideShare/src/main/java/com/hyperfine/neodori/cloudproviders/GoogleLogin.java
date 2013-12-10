@@ -3,12 +3,15 @@ package com.hyperfine.neodori.cloudproviders;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -21,13 +24,49 @@ import static com.hyperfine.neodori.Config.E;
 
 public class GoogleLogin extends AlertActivity {
     public static final String TAG = "GoogleLogin";
+    public static int ACCOUNT_PICKER_RESULT = 1;
+    public static int USER_AUTHORIZATION_RESULT = 2;
+
+    private SharedPreferences m_prefs;
+    private String m_userAccountEmail;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(D)Log.d(TAG, "GoogleLogin.onCreate");
 
+        m_prefs = getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
+        m_userAccountEmail = m_prefs.getString(SSPreferences.PREFS_USERACCOUNT, null);
+
+        if (m_userAccountEmail == null) {
+            if(D)Log.d(TAG, "GoogleLogin.onCreate - calling AccountPicker");
+            Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[] {GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
+            startActivityForResult(intent, ACCOUNT_PICKER_RESULT);
+            return;
+        }
+
         getAndUseAuthTokenInAsyncTask();
+    }
+
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if(D)Log.d(TAG, String.format("GoogleLogin.onActivityResult: requestCode=%d, resultCode=%d", requestCode, resultCode));
+
+        if (requestCode == ACCOUNT_PICKER_RESULT && resultCode == RESULT_OK) {
+            m_userAccountEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            if(D)Log.d(TAG, String.format("GoogleLogin.onActivityResult: m_userAccountEmail=%s", m_userAccountEmail));
+
+            getAndUseAuthTokenInAsyncTask();
+        }
+        else if (requestCode == USER_AUTHORIZATION_RESULT && resultCode == RESULT_OK) {
+            if(D)Log.d(TAG, "GoogleLogin.onActivityResult - user authorized the application");
+
+            getAndUseAuthTokenInAsyncTask();
+        }
+        else {
+            if(D)Log.d(TAG, "GoogleLogin.onActivityResult - nothing selected, so finishing activity");
+            finish();
+        }
     }
 
     void getAndUseAuthTokenBlocking() {
@@ -36,22 +75,23 @@ public class GoogleLogin extends AlertActivity {
         try {
             int result = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
             if (result != ConnectionResult.SUCCESS) {
+                // BUGBUG TODO: Handle error appropriately
                 throw new Exception("Google Play is not available, make sure you are not running in an emulator",
                         new GooglePlayServicesNotAvailableException(result));
             }
 
-            AccountManager am = AccountManager.get(this);
-            Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-            Log.d(TAG, String.format("GoogleLogin.getAndUseAuthTokenBlocking - found %d accounts", accounts.length));
-            Log.d(TAG, String.format("GoogleLogin.getAndUseAuthTokenBlocking - using %s", accounts[0].name));
-
-            String token = GoogleAuthUtil.getToken(getApplicationContext(), accounts[0].name,
+            String token = GoogleAuthUtil.getToken(getApplicationContext(), m_userAccountEmail,
                     "oauth2:audience:server:client_id:" + MainActivity.s_amazonClientManager.getGoogleClientID() + ":api_scope:" + Scopes.PLUS_LOGIN);
 
             if(D)Log.d(TAG, String.format("GoogleLogin.getAndUseAuthTokenBlocking - using token for login: %s", token));
 
             MainActivity.s_amazonClientManager.login(new GoogleIDP(getApplicationContext(), token), this);
-        } catch (Exception e) {
+        }
+        catch (UserRecoverableAuthException e) {
+            if(D)Log.d(TAG, "GoogleLogin.getAndUserAuthTokenBlocking - app hasn't been authorized by user");
+            startActivityForResult(e.getIntent(), USER_AUTHORIZATION_RESULT);
+        }
+        catch (Exception e) {
             alertUser(e);
         }
     }
