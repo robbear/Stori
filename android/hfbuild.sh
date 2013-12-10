@@ -10,7 +10,7 @@ E_BADARGS=65
 
 usage()
 {
-    echo "hfbuild - command line tool to build Neodori indicating sku as first parameter"
+    echo "hfbuild - command line tool to build neodori indicating sku as first parameter"
     echo "usage: hfbuild <trial|release|amazon|amazon_trial> <debug|release> <buildstring> <password> [install]"
     echo ""
 }
