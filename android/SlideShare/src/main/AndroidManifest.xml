@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hyperfine.slideshare"
+    package="com.hyperfine.neodori"
     android:versionCode="100"
     android:versionName="1.0.0" >
 
@@ -38,7 +38,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="com.hyperfine.slideshare"
+                    android:host="com.hyperfine.neodori"
                     android:scheme="amzn" />
             </intent-filter>
         </activity>

@@ -86,14 +86,14 @@ setBuildStringForRelease()
 {
     echo "---"
     echo "Setting build string for release sku"
-    sed -i -e 's/g000000000000/'$1'/g' build/src/com/hyperfine/slideshare/Config.java
+    sed -i -e 's/g000000000000/'$1'/g' build/src/com/hyperfine/neodori/Config.java
 }
 
 setBuildStringForTrial()
 {
     echo "---"
     echo "Setting build string for trial sku"
-    sed -i -e 's/g000000000000/'$1'/g' build/src/com/hyperfine/slideshare/Config.java
+    sed -i -e 's/g000000000000/'$1'/g' build/src/com/hyperfine/neodori/Config.java
 }
 
 fixAntPropertiesForPassword()

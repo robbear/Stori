@@ -1,0 +1,6 @@
+package com.hyperfine.neodori.cloudproviders;
+
+public class AWSS3ConnectionStrings {
+    public final static String ACCESS_KEY_ID = "access_key_id";
+    public final static String SECRET_KEY = "secret_key";
+}

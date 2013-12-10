@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">SlideShare</string>
+    <string name="app_name">Neodori</string>
     <string name="cancel_text">Cancel</string>
-    <string name="default_slideshare_title">My Slides</string>
-    <string name="default_slideshare_description">My SlideShare slides</string>
+    <string name="default_neodori_title">My Slides</string>
+    <string name="default_neodori_description">My Neodori slides</string>
     <string name="hello_world">Hello world!</string>
     <string name="main_create_alert_title">Create new?</string>
     <string name="main_create_alert_message">If you have not yet published your previous work, it will be lost</string>
