@@ -17,7 +17,7 @@ public class Config
     public static final boolean isAmazon = false;
     
     // Recent search authority string
-    public static final String RECENT_AUTHORITY = "authority.slideshare.hyperfine.com";
+    public static final String RECENT_AUTHORITY = "authority.neodori.hyperfine.com";
 
     // Default setting for notifications
     public static final boolean NOTIFICATIONS_ON_BY_DEFAULT = true;
@@ -29,7 +29,7 @@ public class Config
     public static final boolean USE_GOOGLE_PLAY_SERVICES = true;
 
     // Default web site base url
-    public static final String baseWebUrl = "http://slidesharedotcom.jit.su/";
+    public static final String baseWebUrl = "http://neodoridotcom.jit.su/";
     public static final String baseWebSlidesUrl = baseWebUrl + "slides/";
 
     // Default cloud storage provider
@@ -48,7 +48,6 @@ public class Config
     //
     // Base cloud urls - support for CLOUD_STORAGE_PROVIDER setting
     //
-    public static final String baseAzureStorageUrl = "http://slideshare.blob.core.windows.net/";
     public static final String baseAWSStorageUrl = "https://s3-us-west-2.amazonaws.com/" + AWS_BUCKET_NAME + "/";
     public enum CloudStorageProviders {
         Azure,
@@ -57,8 +56,6 @@ public class Config
     private static String getBaseCloudUrl() {
         switch (CLOUD_STORAGE_PROVIDER) {
             default:
-            case Azure:
-                return baseAzureStorageUrl;
             case AWS:
                 return baseAWSStorageUrl;
         }
@@ -66,7 +63,7 @@ public class Config
     // End base cloud urls
 
     // Standard SlideShareJSON file name
-    public static final String slideShareJSONFilename = "slideshare.json";
+    public static final String slideShareJSONFilename = "neodori.json";
 
     // JPG file compression level (0 - 100)
     public static final int jpgCompressionLevel = 25;

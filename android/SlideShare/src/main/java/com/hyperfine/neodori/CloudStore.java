@@ -6,9 +6,7 @@ import android.util.Log;
 
 import com.hyperfine.neodori.cloudproviders.AWSS3Provider;
 import com.hyperfine.neodori.cloudproviders.ICloudProvider;
-import com.hyperfine.neodori.cloudproviders.WindowsAzureProvider;
 
-import java.util.HashMap;
 import java.util.concurrent.RejectedExecutionException;
 
 import static com.hyperfine.neodori.Config.D;
@@ -54,10 +52,6 @@ public class CloudStore {
 
                 switch (Config.CLOUD_STORAGE_PROVIDER) {
                     default:
-                    case Azure:
-                        icp = new WindowsAzureProvider(m_context);
-                        break;
-
                     case AWS:
                         icp = new AWSS3Provider(m_context);
                         break;

@@ -1,8 +1,8 @@
 {
-    "name": "slidesharedotcom",
+    "name": "neodoridotcom",
     "version": "1.0.0",
     "author": "Hyperfine Software <info@hyperfine.com>",
-    "description": "SlideShare web site",
+    "description": "neodori web site",
     "dependencies": {
 	"bunyan": "0.20.0",
 	"connect": "2.9.0",
@@ -18,8 +18,8 @@
 	"start": "node server.js"
     },
     "domains": [
-	"slideshare.com",
-	"www.slideshare.com"
+	"neodori.com",
+	"www.neodori.com"
     ],
-    "subdomain": "slidesharedotcom"
+    "subdomain": "neodoridotcom"
 }

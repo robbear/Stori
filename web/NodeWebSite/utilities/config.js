@@ -16,4 +16,4 @@ exports.environment = _env;
 exports.isClientLoggingEnabled = _isClientLoggingEnabled;
 exports.logStaticResources = _logStaticResources;
 exports.slideResourceBaseUrl = "https://s3-us-west-2.amazonaws.com/hfneodori/";
-exports.slideShareJSONFilename = "slideshare.json";
+exports.slideShareJSONFilename = "neodori.json";
