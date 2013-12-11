@@ -12,6 +12,8 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.hyperfine.neodori.cloudproviders.AmazonSharedPreferencesWrapper;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +35,7 @@ public class Utilities {
         if(D)Log.d(TAG, "Utilities.getUserUuidString");
 
         SharedPreferences prefs = context.getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
-        String uuid = prefs.getString(SSPreferences.PREFS_USERUUID, null);
+        String uuid = AmazonSharedPreferencesWrapper.getUsername(prefs);
 
         if(D)Log.d(TAG, String.format("Utilities.getUserUuidString returning %s", uuid));
 

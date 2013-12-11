@@ -21,6 +21,7 @@ import java.util.UUID;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.hyperfine.neodori.cloudproviders.AmazonClientManager;
+import com.hyperfine.neodori.cloudproviders.AmazonSharedPreferencesWrapper;
 import com.hyperfine.neodori.cloudproviders.GoogleLogin;
 
 import static com.hyperfine.neodori.Config.D;
@@ -29,7 +30,8 @@ import static com.hyperfine.neodori.Config.E;
 public class MainActivity extends Activity implements CloudStore.ICloudStoreCallback {
 
     public final static String TAG = "MainActivity";
-    public final static int RESULT_GOOGLE_PLAY_SERVICES = 1;
+    public final static int RESULT_GOOGLE_PLAY_SERVICES_ERROR = 1;
+    public final static int RESULT_GOOGLE_LOGIN = 2;
 
     private SharedPreferences m_prefs;
     private Button m_buttonCreate;
@@ -48,33 +50,24 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        int retVal = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (retVal != ConnectionResult.SUCCESS) {
+            if(D)Log.d(TAG, String.format("MainActivity.onCreate - isGooglePlayServicesAvailable failed with %d", retVal));
+            GooglePlayServicesUtil.getErrorDialog(retVal, this, RESULT_GOOGLE_PLAY_SERVICES_ERROR);
+            if(D)Log.d(TAG, "MainActivity.onCreate - called GooglePlayServicesUtil.getErrorDialog, and now exiting");
+        }
+
         m_prefs = getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
-        String userUuidString = m_prefs.getString(SSPreferences.PREFS_USERUUID, null);
-        if (userUuidString == null) {
-            UUID uuid = UUID.randomUUID();
-            if(D)Log.d(TAG, String.format("MainActivity.onCreate - generated USERUUID=%s and setting PREFS_USERUUID", uuid.toString()));
 
-            SharedPreferences.Editor editor = m_prefs.edit();
-            editor.putString(SSPreferences.PREFS_USERUUID, uuid.toString());
-            editor.commit();
-        }
-        else {
-            if(D)Log.d(TAG, String.format("MainActivity.onCreate - USERUUID=%s", userUuidString));
-        }
+        String userUuidString = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
+        String userEmail = AmazonSharedPreferencesWrapper.getUserEmail(m_prefs);
 
-        if (Config.USE_GOOGLE_PLAY_SERVICES) {
-            int retVal = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-            if (retVal != ConnectionResult.SUCCESS) {
-                if(D)Log.d(TAG, String.format("MainActivity.onCreate - isGooglePlayServicesAvailable failed with %d", retVal));
-                GooglePlayServicesUtil.getErrorDialog(retVal, this, RESULT_GOOGLE_PLAY_SERVICES);
-                if(D)Log.d(TAG, "MainActivity.onCreate - called GooglePlayServicesUtil.getErrorDialog, and now exiting");
-                finish();
-            }
+        s_amazonClientManager = new AmazonClientManager(m_prefs);
 
-            // BUGBUG - TEST
-            s_amazonClientManager = new AmazonClientManager(m_prefs);
-            boolean hasCredentials = s_amazonClientManager.hasCredentials();
-            if(D)Log.d(TAG, String.format("MainActivity.onCreate - clientManager.hasCredentials returns %b", hasCredentials));
+        if (userUuidString == null || userEmail == null) {
+            if(D)Log.d(TAG, String.format("MainActivity.onCreate: userUuidString=%s, userEmail=%s, so calling GoogleLogin", userUuidString, userEmail));
+            Intent intent = new Intent(this, GoogleLogin.class);
+            startActivityForResult(intent, RESULT_GOOGLE_LOGIN);
         }
 
         String currentSlideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
@@ -155,7 +148,7 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
         m_buttonShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userUuid = m_prefs.getString(SSPreferences.PREFS_USERUUID, null);
+                String userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
                 String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, null);
 
                 if (userUuid != null && slideShareName != null) {
@@ -168,7 +161,7 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
         m_buttonPublish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userUuid = m_prefs.getString(SSPreferences.PREFS_USERUUID, null);
+                String userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
                 String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, null);
 
                 if (userUuid != null && slideShareName != null) {
@@ -176,6 +169,26 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
                 }
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if(D)Log.d(TAG, String.format("MainActivity.onActivityResult: requestCode=%d, resultCode=%d", requestCode, resultCode));
+
+        if (requestCode == RESULT_GOOGLE_PLAY_SERVICES_ERROR) {
+            if(D)Log.d(TAG, "MainActivity.onActivityResult - returned from Google Play Services error dialog. Finishing.");
+            finish();
+        }
+        else if (requestCode == RESULT_GOOGLE_LOGIN) {
+            if (resultCode == RESULT_OK) {
+                if(D)Log.d(TAG, "MainActivity.onActivityResult - return from successful Google login.");
+            }
+            else {
+                // BUGBUG - handle login failure
+                if(D)Log.d(TAG, "MainActivity.onActivityResult - failed to login to Google. Finishing. TODO: handle with grace.");
+                finish();
+            }
+        }
     }
 
     @Override
@@ -383,7 +396,7 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
         if(D)Log.d(TAG, String.format("CreateSlidesFragment.onSaveComplete: se=%s", se));
 
         final String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
-        final String userUuid = m_prefs.getString(SSPreferences.PREFS_USERUUID, null);
+        final String userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
 
         if (m_progressDialog != null) {
             m_progressDialog.dismiss();

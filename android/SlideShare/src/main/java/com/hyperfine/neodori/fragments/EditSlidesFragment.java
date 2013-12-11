@@ -39,6 +39,7 @@ import com.hyperfine.neodori.SlideJSON;
 import com.hyperfine.neodori.SlideShareJSON;
 import com.hyperfine.neodori.Utilities;
 import com.hyperfine.neodori.adapters.ImageGalleryAdapter;
+import com.hyperfine.neodori.cloudproviders.AmazonSharedPreferencesWrapper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -316,7 +317,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         m_activityParent = activity;
 
         m_prefs = m_activityParent.getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
-        m_userUuid = m_prefs.getString(SSPreferences.PREFS_USERUUID, null);
+        m_userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
 
         // if (activity instanceof SomeActivityInterface) {
         // }

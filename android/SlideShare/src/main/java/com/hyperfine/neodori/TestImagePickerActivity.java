@@ -13,6 +13,7 @@ import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.ViewSwitcher;
 
+import com.hyperfine.neodori.cloudproviders.AmazonSharedPreferencesWrapper;
 import com.hyperfine.neodori.fragments.ImagePickerFragment;
 
 import java.io.File;
@@ -95,7 +96,7 @@ public class TestImagePickerActivity extends FragmentActivity implements ViewSwi
         // BUGBUG - TEST to generate or load user UUID from preferences
         //
         UUID userUuid;
-        String userUuidString = m_prefs.getString(SSPreferences.PREFS_USERUUID, null);
+        String userUuidString = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
         if (userUuidString == null) {
             UUID uuid = UUID.randomUUID();
             if(D)Log.d(TAG, String.format("TestImagePickerActivity.onAttach - generated uuid=%s", uuid.toString()));
@@ -105,9 +106,6 @@ public class TestImagePickerActivity extends FragmentActivity implements ViewSwi
             userUuid = UUID.fromString(userUuidString);
         }
         if(D)Log.d(TAG, String.format("TestImagePickerActivity.onAttach - userUuid=%s", userUuid.toString()));
-        SharedPreferences.Editor editor = m_prefs.edit();
-        editor.putString(SSPreferences.PREFS_USERUUID, userUuid.toString());
-        editor.commit();
 
         //
         // BUGBUG - TEST for SlideShareJSON methods
