@@ -4,7 +4,6 @@ package com.hyperfine.neodori.cloudproviders;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.amazonaws.auth.WebIdentityFederationSessionCredentialsProvider;
@@ -104,26 +103,38 @@ public class AmazonClientManager {
     }
 
     public String getBucketName() {
+        if(D)Log.d(TAG, String.format("AmazonClientManager.getBucketName: %s", m_bucketName));
+
         return m_bucketName;
     }
 
     public String getUsername() {
-        return AmazonSharedPreferencesWrapper.getUsername(m_sharedPreferences);
+        String userName = AmazonSharedPreferencesWrapper.getUsername(m_sharedPreferences);
+        if(D)Log.d(TAG, String.format("AmazonClientManager.getUsername: %s", userName));
+        return userName;
     }
 
     public String getAmazonRoleARN() {
+        if(D)Log.d(TAG, String.format("AmazonClientManager.getAmazonRoleARN: %s", m_amazonRoleARN));
+
         return m_amazonRoleARN;
     }
 
     public String getGoogleRoleARN() {
+        if(D)Log.d(TAG, String.format("AmazonClientManager.getGoogleRoleARN: %s", m_googleRoleARN));
+
         return m_googleRoleARN;
     }
 
     public String getFacebookRoleARN() {
+        if(D)Log.d(TAG, String.format("AmazonClientManager.getFacebookRoleARN: %s", m_fbRoleARN));
+
         return m_fbRoleARN;
     }
 
     public String getGoogleClientID() {
+        if(D)Log.d(TAG, String.format("AmazonClientManager.getGoogleClientID: %s", m_googleClientID));
+
         return m_googleClientID;
     }
 
