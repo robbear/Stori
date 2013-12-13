@@ -586,7 +586,14 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             String slideUuid = m_ssj.getSlideUuidByOrderIndex(oldIndex);
 
             if (slideUuid == null) {
-                initializeNewSlide(0);
+                // Check for whether we deleted from the end of the list
+                slideUuid = m_ssj.getSlideUuidByOrderIndex(oldIndex - 1);
+                if (slideUuid == null) {
+                    initializeNewSlide(0);
+                }
+                else {
+                    initializeSlide(slideUuid);
+                }
             }
             else {
                 initializeSlide(slideUuid);
