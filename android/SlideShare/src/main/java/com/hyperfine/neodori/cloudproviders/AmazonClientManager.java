@@ -59,6 +59,22 @@ public class AmazonClientManager {
         return retVal;
     }
 
+    public void loginSynchronous(WIFIdentityProvider wifIDP) {
+        if(D)Log.d(TAG, "AmazonClientManager.loginSynchronous - no AlertActivity version");
+
+        m_idp = wifIDP;
+
+        m_wif = new WebIdentityFederationSessionCredentialsProvider(m_idp.getToken(), m_idp.getProviderID(), m_idp.getRoleARN());
+
+        if(D)Log.d(TAG, String.format("AmazonClientManager.loginSynchronous: token=%s, providerID=%s, roleARN=%s", m_idp.getToken(), m_idp.getProviderID(), m_idp.getRoleARN()));
+        if(D)Log.d(TAG, "AmazonClientManager.loginSynchronous - calling WIF.refresh synchronously");
+
+        m_wif.refresh();
+
+        m_s3Client = new AmazonS3Client(m_wif);
+        AmazonSharedPreferencesWrapper.storeUsername(m_sharedPreferences, m_wif.getSubjectFromWIF());
+    }
+
     public void login(WIFIdentityProvider wifIDP, final AlertActivity activity) {
         if(D)Log.d(TAG, "AmazonClientManager.login");
 

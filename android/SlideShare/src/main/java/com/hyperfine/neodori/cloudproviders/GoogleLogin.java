@@ -1,6 +1,5 @@
 package com.hyperfine.neodori.cloudproviders;
 
-import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +14,6 @@ import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.Scopes;
 import com.hyperfine.neodori.MainActivity;
 import com.hyperfine.neodori.SSPreferences;
 

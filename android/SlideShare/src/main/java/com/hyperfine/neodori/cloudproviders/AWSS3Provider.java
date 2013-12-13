@@ -1,6 +1,7 @@
 package com.hyperfine.neodori.cloudproviders;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -37,17 +38,24 @@ public class AWSS3Provider implements ICloudProvider {
         m_context = context;
     }
 
-    public void initializeProvider(String userUuid) throws Exception {
+    //
+    // Note: This is a blocking call and should not be made on the UI thread
+    //
+    public void initializeProvider(String userUuid, SharedPreferences prefs) throws Exception {
         if(D)Log.d(TAG, String.format("AWSS3Provider.initializeProvider: userUuid=%s", userUuid));
 
         /* NEVER
         m_s3Client = new AmazonS3Client(new BasicAWSCredentials(AWSS3ConnectionStrings.ACCESS_KEY_ID, AWSS3ConnectionStrings.SECRET_KEY));
         m_s3Client.setRegion(Region.getRegion(Regions.US_WEST_2));
         */
-        m_s3Client = MainActivity.s_amazonClientManager.s3();
-        m_s3Client.setRegion(Region.getRegion(Regions.US_WEST_2));
 
         m_userUuid = userUuid;
+
+        GoogleLoginHelper glh = new GoogleLoginHelper(m_context, prefs);
+        glh.getAndUseAuthToken();
+
+        m_s3Client = MainActivity.s_amazonClientManager.s3();
+        m_s3Client.setRegion(Region.getRegion(Regions.US_WEST_2));
     }
 
     public void deleteVirtualDirectory(String directoryName) throws Exception {

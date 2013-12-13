@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.hyperfine.neodori.cloudproviders.AWSS3Provider;
+import com.hyperfine.neodori.cloudproviders.AmazonClientManager;
 import com.hyperfine.neodori.cloudproviders.ICloudProvider;
 
 import java.util.concurrent.RejectedExecutionException;
@@ -57,7 +58,7 @@ public class CloudStore {
                         break;
                 }
 
-                icp.initializeProvider(m_userUuid);
+                icp.initializeProvider(m_userUuid, m_context.getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE));
                 icp.deleteVirtualDirectory(m_slideShareName);
 
                 for (String fileName : imageFileNames) {
