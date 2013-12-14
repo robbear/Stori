@@ -26,6 +26,8 @@
     <string name="share_dialog_title">Share this show</string>
     <string name="share_email_body_format">I want to share a %1$s slide show with you! To view the show, click on %2$s or paste the address into your browser.\n\nInstall the %1$s application (coming soon!):\n\n iOS: {App Store application address}\nAndroid: {Google Play application address}</string>
     <string name="share_email_subject_format">You have a new %1$s show to view!</string>
+    <string name="switch_account_dialog_title">Switch account?</string>
+    <string name="switch_account_dialog_message">If you switch your account, you will lose any unpublished changes to your current work. Continue?</string>
     <string name="upload_dialog_title">Uploading...</string>
     <string name="upload_dialog_complete_title">Upload complete</string>
     <string name="upload_dialog_complete_message_format">Do you want to share this show?</string>

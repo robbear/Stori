@@ -286,6 +286,51 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
 
         super.onCreateOptionsMenu(menu);
 
+        MenuItem sa = menu.add("Switch account");
+        sa.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
+                adb.setTitle(getString(R.string.switch_account_dialog_title));
+                adb.setCancelable(true);
+                adb.setMessage(getString(R.string.switch_account_dialog_message));
+                adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(D)Log.d(TAG, "MainActivity.onMenuClick - switching account");
+                        dialog.dismiss();
+
+                        String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+
+                        Utilities.deleteSlideShareDirectory(MainActivity.this, slideShareName);
+
+                        if(D)Log.d(TAG, "MainActivity.onMenuClick - switching account: nulling out PREFS_SSNAME");
+                        Editor edit = m_prefs.edit();
+                        edit.putString(SSPreferences.PREFS_SSNAME, null);
+                        edit.commit();
+
+                        s_amazonClientManager.clearCredentials();
+                        s_amazonClientManager.wipe();
+
+                        Intent intent = new Intent(MainActivity.this, GoogleLogin.class);
+                        MainActivity.this.startActivity(intent);
+                    }
+                });
+                adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog ad = adb.create();
+                ad.show();
+
+                return true;
+            }
+        });
+
+        /* NEVER
         MenuItem li = menu.add("Login");
         li.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -350,6 +395,7 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
                 return true;
             }
         });
+        */
 
         return true;
     }
