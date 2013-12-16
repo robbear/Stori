@@ -1,5 +1,6 @@
 package com.hyperfine.neodori;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.content.Context;
@@ -127,6 +128,16 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         }
 
         getActionBar().hide();
+
+        // BUGBUG - test out url interception
+        final Intent intent = getIntent();
+        final String action = intent.getAction();
+        if(D)Log.d(TAG, String.format("PlaySlidesActivity.onCreate: action=%s", action));
+
+        if (Intent.ACTION_VIEW.equals(action)) {
+            if(D)Log.d(TAG, String.format("PlaySlidesActivity.onCreate: data=%s", intent.getData().toString()));
+            // TODO: Set up download of assets and play the show
+        }
     }
 
     @Override

@@ -25,7 +25,22 @@
         <activity android:name=".TestRecordPlayActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
         <activity android:name=".TestImagePickerActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
         <activity android:name=".EditSlidesActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
-        <activity android:name=".PlaySlidesActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
+        <activity android:name=".PlaySlidesActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http"
+                    android:host="neodori.com"
+                    android:pathPrefix="/slides/" />
+                <data android:scheme="http"
+                    android:host="www.neodori.com"
+                    android:pathPrefix="/slides/" />
+                <data android:scheme="http"
+                    android:host="neodoridotcom.jit.su"
+                    android:pathPrefix="/slides/" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="com.amazon.identity.auth.device.authorization.AuthorizationActivity"
             android:allowTaskReparenting="true"
