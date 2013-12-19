@@ -48,7 +48,7 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
 
         setContentView(R.layout.activity_playslides);
 
-        m_slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+        m_slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
         if (m_slideShareName == null) {
             if(D)Log.d(TAG, "PlaySlidesActivity.onCreate - m_slideShareName is null, meaning we'll have no SSJ. Bailing.");
             finish();
@@ -128,16 +128,6 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         }
 
         getActionBar().hide();
-
-        // BUGBUG - test out url interception
-        final Intent intent = getIntent();
-        final String action = intent.getAction();
-        if(D)Log.d(TAG, String.format("PlaySlidesActivity.onCreate: action=%s", action));
-
-        if (Intent.ACTION_VIEW.equals(action)) {
-            if(D)Log.d(TAG, String.format("PlaySlidesActivity.onCreate: data=%s", intent.getData().toString()));
-            // TODO: Set up download of assets and play the show
-        }
     }
 
     @Override

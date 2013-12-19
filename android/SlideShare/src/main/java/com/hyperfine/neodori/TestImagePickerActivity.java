@@ -39,7 +39,7 @@ public class TestImagePickerActivity extends FragmentActivity implements ViewSwi
 
         setContentView(R.layout.activity_testimagepicker);
 
-        String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+        String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
 
         // BUGBUG TODO: Replace with dialog to create/fetch SlideShare name
         m_slideShareDirectory = Utilities.createOrGetSlideShareDirectory(this, slideShareName);
@@ -65,7 +65,7 @@ public class TestImagePickerActivity extends FragmentActivity implements ViewSwi
 
         if (fragment instanceof ImagePickerFragment) {
             if(D)Log.d(TAG, "TestImagePickerActivity.onAttachFragment - found our ImagePickerFragment");
-            String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+            String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
             m_imagePickerFragment = (ImagePickerFragment)fragment;
             m_imagePickerFragment.setSlideShareName(slideShareName);
         }
@@ -85,7 +85,7 @@ public class TestImagePickerActivity extends FragmentActivity implements ViewSwi
         if(D)Log.d(TAG, "TestImagePickerActivity.runTests");
 
         File rootDir = Utilities.getRootFilesDirectory(this);
-        String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+        String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
 
         //
         // BUGBUG - TEST to list all files and directories

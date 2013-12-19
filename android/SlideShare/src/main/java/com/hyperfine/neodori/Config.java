@@ -4,6 +4,7 @@
 //
 package com.hyperfine.neodori;
 
+import java.net.URI;
 import java.util.GregorianCalendar;
 
 import android.os.Build;
@@ -31,6 +32,7 @@ public class Config
     // Default web site base url
     public static final String baseWebUrl = "http://neodoridotcom.jit.su/";
     public static final String baseWebSlidesUrl = baseWebUrl + "slides/";
+    public static final int webUrlSegmentCount = 3;
 
     // Default cloud storage provider
     public static final CloudStorageProviders CLOUD_STORAGE_PROVIDER = CloudStorageProviders.AWS;

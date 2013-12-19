@@ -32,7 +32,7 @@ public class TestRecordPlayActivity extends FragmentActivity {
 
         setContentView(R.layout.activity_testrecordplay);
 
-        String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+        String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
 
         // BUGBUG TODO: Replace with dialog to create/fetch SlideShare name
         m_slideShareDirectory = Utilities.createOrGetSlideShareDirectory(this, slideShareName);
@@ -53,7 +53,7 @@ public class TestRecordPlayActivity extends FragmentActivity {
 
         if (fragment instanceof RecordFragment) {
             if(D)Log.d(TAG, "TestRecordPlayActivity.onAttachFragment - found our RecordFragment");
-            String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+            String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
             m_recordFragment = (RecordFragment)fragment;
             m_recordFragment.setSlideShareName(slideShareName);
          }

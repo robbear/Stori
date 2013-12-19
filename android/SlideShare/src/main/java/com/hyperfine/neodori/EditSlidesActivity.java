@@ -42,14 +42,14 @@ public class EditSlidesActivity extends FragmentActivity implements ViewSwitcher
         m_slideShareTitle = intent.getStringExtra(EXTRA_TITLE);
         getActionBar().setTitle(m_slideShareTitle == null ? getString(R.string.default_neodori_title) : m_slideShareTitle);
 
-        String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+        String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
 
         if (slideShareName == null) {
             if(D)Log.d(TAG, "EditSlidesActivity.onCreate - null slideShareName. Creating one and saving it to prefs.");
             slideShareName = UUID.randomUUID().toString();
 
             SharedPreferences.Editor edit = m_prefs.edit();
-            edit.putString(SSPreferences.PREFS_SSNAME, slideShareName);
+            edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, slideShareName);
             edit.commit();
         }
 
@@ -75,7 +75,7 @@ public class EditSlidesActivity extends FragmentActivity implements ViewSwitcher
 
         if (fragment instanceof EditSlidesFragment) {
             if(D)Log.d(TAG, "EditSlidesActivity.onAttachFragment - found our editSlidesFragment");
-            String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+            String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
             m_editSlidesFragment = (EditSlidesFragment)fragment;
             m_editSlidesFragment.setSlideShareName(slideShareName);
             m_editSlidesFragment.setSlideShareTitle(m_slideShareTitle);

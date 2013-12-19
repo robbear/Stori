@@ -25,7 +25,8 @@
         <activity android:name=".TestRecordPlayActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
         <activity android:name=".TestImagePickerActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
         <activity android:name=".EditSlidesActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
-        <activity android:name=".PlaySlidesActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo">
+        <activity android:name=".PlaySlidesActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
+        <activity android:name=".DownloadActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -68,5 +69,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 </manifest>

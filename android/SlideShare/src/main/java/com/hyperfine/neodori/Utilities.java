@@ -57,7 +57,7 @@ public class Utilities {
         slideShareDirectory.mkdir();
 
         Editor editor = prefs.edit();
-        editor.putString(SSPreferences.PREFS_SSNAME, slideShareName);
+        editor.putString(SSPreferences.PREFS_EDITPROJECTNAME, slideShareName);
         editor.commit();
 
         return slideShareDirectory;
@@ -156,6 +156,7 @@ public class Utilities {
 
         try {
             file.createNewFile();
+            if(D)Log.d(TAG, String.format("Utilities.saveStringToFile: file=%s", file.getAbsolutePath()));
             fos = new FileOutputStream(file);
             fos.write(data.getBytes());
             retVal = true;

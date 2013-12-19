@@ -70,7 +70,7 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
             startActivityForResult(intent, RESULT_GOOGLE_LOGIN);
         }
 
-        String currentSlideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+        String currentSlideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
         if(D)Log.d(TAG, String.format("MainActivity.onCreate: currentSlideShareName=%s", currentSlideShareName));
 
         m_buttonCreate = (Button)findViewById(R.id.create_button);
@@ -79,7 +79,7 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
             public void onClick(View v) {
                 if(D)Log.d(TAG, "MainActivity.onCreateButtonClicked");
 
-                final String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+                final String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
                 if (slideShareName != null) {
                     AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
                     adb.setTitle(getString(R.string.main_create_alert_title));
@@ -101,7 +101,7 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
                             if(D)Log.d(TAG, String.format("MainActivity.onCreateButtonClicked - new slideShareName: %s", ssname));
 
                             Editor edit = m_prefs.edit();
-                            edit.putString(SSPreferences.PREFS_SSNAME, ssname);
+                            edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, ssname);
                             edit.commit();
 
                             enterSlideShareTitleAndLaunchCreate();
@@ -149,7 +149,7 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
             @Override
             public void onClick(View v) {
                 String userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
-                String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, null);
+                String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, null);
 
                 if (userUuid != null && slideShareName != null) {
                     Utilities.shareShow(MainActivity.this, userUuid, slideShareName);
@@ -162,7 +162,7 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
             @Override
             public void onClick(View v) {
                 String userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
-                String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, null);
+                String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, null);
 
                 if (userUuid != null && slideShareName != null) {
                     publishSlides(userUuid, slideShareName);
@@ -218,7 +218,7 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
 
         super.onResume();
 
-        String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+        String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
         m_slideShareTitle = SlideShareJSON.getSlideShareTitle(this, slideShareName);
         if(D)Log.d(TAG, String.format("MainActivity.onResume: m_slideShareTitle = %s", m_slideShareTitle));
 
@@ -300,13 +300,13 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
                         if(D)Log.d(TAG, "MainActivity.onMenuClick - switching account");
                         dialog.dismiss();
 
-                        String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+                        String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
 
                         Utilities.deleteSlideShareDirectory(MainActivity.this, slideShareName);
 
-                        if(D)Log.d(TAG, "MainActivity.onMenuClick - switching account: nulling out PREFS_SSNAME");
+                        if(D)Log.d(TAG, "MainActivity.onMenuClick - switching account: nulling out PREFS_EDITPROJECTNAME");
                         Editor edit = m_prefs.edit();
-                        edit.putString(SSPreferences.PREFS_SSNAME, null);
+                        edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, null);
                         edit.commit();
 
                         s_amazonClientManager.clearCredentials();
@@ -441,7 +441,7 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
     public void onSaveComplete(CloudStore.SaveErrors se, SlideShareJSON ssj) {
         if(D)Log.d(TAG, String.format("CreateSlidesFragment.onSaveComplete: se=%s", se));
 
-        final String slideShareName = m_prefs.getString(SSPreferences.PREFS_SSNAME, SSPreferences.DEFAULT_SSNAME);
+        final String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
         final String userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
 
         if (m_progressDialog != null) {
