@@ -35,7 +35,7 @@ public class PlaySlidesPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public void setSlideShareName(String slideShareName) {
-        if(D)Log.d(TAG, "PlaySlidesPagerAdapter.setSlideShareName");
+        if(D)Log.d(TAG, String.format("PlaySlidesPagerAdapter.setSlideShareName: %s", slideShareName));
 
         m_slideShareName = slideShareName;
     }

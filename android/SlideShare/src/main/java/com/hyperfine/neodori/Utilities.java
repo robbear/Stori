@@ -44,21 +44,14 @@ public class Utilities {
 
     //
     // Creates or gets the SlideShare directory for SlideShare name, slideShareName.
-    // This method also sets the SSPreferences.SSNAME to slideShareName.
     //
     public static File createOrGetSlideShareDirectory(Context context, String slideShareName) {
         if(D)Log.d(TAG, String.format("Utilities.createOrGetSlideShareDirectory: dirName=%s", slideShareName));
-
-        SharedPreferences prefs = context.getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
 
         File rootDir = getRootFilesDirectory(context);
 
         File slideShareDirectory = new File(rootDir.getAbsolutePath() + "/" + slideShareName);
         slideShareDirectory.mkdir();
-
-        Editor editor = prefs.edit();
-        editor.putString(SSPreferences.PREFS_EDITPROJECTNAME, slideShareName);
-        editor.commit();
 
         return slideShareDirectory;
     }

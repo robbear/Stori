@@ -1,6 +1,5 @@
 package com.hyperfine.neodori;
 
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.content.Context;
@@ -26,6 +25,7 @@ import static com.hyperfine.neodori.Config.E;
 
 public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher.ViewFactory {
     public final static String TAG = "PlaySlidesActivity";
+    public final static String EXTRA_FROMURL = "extra_from_url";
 
     private final static String INSTANCE_STATE_CURRENT_TAB = "instance_state_current_tab";
 
@@ -48,14 +48,22 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
 
         setContentView(R.layout.activity_playslides);
 
-        m_slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
+        boolean isFromUrl = getIntent().getBooleanExtra(EXTRA_FROMURL, false);
+
+        if (isFromUrl) {
+            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME, SSPreferences.DEFAULT_PLAYSLIDESNAME);
+            if(D)Log.d(TAG, String.format("PlaySlidesActivity.onCreate - playing from a downloaded URL reference: %s", m_slideShareName));
+        }
+        else {
+            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
+            if(D)Log.d(TAG, String.format("PlaySlidesActivity.onCreate - playing a preview: %s", m_slideShareName));
+        }
         if (m_slideShareName == null) {
             if(D)Log.d(TAG, "PlaySlidesActivity.onCreate - m_slideShareName is null, meaning we'll have no SSJ. Bailing.");
             finish();
             return;
         }
 
-        // BUGBUG TODO: Replace with dialog to create/fetch SlideShare name
         m_slideShareDirectory = Utilities.createOrGetSlideShareDirectory(this, m_slideShareName);
         if (m_slideShareDirectory == null) {
             if(D)Log.d(TAG, "PlaySlidesActivity.onCreate - m_slideShareDirectory is null. Bad!!!");

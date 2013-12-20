@@ -59,6 +59,9 @@ public class EditSlidesActivity extends FragmentActivity implements ViewSwitcher
             finish();
             return;
         }
+        SharedPreferences.Editor editor = m_prefs.edit();
+        editor.putString(SSPreferences.PREFS_EDITPROJECTNAME, slideShareName);
+        editor.commit();
 
         setContentView(R.layout.activity_editslides);
 

@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -12,7 +13,6 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.hyperfine.neodori.Config.D;
@@ -33,11 +34,16 @@ public class DownloadActivity extends FragmentActivity {
     private DownloadTask m_downloadTask;
     private String m_slideShareName;
     private String m_userUuid;
+    private SlideShareJSON m_ssj;
+    private ArrayList<String> m_urlsToDownload;
+    private SharedPreferences m_prefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(D)Log.d(TAG, "DownloadActivity.onCreate");
+
+        m_prefs = getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
 
         // Lock the orientation down
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
@@ -107,7 +113,7 @@ public class DownloadActivity extends FragmentActivity {
         }
     }
 
-    private class DownloadTask extends AsyncTask<String, Integer, String> {
+    private class DownloadTask extends AsyncTask<String, Integer, Boolean> {
         private Context m_context;
 
         public DownloadTask(Context context) {
@@ -117,7 +123,7 @@ public class DownloadActivity extends FragmentActivity {
         }
 
         @Override
-        protected String doInBackground(String... sUrl) {
+        protected Boolean doInBackground(String... sUrl) {
             if(D)Log.d(TAG, "DownloadActivity.DownloadTask.doInBackground");
 
             // Take CPU lock to prevent CPU from going off if the user
@@ -139,9 +145,10 @@ public class DownloadActivity extends FragmentActivity {
                     // Expect HTTP 200 OK, so we don't mistakenly save error report
                     // instead of the file
                     if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                        if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.doInBackground: http code = %d", connection.getResponseCode()));
-                        return "Server returned HTTP " + connection.getResponseCode()
-                                + " " + connection.getResponseMessage();
+                        if(D)Log.d(TAG, String.format(
+                                "DownloadActivity.DownloadTask.doInBackground: http request failed: code=%d, message=%s",
+                                connection.getResponseCode(), connection.getResponseMessage()));
+                        return false;
                     }
 
                     // This will be useful to display download percentage
@@ -152,8 +159,16 @@ public class DownloadActivity extends FragmentActivity {
                     input = connection.getInputStream();
 
                     File slideShareDirectory = Utilities.createOrGetSlideShareDirectory(DownloadActivity.this, m_slideShareName);
-                    slideShareDirectory.mkdir();
-                    File file = new File(slideShareDirectory, Config.slideShareJSONFilename);
+
+                    if (!slideShareDirectory.exists()) {
+                        slideShareDirectory.mkdir();
+                    }
+
+                    String fileName = url.getFile();
+                    fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+                    if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.doInBackground - creating output file for file name: %s", fileName));
+
+                    File file = new File(slideShareDirectory, fileName);
                     if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.doInBackground - creating output file %s", file.getAbsolutePath()));
                     file.createNewFile();
 
@@ -165,7 +180,7 @@ public class DownloadActivity extends FragmentActivity {
                     while ((count = input.read(data)) != -1) {
                         // Allow canceling with back button
                         if (isCancelled()) {
-                            return null;
+                            return false;
                         }
                         total += count;
                         // Publishing the progress....
@@ -178,7 +193,12 @@ public class DownloadActivity extends FragmentActivity {
                 catch (Exception e) {
                     if(E)Log.e(TAG, "DownloadActivity.DownloadTask.doInBackground", e);
                     e.printStackTrace();
-                    return e.toString();
+                    return false;
+                }
+                catch (OutOfMemoryError e) {
+                    if(E)Log.e(TAG, "DownloadActivity.DownloadTask.doInBackground", e);
+                    e.printStackTrace();
+                    return false;
                 }
                 finally {
                     try {
@@ -201,7 +221,7 @@ public class DownloadActivity extends FragmentActivity {
                 if(D)Log.d(TAG, "DownloadActivity.DownloadTask.doInBackground - WakeLock released");
             }
 
-            return null;
+            return true;
         }
 
         @Override
@@ -215,7 +235,7 @@ public class DownloadActivity extends FragmentActivity {
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
-            if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.onProgressUpdate: progress=%d", progress[0]));
+            //if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.onProgressUpdate: progress=%d", progress[0]));
 
             super.onProgressUpdate(progress);
 
@@ -226,16 +246,98 @@ public class DownloadActivity extends FragmentActivity {
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Boolean result) {
             if(D)Log.d(TAG, "DownloadActivity.DownloadTask.onPostExecute");
 
             m_progressDialog.dismiss();
-            if (result != null) {
-                Toast.makeText(m_context, "Download error: " + result, Toast.LENGTH_LONG).show();
+
+            if (!result) {
+                if(D)Log.d(TAG, "DownloadActivity.DownloadTask.onPostExecute - download failed");
+                // BUGBUG - put up error dialog
+                handleDownloadError();
+                return;
             }
-            else {
-                Toast.makeText(m_context,"File downloaded", Toast.LENGTH_SHORT).show();
+
+            if (m_ssj == null) {
+                m_ssj = SlideShareJSON.load(DownloadActivity.this, m_slideShareName, Config.slideShareJSONFilename);
+                if (m_ssj == null) {
+                    // BUGBUG - put up error dialog
+                    handleDownloadError();
+                    return;
+                }
+
+                try {
+                    int count = m_ssj.getSlideCount();
+                    m_urlsToDownload = new ArrayList<String>();
+
+                    for (int i = 0; i < count; i++) {
+                        SlideJSON slide = m_ssj.getSlide(i);
+
+                        String audioUrlString = slide.getAudioUrlString();
+                        String imageUrlString = slide.getImageUrlString();
+
+                        if (audioUrlString != null) {
+                            m_urlsToDownload.add(audioUrlString);
+                        }
+                        if (imageUrlString != null) {
+                            m_urlsToDownload.add(imageUrlString);
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    if(E)Log.e(TAG, "DownloadActivity.DownloadTask.onPostExecute", e);
+                    e.printStackTrace();
+
+                    handleDownloadError();
+                }
+                catch (OutOfMemoryError e) {
+                    if(E)Log.e(TAG, "DownloadActivity.DownloadTask.onPostExecute", e);
+                    e.printStackTrace();
+
+                    handleDownloadError();
+                }
             }
+
+            if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.onPostExecute: remaining URLs to download: %d", m_urlsToDownload.size()));
+
+            if (m_urlsToDownload.size() <= 0) {
+                if(D)Log.d(TAG, "DownloadActivity.DownloadTask.onPostExecute - all downloads complete");
+
+                String oldSlideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME, SSPreferences.DEFAULT_PLAYSLIDESNAME);
+                if (oldSlideShareName != null && !oldSlideShareName.equals(m_slideShareName)) {
+                    if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.onPostExecute: deleting old slideshare playslide directory for %s", oldSlideShareName));
+                    Utilities.deleteSlideShareDirectory(DownloadActivity.this, oldSlideShareName);
+                }
+
+                SharedPreferences.Editor edit = m_prefs.edit();
+                edit.putString(SSPreferences.PREFS_PLAYSLIDESNAME, m_slideShareName);
+                edit.commit();
+
+                Intent intent = new Intent(DownloadActivity.this, PlaySlidesActivity.class);
+                intent.putExtra(PlaySlidesActivity.EXTRA_FROMURL, true);
+                DownloadActivity.this.startActivity(intent);
+
+                // BUGBUG TODO - how to manipulate Activity stack?
+
+                finish();
+                return;
+            }
+
+            String nextUrl = m_urlsToDownload.get(0);
+            m_urlsToDownload.remove(0);
+
+            if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.onPostExecute: downloading %s", nextUrl));
+            m_downloadTask = new DownloadTask(DownloadActivity.this);
+            m_progressDialog.setMessage(String.format("Downloading %s", nextUrl));
+            m_downloadTask.execute(nextUrl);
+        }
+    }
+
+    private void handleDownloadError() {
+        if(D)Log.d(TAG, "DownloadActivity.handleDownloadError");
+
+        if (m_slideShareName != null) {
+            Utilities.deleteSlideShareDirectory(this, m_slideShareName);
         }
     }
 }
