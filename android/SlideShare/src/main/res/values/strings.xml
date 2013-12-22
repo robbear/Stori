@@ -5,6 +5,8 @@
     <string name="cancel_text">Cancel</string>
     <string name="default_neodori_title">My Slides</string>
     <string name="default_neodori_description">My neodori slides</string>
+    <string name="download_dialog_message">Downloading...</string>
+    <string name="download_dialog_message_format">Downloading %1$d of %2$d...</string>
     <string name="download_errordialog_title">Download failed</string>
     <string name="download_errordialog_message">Filed to download the files necessary for viewing this neodori show</string>
     <string name="hello_world">Hello world!</string>
@@ -13,7 +15,7 @@
     <string name="main_create_button">Create new</string>
     <string name="main_edit_button_format">Edit %1$s</string>
     <string name="main_new_title_title">Slideshow Title</string>
-    <string name="main_new_title_hint">Enter your new slideshow title</string>
+    <string name="main_new_title_hint">Enter your new neodori title</string>
     <string name="main_preview_button_format">Preview %1$s</string>
     <string name="main_publish_button_format">Publish %1$s</string>
     <string name="main_share_button_format">Share %1$s</string>

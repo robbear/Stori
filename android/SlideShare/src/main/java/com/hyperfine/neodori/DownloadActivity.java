@@ -37,6 +37,8 @@ public class DownloadActivity extends FragmentActivity {
     private String m_userUuid;
     private SlideShareJSON m_ssj;
     private ArrayList<String> m_urlsToDownload;
+    private int m_numberOfResources = 0;
+    private int m_currentResourceDownloadIndex = 0;
     private SharedPreferences m_prefs;
 
     @Override
@@ -93,7 +95,7 @@ public class DownloadActivity extends FragmentActivity {
             m_downloadTask = new DownloadTask(this);
 
             m_progressDialog = new ProgressDialog(this);
-            m_progressDialog.setMessage(String.format("Downloading %s", jsonUrl));
+            m_progressDialog.setMessage(getString(R.string.download_dialog_message));
             m_progressDialog.setIndeterminate(true);
             m_progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             m_progressDialog.setCancelable(true);
@@ -266,6 +268,8 @@ public class DownloadActivity extends FragmentActivity {
                 }
 
                 try {
+                    calculateDownloadStats();
+
                     int count = m_ssj.getSlideCount();
                     m_urlsToDownload = new ArrayList<String>();
 
@@ -323,11 +327,32 @@ public class DownloadActivity extends FragmentActivity {
             String nextUrl = m_urlsToDownload.get(0);
             m_urlsToDownload.remove(0);
 
-            if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.onPostExecute: downloading %s", nextUrl));
+            if(D)Log.d(TAG, String.format(
+                    "DownloadActivity.DownloadTask.onPostExecute: m_numberOfResources=%d, m_currentResourceDownloadIndex=%d, downloading %s, m_",
+                    m_numberOfResources, m_numberOfResources - m_urlsToDownload.size(), nextUrl));
             m_downloadTask = new DownloadTask(DownloadActivity.this);
-            m_progressDialog.setMessage(String.format("Downloading %s", nextUrl));
+
+            m_progressDialog.setMessage(String.format(getString(R.string.download_dialog_message_format), m_currentResourceDownloadIndex + 1, m_numberOfResources));
+            m_currentResourceDownloadIndex++;
+
             m_downloadTask.execute(nextUrl);
         }
+    }
+
+    private void calculateDownloadStats() throws Exception {
+        if(D)Log.d(TAG, "DownloadActivity.calculateDownloadStats");
+
+        int count = m_ssj.getSlideCount();
+
+        for (int i = 0; i < count; i++) {
+            SlideJSON sj = m_ssj.getSlide(i);
+
+            if (sj.getAudioUrlString() != null) m_numberOfResources++;
+            if (sj.getImageUrlString() != null) m_numberOfResources++;
+        }
+
+        m_currentResourceDownloadIndex = 0;
+        if(D)Log.d(TAG, String.format("DownloadActivity.calculateDownloadStats: m_numberOfResources=%d", m_numberOfResources));
     }
 
     private void handleDownloadError() {
