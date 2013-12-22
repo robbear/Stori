@@ -1,5 +1,6 @@
 package com.hyperfine.neodori;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -253,7 +254,6 @@ public class DownloadActivity extends FragmentActivity {
 
             if (!result) {
                 if(D)Log.d(TAG, "DownloadActivity.DownloadTask.onPostExecute - download failed");
-                // BUGBUG - put up error dialog
                 handleDownloadError();
                 return;
             }
@@ -261,7 +261,6 @@ public class DownloadActivity extends FragmentActivity {
             if (m_ssj == null) {
                 m_ssj = SlideShareJSON.load(DownloadActivity.this, m_slideShareName, Config.slideShareJSONFilename);
                 if (m_ssj == null) {
-                    // BUGBUG - put up error dialog
                     handleDownloadError();
                     return;
                 }
@@ -317,8 +316,6 @@ public class DownloadActivity extends FragmentActivity {
                 intent.putExtra(PlaySlidesActivity.EXTRA_FROMURL, true);
                 DownloadActivity.this.startActivity(intent);
 
-                // BUGBUG TODO - how to manipulate Activity stack?
-
                 finish();
                 return;
             }
@@ -339,5 +336,22 @@ public class DownloadActivity extends FragmentActivity {
         if (m_slideShareName != null) {
             Utilities.deleteSlideShareDirectory(this, m_slideShareName);
         }
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setCancelable(false);
+
+        adb.setTitle(getString(R.string.download_errordialog_title));
+        adb.setMessage(getString(R.string.download_errordialog_message));
+        adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                finish();
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
     }
 }
