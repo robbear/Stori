@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -758,27 +757,21 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         int targetW = m_imageSwitcherSelected.getWidth();
         int targetH = m_imageSwitcherSelected.getHeight();
 
-        if(D)Log.d(TAG, String.format("EditSlidesFragment.fillImage: targetW=%d, targetH=%d", targetW, targetH));
+        try {
+            String filePath = Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName);
+            Bitmap bitmap = Utilities.getConstrainedBitmap(filePath, targetW, targetH);
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName), options);
-        int photoW = options.outWidth;
-        int photoH = options.outHeight;
-
-        if (targetW == 0) targetW = photoW;
-        if (targetH == 0) targetH = photoH;
-
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-        if(D)Log.d(TAG, String.format("EditSlidesFragment.fillImage: scaleFactor=%d", scaleFactor));
-
-        options.inJustDecodeBounds = false;
-        options.inSampleSize = scaleFactor;
-        options.inPurgeable = true;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName), options);
-        Drawable drawableImage = new BitmapDrawable(m_activityParent.getResources(), bitmap);
-        m_imageSwitcherSelected.setImageDrawable(drawableImage);
+            Drawable drawableImage = new BitmapDrawable(m_activityParent.getResources(), bitmap);
+            m_imageSwitcherSelected.setImageDrawable(drawableImage);
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.fillImage", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.fillImage", e);
+            e.printStackTrace();
+        }
     }
 
     private void startRecording() {

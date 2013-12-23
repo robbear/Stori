@@ -3,7 +3,6 @@ package com.hyperfine.neodori.fragments;
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -232,7 +231,7 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
     }
 
     public void onTabPageSelected(int position) {
-        if(D)Log.d(TAG, String.format("PlaySlidesFragment.onTabPageSelected: this=%d, position=%d", m_tabPosition, position));
+        if(D)Log.d(TAG, String.format("PlaySlidesFragment.onTabPageSelected: m_tabPosition=%d, position=%d", m_tabPosition, position));
 
         m_selectedTabPosition = position;
 
@@ -268,27 +267,9 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
                 int targetW = m_imageSwitcher.getWidth();
                 int targetH = m_imageSwitcher.getHeight();
 
-                if(D)Log.d(TAG, String.format("PlaySlidesFragment.renderImage: targetW=%d, targetH=%d", targetW, targetH));
+                String filePath = Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName);
+                Bitmap bitmap = Utilities.getConstrainedBitmap(filePath, targetW, targetH);
 
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                BitmapFactory.decodeFile(Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName), options);
-                int photoW = options.outWidth;
-                int photoH = options.outHeight;
-                if(D)Log.d(TAG, String.format("PlaySlidesFragment.renderImage: photoW=%d, photoH=%d", photoW, photoH));
-
-                if (targetW == 0) targetW = photoW;
-                if (targetH == 0) targetH = photoH;
-
-                // Determine how much to scale down the image
-                int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-
-                // Decode the image file into a Bitmap sized to fill the View
-                options.inJustDecodeBounds = false;
-                options.inSampleSize = scaleFactor;
-                options.inPurgeable = true;
-
-                Bitmap bitmap = BitmapFactory.decodeFile(Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName), options);
                 Drawable drawableImage = new BitmapDrawable(m_activityParent.getResources(), bitmap);
                 m_imageSwitcher.setImageDrawable(drawableImage);
             }

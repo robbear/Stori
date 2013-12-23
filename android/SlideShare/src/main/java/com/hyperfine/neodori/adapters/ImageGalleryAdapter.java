@@ -2,7 +2,6 @@ package com.hyperfine.neodori.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -131,33 +130,13 @@ public class ImageGalleryAdapter extends BaseAdapter {
                 int targetW = imageView.getWidth();
                 int targetH = imageView.getHeight();
 
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                BitmapFactory.decodeFile(Utilities.getAbsoluteFilePath(m_context, m_slideShareName, imageFileName), options);
-                int photoW = options.outWidth;
-                int photoH = options.outHeight;
-
                 if (parentHeight != 0) {
                     targetH = parentHeight;
-                    targetW = (photoW * parentHeight) / photoH;
                 }
 
-                if(D)Log.d(TAG, String.format("ImageGalleryAdapter.renderImage: targetW=%d, targetH=%d", targetW, targetH));
-                if(D)Log.d(TAG, String.format("ImageGalleryAdapter.renderImage: photoW=%d, photoH=%d", photoW, photoH));
+                String filePath = Utilities.getAbsoluteFilePath(m_context, m_slideShareName, imageFileName);
+                Bitmap bitmap = Utilities.getConstrainedBitmap(filePath, targetW, targetH);
 
-                if (targetW == 0) targetW = photoW;
-                if (targetH == 0) targetH = photoH;
-
-                // Determine how much to scale down the image
-                int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-                if(D)Log.d(TAG, String.format("ImageGalleryAdapter.renderImage: scaleFactor=%d", scaleFactor));
-
-                // Decode the image file into a Bitmap sized to fill the View
-                options.inJustDecodeBounds = false;
-                options.inSampleSize = scaleFactor;
-                options.inPurgeable = true;
-
-                Bitmap bitmap = BitmapFactory.decodeFile(Utilities.getAbsoluteFilePath(m_context, m_slideShareName, imageFileName), options);
                 Drawable drawableImage = new BitmapDrawable(m_context.getResources(), bitmap);
                 imageView.setImageDrawable(drawableImage);
             }

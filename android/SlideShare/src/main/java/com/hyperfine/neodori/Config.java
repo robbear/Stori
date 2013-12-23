@@ -26,6 +26,9 @@ public class Config
     // Use cache space rather than files space
     public static final boolean USE_CACHE = true;
 
+    // Default inSampleSize scale factor for images
+    public static final int imageScaleFactor = 4;
+
     // Use Google Play Services
     public static final boolean USE_GOOGLE_PLAY_SERVICES = true;
 

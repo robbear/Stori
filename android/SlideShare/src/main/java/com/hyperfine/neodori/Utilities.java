@@ -3,7 +3,6 @@ package com.hyperfine.neodori;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
@@ -19,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -271,11 +271,71 @@ public class Utilities {
         }
     }
 
+    private static int calculateInSampleSize(int bitmapWidth, int bitmapHeight, int displayWidth, int displayHeight) {
+        if(D)Log.d(TAG, String.format("Utilities.calculateInSampleSize: bW=%d, bH=%d, dW=%d, dH=%d", bitmapWidth, bitmapHeight, displayWidth, displayHeight));
+
+        int inSampleSize = 1;
+
+        if (bitmapWidth > displayWidth || bitmapHeight > displayHeight) {
+            int halfHeight = bitmapHeight / 2;
+            int halfWidth = bitmapWidth / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // bitmapWidth and bitmapHeight larger than the requested width/height
+            while (((halfHeight / inSampleSize) > displayHeight) && ((halfWidth / inSampleSize) > displayWidth)) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    public static Bitmap getConstrainedBitmap(String filePath, int displayWidth, int displayHeight) {
+        if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: displayWidth=%d, displayHeight=%d, filePath=%s", displayWidth, displayHeight, filePath));
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, options);
+        int bitmapWidth = options.outWidth;
+        int bitmapHeight = options.outHeight;
+        int scaleFactor = 1;
+
+        if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: bitmapWidth=%d, bitmapHeight=%d", bitmapWidth, bitmapHeight));
+
+        if (displayWidth == 0 && displayHeight == 0) {
+            scaleFactor = Config.imageScaleFactor;
+        }
+        else {
+            if (displayWidth == 0) {
+                displayWidth = (bitmapWidth * displayHeight) / bitmapHeight;
+            }
+            else if (displayHeight == 0) {
+                displayHeight = (bitmapHeight * displayWidth) / bitmapWidth;
+            }
+        }
+
+        if (scaleFactor == 1) {
+            scaleFactor = calculateInSampleSize(bitmapWidth, bitmapHeight, displayWidth, displayHeight);
+        }
+        if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: scaleFactor=%d", scaleFactor));
+
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = scaleFactor;
+        options.inPurgeable = true;
+
+        if(D)Log.d(TAG, "Utilities.getConstrainedBitmap - returning bitmap from decodeFile");
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
+        if(D)Log.d(TAG, String.format("Utililties.getConstrainedBitmap: bitmap %s null", bitmap == null ? "is" : "is not"));
+
+        return bitmap;
+    }
+
     public static boolean copyExternalStorageImageToJPG(Context context, String slideShareName, String fileName, String imageFilePath) {
         if(D)Log.d(TAG, String.format("Utilities.copyExternalStorageImageToJPG: slideShareName=%s, fileName=%s, imageFilePath=%s", slideShareName, fileName, imageFilePath));
 
         boolean success = false;
         OutputStream outStream = null;
+        InputStream is = null;
         File slideShareDirectory = createOrGetSlideShareDirectory(context, slideShareName);
 
         if (slideShareDirectory == null) {
@@ -284,13 +344,28 @@ public class Utilities {
         }
 
         try {
-            ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
-
             File f = new File(imageFilePath);
             Uri uri = Uri.fromFile(f);
-            Bitmap bitmapImage = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri));
-            if (bitmapImage.compress(Bitmap.CompressFormat.JPEG, Config.jpgCompressionLevel, outputBuffer)) {
-                File file = createFile(context, slideShareName, fileName);
+            is = context.getContentResolver().openInputStream(uri);
+
+            File file = createFile(context, slideShareName, fileName);
+            outStream = new FileOutputStream(file);
+
+            // Copy the bitmap file to disk
+            byte[] buffer = new byte[10240];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                outStream.write(buffer, 0, bytesRead);
+            }
+            outStream.flush();
+            outStream.close();
+            outStream = null;
+
+            // Now compress the file
+            ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
+            Bitmap bitmap = getConstrainedBitmap(Utilities.getAbsoluteFilePath(context, slideShareName, fileName), 0, 0);
+            if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputBuffer)) {
+                file = createFile(context, slideShareName, fileName);
                 outStream = new FileOutputStream(file);
 
                 outputBuffer.writeTo(outStream);
@@ -319,6 +394,13 @@ public class Utilities {
                 }
                 catch (Exception e) {}
             }
+
+            if (is != null) {
+                try {
+                    is.close();
+                }
+                catch (Exception e) {}
+            }
         }
 
         return success;
@@ -329,6 +411,7 @@ public class Utilities {
 
         boolean success = false;
         OutputStream outStream = null;
+        InputStream is = null;
         File slideShareDirectory = createOrGetSlideShareDirectory(context, slideShareName);
 
         if (slideShareDirectory == null) {
@@ -337,11 +420,26 @@ public class Utilities {
         }
 
         try {
-            ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
+            is = context.getContentResolver().openInputStream(intent.getData());
 
-            Bitmap bitmapImage = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(intent.getData()));
-            if (bitmapImage.compress(Bitmap.CompressFormat.JPEG, Config.jpgCompressionLevel, outputBuffer)) {
-                File file = createFile(context, slideShareName, fileName);
+            File file = createFile(context, slideShareName, fileName);
+            outStream = new FileOutputStream(file);
+
+            // Copy the bitmap file to disk
+            byte[] buffer = new byte[10240];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                outStream.write(buffer, 0, bytesRead);
+            }
+            outStream.flush();
+            outStream.close();
+            outStream = null;
+
+            // Now compress the file
+            ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
+            Bitmap bitmap = getConstrainedBitmap(Utilities.getAbsoluteFilePath(context, slideShareName, fileName), 0, 0);
+            if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputBuffer)) {
+                file = createFile(context, slideShareName, fileName);
                 outStream = new FileOutputStream(file);
 
                 outputBuffer.writeTo(outStream);
@@ -367,6 +465,13 @@ public class Utilities {
             if (outStream != null) {
                 try {
                     outStream.close();
+                }
+                catch (Exception e) {}
+            }
+
+            if (is != null) {
+                try {
+                    is.close();
                 }
                 catch (Exception e) {}
             }
