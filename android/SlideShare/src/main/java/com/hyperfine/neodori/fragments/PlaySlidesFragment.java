@@ -178,22 +178,6 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
         View view = inflater.inflate(R.layout.fragment_playslides, container, false);
 
         m_imageSwitcher = (ImageSwitcher)view.findViewById(R.id.current_image);
-        m_imageSwitcher.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                if(D)Log.d(TAG, String.format("************ onLayoutChange for m_imageSwitcher: left=%d, top=%d, right=%d, bottom=%d", left, top, right, bottom));
-                if ((left == 0 && right == 0 && top == 0 && bottom == 0) ||
-                    (left == oldLeft && right == oldRight && top == oldTop && bottom == oldBottom)) {
-                    return;
-                }
-
-                // Wait for onLayoutChange for the Image Switcher, seeded with a black png drawable, so
-                // that we have the dimensions of the control inflated. We need non-zero control dimensions
-                // so we can scale the in-memory bitmap to something reasonable, based on the control's
-                // dimensions.
-                renderImage();
-            }
-        });
         m_imageSwitcher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -224,6 +208,7 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
         // Seed the ImageSwitcher with a black background in order to inflate it
         // to non-zero dimensions.
         m_imageSwitcher.setImageResource(R.drawable.ic_black);
+        renderImage();
 
         if (savedInstanceState == null) {
             AsyncTaskTimer.startAsyncTaskTimer(1, Config.audioDelayMillis, this);
@@ -236,6 +221,7 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
         m_selectedTabPosition = position;
 
         if (m_tabPosition == position) {
+            if(D)Log.d(TAG, "PlaySlidesFragment.onTabPageSelected - starting audio timer");
             AsyncTaskTimer.startAsyncTaskTimer(1, Config.audioDelayMillis, this);
         }
         else {
