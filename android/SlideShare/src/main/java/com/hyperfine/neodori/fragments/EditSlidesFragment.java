@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -18,6 +19,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -80,6 +82,8 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
     private ImageSwitcher m_imageSwitcherSelected;
     private ProgressDialog m_progressDialog = null;
     private String m_currentCameraPhotoFilePath = null;
+    private int m_displayWidth = 0;
+    private int m_displayHeight = 0;
 
     private static EditSlidesFragment newInstance(String slideShareName) {
         if(D)Log.d(TAG, "EditSlidesFragment.newInstance");
@@ -314,6 +318,14 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         super.onAttach(activity);
 
         m_activityParent = activity;
+
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        m_displayWidth = size.x;
+        m_displayHeight = size.y;
+
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.onAttach: displayWidth=%d, displayHeight=%d", m_displayWidth, m_displayHeight));
 
         m_prefs = m_activityParent.getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
         m_userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
@@ -756,6 +768,15 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
 
         int targetW = m_imageSwitcherSelected.getWidth();
         int targetH = m_imageSwitcherSelected.getHeight();
+
+        // BUGBUG - note that getWidth/getHeight always returns zero at
+        // this point of the fragment life cycle. As a temporary work around,
+        // use the screen dimensions if this is the case.
+        // See issue #9
+        if (targetW == 0 || targetH == 0) {
+            targetW = m_displayWidth;
+            targetH = m_displayHeight;
+        }
 
         try {
             String filePath = Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName);

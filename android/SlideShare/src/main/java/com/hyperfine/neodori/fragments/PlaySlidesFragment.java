@@ -1,6 +1,7 @@
 package com.hyperfine.neodori.fragments;
 
 import android.app.Activity;
+import android.graphics.Point;
 import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -8,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +50,8 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
     private FileInputStream m_fileInputStream;
     private boolean m_isPlaying = false;
     private boolean m_ignoreAudio = false;
+    private int m_displayWidth = 0;
+    private int m_displayHeight = 0;
 
     public static PlaySlidesFragment newInstance(Activity activityParent, int position, String slideShareName, SlideJSON sj) {
         if(D)Log.d(TAG, "PlaySlidesFragment.newInstance");
@@ -158,6 +162,14 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
 
         m_activityParent = activity;
 
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        m_displayWidth = size.x;
+        m_displayHeight = size.y;
+
+        if(D)Log.d(TAG, String.format("PlaySlidesFragment.onAttach: displayWidth=%d, displayHeight=%d", m_displayWidth, m_displayHeight));
+
         // if (activity instanceof SomeActivityInterface) {
         // }
         // else {
@@ -252,6 +264,15 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
             try {
                 int targetW = m_imageSwitcher.getWidth();
                 int targetH = m_imageSwitcher.getHeight();
+
+                // BUGBUG - note that getWidth/getHeight always returns zero at
+                // this point of the fragment life cycle. As a temporary work around,
+                // use the screen dimensions if this is the case.
+                // See issue #9
+                if (targetW == 0 || targetH == 0) {
+                    targetW = m_displayWidth;
+                    targetH = m_displayHeight;
+                }
 
                 String filePath = Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName);
                 Bitmap bitmap = Utilities.getConstrainedBitmap(filePath, targetW, targetH);

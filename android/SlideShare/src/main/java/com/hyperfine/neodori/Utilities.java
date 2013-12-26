@@ -293,6 +293,13 @@ public class Utilities {
     public static Bitmap getConstrainedBitmap(String filePath, int displayWidth, int displayHeight) {
         if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: displayWidth=%d, displayHeight=%d, filePath=%s", displayWidth, displayHeight, filePath));
 
+        if (D) {
+            File file = new File(filePath);
+            if (file.exists()) {
+                if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: length %d for file %s", file.length(), filePath));
+            }
+        }
+
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, options);
@@ -361,6 +368,12 @@ public class Utilities {
             outStream.close();
             outStream = null;
 
+            if (D) {
+                if (file.exists()) {
+                    if(D)Log.d(TAG, String.format("Utilities.copyExternalStorageImageToJPG: original file length is %d", file.length()));
+                }
+            }
+
             // Now compress the file
             ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
             Bitmap bitmap = getConstrainedBitmap(Utilities.getAbsoluteFilePath(context, slideShareName, fileName), 0, 0);
@@ -370,6 +383,12 @@ public class Utilities {
 
                 outputBuffer.writeTo(outStream);
                 success = true;
+
+                if (D) {
+                    if (file.exists()) {
+                        if(D)Log.d(TAG, String.format("Utilities.copyExternalStorageImageToJPG: compressed file length is %d", file.length()));
+                    }
+                }
             }
             else {
                 if(D)Log.d(TAG, "Utilities.copyExternalStorageImageToJPG failed");
@@ -435,6 +454,12 @@ public class Utilities {
             outStream.close();
             outStream = null;
 
+            if (D) {
+                if (file.exists()) {
+                    if(D)Log.d(TAG, String.format("Utilities.copyGalleryImageToJPG: original file length is %d", file.length()));
+                }
+            }
+
             // Now compress the file
             ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
             Bitmap bitmap = getConstrainedBitmap(Utilities.getAbsoluteFilePath(context, slideShareName, fileName), 0, 0);
@@ -444,6 +469,12 @@ public class Utilities {
 
                 outputBuffer.writeTo(outStream);
                 success = true;
+
+                if (D) {
+                    if (file.exists()) {
+                        if(D)Log.d(TAG, String.format("Utilities.copyGalleryImageToJPG: compressed file length is %d", file.length()));
+                    }
+                }
             }
             else {
                 if(D)Log.d(TAG, "Utilities.copyGalleryImageToJPG failed");
