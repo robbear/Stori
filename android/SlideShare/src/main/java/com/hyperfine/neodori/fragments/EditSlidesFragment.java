@@ -34,6 +34,7 @@ import android.widget.ViewSwitcher;
 import com.hyperfine.neodori.CloudStore;
 import com.hyperfine.neodori.Config;
 import com.hyperfine.neodori.HorizontalListView;
+import com.hyperfine.neodori.PlaySlidesActivity;
 import com.hyperfine.neodori.R;
 import com.hyperfine.neodori.SSPreferences;
 import com.hyperfine.neodori.SlideJSON;
@@ -414,12 +415,24 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if(D)Log.d(TAG, "EditSlidesFragment.onCreateOptionsMenu");
 
-        inflater.inflate(R.menu.menu_slide, menu);
-        if (!Utilities.isCameraAvailable(m_activityParent)) {
-            menu.removeItem(R.id.menu_slide_item_camera);
+        String title = "";
+        try {
+            title = m_ssj.getTitle();
         }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.onCreateOptionsMenu", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.onCreateOptionsMenu", e);
+            e.printStackTrace();
+        }
+        final String slideShareTitle = title;
 
-        menu.findItem(R.id.menu_slide_item_selectimage).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        inflater.inflate(R.menu.menu_slide, menu);
+
+        MenuItem selectImage = menu.findItem(R.id.menu_edit_item_selectimage);
+        selectImage.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 selectImageFromGallery();
@@ -427,7 +440,8 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             }
         });
 
-        menu.findItem(R.id.menu_slide_item_camera).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        MenuItem cameraImage = menu.findItem(R.id.menu_edit_item_camera);
+        cameraImage.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 selectImageFromCamera();
@@ -435,7 +449,8 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             }
         });
 
-        menu.findItem(R.id.menu_slide_item_delete).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        MenuItem deleteItem = menu.findItem(R.id.menu_edit_item_delete);
+        deleteItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 deleteCurrentSlide();
@@ -443,7 +458,8 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             }
         });
 
-        menu.findItem(R.id.menu_slide_item_insertbefore).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        MenuItem insertBefore = menu.findItem(R.id.menu_edit_item_insertbefore);
+        insertBefore.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 initializeNewSlide(m_currentSlideIndex);
@@ -451,7 +467,8 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             }
         });
 
-        menu.findItem(R.id.menu_slide_item_insertafter).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        MenuItem insertAfter = menu.findItem(R.id.menu_edit_item_insertafter);
+        insertAfter.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 initializeNewSlide(m_currentSlideIndex + 1);
@@ -459,13 +476,44 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             }
         });
 
-        menu.findItem(R.id.menu_slide_item_publish).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        MenuItem preview = menu.findItem(R.id.menu_edit_preview);
+        preview.setTitle(String.format(getString(R.string.menu_edit_preview_format), slideShareTitle));
+        preview.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(m_activityParent, PlaySlidesActivity.class);
+                m_activityParent.startActivity(intent);
+                return true;
+            }
+        });
+
+        MenuItem publish = menu.findItem(R.id.menu_edit_publish);
+        publish.setTitle(String.format(getString(R.string.menu_edit_publish_format), slideShareTitle));
+        publish.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 publishSlides();
                 return true;
             }
         });
+
+        MenuItem share = menu.findItem(R.id.menu_edit_share);
+        share.setTitle(String.format(getString(R.string.menu_edit_share_format), slideShareTitle));
+        share.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Utilities.shareShow(m_activityParent, m_userUuid, m_slideShareName);
+                return true;
+            }
+        });
+
+        if (!Utilities.isCameraAvailable(m_activityParent)) {
+            menu.removeItem(R.id.menu_edit_item_camera);
+        }
+        boolean isPublished = SlideShareJSON.isSlideSharePublished(m_activityParent, m_slideShareName);
+        if (!isPublished) {
+            menu.removeItem(R.id.menu_edit_share);
+        }
     }
 
     @Override

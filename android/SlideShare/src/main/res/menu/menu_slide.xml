@@ -2,21 +2,27 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_slide_item_selectimage"
-        android:title="@string/menu_slide_selectfromgallery" />
+        android:id="@+id/menu_edit_item_selectimage"
+        android:title="@string/menu_edit_selectfromgallery" />
     <item
-        android:id="@+id/menu_slide_item_camera"
-        android:title="@string/menu_slide_camera" />
+        android:id="@+id/menu_edit_item_camera"
+        android:title="@string/menu_edit_camera" />
     <item
-        android:id="@+id/menu_slide_item_delete"
-        android:title="@string/menu_slide_delete" />
+        android:id="@+id/menu_edit_item_delete"
+        android:title="@string/menu_edit_delete" />
     <item
-        android:id="@+id/menu_slide_item_insertbefore"
-        android:title="@string/menu_slide_insertbefore" />
+        android:id="@+id/menu_edit_item_insertbefore"
+        android:title="@string/menu_edit_insertbefore" />
     <item
-        android:id="@+id/menu_slide_item_insertafter"
-        android:title="@string/menu_slide_insertafter" />
+        android:id="@+id/menu_edit_item_insertafter"
+        android:title="@string/menu_edit_insertafter" />
     <item
-        android:id="@+id/menu_slide_item_publish"
-        android:title="@string/menu_slide_publish" />
+        android:id="@+id/menu_edit_preview"
+        android:title="@string/menu_edit_preview_format" />
+    <item
+        android:id="@+id/menu_edit_publish"
+        android:title="@string/menu_edit_publish_format" />
+    <item
+        android:id="@+id/menu_edit_share"
+        android:title="@string/menu_edit_share_format" />
 </menu>
