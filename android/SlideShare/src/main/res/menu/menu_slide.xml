@@ -25,4 +25,10 @@
     <item
         android:id="@+id/menu_edit_share"
         android:title="@string/menu_edit_share_format" />
+    <item
+        android:id="@+id/menu_edit_create_new"
+        android:title="@string/menu_edit_create_new" />
+    <item
+        android:id="@+id/menu_edit_switch_account"
+        android:title="@string/menu_edit_switch_account" />
 </menu>

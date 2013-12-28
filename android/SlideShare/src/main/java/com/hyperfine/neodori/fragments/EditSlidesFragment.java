@@ -54,6 +54,8 @@ import static com.hyperfine.neodori.Config.E;
 public class EditSlidesFragment extends Fragment implements CloudStore.ICloudStoreCallback {
     public final static String TAG = "EditSlidesFragment";
 
+    public final static int RESULT_GOOGLE_PLAY_SERVICES_ERROR = 1;
+    public final static int RESULT_GOOGLE_LOGIN = 2;
     private final static int REQUEST_IMAGE = 1;
     private final static int REQUEST_CAMERA = 2;
     private final static String INSTANCE_STATE_IMAGEFILE = "instance_state_imagefile";
@@ -503,6 +505,22 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Utilities.shareShow(m_activityParent, m_userUuid, m_slideShareName);
+                return true;
+            }
+        });
+
+        MenuItem createNew = menu.findItem(R.id.menu_edit_create_new);
+        createNew.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return true;
+            }
+        });
+
+        MenuItem switchAccount = menu.findItem(R.id.menu_edit_switch_account);
+        switchAccount.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
                 return true;
             }
         });
