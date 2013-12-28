@@ -561,14 +561,14 @@ public class Utilities {
             return null;
         }
 
-        String urlString = Config.baseCloudUrl + userUuid.toString() + "/" + slideShareName + "/" + fileName;
+        String urlString = Config.baseCloudUrl + userUuid + "/" + slideShareName + "/" + fileName;
         if(D)Log.d(TAG, String.format("Utilities.buildResourceUrlString: %s", urlString));
 
         return urlString;
     }
 
     public static String buildShowWebPageUrlString(String userUuid, String slideShareName) {
-        String urlString = Config.baseWebSlidesUrl + userUuid.toString() + "/" + slideShareName;
+        String urlString = Config.baseWebSlidesUrl + userUuid + "/" + slideShareName;
 
         return urlString;
     }

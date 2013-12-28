@@ -18,13 +18,13 @@
         android:title="@string/menu_edit_insertafter" />
     <item
         android:id="@+id/menu_edit_preview"
-        android:title="@string/menu_edit_preview_format" />
+        android:title="@string/menu_edit_preview" />
     <item
         android:id="@+id/menu_edit_publish"
-        android:title="@string/menu_edit_publish_format" />
+        android:title="@string/menu_edit_publish" />
     <item
         android:id="@+id/menu_edit_share"
-        android:title="@string/menu_edit_share_format" />
+        android:title="@string/menu_edit_share" />
     <item
         android:id="@+id/menu_edit_create_new"
         android:title="@string/menu_edit_create_new" />

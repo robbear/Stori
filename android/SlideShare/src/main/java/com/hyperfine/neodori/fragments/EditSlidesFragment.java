@@ -28,11 +28,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageSwitcher;
 import android.widget.ViewSwitcher;
 
 import com.hyperfine.neodori.CloudStore;
 import com.hyperfine.neodori.Config;
+import com.hyperfine.neodori.EditSlidesActivity;
 import com.hyperfine.neodori.HorizontalListView;
 import com.hyperfine.neodori.PlaySlidesActivity;
 import com.hyperfine.neodori.R;
@@ -42,6 +44,7 @@ import com.hyperfine.neodori.SlideShareJSON;
 import com.hyperfine.neodori.Utilities;
 import com.hyperfine.neodori.adapters.ImageGalleryAdapter;
 import com.hyperfine.neodori.cloudproviders.AmazonSharedPreferencesWrapper;
+import com.hyperfine.neodori.cloudproviders.GoogleLogin;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,8 +57,6 @@ import static com.hyperfine.neodori.Config.E;
 public class EditSlidesFragment extends Fragment implements CloudStore.ICloudStoreCallback {
     public final static String TAG = "EditSlidesFragment";
 
-    public final static int RESULT_GOOGLE_PLAY_SERVICES_ERROR = 1;
-    public final static int RESULT_GOOGLE_LOGIN = 2;
     private final static int REQUEST_IMAGE = 1;
     private final static int REQUEST_CAMERA = 2;
     private final static String INSTANCE_STATE_IMAGEFILE = "instance_state_imagefile";
@@ -249,6 +250,19 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             }
         }
 
+        try {
+            String title = m_ssj.getTitle();
+            getActivity().getActionBar().setTitle(title == null ? getString(R.string.default_neodori_title) : title);
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.initializeSlideShareJSON", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.initializeSlideShareJSON", e);
+            e.printStackTrace();
+        }
+
         if(D)Log.d(TAG, "EditSlidesFragment.initializeSlideShareJSON: here is the current JSON:");
         Utilities.printSlideShareJSON(TAG, m_ssj);
     }
@@ -311,6 +325,9 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
 
         super.onResume();
 
+        m_userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.onResume: m_userUuid=%s", m_userUuid));
+
         selectSlide(m_currentSlideIndex);
     }
 
@@ -331,7 +348,6 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         if(D)Log.d(TAG, String.format("EditSlidesFragment.onAttach: displayWidth=%d, displayHeight=%d", m_displayWidth, m_displayHeight));
 
         m_prefs = m_activityParent.getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
-        m_userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
 
         // if (activity instanceof SomeActivityInterface) {
         // }
@@ -414,6 +430,17 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if(D)Log.d(TAG, "EditSlidesFragment.onPrepareOptionsMenu");
+
+        boolean isPublished = SlideShareJSON.isSlideSharePublished(m_activityParent, m_slideShareName);
+        boolean hasCamera = Utilities.isCameraAvailable(m_activityParent);
+
+        menu.findItem(R.id.menu_edit_item_camera).setVisible(hasCamera);
+        menu.findItem(R.id.menu_edit_share).setVisible(isPublished);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if(D)Log.d(TAG, "EditSlidesFragment.onCreateOptionsMenu");
 
@@ -429,7 +456,6 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             if(E)Log.e(TAG, "EditSlidesFragment.onCreateOptionsMenu", e);
             e.printStackTrace();
         }
-        final String slideShareTitle = title;
 
         inflater.inflate(R.menu.menu_slide, menu);
 
@@ -479,7 +505,6 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         });
 
         MenuItem preview = menu.findItem(R.id.menu_edit_preview);
-        preview.setTitle(String.format(getString(R.string.menu_edit_preview_format), slideShareTitle));
         preview.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -490,7 +515,6 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         });
 
         MenuItem publish = menu.findItem(R.id.menu_edit_publish);
-        publish.setTitle(String.format(getString(R.string.menu_edit_publish_format), slideShareTitle));
         publish.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -499,9 +523,8 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             }
         });
 
-        MenuItem share = menu.findItem(R.id.menu_edit_share);
-        share.setTitle(String.format(getString(R.string.menu_edit_share_format), slideShareTitle));
-        share.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        MenuItem shareSlides = menu.findItem(R.id.menu_edit_share);
+        shareSlides.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Utilities.shareShow(m_activityParent, m_userUuid, m_slideShareName);
@@ -513,6 +536,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         createNew.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                createNewSlideShow();
                 return true;
             }
         });
@@ -521,17 +545,45 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         switchAccount.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
+                adb.setTitle(getString(R.string.switch_account_dialog_title));
+                adb.setCancelable(true);
+                adb.setMessage(getString(R.string.switch_account_dialog_message));
+                adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(D)Log.d(TAG, "EditSlidesActivity.onMenuClick - switching account");
+                        dialog.dismiss();
+
+                        String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
+
+                        Utilities.deleteSlideShareDirectory(m_activityParent, slideShareName);
+
+                        if(D)Log.d(TAG, "EditSlidesActivity.onMenuClick - switching account: nulling out PREFS_EDITPROJECTNAME");
+                        SharedPreferences.Editor edit = m_prefs.edit();
+                        edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, null);
+                        edit.commit();
+
+                        EditSlidesActivity.s_amazonClientManager.clearCredentials();
+                        EditSlidesActivity.s_amazonClientManager.wipe();
+
+                        Intent intent = new Intent(m_activityParent, GoogleLogin.class);
+                        m_activityParent.startActivityForResult(intent, EditSlidesActivity.REQUEST_GOOGLE_LOGIN_FROM_FRAGMENT);
+                    }
+                });
+                adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog ad = adb.create();
+                ad.show();
+
                 return true;
             }
         });
-
-        if (!Utilities.isCameraAvailable(m_activityParent)) {
-            menu.removeItem(R.id.menu_edit_item_camera);
-        }
-        boolean isPublished = SlideShareJSON.isSlideSharePublished(m_activityParent, m_slideShareName);
-        if (!isPublished) {
-            menu.removeItem(R.id.menu_edit_share);
-        }
     }
 
     @Override
@@ -611,6 +663,99 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         else {
             super.onActivityResult(requestCode, resultCode, intent);
         }
+    }
+
+    private void initializeNewSlideShow() {
+        if(D)Log.d(TAG, "EditSlidesFragment.initializeNewSlideShow");
+
+        //
+        // Delete the old slide share directory and create a new one.
+        // Create a new m_slideShareName
+        //
+
+        if (m_slideShareName != null) {
+            Utilities.deleteSlideShareDirectory(m_activityParent, m_slideShareName);
+        }
+        m_slideShareName = UUID.randomUUID().toString();
+
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.initializeNewSlideShow - new slideShareName: %s", m_slideShareName));
+
+        SharedPreferences.Editor edit = m_prefs.edit();
+        edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, m_slideShareName);
+        edit.commit();
+
+        Utilities.createOrGetSlideShareDirectory(m_activityParent, m_slideShareName);
+
+        enterSlideShareTitleAndRecreate();
+    }
+
+    public void initializeForChangeInAccount() {
+        if(D)Log.d(TAG, "EditSlidesFragment.initializeForChangeInAccount");
+
+        initializeNewSlideShow();
+    }
+
+    private void createNewSlideShow() {
+        if(D)Log.d(TAG, "EditSlidesFragment.createNewSlideShow");
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
+        adb.setTitle(getString(R.string.main_create_alert_title));
+        adb.setCancelable(true);
+        adb.setMessage(getString(R.string.main_create_alert_message));
+        adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                initializeNewSlideShow();
+            }
+        });
+        adb.setNegativeButton(getString(R.string.cancel_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
+    }
+
+    private void enterSlideShareTitleAndRecreate() {
+        if(D)Log.d(TAG, "EditSlidesActivity.enterSlideShareTitleAndRecreate");
+
+        final EditText titleText = new EditText(m_activityParent);
+        titleText.setHint(getString(R.string.main_new_title_hint));
+        titleText.setSingleLine();
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
+        adb.setTitle(getString(R.string.main_new_title_title)); // BUGBUG - TODO - rename from main
+        adb.setCancelable(false);
+        adb.setView(titleText);
+        adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String title = titleText.getText().toString();
+
+                dialog.dismiss();
+
+                setSlideShareName(m_slideShareName);
+                setSlideShareTitle(title);
+
+                m_currentSlideIndex = 0;
+                m_imageGalleryAdapter = new ImageGalleryAdapter();
+                m_imageGalleryAdapter.setContext(m_activityParent);
+                m_imageGalleryAdapter.setSlideShareJSON(m_ssj);
+                m_imageGalleryAdapter.setSlideShareName(m_slideShareName);
+                m_horizontalListView.setAdapter(m_imageGalleryAdapter);
+
+                selectSlide(m_currentSlideIndex);
+                getActivity().getActionBar().setTitle(title == null ? getString(R.string.default_neodori_title) : title);
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
     }
 
     public void publishSlides() {

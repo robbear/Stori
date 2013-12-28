@@ -24,10 +24,10 @@
     <string name="menu_edit_delete">Remove slide</string>
     <string name="menu_edit_insertbefore">New slide before</string>
     <string name="menu_edit_insertafter">New slide after</string>
-    <string name="menu_edit_preview_format">Preview %1$s</string>
-    <string name="menu_edit_publish_format">Publish %1$s</string>
+    <string name="menu_edit_preview">Preview</string>
+    <string name="menu_edit_publish">Publish</string>
     <string name="menu_edit_selectfromgallery">Choose gallery image...</string>
-    <string name="menu_edit_share_format">Share %1$s</string>
+    <string name="menu_edit_share">Share</string>
     <string name="menu_edit_switch_account">Switch account</string>
     <string name="publish_dialog_title">Publish</string>
     <string name="publish_dialog_message">Ok to publish?</string>

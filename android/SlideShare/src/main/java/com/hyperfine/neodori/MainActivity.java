@@ -42,7 +42,7 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
     private String m_slideShareTitle;
     private ProgressDialog m_progressDialog = null;
 
-    public static AmazonClientManager s_amazonClientManager = null;
+    public static AmazonClientManager s_amazonClientManagerXXX = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +62,7 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
         String userUuidString = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
         String userEmail = AmazonSharedPreferencesWrapper.getUserEmail(m_prefs);
 
-        s_amazonClientManager = new AmazonClientManager(m_prefs);
+        s_amazonClientManagerXXX = new AmazonClientManager(m_prefs);
 
         if (userUuidString == null || userEmail == null) {
             if(D)Log.d(TAG, String.format("MainActivity.onCreate: userUuidString=%s, userEmail=%s, so calling GoogleLogin", userUuidString, userEmail));
@@ -309,8 +309,8 @@ public class MainActivity extends Activity implements CloudStore.ICloudStoreCall
                         edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, null);
                         edit.commit();
 
-                        s_amazonClientManager.clearCredentials();
-                        s_amazonClientManager.wipe();
+                        s_amazonClientManagerXXX.clearCredentials();
+                        s_amazonClientManagerXXX.wipe();
 
                         Intent intent = new Intent(MainActivity.this, GoogleLogin.class);
                         MainActivity.this.startActivity(intent);
