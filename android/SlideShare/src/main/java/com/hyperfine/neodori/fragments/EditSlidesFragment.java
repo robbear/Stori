@@ -419,9 +419,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             menu.removeItem(R.id.menu_slide_item_camera);
         }
 
-        // BUGBUG - is there a better way to base the menus off
-        // identifiers rather than knowing the index order?
-        menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        menu.findItem(R.id.menu_slide_item_selectimage).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 selectImageFromGallery();
@@ -429,7 +427,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             }
         });
 
-        menu.getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        menu.findItem(R.id.menu_slide_item_camera).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 selectImageFromCamera();
@@ -437,7 +435,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             }
         });
 
-        menu.getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        menu.findItem(R.id.menu_slide_item_delete).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 deleteCurrentSlide();
@@ -445,7 +443,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             }
         });
 
-        menu.getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        menu.findItem(R.id.menu_slide_item_insertbefore).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 initializeNewSlide(m_currentSlideIndex);
@@ -453,7 +451,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             }
         });
 
-        menu.getItem(4).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        menu.findItem(R.id.menu_slide_item_insertafter).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 initializeNewSlide(m_currentSlideIndex + 1);
@@ -461,7 +459,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             }
         });
 
-        menu.getItem(5).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        menu.findItem(R.id.menu_slide_item_publish).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 publishSlides();
