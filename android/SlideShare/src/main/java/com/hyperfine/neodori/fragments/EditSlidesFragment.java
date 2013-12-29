@@ -32,6 +32,7 @@ import android.widget.EditText;
 import android.widget.ImageSwitcher;
 import android.widget.ViewSwitcher;
 
+import com.hyperfine.neodori.AboutActivity;
 import com.hyperfine.neodori.CloudStore;
 import com.hyperfine.neodori.Config;
 import com.hyperfine.neodori.EditSlidesActivity;
@@ -997,6 +998,17 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
                 return true;
             }
         });
+
+        MenuItem about = menu.findItem(R.id.menu_edit_about);
+        about.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(m_activityParent, AboutActivity.class);
+                m_activityParent.startActivity(intent);
+
+                return true;
+            }
+        });
     }
 
     @Override
@@ -1005,7 +1017,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
 
         super.onActivityCreated(savedInstanceState);
 
-        m_imageSwitcherSelected.setFactory((ViewSwitcher.ViewFactory)m_activityParent);
+        m_imageSwitcherSelected.setFactory((ViewSwitcher.ViewFactory) m_activityParent);
 
         fillImage();
     }

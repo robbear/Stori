@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="about_actionbar">About neodori</string>
+    <string name="about_title1">neodori</string>
+    <string name="about_title2">Share your voice-annotated pictures</string>
     <string name="app_name">neodori</string>
     <string name="cancel_text">Cancel</string>
+    <string name="copyright">Version %1$s (%2$d)\n\nBuild %3$s\n\nTips and help at http://neodori.com\n\nCopyright \u00a9 2013-2014 Hyperfine Software Corp. http://hyperfine.com</string>
     <string name="default_neodori_title">My Slides</string>
     <string name="default_neodori_description">My neodori slides</string>
     <string name="download_dialog_message">Downloading...</string>
@@ -19,6 +23,7 @@
     <string name="main_preview_button_format">Preview %1$s</string>
     <string name="main_publish_button_format">Publish %1$s</string>
     <string name="main_share_button_format">Share %1$s</string>
+    <string name="menu_edit_about">About neodori</string>
     <string name="menu_edit_camera">Camera...</string>
     <string name="menu_edit_create_new">Create new</string>
     <string name="menu_edit_delete">Remove slide</string>
