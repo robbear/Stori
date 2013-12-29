@@ -89,6 +89,16 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
     private int m_displayWidth = 0;
     private int m_displayHeight = 0;
 
+    //**********************************************************************************************
+    //
+    // Initialization methods
+    //
+    //**********************************************************************************************
+
+    //
+    // newInstance
+    // Creates a new instance of the fragment
+    //
     private static EditSlidesFragment newInstance(String slideShareName) {
         if(D)Log.d(TAG, "EditSlidesFragment.newInstance");
 
@@ -99,19 +109,28 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         return f;
     }
 
+    //
+    // setSlideShareName
+    // This method sets the guid name of the slide show, which represents the folder
+    // name of the storage path. It then calls initializeSlideShareJSON to kick off
+    // the creation or retrieval of the SlideShareJSON file.
+    //
+    // This method is called by the parent activity at the time of onAttachFragment,
+    // and is also called in the flow of reinitializing as a result of the user
+    // changing accounts.
+    //
     public void setSlideShareName(String name) {
         if(D)Log.d(TAG, String.format("EditSlidesFragment.setSlideShareName: %s", name));
 
         m_slideShareName = name;
 
-        //
-        // Note: setSlideShareName is called only by the parent activity and is done
-        // at the time of onAttachFragment. It's only at this point we can have the
-        // parent activity context and load or create the SlideShareJSON file.
-        //
         initializeSlideShareJSON();
     }
 
+    //
+    // setSlideShareTitle
+    // Sets the title in the SlideShareJSON file.
+    //
     public void setSlideShareTitle(String title) {
         if(D)Log.d(TAG, String.format("EditSlidesFragment.setSlideShareTitle: %s", title));
 
@@ -131,106 +150,11 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         }
     }
 
-    public void setImageFileName(String fileName) {
-        if(D)Log.d(TAG, String.format("EditSlidesFragment.setImageFileName: %s", fileName));
-
-        m_imageFileName = fileName;
-    }
-
-    public void setAudioFileName(String fileName) {
-        if(D)Log.d(TAG, String.format("EditSlidesFragment.setAudioFileName: %s", fileName));
-
-        m_audioFileName = fileName;
-    }
-
-    public void setSlideUuid(String s) {
-        if(D)Log.d(TAG, String.format("EditSlidesFragment.setSlideUuid: %s", s));
-
-        m_slideUuid = s;
-    }
-
-    private void initializeNewSlide(int newIndex) {
-        if(D)Log.d(TAG, String.format("EditSlidesFragment.initializeNewSlide: newIndex=%d", newIndex));
-
-        if (newIndex < 0) {
-            m_currentSlideIndex = 0;
-        }
-        else {
-            m_currentSlideIndex = newIndex;
-        }
-
-        m_imageFileName = null;
-        m_audioFileName = null;
-        m_slideUuid = UUID.randomUUID().toString();
-
-        updateSlideShareJSON();
-
-        m_buttonPlayStop.setEnabled(false);
-    }
-
-    private void initializeSlide(String uuidSlide) {
-        if(D)Log.d(TAG, String.format("EditSlidesFragment.initializeSlide(%s)", uuidSlide));
-
-        m_imageFileName = null;
-        m_audioFileName = null;
-        m_slideUuid = UUID.randomUUID().toString();
-
-        try {
-            SlideJSON sj = m_ssj.getSlide(uuidSlide);
-            m_imageFileName = sj.getImageFilename();
-            m_audioFileName = sj.getAudioFilename();
-            m_slideUuid = uuidSlide;
-
-            m_currentSlideIndex = m_ssj.getOrderIndex(uuidSlide);
-            if(D)Log.d(TAG, String.format("EditSlidesFragment.initializeSlide: m_currentSlideIndex=%d", m_currentSlideIndex));
-
-            m_buttonPlayStop.setEnabled(hasAudio());
-            fillImage();
-        }
-        catch (Exception e) {
-            if(E)Log.e(TAG, "EditSlidesFragment.initializeSlide", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "EditSlidesFragment.initializeSlide", e);
-            e.printStackTrace();
-        }
-    }
-
-    private void deleteSlide() {
-        if(D)Log.d(TAG, "EditSlidesFragment.deleteSlide");
-        if(D)Log.d(TAG, "Before slide deletion:");
-        Utilities.printSlideShareJSON(TAG, m_ssj);
-
-        if (m_imageFileName != null) {
-            Utilities.deleteFile(m_activityParent, m_slideShareName, m_imageFileName);
-            m_imageFileName = null;
-        }
-
-        if (m_audioFileName != null) {
-            Utilities.deleteFile(m_activityParent, m_slideShareName, m_audioFileName);
-            m_audioFileName = null;
-        }
-
-        try {
-            m_ssj.removeSlide(m_slideUuid);
-            m_ssj.save(m_activityParent, m_slideShareName, Config.slideShareJSONFilename);
-        }
-        catch (Exception e) {
-            if(E)Log.e(TAG, "EditSlidesFragment.deleteSlide", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "EditSlidesFragment.deleteSlide", e);
-            e.printStackTrace();
-        }
-
-        m_slideUuid = null;
-
-        if(D)Log.d(TAG, "After slide deletion:");
-        Utilities.printSlideShareJSON(TAG, m_ssj);
-    }
-
+    //
+    // initializeSlideShareJSON
+    // Key method in initializing the EditSlidesFragment state. Loads or creates
+    // the m_ssj SlideShareJSON structure.
+    //
     private void initializeSlideShareJSON() {
         if(D)Log.d(TAG, "EditSlidesFragment.initializeSlideShareJSON");
 
@@ -266,6 +190,500 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         if(D)Log.d(TAG, "EditSlidesFragment.initializeSlideShareJSON: here is the current JSON:");
         Utilities.printSlideShareJSON(TAG, m_ssj);
     }
+
+    //
+    // initializeNewSlideShow
+    // Helper method called by initializeForChangeInAccount and createNewSlideShow.
+    // This method is critical for initializing state, similar to the fragment
+    // lifecycle flow, but without recreating the activity/fragment.
+    //
+    private void initializeNewSlideShow() {
+        if(D)Log.d(TAG, "EditSlidesFragment.initializeNewSlideShow");
+
+        //
+        // Delete the old slide share directory and create a new one.
+        // Create a new m_slideShareName
+        //
+
+        if (m_slideShareName != null) {
+            Utilities.deleteSlideShareDirectory(m_activityParent, m_slideShareName);
+        }
+        m_slideShareName = UUID.randomUUID().toString();
+
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.initializeNewSlideShow - new slideShareName: %s", m_slideShareName));
+
+        SharedPreferences.Editor edit = m_prefs.edit();
+        edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, m_slideShareName);
+        edit.commit();
+
+        Utilities.createOrGetSlideShareDirectory(m_activityParent, m_slideShareName);
+
+        enterSlideShareTitleAndRecreate();
+    }
+
+    //
+    // enterSlideShareTitleAndRecreate
+    // Part of the newly created show flow, provides UI for entering a title,
+    // then kicks off the initialization flow via a call to setSlideShareName.
+    //
+    private void enterSlideShareTitleAndRecreate() {
+        if(D)Log.d(TAG, "EditSlidesActivity.enterSlideShareTitleAndRecreate");
+
+        final EditText titleText = new EditText(m_activityParent);
+        titleText.setHint(getString(R.string.main_new_title_hint));
+        titleText.setSingleLine();
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
+        adb.setTitle(getString(R.string.main_new_title_title)); // BUGBUG - TODO - rename from main
+        adb.setCancelable(false);
+        adb.setView(titleText);
+        adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String title = titleText.getText().toString();
+
+                dialog.dismiss();
+
+                setSlideShareName(m_slideShareName);
+                setSlideShareTitle(title);
+
+                m_currentSlideIndex = 0;
+                m_imageGalleryAdapter = new ImageGalleryAdapter();
+                m_imageGalleryAdapter.setContext(m_activityParent);
+                m_imageGalleryAdapter.setSlideShareJSON(m_ssj);
+                m_imageGalleryAdapter.setSlideShareName(m_slideShareName);
+                m_horizontalListView.setAdapter(m_imageGalleryAdapter);
+
+                selectSlide(m_currentSlideIndex);
+                getActivity().getActionBar().setTitle(title == null ? getString(R.string.default_neodori_title) : title);
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
+    }
+
+    //
+    // initializeForChangeInAccount
+    // Called in response to the user selecting a new account.
+    //
+    public void initializeForChangeInAccount() {
+        if(D)Log.d(TAG, "EditSlidesFragment.initializeForChangeInAccount");
+
+        initializeNewSlideShow();
+    }
+
+    //
+    // createNewSlideShow
+    // Called in response to the user choosing to create a new slide show.
+    //
+    private void createNewSlideShow() {
+        if(D)Log.d(TAG, "EditSlidesFragment.createNewSlideShow");
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
+        adb.setTitle(getString(R.string.main_create_alert_title));
+        adb.setCancelable(true);
+        adb.setMessage(getString(R.string.main_create_alert_message));
+        adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                initializeNewSlideShow();
+            }
+        });
+        adb.setNegativeButton(getString(R.string.cancel_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
+    }
+
+
+    //**********************************************************************************************
+    //
+    // General helper methods
+    //
+    //**********************************************************************************************
+
+    public void setImageFileName(String fileName) {
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.setImageFileName: %s", fileName));
+
+        m_imageFileName = fileName;
+    }
+
+    public void setAudioFileName(String fileName) {
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.setAudioFileName: %s", fileName));
+
+        m_audioFileName = fileName;
+    }
+
+    public void setSlideUuid(String s) {
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.setSlideUuid: %s", s));
+
+        m_slideUuid = s;
+    }
+
+    //
+    // initializeNewSlide
+    // Initializes and creates a new slide through the call to updateSlideShareJSON.
+    // Stops any playing audio.
+    //
+    private void initializeNewSlide(int newIndex) {
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.initializeNewSlide: newIndex=%d", newIndex));
+
+        if (newIndex < 0) {
+            m_currentSlideIndex = 0;
+        }
+        else {
+            m_currentSlideIndex = newIndex;
+        }
+
+        m_imageFileName = null;
+        m_audioFileName = null;
+        m_slideUuid = UUID.randomUUID().toString();
+
+        updateSlideShareJSON();
+
+        m_buttonPlayStop.setEnabled(false);
+    }
+
+    //
+    // initializeSlide
+    // Initializes the slide represented by uuidSlide to be the
+    // current slide being viewed.
+    //
+    private void initializeSlide(String uuidSlide) {
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.initializeSlide(%s)", uuidSlide));
+
+        m_imageFileName = null;
+        m_audioFileName = null;
+        m_slideUuid = UUID.randomUUID().toString();
+
+        try {
+            SlideJSON sj = m_ssj.getSlide(uuidSlide);
+            m_imageFileName = sj.getImageFilename();
+            m_audioFileName = sj.getAudioFilename();
+            m_slideUuid = uuidSlide;
+
+            m_currentSlideIndex = m_ssj.getOrderIndex(uuidSlide);
+            if(D)Log.d(TAG, String.format("EditSlidesFragment.initializeSlide: m_currentSlideIndex=%d", m_currentSlideIndex));
+
+            m_buttonPlayStop.setEnabled(hasAudio());
+            fillImage();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.initializeSlide", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.initializeSlide", e);
+            e.printStackTrace();
+        }
+    }
+
+    //
+    // deleteSlide
+    // Deletes the currenly viewed slide.
+    //
+    private void deleteSlide() {
+        if(D)Log.d(TAG, "EditSlidesFragment.deleteSlide");
+        if(D)Log.d(TAG, "Before slide deletion:");
+        Utilities.printSlideShareJSON(TAG, m_ssj);
+
+        if (m_imageFileName != null) {
+            Utilities.deleteFile(m_activityParent, m_slideShareName, m_imageFileName);
+            m_imageFileName = null;
+        }
+
+        if (m_audioFileName != null) {
+            Utilities.deleteFile(m_activityParent, m_slideShareName, m_audioFileName);
+            m_audioFileName = null;
+        }
+
+        try {
+            m_ssj.removeSlide(m_slideUuid);
+            m_ssj.save(m_activityParent, m_slideShareName, Config.slideShareJSONFilename);
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.deleteSlide", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.deleteSlide", e);
+            e.printStackTrace();
+        }
+
+        m_slideUuid = null;
+
+        if(D)Log.d(TAG, "After slide deletion:");
+        Utilities.printSlideShareJSON(TAG, m_ssj);
+    }
+
+    public void publishSlides() {
+        if(D)Log.d(TAG, "EditSlidesFragment.publishSlides");
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
+        adb.setTitle(getString(R.string.publish_dialog_title));
+        adb.setCancelable(true);
+        adb.setMessage(getString(R.string.publish_dialog_message));
+        adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                CloudStore cloudStore = new CloudStore(m_activityParent, m_userUuid,
+                        m_slideShareName, Config.CLOUD_STORAGE_PROVIDER, EditSlidesFragment.this);
+
+                cloudStore.saveAsync();
+
+                m_progressDialog = new ProgressDialog(m_activityParent);
+                m_progressDialog.setTitle(getString(R.string.upload_dialog_title));
+                m_progressDialog.setCancelable(false);
+                m_progressDialog.setIndeterminate(true);
+                m_progressDialog.show();
+            }
+        });
+        adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
+    }
+
+    public void deleteCurrentSlide() {
+        if(D)Log.d(TAG, "EditSlidesFragment.deleteCurrentSlide: position");
+
+        // Deletes the slide and sets the current slide to the same index or
+        // creates a new slide if at the end of the order array.
+
+        try {
+            int oldIndex = m_ssj.getOrderIndex(m_slideUuid);
+            deleteSlide();
+
+            String slideUuid = m_ssj.getSlideUuidByOrderIndex(oldIndex);
+
+            if (slideUuid == null) {
+                // Check for whether we deleted from the end of the list
+                slideUuid = m_ssj.getSlideUuidByOrderIndex(oldIndex - 1);
+                if (slideUuid == null) {
+                    initializeNewSlide(0);
+                }
+                else {
+                    initializeSlide(slideUuid);
+                }
+            }
+            else {
+                initializeSlide(slideUuid);
+            }
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.onDeleteButtonClicked", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.onDeleteButtonClicked", e);
+            e.printStackTrace();
+        }
+
+        m_imageGalleryAdapter.notifyDataSetChanged();
+        fillImage();
+    }
+
+    public void selectSlide(int position) {
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.selectSlide: position=%d", position));
+
+        m_currentSlideIndex = position;
+
+        String uuidSlide = null;
+        try {
+            uuidSlide = m_ssj.getSlideUuidByOrderIndex(m_currentSlideIndex);
+        }
+        catch (Exception e) {
+            if(D)Log.d(TAG, "EditSlidesFragment.onItemSelected", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(D)Log.d(TAG, "EditSlidesFragment.onItemSelected", e);
+            e.printStackTrace();
+        }
+
+        if (uuidSlide == null) {
+            initializeNewSlide(m_currentSlideIndex);
+        }
+        else {
+            initializeSlide(uuidSlide);
+        }
+    }
+
+    public void selectImageFromGallery() {
+        if(D)Log.d(TAG, "EditSlidesFragment.selectImageFromGallery");
+
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(intent, REQUEST_IMAGE);
+    }
+
+    public void selectImageFromCamera() {
+        if(D)Log.d(TAG, "EditSlidesFragment.selectImageFromCamera");
+
+        String imageFileName = getNewImageFileName();
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/SlideShare";
+        File pictureDirPath = new File(path);
+        if (!pictureDirPath.exists()) {
+            if(D)Log.d(TAG, "****** creating directory");
+            pictureDirPath.mkdir();
+        }
+
+        m_currentCameraPhotoFilePath = pictureDirPath + "/" + imageFileName;
+        if(D)Log.d(TAG, String.format("CreateSlidesFragment.selectImageFromCamera: m_currentCameraPhotoFilePath=%s", m_currentCameraPhotoFilePath));
+
+        File imageFile = new File(m_currentCameraPhotoFilePath);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
+        startActivityForResult(intent, REQUEST_CAMERA);
+    }
+
+    public void onSaveComplete(CloudStore.SaveErrors se, SlideShareJSON ssj) {
+        if(D)Log.d(TAG, String.format("CreateSlidesFragment.onSaveComplete: se=%s", se));
+
+        if (ssj != null) {
+            m_ssj = ssj;
+        }
+
+        if (m_progressDialog != null) {
+            m_progressDialog.dismiss();
+            m_progressDialog = null;
+        }
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
+        adb.setCancelable(false);
+
+        if (se == CloudStore.SaveErrors.Success) {
+            adb.setTitle(getString(R.string.upload_dialog_complete_title));
+            adb.setMessage(getString(R.string.upload_dialog_complete_message_format));
+            adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+
+                    Utilities.shareShow(m_activityParent, m_userUuid, m_slideShareName);
+                }
+            });
+            adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
+        else {
+            adb.setTitle(getString(R.string.upload_dialog_failure_title));
+            adb.setMessage(String.format(getString(R.string.upload_dialog_failure_message_format), se.toString()));
+            adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
+
+        AlertDialog ad = adb.create();
+        ad.show();
+    }
+
+    private void updateSlideShareJSON() {
+        if(D)Log.d(TAG, "EditSlidesFragment.updateSlideShareJSON");
+        if(D)Log.d(TAG, "Current JSON:");
+        Utilities.printSlideShareJSON(TAG, m_ssj);
+
+        try {
+            String imageUrl = Utilities.buildResourceUrlString(m_userUuid, m_slideShareName, m_imageFileName);
+            String audioUrl = Utilities.buildResourceUrlString(m_userUuid, m_slideShareName, m_audioFileName);
+
+            m_ssj.upsertSlide(m_slideUuid, m_currentSlideIndex, imageUrl, audioUrl);
+            m_ssj.save(m_activityParent, m_slideShareName, Config.slideShareJSONFilename);
+
+            m_currentSlideIndex = m_ssj.getOrderIndex(m_slideUuid);
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.updateSlideShareJSON", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.updateSlideShareJSON", e);
+            e.printStackTrace();
+        }
+
+        m_imageGalleryAdapter.notifyDataSetChanged();
+        fillImage();
+
+        if(D)Log.d(TAG, "After update:");
+        Utilities.printSlideShareJSON(TAG, m_ssj);
+    }
+
+    private void fillImage() {
+        if(D)Log.d(TAG, "EditSlidesFragment.fillImage");
+
+        if (m_imageFileName == null) {
+            m_imageSwitcherSelected.setImageResource(R.drawable.ic_defaultslideimage);
+            return;
+        }
+
+        int targetW = m_imageSwitcherSelected.getWidth();
+        int targetH = m_imageSwitcherSelected.getHeight();
+
+        // BUGBUG - note that getWidth/getHeight always returns zero at
+        // this point of the fragment life cycle. As a temporary work around,
+        // use the screen dimensions if this is the case.
+        // See issue #9
+        if (targetW == 0 || targetH == 0) {
+            targetW = m_displayWidth;
+            targetH = m_displayHeight;
+        }
+
+        try {
+            String filePath = Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName);
+            Bitmap bitmap = Utilities.getConstrainedBitmap(filePath, targetW, targetH);
+
+            Drawable drawableImage = new BitmapDrawable(m_activityParent.getResources(), bitmap);
+            m_imageSwitcherSelected.setImageDrawable(drawableImage);
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.fillImage", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditSlidesFragment.fillImage", e);
+            e.printStackTrace();
+        }
+    }
+
+    private static String getNewImageFileName() {
+        return UUID.randomUUID().toString() + ".jpg";
+    }
+
+    private static String getNewAudioFileName() {
+        return UUID.randomUUID().toString() + ".3gp";
+    }
+
+
+    //**********************************************************************************************
+    //
+    // Fragment lifecycle overrides
+    //
+    //**********************************************************************************************
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -348,11 +766,6 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         if(D)Log.d(TAG, String.format("EditSlidesFragment.onAttach: displayWidth=%d, displayHeight=%d", m_displayWidth, m_displayHeight));
 
         m_prefs = m_activityParent.getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
-
-        // if (activity instanceof SomeActivityInterface) {
-        // }
-        // else {
-        //     throw new ClassCastException(activity.toString() + " must implement SomeActivityInterface");
     }
 
     @Override
@@ -665,344 +1078,12 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         }
     }
 
-    private void initializeNewSlideShow() {
-        if(D)Log.d(TAG, "EditSlidesFragment.initializeNewSlideShow");
 
-        //
-        // Delete the old slide share directory and create a new one.
-        // Create a new m_slideShareName
-        //
-
-        if (m_slideShareName != null) {
-            Utilities.deleteSlideShareDirectory(m_activityParent, m_slideShareName);
-        }
-        m_slideShareName = UUID.randomUUID().toString();
-
-        if(D)Log.d(TAG, String.format("EditSlidesFragment.initializeNewSlideShow - new slideShareName: %s", m_slideShareName));
-
-        SharedPreferences.Editor edit = m_prefs.edit();
-        edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, m_slideShareName);
-        edit.commit();
-
-        Utilities.createOrGetSlideShareDirectory(m_activityParent, m_slideShareName);
-
-        enterSlideShareTitleAndRecreate();
-    }
-
-    public void initializeForChangeInAccount() {
-        if(D)Log.d(TAG, "EditSlidesFragment.initializeForChangeInAccount");
-
-        initializeNewSlideShow();
-    }
-
-    private void createNewSlideShow() {
-        if(D)Log.d(TAG, "EditSlidesFragment.createNewSlideShow");
-
-        AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
-        adb.setTitle(getString(R.string.main_create_alert_title));
-        adb.setCancelable(true);
-        adb.setMessage(getString(R.string.main_create_alert_message));
-        adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-
-                initializeNewSlideShow();
-            }
-        });
-        adb.setNegativeButton(getString(R.string.cancel_text), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        AlertDialog ad = adb.create();
-        ad.show();
-    }
-
-    private void enterSlideShareTitleAndRecreate() {
-        if(D)Log.d(TAG, "EditSlidesActivity.enterSlideShareTitleAndRecreate");
-
-        final EditText titleText = new EditText(m_activityParent);
-        titleText.setHint(getString(R.string.main_new_title_hint));
-        titleText.setSingleLine();
-
-        AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
-        adb.setTitle(getString(R.string.main_new_title_title)); // BUGBUG - TODO - rename from main
-        adb.setCancelable(false);
-        adb.setView(titleText);
-        adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String title = titleText.getText().toString();
-
-                dialog.dismiss();
-
-                setSlideShareName(m_slideShareName);
-                setSlideShareTitle(title);
-
-                m_currentSlideIndex = 0;
-                m_imageGalleryAdapter = new ImageGalleryAdapter();
-                m_imageGalleryAdapter.setContext(m_activityParent);
-                m_imageGalleryAdapter.setSlideShareJSON(m_ssj);
-                m_imageGalleryAdapter.setSlideShareName(m_slideShareName);
-                m_horizontalListView.setAdapter(m_imageGalleryAdapter);
-
-                selectSlide(m_currentSlideIndex);
-                getActivity().getActionBar().setTitle(title == null ? getString(R.string.default_neodori_title) : title);
-            }
-        });
-
-        AlertDialog ad = adb.create();
-        ad.show();
-    }
-
-    public void publishSlides() {
-        if(D)Log.d(TAG, "EditSlidesFragment.publishSlides");
-
-        AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
-        adb.setTitle(getString(R.string.publish_dialog_title));
-        adb.setCancelable(true);
-        adb.setMessage(getString(R.string.publish_dialog_message));
-        adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-
-                CloudStore cloudStore = new CloudStore(m_activityParent, m_userUuid,
-                        m_slideShareName, Config.CLOUD_STORAGE_PROVIDER, EditSlidesFragment.this);
-
-                cloudStore.saveAsync();
-
-                m_progressDialog = new ProgressDialog(m_activityParent);
-                m_progressDialog.setTitle(getString(R.string.upload_dialog_title));
-                m_progressDialog.setCancelable(false);
-                m_progressDialog.setIndeterminate(true);
-                m_progressDialog.show();
-            }
-        });
-        adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        AlertDialog ad = adb.create();
-        ad.show();
-    }
-
-    public void deleteCurrentSlide() {
-        if(D)Log.d(TAG, "EditSlidesFragment.deleteCurrentSlide: position");
-
-        // Deletes the slide and sets the current slide to the same index or
-        // creates a new slide if at the end of the order array.
-
-        try {
-            int oldIndex = m_ssj.getOrderIndex(m_slideUuid);
-            deleteSlide();
-
-            String slideUuid = m_ssj.getSlideUuidByOrderIndex(oldIndex);
-
-            if (slideUuid == null) {
-                // Check for whether we deleted from the end of the list
-                slideUuid = m_ssj.getSlideUuidByOrderIndex(oldIndex - 1);
-                if (slideUuid == null) {
-                    initializeNewSlide(0);
-                }
-                else {
-                    initializeSlide(slideUuid);
-                }
-            }
-            else {
-                initializeSlide(slideUuid);
-            }
-        }
-        catch (Exception e) {
-            if(E)Log.e(TAG, "EditSlidesFragment.onDeleteButtonClicked", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "EditSlidesFragment.onDeleteButtonClicked", e);
-            e.printStackTrace();
-        }
-
-        m_imageGalleryAdapter.notifyDataSetChanged();
-        fillImage();
-    }
-
-    public void selectSlide(int position) {
-        if(D)Log.d(TAG, String.format("EditSlidesFragment.selectSlide: position=%d", position));
-
-        m_currentSlideIndex = position;
-
-        String uuidSlide = null;
-        try {
-            uuidSlide = m_ssj.getSlideUuidByOrderIndex(m_currentSlideIndex);
-        }
-        catch (Exception e) {
-            if(D)Log.d(TAG, "EditSlidesFragment.onItemSelected", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(D)Log.d(TAG, "EditSlidesFragment.onItemSelected", e);
-            e.printStackTrace();
-        }
-
-        if (uuidSlide == null) {
-            initializeNewSlide(m_currentSlideIndex);
-        }
-        else {
-            initializeSlide(uuidSlide);
-        }
-    }
-
-    public void selectImageFromGallery() {
-        if(D)Log.d(TAG, "EditSlidesFragment.selectImageFromGallery");
-
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, REQUEST_IMAGE);
-    }
-
-    public void selectImageFromCamera() {
-        if(D)Log.d(TAG, "EditSlidesFragment.selectImageFromCamera");
-
-        String imageFileName = getNewImageFileName();
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/SlideShare";
-        File pictureDirPath = new File(path);
-        if (!pictureDirPath.exists()) {
-            if(D)Log.d(TAG, "****** creating directory");
-            pictureDirPath.mkdir();
-        }
-
-        m_currentCameraPhotoFilePath = pictureDirPath + "/" + imageFileName;
-        if(D)Log.d(TAG, String.format("CreateSlidesFragment.selectImageFromCamera: m_currentCameraPhotoFilePath=%s", m_currentCameraPhotoFilePath));
-
-        File imageFile = new File(m_currentCameraPhotoFilePath);
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
-        startActivityForResult(intent, REQUEST_CAMERA);
-    }
-
-    public void onSaveComplete(CloudStore.SaveErrors se, SlideShareJSON ssj) {
-        if(D)Log.d(TAG, String.format("CreateSlidesFragment.onSaveComplete: se=%s", se));
-
-        if (ssj != null) {
-            m_ssj = ssj;
-        }
-
-        if (m_progressDialog != null) {
-            m_progressDialog.dismiss();
-            m_progressDialog = null;
-        }
-
-        AlertDialog.Builder adb = new AlertDialog.Builder(m_activityParent);
-        adb.setCancelable(false);
-
-        if (se == CloudStore.SaveErrors.Success) {
-            adb.setTitle(getString(R.string.upload_dialog_complete_title));
-            adb.setMessage(getString(R.string.upload_dialog_complete_message_format));
-            adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-
-                    Utilities.shareShow(m_activityParent, m_userUuid, m_slideShareName);
-                }
-            });
-            adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-        }
-        else {
-            adb.setTitle(getString(R.string.upload_dialog_failure_title));
-            adb.setMessage(String.format(getString(R.string.upload_dialog_failure_message_format), se.toString()));
-            adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-        }
-
-        AlertDialog ad = adb.create();
-        ad.show();
-    }
-
-    private void updateSlideShareJSON() {
-        if(D)Log.d(TAG, "EditSlidesFragment.updateSlideShareJSON");
-        if(D)Log.d(TAG, "Current JSON:");
-        Utilities.printSlideShareJSON(TAG, m_ssj);
-
-        try {
-            String imageUrl = Utilities.buildResourceUrlString(m_userUuid, m_slideShareName, m_imageFileName);
-            String audioUrl = Utilities.buildResourceUrlString(m_userUuid, m_slideShareName, m_audioFileName);
-
-            m_ssj.upsertSlide(m_slideUuid, m_currentSlideIndex, imageUrl, audioUrl);
-            m_ssj.save(m_activityParent, m_slideShareName, Config.slideShareJSONFilename);
-
-            m_currentSlideIndex = m_ssj.getOrderIndex(m_slideUuid);
-        }
-        catch (Exception e) {
-            if(E)Log.e(TAG, "EditSlidesFragment.updateSlideShareJSON", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "EditSlidesFragment.updateSlideShareJSON", e);
-            e.printStackTrace();
-        }
-
-        m_imageGalleryAdapter.notifyDataSetChanged();
-        fillImage();
-
-        if(D)Log.d(TAG, "After update:");
-        Utilities.printSlideShareJSON(TAG, m_ssj);
-    }
-
-    private void fillImage() {
-        if(D)Log.d(TAG, "EditSlidesFragment.fillImage");
-
-        if (m_imageFileName == null) {
-            m_imageSwitcherSelected.setImageResource(R.drawable.ic_defaultslideimage);
-            return;
-        }
-
-        int targetW = m_imageSwitcherSelected.getWidth();
-        int targetH = m_imageSwitcherSelected.getHeight();
-
-        // BUGBUG - note that getWidth/getHeight always returns zero at
-        // this point of the fragment life cycle. As a temporary work around,
-        // use the screen dimensions if this is the case.
-        // See issue #9
-        if (targetW == 0 || targetH == 0) {
-            targetW = m_displayWidth;
-            targetH = m_displayHeight;
-        }
-
-        try {
-            String filePath = Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName);
-            Bitmap bitmap = Utilities.getConstrainedBitmap(filePath, targetW, targetH);
-
-            Drawable drawableImage = new BitmapDrawable(m_activityParent.getResources(), bitmap);
-            m_imageSwitcherSelected.setImageDrawable(drawableImage);
-        }
-        catch (Exception e) {
-            if(E)Log.e(TAG, "EditSlidesFragment.fillImage", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "EditSlidesFragment.fillImage", e);
-            e.printStackTrace();
-        }
-    }
+    //**********************************************************************************************
+    //
+    // Audio methods
+    //
+    //**********************************************************************************************
 
     private void startRecording() {
         if(D)Log.d(TAG, "EditSlidesFragment.startRecording");
@@ -1143,23 +1224,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
         m_buttonPlayStop.setText("Play");
     }
 
-    private boolean isDirty() {
-        return hasAudio() || hasImage();
-    }
-
     private boolean hasAudio() {
         return m_audioFileName != null;
-    }
-
-    private boolean hasImage() {
-        return m_imageFileName != null;
-    }
-
-    private static String getNewImageFileName() {
-        return UUID.randomUUID().toString() + ".jpg";
-    }
-
-    private static String getNewAudioFileName() {
-        return UUID.randomUUID().toString() + ".3gp";
     }
 }
