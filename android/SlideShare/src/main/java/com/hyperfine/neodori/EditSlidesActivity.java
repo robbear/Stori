@@ -107,7 +107,7 @@ public class EditSlidesActivity extends FragmentActivity implements ViewSwitcher
             if(D)Log.d(TAG, "EditSlidesActivity.onAttachFragment - found our editSlidesFragment");
             String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
             EditSlidesFragment editSlidesFragment = (EditSlidesFragment)fragment;
-            editSlidesFragment.setSlideShareName(slideShareName);
+            editSlidesFragment.initializeEditSlidesFragment(slideShareName);
         }
     }
 

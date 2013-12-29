@@ -104,13 +104,13 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
 
         EditSlidesFragment f = new EditSlidesFragment();
 
-        f.setSlideShareName(slideShareName);
+        f.initializeEditSlidesFragment(slideShareName);
 
         return f;
     }
 
     //
-    // setSlideShareName
+    // initializeEditSlidesFragment
     // This method sets the guid name of the slide show, which represents the folder
     // name of the storage path. It then calls initializeSlideShareJSON to kick off
     // the creation or retrieval of the SlideShareJSON file.
@@ -119,8 +119,8 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
     // and is also called in the flow of reinitializing as a result of the user
     // changing accounts.
     //
-    public void setSlideShareName(String name) {
-        if(D)Log.d(TAG, String.format("EditSlidesFragment.setSlideShareName: %s", name));
+    public void initializeEditSlidesFragment(String name) {
+        if(D)Log.d(TAG, String.format("EditSlidesFragment.initializeEditSlidesFragment: %s", name));
 
         m_slideShareName = name;
 
@@ -244,7 +244,7 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
 
                 dialog.dismiss();
 
-                setSlideShareName(m_slideShareName);
+                initializeEditSlidesFragment(m_slideShareName);
                 setSlideShareTitle(title);
 
                 m_currentSlideIndex = 0;
