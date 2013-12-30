@@ -13,6 +13,7 @@
     <string name="download_dialog_message_format">Downloading %1$d of %2$d...</string>
     <string name="download_errordialog_title">Download failed</string>
     <string name="download_errordialog_message">Filed to download the files necessary for viewing this neodori show</string>
+    <string name="googlelogin_wait_message">Signing in...</string>
     <string name="hello_world">Hello world!</string>
     <string name="main_create_alert_title">Create new?</string>
     <string name="main_create_alert_message">If you have not yet published your previous work, it will be lost</string>

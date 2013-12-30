@@ -16,6 +16,7 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.hyperfine.neodori.EditSlidesActivity;
 import com.hyperfine.neodori.MainActivity;
+import com.hyperfine.neodori.R;
 import com.hyperfine.neodori.SSPreferences;
 
 import static com.hyperfine.neodori.Config.D;
@@ -33,6 +34,8 @@ public class GoogleLogin extends AlertActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(D)Log.d(TAG, "GoogleLogin.onCreate");
+
+        setContentView(R.layout.activity_googlelogin);
 
         m_prefs = getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
         m_userAccountEmail = AmazonSharedPreferencesWrapper.getUserEmail(m_prefs);
