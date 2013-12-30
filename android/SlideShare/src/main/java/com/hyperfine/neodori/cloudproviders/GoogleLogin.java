@@ -15,7 +15,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.hyperfine.neodori.EditSlidesActivity;
-import com.hyperfine.neodori.MainActivity;
 import com.hyperfine.neodori.R;
 import com.hyperfine.neodori.SSPreferences;
 

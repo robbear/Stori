@@ -2,7 +2,6 @@ package com.hyperfine.neodori.cloudproviders;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -11,7 +10,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.hyperfine.neodori.EditSlidesActivity;
-import com.hyperfine.neodori.MainActivity;
 
 import static com.hyperfine.neodori.Config.D;
 import static com.hyperfine.neodori.Config.E;
