@@ -33,7 +33,7 @@ public class Config
     public static final boolean USE_GOOGLE_PLAY_SERVICES = true;
 
     // Default web site base url
-    public static final String baseWebUrl = "http://neodoridotcom.jit.su/";
+    public static final String baseWebUrl = "http://neodori.com/";
     public static final String baseWebSlidesUrl = baseWebUrl + "slides/";
     public static final int webUrlSegmentCount = 3;
 
