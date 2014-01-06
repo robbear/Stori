@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fragment_editplay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,4 +16,16 @@
         android:inAnimation="@anim/fade_in"
         android:outAnimation="@anim/fade_out" />
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/overlay_panel"
+        android:orientation="vertical"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+        <Button
+            android:id="@+id/test_button"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Test" />
+    </LinearLayout>
+
+</RelativeLayout>

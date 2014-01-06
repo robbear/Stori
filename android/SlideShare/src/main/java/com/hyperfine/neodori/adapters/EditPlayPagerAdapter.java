@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.hyperfine.neodori.SlideJSON;
 import com.hyperfine.neodori.SlideShareJSON;
-import com.hyperfine.neodori.fragments.PlaySlidesFragment;
+import com.hyperfine.neodori.fragments.EditPlayFragment;
 
 import static com.hyperfine.neodori.Config.D;
 import static com.hyperfine.neodori.Config.E;
@@ -61,7 +61,7 @@ public class EditPlayPagerAdapter extends FragmentStatePagerAdapter {
             e.printStackTrace();
         }
 
-        return PlaySlidesFragment.newInstance(m_activityParent, i, m_slideShareName, sj);
+        return EditPlayFragment.newInstance(m_activityParent, i, m_slideShareName, sj);
     }
 
     @Override

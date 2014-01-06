@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.ViewSwitcher;
 
 import com.hyperfine.neodori.adapters.EditPlayPagerAdapter;
-import com.hyperfine.neodori.fragments.PlaySlidesFragment;
+import com.hyperfine.neodori.fragments.EditPlayFragment;
 
 import java.io.File;
 import java.util.List;
@@ -120,9 +120,9 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                     FragmentManager fm = getSupportFragmentManager();
                     List<Fragment> fragments = fm.getFragments();
                     for (Fragment f : fragments) {
-                        PlaySlidesFragment psf = (PlaySlidesFragment)f;
-                        if (psf != null) {
-                            psf.onTabPageSelected(position);
+                        EditPlayFragment epf = (EditPlayFragment)f;
+                        if (epf != null) {
+                            epf.onTabPageSelected(position);
                         }
                     }
                 }
