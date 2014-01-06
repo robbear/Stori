@@ -35,6 +35,7 @@
                     android:pathPrefix="/slides/" />
             </intent-filter>
         </activity>
+        <activity android:name=".EditPlayActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
         <activity
             android:name="com.amazon.identity.auth.device.authorization.AuthorizationActivity"
             android:allowTaskReparenting="true"
