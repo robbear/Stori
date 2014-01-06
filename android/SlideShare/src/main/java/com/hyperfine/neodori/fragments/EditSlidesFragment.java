@@ -35,6 +35,7 @@ import android.widget.ViewSwitcher;
 import com.hyperfine.neodori.AboutActivity;
 import com.hyperfine.neodori.CloudStore;
 import com.hyperfine.neodori.Config;
+import com.hyperfine.neodori.EditPlayActivity;
 import com.hyperfine.neodori.EditSlidesActivity;
 import com.hyperfine.neodori.HorizontalListView;
 import com.hyperfine.neodori.PlaySlidesActivity;
@@ -1004,6 +1005,17 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Intent intent = new Intent(m_activityParent, AboutActivity.class);
+                m_activityParent.startActivity(intent);
+
+                return true;
+            }
+        });
+
+        MenuItem test = menu.findItem(R.id.menu_edit_editplaytest);
+        test.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(m_activityParent, EditPlayActivity.class);
                 m_activityParent.startActivity(intent);
 
                 return true;

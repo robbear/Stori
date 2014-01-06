@@ -39,6 +39,12 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private int m_currentTabPosition = 0;
     private boolean m_loadedFromSavedInstanceState = false;
 
+    public enum PlayEditMode {
+        Edit,
+        PlayEdit,
+        Play
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if(D)Log.d(TAG, "EditPlayActivity.onCreate");

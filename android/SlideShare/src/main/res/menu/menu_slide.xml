@@ -34,4 +34,7 @@
     <item
         android:id="@+id/menu_edit_about"
         android:title="@string/menu_edit_about" />
+    <item
+        android:id="@+id/menu_edit_editplaytest"
+        android:title="EditPlay test" />
 </menu>
