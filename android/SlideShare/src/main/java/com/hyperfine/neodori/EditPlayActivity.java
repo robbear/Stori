@@ -28,6 +28,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     public final static String EXTRA_FROMURL = "extra_from_url";
 
     private final static String INSTANCE_STATE_CURRENT_TAB = "instance_state_current_tab";
+    private final static String INSTANCE_STATE_EDITPLAYMODE = "instance_state_editplaymode";
 
     private SharedPreferences m_prefs;
     private SlideShareJSON m_ssj;
@@ -38,12 +39,30 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private String m_slideShareName;
     private int m_currentTabPosition = 0;
     private boolean m_loadedFromSavedInstanceState = false;
+    private EditPlayMode m_editPlayMode = EditPlayMode.Edit;
 
-    public enum PlayEditMode {
-        Edit,
-        PlayEdit,
-        Play
+    public enum EditPlayMode {
+        Edit(0),
+        PlayEdit(1),
+        Play(2);
+
+        private final int value;
+        private  EditPlayMode(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
     };
+
+    public EditPlayMode getEditPlayMode() {
+        return m_editPlayMode;
+    }
+
+    public void setEditPlayMode(EditPlayMode mode) {
+        m_editPlayMode = mode;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +101,10 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         if (savedInstanceState != null) {
             m_loadedFromSavedInstanceState = true;
             m_currentTabPosition = savedInstanceState.getInt(INSTANCE_STATE_CURRENT_TAB, 0);
+
+            EditPlayMode pemDefault = EditPlayMode.Edit;
+            int pemValue = savedInstanceState.getInt(INSTANCE_STATE_EDITPLAYMODE, pemDefault.getValue());
+            m_editPlayMode = EditPlayMode.values()[pemValue];
         }
 
         m_editPlayPagerAdapter = new EditPlayPagerAdapter(getSupportFragmentManager());
@@ -153,6 +176,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         if(D)Log.d(TAG, String.format("EditPlayActivity.onSaveInstanceState: m_currentTabPosition=%d", m_currentTabPosition));
 
         savedInstanceState.putInt(INSTANCE_STATE_CURRENT_TAB, m_currentTabPosition);
+        savedInstanceState.putInt(INSTANCE_STATE_EDITPLAYMODE, m_editPlayMode.getValue());
     }
 
     @Override

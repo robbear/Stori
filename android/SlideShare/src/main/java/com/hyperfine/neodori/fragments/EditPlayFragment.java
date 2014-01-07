@@ -18,6 +18,7 @@ import android.widget.ViewSwitcher;
 
 import com.hyperfine.neodori.AsyncTaskTimer;
 import com.hyperfine.neodori.Config;
+import com.hyperfine.neodori.EditPlayActivity;
 import com.hyperfine.neodori.R;
 import com.hyperfine.neodori.SlideJSON;
 import com.hyperfine.neodori.Utilities;
@@ -51,6 +52,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private boolean m_ignoreAudio = false;
     private int m_displayWidth = 0;
     private int m_displayHeight = 0;
+    private EditPlayActivity.EditPlayMode m_editPlayMode = EditPlayActivity.EditPlayMode.Edit;
 
     public static EditPlayFragment newInstance(Activity activityParent, int position, String slideShareName, SlideJSON sj) {
         if(D)Log.d(TAG, "EditPlayFragment.newInstance");
@@ -194,13 +196,29 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             public void onClick(View v) {
                 if(D)Log.d(TAG, "EditPlayFragment.onImageClicked");
 
-                if (m_audioFileName != null) {
-                    if (m_isPlaying) {
-                        stopPlaying();
-                    }
-                    else {
-                        startPlaying();
-                    }
+                switch (m_editPlayMode) {
+                    case Edit:
+                        m_editPlayMode = EditPlayActivity.EditPlayMode.PlayEdit;
+                        setActivityEditPlayMode(m_editPlayMode);
+                        updateOverlay();
+                        break;
+
+                    case PlayEdit:
+                        m_editPlayMode = EditPlayActivity.EditPlayMode.Edit;
+                        setActivityEditPlayMode(m_editPlayMode);
+                        updateOverlay();
+                        break;
+
+                    case Play:
+                        if (m_audioFileName != null) {
+                            if (m_isPlaying) {
+                                stopPlaying();
+                            }
+                            else {
+                                startPlaying();
+                            }
+                        }
+                        break;
                 }
             }
         });
@@ -221,13 +239,31 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         m_imageSwitcher.setImageResource(R.drawable.ic_black);
         renderImage();
 
+        m_editPlayMode = getActivityEditPlayMode();
+        updateOverlay();
+
         if (savedInstanceState == null) {
             AsyncTaskTimer.startAsyncTaskTimer(1, Config.audioDelayMillis, this);
         }
     }
 
+    private EditPlayActivity.EditPlayMode getActivityEditPlayMode() {
+        EditPlayActivity.EditPlayMode epm = ((EditPlayActivity)m_activityParent).getEditPlayMode();
+        if(D)Log.d(TAG, String.format("EditPlayFragment.getActivityEditPlayMode: %s", epm.toString()));
+
+        return epm;
+    }
+
+    private void setActivityEditPlayMode(EditPlayActivity.EditPlayMode editPlayMode) {
+        if(D)Log.d(TAG, String.format("EditPlayFragment.setActivityEditPlayMode: %s", editPlayMode.toString()));
+        ((EditPlayActivity)m_activityParent).setEditPlayMode(editPlayMode);
+    }
+
     public void onTabPageSelected(int position) {
         if(D)Log.d(TAG, String.format("EditPlayFragment.onTabPageSelected: m_tabPosition=%d, position=%d", m_tabPosition, position));
+
+        m_editPlayMode = getActivityEditPlayMode();
+        updateOverlay();
 
         m_selectedTabPosition = position;
 
@@ -250,6 +286,18 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         }
         else {
             stopPlaying();
+        }
+    }
+
+    private void updateOverlay() {
+        if(D)Log.d(TAG, String.format("EditPlayFragment.updateOverlay: %s", m_editPlayMode.toString()));
+
+        View view = getView().findViewById(R.id.overlay_panel);
+        if (m_editPlayMode == EditPlayActivity.EditPlayMode.Edit) {
+            view.setVisibility(View.VISIBLE);
+        }
+        else {
+            view.setVisibility(View.GONE);
         }
     }
 

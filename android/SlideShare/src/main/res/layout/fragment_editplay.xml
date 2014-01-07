@@ -19,6 +19,7 @@
     <LinearLayout
         android:id="@+id/overlay_panel"
         android:orientation="vertical"
+        android:visibility="gone"
         android:layout_height="match_parent"
         android:layout_width="match_parent">
         <Button
