@@ -18,15 +18,48 @@
 
     <LinearLayout
         android:id="@+id/overlay_panel"
-        android:orientation="vertical"
-        android:visibility="gone"
+        android:orientation="horizontal"
+        android:visibility="visible"
         android:layout_height="match_parent"
         android:layout_width="match_parent">
-        <Button
-            android:id="@+id/test_button"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="Test" />
+        <RelativeLayout
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight=".10">
+            <Button
+                android:id="@+id/edit_prev_control"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="+"/>
+        </RelativeLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight=".80">
+            <Button
+                android:id="@+id/select_from_gallery_control"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Choose photo" />
+            <Button
+                android:id="@+id/camera_control"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Camera" />
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight=".10">
+            <Button
+                android:id="@+id/edit_next_control"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="+"/>
+        </RelativeLayout>
     </LinearLayout>
 
 </RelativeLayout>
