@@ -49,7 +49,6 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private MediaPlayer m_player;
     private FileInputStream m_fileInputStream;
     private boolean m_isPlaying = false;
-    private boolean m_ignoreAudio = false;
     private int m_displayWidth = 0;
     private int m_displayHeight = 0;
     private EditPlayActivity.EditPlayMode m_editPlayMode = EditPlayActivity.EditPlayMode.Edit;
@@ -201,20 +200,21 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
                         m_editPlayMode = EditPlayActivity.EditPlayMode.PlayEdit;
                         setActivityEditPlayMode(m_editPlayMode);
                         updateOverlay();
+                        startPlaying();
                         break;
 
                     case PlayEdit:
                         m_editPlayMode = EditPlayActivity.EditPlayMode.Edit;
                         setActivityEditPlayMode(m_editPlayMode);
                         updateOverlay();
+                        stopPlaying();
                         break;
 
                     case Play:
                         if (m_audioFileName != null) {
                             if (m_isPlaying) {
                                 stopPlaying();
-                            }
-                            else {
+                            } else {
                                 startPlaying();
                             }
                         }
@@ -243,7 +243,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         updateOverlay();
 
         if (savedInstanceState == null) {
-            AsyncTaskTimer.startAsyncTaskTimer(1, Config.audioDelayMillis, this);
+            asyncStartAudio();
         }
     }
 
@@ -269,11 +269,22 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
         if (m_tabPosition == position) {
             if(D)Log.d(TAG, "EditPlayFragment.onTabPageSelected - starting audio timer");
-            AsyncTaskTimer.startAsyncTaskTimer(1, Config.audioDelayMillis, this);
+            asyncStartAudio();
         }
         else {
             stopPlaying();
         }
+    }
+
+    private void asyncStartAudio() {
+        if(D)Log.d(TAG, "EditPlayFragment.asyncStartAudio");
+
+        if (m_editPlayMode == EditPlayActivity.EditPlayMode.Edit) {
+            if(D)Log.d(TAG, "EditPlayFragment.asyncStartAudio - mode is Edit, so bailing");
+            return;
+        }
+
+        AsyncTaskTimer.startAsyncTaskTimer(1, Config.audioDelayMillis, this);
     }
 
     public void onAsyncTaskTimerComplete(long cookie) {
@@ -281,8 +292,8 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
                 "EditPlayFragment.onAsyncTaskTimerComplete m_selectedTabPosition=%d, m_tabPosition=%d",
                 m_selectedTabPosition, m_tabPosition));
 
-        if (m_selectedTabPosition == m_tabPosition) {
-            renderAudio();
+        if (m_selectedTabPosition == m_tabPosition && m_editPlayMode != EditPlayActivity.EditPlayMode.Edit) {
+            startPlaying();
         }
         else {
             stopPlaying();
@@ -338,14 +349,6 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         }
     }
 
-    private void renderAudio() {
-        if(D)Log.d(TAG, "EditPlayFragment.renderAudio");
-
-        if (m_audioFileName != null) {
-            startPlaying();
-        }
-    }
-
     private void startPlaying() {
         if(D)Log.d(TAG, "EditPlayFragment.startPlaying");
 
@@ -354,9 +357,8 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             return;
         }
 
-        if (m_ignoreAudio) {
-            if(D)Log.d(TAG, "EditPlayFragment.startPlaying - m_ignoreAudio is true, so skipping audio playback.");
-            m_ignoreAudio = false;
+        if (m_audioFileName == null) {
+            if(D)Log.d(TAG, "EditPlayFragment.startPlaying - m_audioFileName is null, so bailing");
             return;
         }
 
