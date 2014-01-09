@@ -13,6 +13,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageSwitcher;
 import android.widget.ViewSwitcher;
 
@@ -41,9 +42,11 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
     private int m_tabPosition = -1;
     private int m_selectedTabPosition = 0;
-    private Activity m_activityParent;
+    private EditPlayActivity m_editPlayActivity;
     private String m_slideShareName;
     private ImageSwitcher m_imageSwitcher;
+    private Button m_insertBeforeControl;
+    private Button m_insertAfterControl;
     private String m_imageFileName;
     private String m_audioFileName;
     private MediaPlayer m_player;
@@ -53,7 +56,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private int m_displayHeight = 0;
     private EditPlayActivity.EditPlayMode m_editPlayMode = EditPlayActivity.EditPlayMode.Edit;
 
-    public static EditPlayFragment newInstance(Activity activityParent, int position, String slideShareName, SlideJSON sj) {
+    public static EditPlayFragment newInstance(EditPlayActivity editPlayActivity, int position, String slideShareName, SlideJSON sj) {
         if(D)Log.d(TAG, "EditPlayFragment.newInstance");
 
         EditPlayFragment f = new EditPlayFragment();
@@ -61,7 +64,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         f.setTabPosition(position);
         f.setSlideShareName(slideShareName);
         f.setSlideJSON(sj);
-        f.setActivityParent(activityParent);
+        f.setEditPlayActivity(editPlayActivity);
 
         return f;
     }
@@ -95,10 +98,10 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         }
     }
 
-    public void setActivityParent(Activity activityParent) {
-        if(D)Log.d(TAG, "EditPlayFragment.setActivityParent");
+    public void setEditPlayActivity(EditPlayActivity editPlayActivity) {
+        if(D)Log.d(TAG, "EditPlayFragment.setEditPlayActivity");
 
-        m_activityParent = activityParent;
+        m_editPlayActivity = editPlayActivity;
     }
 
     @Override
@@ -160,7 +163,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
         super.onAttach(activity);
 
-        m_activityParent = activity;
+        m_editPlayActivity = (EditPlayActivity)activity;
 
         Display display = activity.getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -169,11 +172,6 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         m_displayHeight = size.y;
 
         if(D)Log.d(TAG, String.format("EditPlayFragment.onAttach: displayWidth=%d, displayHeight=%d", m_displayWidth, m_displayHeight));
-
-        // if (activity instanceof SomeActivityInterface) {
-        // }
-        // else {
-        //     throw new ClassCastException(activity.toString() + " must implement SomeActivityInterface");
     }
 
     @Override
@@ -188,6 +186,24 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         if(D)Log.d(TAG, "EditPlayFragment.onCreateView");
 
         View view = inflater.inflate(R.layout.fragment_editplay, container, false);
+
+        m_insertBeforeControl = (Button)view.findViewById(R.id.edit_prev_control);
+        m_insertBeforeControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(D)Log.d(TAG, "EditPlayFragment.onInsertBeforeButtonClicked");
+                m_editPlayActivity.initializeNewSlide(m_selectedTabPosition);
+            }
+        });
+
+        m_insertAfterControl = (Button)view.findViewById(R.id.edit_next_control);
+        m_insertAfterControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(D)Log.d(TAG, "EditPlayFragment.onInsertAfterButtonClicked");
+                m_editPlayActivity.initializeNewSlide(m_selectedTabPosition + 1);
+            }
+        });
 
         m_imageSwitcher = (ImageSwitcher)view.findViewById(R.id.current_image);
         m_imageSwitcher.setOnClickListener(new View.OnClickListener() {
@@ -232,7 +248,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
         super.onActivityCreated(savedInstanceState);
 
-        m_imageSwitcher.setFactory((ViewSwitcher.ViewFactory)m_activityParent);
+        m_imageSwitcher.setFactory((ViewSwitcher.ViewFactory)m_editPlayActivity);
 
         // Seed the ImageSwitcher with a black background in order to inflate it
         // to non-zero dimensions.
@@ -248,7 +264,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     }
 
     private EditPlayActivity.EditPlayMode getActivityEditPlayMode() {
-        EditPlayActivity.EditPlayMode epm = ((EditPlayActivity)m_activityParent).getEditPlayMode();
+        EditPlayActivity.EditPlayMode epm = m_editPlayActivity.getEditPlayMode();
         if(D)Log.d(TAG, String.format("EditPlayFragment.getActivityEditPlayMode: %s", epm.toString()));
 
         return epm;
@@ -256,7 +272,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
     private void setActivityEditPlayMode(EditPlayActivity.EditPlayMode editPlayMode) {
         if(D)Log.d(TAG, String.format("EditPlayFragment.setActivityEditPlayMode: %s", editPlayMode.toString()));
-        ((EditPlayActivity)m_activityParent).setEditPlayMode(editPlayMode);
+        m_editPlayActivity.setEditPlayMode(editPlayMode);
     }
 
     public void onTabPageSelected(int position) {
@@ -316,7 +332,12 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         if(D)Log.d(TAG, "EditPlayFragment.renderImage");
 
         if (m_imageFileName == null) {
-            m_imageSwitcher.setImageDrawable(null);
+            if (m_editPlayMode == EditPlayActivity.EditPlayMode.Play) {
+                m_imageSwitcher.setImageDrawable(null);
+            }
+            else {
+                m_imageSwitcher.setImageResource(R.drawable.ic_defaultslideimage);
+            }
         }
         else {
             try {
@@ -332,10 +353,10 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
                     targetH = m_displayHeight;
                 }
 
-                String filePath = Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName);
+                String filePath = Utilities.getAbsoluteFilePath(m_editPlayActivity, m_slideShareName, m_imageFileName);
                 Bitmap bitmap = Utilities.getConstrainedBitmap(filePath, targetW, targetH);
 
-                Drawable drawableImage = new BitmapDrawable(m_activityParent.getResources(), bitmap);
+                Drawable drawableImage = new BitmapDrawable(m_editPlayActivity.getResources(), bitmap);
                 m_imageSwitcher.setImageDrawable(drawableImage);
             }
             catch (Exception e) {
@@ -372,7 +393,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         });
 
         try {
-            String filePath = Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_audioFileName);
+            String filePath = Utilities.getAbsoluteFilePath(m_editPlayActivity, m_slideShareName, m_audioFileName);
             if(D)Log.d(TAG, String.format("EditPlayFragment.startPlaying: filePath=%s", filePath));
 
             File file = new File(filePath);

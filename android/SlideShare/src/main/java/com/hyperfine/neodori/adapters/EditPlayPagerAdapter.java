@@ -1,11 +1,11 @@
 package com.hyperfine.neodori.adapters;
 
-import android.app.Activity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 
+import com.hyperfine.neodori.EditPlayActivity;
 import com.hyperfine.neodori.SlideJSON;
 import com.hyperfine.neodori.SlideShareJSON;
 import com.hyperfine.neodori.fragments.EditPlayFragment;
@@ -18,7 +18,7 @@ public class EditPlayPagerAdapter extends FragmentStatePagerAdapter {
 
     private SlideShareJSON m_ssj;
     private String m_slideShareName;
-    private Activity m_activityParent;
+    private EditPlayActivity m_editPlayActivity;
 
     public EditPlayPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -38,10 +38,10 @@ public class EditPlayPagerAdapter extends FragmentStatePagerAdapter {
         m_slideShareName = slideShareName;
     }
 
-    public void setActivityParent(Activity activityParent) {
+    public void setEditPlayActivity(EditPlayActivity editPlayActivity) {
         if(D)Log.d(TAG, "EditPlayPagerAdapter.setContext");
 
-        m_activityParent = activityParent;
+        m_editPlayActivity = editPlayActivity;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class EditPlayPagerAdapter extends FragmentStatePagerAdapter {
             e.printStackTrace();
         }
 
-        return EditPlayFragment.newInstance(m_activityParent, i, m_slideShareName, sj);
+        return EditPlayFragment.newInstance(m_editPlayActivity, i, m_slideShareName, sj);
     }
 
     @Override
