@@ -1,7 +1,11 @@
 package com.hyperfine.neodori.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Point;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -27,6 +31,7 @@ import com.hyperfine.neodori.Utilities;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 import static com.hyperfine.neodori.Config.D;
 import static com.hyperfine.neodori.Config.E;
@@ -39,6 +44,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private final static String INSTANCE_STATE_SLIDESHARENAME = "instance_state_slidesharename";
     private final static String INSTANCE_STATE_TABPOSITION = "instance_state_tabposition";
     private final static String INSTANCE_STATE_SELECTEDTABPOSITION = "instance_state_selectedtabposition";
+    private final static String INSTANCE_STATE_CURRENTCAMERAPHOTOFILEPATH = "instance_state_currentcameraphotofilepath";
 
     private int m_tabPosition = -1;
     private int m_selectedTabPosition = 0;
@@ -47,23 +53,27 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private ImageSwitcher m_imageSwitcher;
     private Button m_insertBeforeControl;
     private Button m_insertAfterControl;
+    private Button m_selectPhotoControl;
+    private Button m_cameraControl;
     private String m_imageFileName;
     private String m_audioFileName;
+    private String m_slideUuid;
     private MediaPlayer m_player;
     private FileInputStream m_fileInputStream;
     private boolean m_isPlaying = false;
     private int m_displayWidth = 0;
     private int m_displayHeight = 0;
+    private String m_currentCameraPhotoFilePath = null;
     private EditPlayActivity.EditPlayMode m_editPlayMode = EditPlayActivity.EditPlayMode.Edit;
 
-    public static EditPlayFragment newInstance(EditPlayActivity editPlayActivity, int position, String slideShareName, SlideJSON sj) {
+    public static EditPlayFragment newInstance(EditPlayActivity editPlayActivity, int position, String slideShareName, String slideUuid, SlideJSON sj) {
         if(D)Log.d(TAG, "EditPlayFragment.newInstance");
 
         EditPlayFragment f = new EditPlayFragment();
 
         f.setTabPosition(position);
         f.setSlideShareName(slideShareName);
-        f.setSlideJSON(sj);
+        f.setSlideJSON(slideUuid, sj);
         f.setEditPlayActivity(editPlayActivity);
 
         return f;
@@ -81,10 +91,11 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         m_slideShareName = name;
     }
 
-    public void setSlideJSON(SlideJSON sj) {
+    public void setSlideJSON(String slideUuid, SlideJSON sj) {
         if(D)Log.d(TAG, "EditPlayFragment.setSlideJSON");
 
         try {
+            m_slideUuid = slideUuid;
             m_imageFileName = sj.getImageFilename();
             m_audioFileName = sj.getAudioFilename();
         }
@@ -118,6 +129,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             m_audioFileName = savedInstanceState.getString(INSTANCE_STATE_AUDIOFILENAME);
             m_imageFileName = savedInstanceState.getString(INSTANCE_STATE_IMAGEFILENAME);
             m_slideShareName = savedInstanceState.getString(INSTANCE_STATE_SLIDESHARENAME);
+            m_currentCameraPhotoFilePath = savedInstanceState.getString(INSTANCE_STATE_CURRENTCAMERAPHOTOFILEPATH);
         }
     }
 
@@ -132,6 +144,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         savedInstanceState.putString(INSTANCE_STATE_AUDIOFILENAME, m_audioFileName);
         savedInstanceState.putString(INSTANCE_STATE_IMAGEFILENAME, m_imageFileName);
         savedInstanceState.putString(INSTANCE_STATE_SLIDESHARENAME, m_slideShareName);
+        savedInstanceState.putString(INSTANCE_STATE_CURRENTCAMERAPHOTOFILEPATH, m_currentCameraPhotoFilePath);
     }
 
     @Override
@@ -186,6 +199,26 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         if(D)Log.d(TAG, "EditPlayFragment.onCreateView");
 
         View view = inflater.inflate(R.layout.fragment_editplay, container, false);
+
+        m_selectPhotoControl = (Button)view.findViewById(R.id.select_from_gallery_control);
+        m_selectPhotoControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(D)Log.d(TAG, "EditPlayFragment.onSelectPhotoControlClicked");
+
+                selectImageFromGallery();
+            }
+        });
+
+        m_cameraControl = (Button)view.findViewById(R.id.camera_control);
+        m_cameraControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(D)Log.d(TAG, "EditPlayFragment.onCameraClicked");
+
+                selectImageFromCamera();
+            }
+        });
 
         m_insertBeforeControl = (Button)view.findViewById(R.id.edit_prev_control);
         m_insertBeforeControl.setOnClickListener(new View.OnClickListener() {
@@ -260,6 +293,74 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
         if (savedInstanceState == null) {
             asyncStartAudio();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if(D)Log.d(TAG, String.format("EditPlayFragment.onActivityResult: requestCode=%d, resultCode=%d", requestCode, resultCode));
+
+        if (requestCode == EditPlayActivity.REQUEST_IMAGE && resultCode == Activity.RESULT_OK) {
+            if(D)Log.d(TAG, String.format("EditPlayFragment.onActivityResult: intent data = %s", intent.getData().toString()));
+
+            String imageFileName = m_imageFileName;
+            if (imageFileName == null) {
+                imageFileName = getNewImageFileName();
+            }
+
+            boolean success = Utilities.copyGalleryImageToJPG(m_editPlayActivity, m_slideShareName, imageFileName, intent);
+
+            if (success) {
+                // Display the image only upon successful save
+                m_imageFileName = imageFileName;
+                renderImage();
+            }
+            else {
+                // Clean up - remove the image file
+                Utilities.deleteFile(m_editPlayActivity, m_slideShareName, imageFileName);
+                m_imageFileName = null;
+            }
+
+            m_editPlayActivity.updateSlideShareJSON(m_slideUuid, m_imageFileName, m_audioFileName);
+        }
+        else if (requestCode == EditPlayActivity.REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+            if(D)Log.d(TAG, String.format("CreateSlidesFragment.onActivityResult for REQUEST_CAMERA: m_currentCameraPhotoFilePath=%s", m_currentCameraPhotoFilePath));
+
+            if (m_currentCameraPhotoFilePath == null) {
+                if(D)Log.d(TAG, "CreateSlidesFragment.onActivityResult - m_currentCameraPhotoFilePath is null. This shouldn't happen. Bailing.");
+                return;
+            }
+
+            // Inform the gallery of the new photo
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            File f = new File(m_currentCameraPhotoFilePath);
+            Uri contentUri = Uri.fromFile(f);
+            mediaScanIntent.setData(contentUri);
+            m_editPlayActivity.sendBroadcast(mediaScanIntent);
+
+            String imageFileName = m_imageFileName;
+            if (imageFileName == null) {
+                imageFileName = getNewImageFileName();
+            }
+
+            boolean success = Utilities.copyExternalStorageImageToJPG(m_editPlayActivity, m_slideShareName, imageFileName, m_currentCameraPhotoFilePath);
+            m_currentCameraPhotoFilePath = null;
+
+            if (success) {
+                // Display the image only upon successful save
+                m_imageFileName = imageFileName;
+                renderImage();
+            }
+            else {
+                // Clean up - remove the image file
+                Utilities.deleteFile(m_editPlayActivity, m_slideShareName, imageFileName);
+                m_imageFileName = null;
+            }
+
+            m_editPlayActivity.updateSlideShareJSON(m_slideUuid, m_imageFileName, m_audioFileName);
+        }
+        else {
+            super.onActivityResult(requestCode, resultCode, intent);
         }
     }
 
@@ -370,6 +471,37 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         }
     }
 
+    private void selectImageFromGallery() {
+        if(D)Log.d(TAG, "EditPlayFragment.selectImageFromGallery");
+
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(intent, EditPlayActivity.REQUEST_IMAGE);
+    }
+
+    public void selectImageFromCamera() {
+        if(D)Log.d(TAG, "EditPlayFragment.selectImageFromCamera");
+
+        String imageFileName = getNewImageFileName();
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/SlideShare";
+        File pictureDirPath = new File(path);
+        if (!pictureDirPath.exists()) {
+            if(D)Log.d(TAG, "****** creating directory");
+            pictureDirPath.mkdir();
+        }
+
+        m_currentCameraPhotoFilePath = pictureDirPath + "/" + imageFileName;
+        if(D)Log.d(TAG, String.format("EditPlayFragment.selectImageFromCamera: m_currentCameraPhotoFilePath=%s", m_currentCameraPhotoFilePath));
+
+        File imageFile = new File(m_currentCameraPhotoFilePath);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
+        startActivityForResult(intent, EditPlayActivity.REQUEST_CAMERA);
+    }
+
     private void startPlaying() {
         if(D)Log.d(TAG, "EditPlayFragment.startPlaying");
 
@@ -452,5 +584,13 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         }
 
         m_isPlaying = false;
+    }
+
+    private static String getNewImageFileName() {
+        return UUID.randomUUID().toString() + ".jpg";
+    }
+
+    private static String getNewAudioFileName() {
+        return UUID.randomUUID().toString() + ".3gp";
     }
 }

@@ -53,6 +53,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     public final static int REQUEST_GOOGLE_PLAY_SERVICES_ERROR = 1;
     public final static int REQUEST_GOOGLE_LOGIN = 2;
     public final static int REQUEST_GOOGLE_LOGIN_FROM_FRAGMENT = 3;
+    public final static int REQUEST_IMAGE = 4;
+    public final static int REQUEST_CAMERA = 5;
 
     public static AmazonClientManager s_amazonClientManager = null;
 
@@ -289,6 +291,41 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     }
 
     @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.onActivityResult: requestCode=%d, resultCode=%d", requestCode, resultCode));
+
+        if (requestCode == REQUEST_GOOGLE_PLAY_SERVICES_ERROR) {
+            if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - returned from Google Play Services error dialog. Finishing.");
+            finish();
+        }
+        else if (requestCode == REQUEST_GOOGLE_LOGIN) {
+            if (resultCode == RESULT_OK) {
+                if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - return from successful Google login.");
+            }
+            else {
+                // BUGBUG - handle login failure
+                if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - failed to login to Google. Finishing. TODO: handle with grace.");
+                finish();
+            }
+        }
+        else if (requestCode == REQUEST_GOOGLE_LOGIN_FROM_FRAGMENT) {
+            if (resultCode == RESULT_OK) {
+                if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - handling REQUEST_GOOGLE_LOGIN_FROM_FRAGMENT");
+                m_fragmentNeedsCreateNew = true;
+            }
+            else {
+                // BUGBUG - handle login failure
+                if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - failed to login to Google. Finishing. TODO: handle with grace.");
+                finish();
+            }
+        }
+        else {
+            if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - passing on to super.onActivityResult");
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
     public View makeView() {
         if(D)Log.d(TAG, "EditPlayActivity.makeView");
 
@@ -356,14 +393,18 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         m_viewPager.setCurrentItem(m_currentTabPosition);
     }
 
-    private void updateSlideShareJSON(String slideUuid, String imageFileName, String audioFileName) {
+    public void updateSlideShareJSON(String slideUuid, String imageFileName, String audioFileName) {
         if(D)Log.d(TAG, "EditPlayActivity.updateSlideShareJSON");
         if(D)Log.d(TAG, "Current JSON:");
         Utilities.printSlideShareJSON(TAG, m_ssj);
 
+        boolean needsAdapterUpdate = false;
+
         try {
             String imageUrl = Utilities.buildResourceUrlString(m_userUuid, m_slideShareName, imageFileName);
             String audioUrl = Utilities.buildResourceUrlString(m_userUuid, m_slideShareName, audioFileName);
+
+            needsAdapterUpdate = (m_ssj.getSlide(slideUuid) == null);
 
             m_ssj.upsertSlide(slideUuid, m_currentTabPosition, imageUrl, audioUrl);
             m_ssj.save(this, m_slideShareName, Config.slideShareJSONFilename);
@@ -377,8 +418,10 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             e.printStackTrace();
         }
 
-        initializeViewPager();
-        //m_editPlayPagerAdapter.notifyDataSetChanged();
+        if (needsAdapterUpdate) {
+            initializeViewPager();
+            //m_editPlayPagerAdapter.notifyDataSetChanged();
+        }
 
         if(D)Log.d(TAG, "After update:");
         Utilities.printSlideShareJSON(TAG, m_ssj);

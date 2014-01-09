@@ -49,8 +49,10 @@ public class EditPlayPagerAdapter extends FragmentStatePagerAdapter {
         if(D)Log.d(TAG, String.format("EditPlayPagerAdapter.getItem(%d)", i));
 
         SlideJSON sj = null;
+        String slideUuid = null;
         try {
             sj = m_ssj.getSlide(i);
+            slideUuid = m_ssj.getSlideUuidByOrderIndex(i);
         }
         catch (Exception e) {
             if(E)Log.e(TAG, "EditPlayPagerAdapter.getItem", e);
@@ -61,7 +63,7 @@ public class EditPlayPagerAdapter extends FragmentStatePagerAdapter {
             e.printStackTrace();
         }
 
-        return EditPlayFragment.newInstance(m_editPlayActivity, i, m_slideShareName, sj);
+        return EditPlayFragment.newInstance(m_editPlayActivity, i, m_slideShareName, slideUuid, sj);
     }
 
     @Override
