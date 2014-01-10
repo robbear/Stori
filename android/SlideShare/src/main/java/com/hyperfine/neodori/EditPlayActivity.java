@@ -1,5 +1,8 @@
 package com.hyperfine.neodori;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -9,6 +12,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageSwitcher;
@@ -30,7 +36,7 @@ import java.util.UUID;
 import static com.hyperfine.neodori.Config.D;
 import static com.hyperfine.neodori.Config.E;
 
-public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.ViewFactory {
+public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.ViewFactory, CloudStore.ICloudStoreCallback {
     public final static String TAG = "EditPlayActivity";
     public final static String EXTRA_FROMURL = "extra_from_url";
 
@@ -49,6 +55,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private int m_currentTabPosition = 0;
     private boolean m_loadedFromSavedInstanceState = false;
     private EditPlayMode m_editPlayMode = EditPlayMode.Edit;
+    private ProgressDialog m_progressDialog = null;
 
     public final static int REQUEST_GOOGLE_PLAY_SERVICES_ERROR = 1;
     public final static int REQUEST_GOOGLE_LOGIN = 2;
@@ -120,7 +127,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             s_amazonClientManager = new AmazonClientManager(m_prefs);
 
             if (userUuidString == null || userEmail == null) {
-                if(D)Log.d(TAG, String.format("EditSlidesActivity.onCreate: userUuidString=%s, userEmail=%s, so calling GoogleLogin", userUuidString, userEmail));
+                if(D)Log.d(TAG, String.format("EditPlayActivity.onCreate: userUuidString=%s, userEmail=%s, so calling GoogleLogin", userUuidString, userEmail));
                 Intent intent = new Intent(this, GoogleLogin.class);
                 startActivityForResult(intent, REQUEST_GOOGLE_LOGIN);
             }
@@ -326,6 +333,120 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if(D)Log.d(TAG, "EditPlayActivity.onPrepareOptionsMenu");
+
+        boolean isPublished = SlideShareJSON.isSlideSharePublished(this, m_slideShareName);
+
+        menu.findItem(R.id.menu_editplayactivity_share).setVisible(isPublished);
+
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if(D)Log.d(TAG, "EditPlayActivity.onCreateOptionsMenu");
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_editplayactivity, menu);
+
+        MenuItem preview = menu.findItem(R.id.menu_editplayactivity_preview);
+        preview.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(EditPlayActivity.this, PlaySlidesActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
+
+        MenuItem publish = menu.findItem(R.id.menu_editplayactivity_publish);
+        publish.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                publishSlides();
+                return true;
+            }
+        });
+
+        MenuItem shareSlides = menu.findItem(R.id.menu_editplayactivity_share);
+        shareSlides.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Utilities.shareShow(EditPlayActivity.this, m_userUuid, m_slideShareName);
+                return true;
+            }
+        });
+
+        MenuItem createNew = menu.findItem(R.id.menu_editplayactivity_createnew);
+        createNew.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //createNewSlideShow();
+                return true;
+            }
+        });
+
+        MenuItem switchAccount = menu.findItem(R.id.menu_editplayactivity_switchaccount);
+        switchAccount.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (true) return true;  // BUGBUG TODO
+                AlertDialog.Builder adb = new AlertDialog.Builder(EditPlayActivity.this);
+                adb.setTitle(getString(R.string.switch_account_dialog_title));
+                adb.setCancelable(true);
+                adb.setMessage(getString(R.string.switch_account_dialog_message));
+                adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(D)Log.d(TAG, "EditPlayActivity.onMenuClick - switching account");
+                        dialog.dismiss();
+
+                        String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
+
+                        Utilities.deleteSlideShareDirectory(EditPlayActivity.this, slideShareName);
+
+                        if(D)Log.d(TAG, "EditPlayActivity.onMenuClick - switching account: nulling out PREFS_EDITPROJECTNAME");
+                        SharedPreferences.Editor edit = m_prefs.edit();
+                        edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, null);
+                        edit.commit();
+
+                        s_amazonClientManager.clearCredentials();
+                        s_amazonClientManager.wipe();
+
+                        Intent intent = new Intent(EditPlayActivity.this, GoogleLogin.class);
+                        startActivityForResult(intent, REQUEST_GOOGLE_LOGIN_FROM_FRAGMENT);
+                    }
+                });
+                adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog ad = adb.create();
+                ad.show();
+
+                return true;
+            }
+        });
+
+        MenuItem about = menu.findItem(R.id.menu_editplayactivity_about);
+        about.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(EditPlayActivity.this, AboutActivity.class);
+                startActivity(intent);
+
+                return true;
+            }
+        });
+
+        return true;
+    }
+
+    @Override
     public View makeView() {
         if(D)Log.d(TAG, "EditPlayActivity.makeView");
 
@@ -472,6 +593,41 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         m_viewPager.setCurrentItem(m_currentTabPosition);
     }
 
+    public void publishSlides() {
+        if(D)Log.d(TAG, "EditSlidesFragment.publishSlides");
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(EditPlayActivity.this);
+        adb.setTitle(getString(R.string.publish_dialog_title));
+        adb.setCancelable(true);
+        adb.setMessage(getString(R.string.publish_dialog_message));
+        adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                CloudStore cloudStore = new CloudStore(EditPlayActivity.this, m_userUuid,
+                        m_slideShareName, Config.CLOUD_STORAGE_PROVIDER, EditPlayActivity.this);
+
+                cloudStore.saveAsync();
+
+                m_progressDialog = new ProgressDialog(EditPlayActivity.this);
+                m_progressDialog.setTitle(getString(R.string.upload_dialog_title));
+                m_progressDialog.setCancelable(false);
+                m_progressDialog.setIndeterminate(true);
+                m_progressDialog.show();
+            }
+        });
+        adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
+    }
+
     public void initializeNewSlide(int newIndex) {
         if(D)Log.d(TAG, String.format("EditPlayActivity.initializeNewSlide: newIndex=%d", newIndex));
 
@@ -485,6 +641,54 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         updateSlideShareJSON(UUID.randomUUID().toString(), null, null);
 
         m_viewPager.setCurrentItem(m_currentTabPosition);
+    }
+
+    public void onSaveComplete(CloudStore.SaveErrors se, SlideShareJSON ssj) {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.onSaveComplete: se=%s", se));
+
+        if (ssj != null) {
+            m_ssj = ssj;
+        }
+
+        if (m_progressDialog != null) {
+            m_progressDialog.dismiss();
+            m_progressDialog = null;
+        }
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setCancelable(false);
+
+        if (se == CloudStore.SaveErrors.Success) {
+            adb.setTitle(getString(R.string.upload_dialog_complete_title));
+            adb.setMessage(getString(R.string.upload_dialog_complete_message_format));
+            adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+
+                    Utilities.shareShow(EditPlayActivity.this, m_userUuid, m_slideShareName);
+                }
+            });
+            adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
+        else {
+            adb.setTitle(getString(R.string.upload_dialog_failure_title));
+            adb.setMessage(String.format(getString(R.string.upload_dialog_failure_message_format), se.toString()));
+            adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
+
+        AlertDialog ad = adb.create();
+        ad.show();
     }
 
     public void updateSlideShareJSON(String slideUuid, String imageFileName, String audioFileName) {

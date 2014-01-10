@@ -178,6 +178,9 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         if(D)Log.d(TAG, "EditPlayFragment.onResume");
 
         super.onResume();
+
+        boolean hasCamera = Utilities.isCameraAvailable(m_editPlayActivity);
+        m_cameraControl.setVisibility(hasCamera ? View.VISIBLE : View.GONE);
     }
 
     @Override

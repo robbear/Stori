@@ -35,6 +35,12 @@
     <string name="menu_edit_selectfromgallery">Choose gallery image...</string>
     <string name="menu_edit_share">Share</string>
     <string name="menu_edit_switch_account">Switch account</string>
+    <string name="menu_editplayactivity_about">About neodori</string>
+    <string name="menu_editplayactivity_createnew">Create new</string>
+    <string name="menu_editplayactivity_preview">Preview</string>
+    <string name="menu_editplayactivity_publish">Publish</string>
+    <string name="menu_editplayactivity_share">Share</string>
+    <string name="menu_editplayactivity_switchaccount">Switch account</string>
     <string name="menu_editplay_more_deleteslide">Remove slide</string>
     <string name="menu_editplay_more_deleteimage">Remove image</string>
     <string name="menu_editplay_more_deleteaudio">Remove audio</string>
