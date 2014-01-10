@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.ViewSwitcher;
@@ -44,7 +45,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private final static String INSTANCE_STATE_EDITPLAYMODE = "instance_state_editplaymode";
 
     private SharedPreferences m_prefs;
-    private boolean m_fragmentNeedsCreateNew = false;
     private String m_userUuid = null;
     private SlideShareJSON m_ssj;
     private EditPlayPagerAdapter m_editPlayPagerAdapter;
@@ -164,26 +164,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         }
 
         initializeViewPager();
-        /* NEVER
-        m_editPlayPagerAdapter = new EditPlayPagerAdapter(getSupportFragmentManager());
-        m_editPlayPagerAdapter.setSlideShareJSON(m_ssj);
-        m_editPlayPagerAdapter.setSlideShareName(m_slideShareName);
-        m_editPlayPagerAdapter.setEditPlayActivity(this);
-
-        m_viewPager = (ViewPager)findViewById(R.id.view_pager);
-        try {
-            m_viewPager.setOffscreenPageLimit(1);
-            m_viewPager.setAdapter(m_editPlayPagerAdapter);
-        }
-        catch (Exception e) {
-            if(E)Log.e(TAG, "EditPlayActivity.onCreate", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "EditPlayActivity.onCreate", e);
-            e.printStackTrace();
-        }
-        */
 
         m_pageChangeListener = new ViewPager.OnPageChangeListener() {
             @Override
@@ -318,7 +298,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         else if (requestCode == REQUEST_GOOGLE_LOGIN_FROM_FRAGMENT) {
             if (resultCode == RESULT_OK) {
                 if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - handling REQUEST_GOOGLE_LOGIN_FROM_FRAGMENT");
-                m_fragmentNeedsCreateNew = true;
             }
             else {
                 // BUGBUG - handle login failure
@@ -382,7 +361,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         createNew.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                //createNewSlideShow();
+                createNewSlideShow();
                 return true;
             }
         });
@@ -456,6 +435,29 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         return view;
     }
 
+    //
+    // setSlideShareTitle
+    // Sets the title in the SlideShareJSON file.
+    //
+    private void setSlideShareTitle(String title) {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.setSlideShareTitle: %s", title));
+
+        if (title != null) {
+            try {
+                m_ssj.setTitle(title);
+                m_ssj.save(this, m_slideShareName, Config.slideShareJSONFilename);
+            }
+            catch (Exception e) {
+                if(E)Log.e(TAG, "EditPlayActivity.setSlideShareTitle", e);
+                e.printStackTrace();
+            }
+            catch (OutOfMemoryError e) {
+                if(E)Log.e(TAG, "EditPlayActivity.setSlideShareTitle", e);
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void initializeSlideShareJSON() {
         if(D)Log.d(TAG, "EditPlayActivity.initializeSlideShareJSON");
 
@@ -497,6 +499,114 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         if(D)Log.d(TAG, "EditPlayActivity.initializeSlideShareJSON: here is the JSON:");
         Utilities.printSlideShareJSON(TAG, m_ssj);
+    }
+
+    //
+    // initializeNewSlideShow
+    // Helper method called by initializeForChangeInAccount and createNewSlideShow.
+    // This method is critical for initializing state, similar to the fragment
+    // lifecycle flow, but without recreating the activity/fragment.
+    //
+    private void initializeNewSlideShow() {
+        if(D)Log.d(TAG, "EditPlayActivity.initializeNewSlideShow");
+
+        //
+        // Delete the old slide share directory and create a new one.
+        // Create a new m_slideShareName
+        //
+
+        if (m_slideShareName != null) {
+            Utilities.deleteSlideShareDirectory(this, m_slideShareName);
+        }
+        m_slideShareName = UUID.randomUUID().toString();
+
+        if(D)Log.d(TAG, String.format("EditPlayActivity.initializeNewSlideShow - new slideShareName: %s", m_slideShareName));
+
+        SharedPreferences.Editor edit = m_prefs.edit();
+        edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, m_slideShareName);
+        edit.commit();
+
+        Utilities.createOrGetSlideShareDirectory(this, m_slideShareName);
+
+        enterSlideShareTitleAndRecreate();
+    }
+
+    //
+    // enterSlideShareTitleAndRecreate
+    // Part of the newly created show flow, provides UI for entering a title,
+    // then kicks off the initialization flow via a call to setSlideShareName.
+    //
+    private void enterSlideShareTitleAndRecreate() {
+        if(D)Log.d(TAG, "EditPlayActivity.enterSlideShareTitleAndRecreate");
+
+        final EditText titleText = new EditText(this);
+        titleText.setHint(getString(R.string.main_new_title_hint));
+        titleText.setSingleLine();
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle(getString(R.string.main_new_title_title)); // BUGBUG - TODO - rename from main
+        adb.setCancelable(false);
+        adb.setView(titleText);
+        adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String title = titleText.getText().toString();
+
+                dialog.dismiss();
+
+                initializeSlideShareJSON();
+                setSlideShareTitle(title);
+
+                m_currentTabPosition = 0;
+                initializeViewPager();
+                initializeNewSlide(m_currentTabPosition);
+
+                getActionBar().setTitle(title == null ? getString(R.string.default_neodori_title) : title);
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
+    }
+
+    //
+    // initializeForChangeInAccount
+    // Called in response to the user selecting a new account.
+    //
+    public void initializeForChangeInAccount() {
+        if(D)Log.d(TAG, "EditPlayActivity.initializeForChangeInAccount");
+
+        initializeNewSlideShow();
+    }
+
+    //
+    // createNewSlideShow
+    // Called in response to the user choosing to create a new slide show.
+    //
+    private void createNewSlideShow() {
+        if(D)Log.d(TAG, "EditPlayActivity.createNewSlideShow");
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle(getString(R.string.main_create_alert_title));
+        adb.setCancelable(true);
+        adb.setMessage(getString(R.string.main_create_alert_message));
+        adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                initializeNewSlideShow();
+            }
+        });
+        adb.setNegativeButton(getString(R.string.cancel_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
     }
 
     public void deleteAudio(String slideUuid, String audioFileName) {
@@ -594,7 +704,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     }
 
     public void publishSlides() {
-        if(D)Log.d(TAG, "EditSlidesFragment.publishSlides");
+        if(D)Log.d(TAG, "EditPlayActivity.publishSlides");
 
         AlertDialog.Builder adb = new AlertDialog.Builder(EditPlayActivity.this);
         adb.setTitle(getString(R.string.publish_dialog_title));
