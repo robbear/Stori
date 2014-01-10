@@ -3,6 +3,7 @@ package com.hyperfine.neodori.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -55,12 +56,17 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private Button m_insertAfterControl;
     private Button m_selectPhotoControl;
     private Button m_cameraControl;
+    private Button m_recordControl;
+    private Button m_playstopControl;
     private String m_imageFileName;
     private String m_audioFileName;
     private String m_slideUuid;
     private MediaPlayer m_player;
+    private MediaRecorder m_recorder;
+
     private FileInputStream m_fileInputStream;
     private boolean m_isPlaying = false;
+    private boolean m_isRecording = false;
     private int m_displayWidth = 0;
     private int m_displayHeight = 0;
     private String m_currentCameraPhotoFilePath = null;
@@ -207,6 +213,37 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
                 if(D)Log.d(TAG, "EditPlayFragment.onSelectPhotoControlClicked");
 
                 selectImageFromGallery();
+            }
+        });
+
+        m_recordControl = (Button)view.findViewById(R.id.control_record);
+        m_recordControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(D)Log.d(TAG, String.format("EditPlayFormat.onRecordButtonClicked: %s recording", m_isRecording ? "Stopping" : "Starting"));
+
+                if (m_isRecording) {
+                    stopRecording();
+                }
+                else {
+                    startRecording();
+                }
+            }
+        });
+
+        m_playstopControl = (Button)view.findViewById(R.id.control_playback);
+        m_playstopControl.setEnabled(hasAudio());
+        m_playstopControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(D)Log.d(TAG, String.format("EditPlayFragment.onPlayStopButtonClicked: %s playing", m_isPlaying ? "Stopping" : "Starting"));
+
+                if (m_isPlaying) {
+                    stopPlaying();
+                }
+                else {
+                    startPlaying();
+                }
             }
         });
 
@@ -502,6 +539,66 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         startActivityForResult(intent, EditPlayActivity.REQUEST_CAMERA);
     }
 
+    private void startRecording() {
+        if(D)Log.d(TAG, "EditPlayFragment.startRecording");
+
+        if (m_isRecording) {
+            if(D)Log.d(TAG, "EditPlayFragment.startRecording - m_isRecording is true, so bailing");
+            return;
+        }
+
+        if (m_audioFileName == null) {
+            m_audioFileName = getNewAudioFileName();
+            m_editPlayActivity.updateSlideShareJSON(m_slideUuid, m_imageFileName, m_audioFileName);
+        }
+
+        String filePath = Utilities.getAbsoluteFilePath(m_editPlayActivity, m_slideShareName, m_audioFileName);
+        if(D)Log.d(TAG, String.format("EditPlayFragment.startRecording: filePath=%s", filePath));
+
+        m_recorder = new MediaRecorder();
+        m_recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        m_recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        m_recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        m_recorder.setOutputFile(filePath);
+
+        try {
+            m_recorder.prepare();
+            m_recorder.start();
+            m_isRecording = true;
+            m_recordControl.setText("Stop recording");
+        }
+        catch (IOException e) {
+            if(E)Log.e(TAG, "EditPlayFragment.startRecording", e);
+            e.printStackTrace();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditPlayFragment.startRecording", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditPlayFragment.startRecording", e);
+            e.printStackTrace();
+        }
+    }
+
+    private void stopRecording() {
+        if(D)Log.d(TAG, "EditPlayFragment.stopRecording");
+
+        if (!m_isRecording) {
+            if(D)Log.d(TAG, "EditPlayFragment.stopRecording - m_isRecording is false so bailing");
+            return;
+        }
+
+        m_recorder.stop();
+        m_recorder.release();
+        m_recorder = null;
+
+        m_isRecording = false;
+        m_recordControl.setText("Record");
+
+        m_playstopControl.setEnabled(true);
+    }
+
     private void startPlaying() {
         if(D)Log.d(TAG, "EditPlayFragment.startPlaying");
 
@@ -538,6 +635,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             m_player.start();
 
             m_isPlaying = true;
+            m_playstopControl.setText("Stop playing");
         }
         catch (IOException e) {
             if(E)Log.e(TAG, "EditPlayFragment.startPlaying", e);
@@ -584,6 +682,11 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         }
 
         m_isPlaying = false;
+        m_playstopControl.setText("Play");
+    }
+
+    private boolean hasAudio() {
+        return m_audioFileName != null;
     }
 
     private static String getNewImageFileName() {

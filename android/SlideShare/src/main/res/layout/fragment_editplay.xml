@@ -41,13 +41,28 @@
             <Button
                 android:id="@+id/select_from_gallery_control"
                 android:layout_height="wrap_content"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:text="Choose photo" />
             <Button
                 android:id="@+id/camera_control"
                 android:layout_height="wrap_content"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:text="Camera" />
+            <Button
+                android:id="@+id/control_record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Record" />
+            <Button
+                android:id="@+id/control_playback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Play"/>
+            <Button
+                android:id="@+id/control_deleterecording"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete recording" />
         </LinearLayout>
         <RelativeLayout
             android:layout_height="match_parent"
