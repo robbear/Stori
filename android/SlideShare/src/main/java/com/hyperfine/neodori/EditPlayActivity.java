@@ -378,6 +378,100 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         Utilities.printSlideShareJSON(TAG, m_ssj);
     }
 
+    public void deleteAudio(String slideUuid, String audioFileName) {
+        if(D)Log.d(TAG, "EditPlayActivity.deleteAudio");
+        if(D)Log.d(TAG, "Before audio deletion:");
+        Utilities.printSlideShareJSON(TAG, m_ssj);
+
+        if (audioFileName != null) {
+            Utilities.deleteFile(this, m_slideShareName, audioFileName);
+        }
+
+        String imageFileName = null;
+
+        try {
+            SlideJSON sj = m_ssj.getSlide(slideUuid);
+            imageFileName = sj.getImageFilename();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditPlayActivity.deleteAudio", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditPlayActivity.deleteAudio", e);
+            e.printStackTrace();
+        }
+
+        updateSlideShareJSON(slideUuid, imageFileName, audioFileName);
+    }
+
+    public void deleteImage(String slideUuid, String imageFileName) {
+        if(D)Log.d(TAG, "EditPlayActivity.deleteImage");
+        if(D)Log.d(TAG, "Before image deletion:");
+        Utilities.printSlideShareJSON(TAG, m_ssj);
+
+        if (imageFileName != null) {
+            Utilities.deleteFile(this, m_slideShareName, imageFileName);
+        }
+
+        String audioFileName = null;
+
+        try {
+            SlideJSON sj = m_ssj.getSlide(slideUuid);
+            audioFileName = sj.getAudioFilename();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditPlayActivity.deleteImage", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditPlayActivity.deleteImage", e);
+            e.printStackTrace();
+        }
+
+        updateSlideShareJSON(slideUuid, imageFileName, audioFileName);
+    }
+
+    public void deleteSlide(String slideUuid, String imageFileName, String audioFileName) {
+        if(D)Log.d(TAG, "EditPlayActivity.deleteSlide");
+        if(D)Log.d(TAG, "Before slide deletion:");
+        Utilities.printSlideShareJSON(TAG, m_ssj);
+
+        int count = 0;
+
+        if (imageFileName != null) {
+            Utilities.deleteFile(this, m_slideShareName, imageFileName);
+        }
+
+        if (audioFileName != null) {
+            Utilities.deleteFile(this, m_slideShareName, audioFileName);
+        }
+
+        try {
+            m_ssj.removeSlide(slideUuid);
+            m_ssj.save(this, m_slideShareName, Config.slideShareJSONFilename);
+            count = m_ssj.getSlideCount();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditPlayActivity.deleteSlide", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditPlayActivity.deleteSlide", e);
+            e.printStackTrace();
+        }
+
+        if(D)Log.d(TAG, "After slide deletion:");
+        Utilities.printSlideShareJSON(TAG, m_ssj);
+
+        initializeViewPager();
+
+        if (m_currentTabPosition >= count) {
+            m_currentTabPosition--;
+        }
+        m_viewPager.setCurrentItem(m_currentTabPosition);
+    }
+
     public void initializeNewSlide(int newIndex) {
         if(D)Log.d(TAG, String.format("EditPlayActivity.initializeNewSlide: newIndex=%d", newIndex));
 

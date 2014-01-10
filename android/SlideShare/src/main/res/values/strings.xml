@@ -35,6 +35,9 @@
     <string name="menu_edit_selectfromgallery">Choose gallery image...</string>
     <string name="menu_edit_share">Share</string>
     <string name="menu_edit_switch_account">Switch account</string>
+    <string name="menu_editplay_more_deleteslide">Remove slide</string>
+    <string name="menu_editplay_more_deleteimage">Remove image</string>
+    <string name="menu_editplay_more_deleteaudio">Remove audio</string>
     <string name="publish_dialog_title">Publish</string>
     <string name="publish_dialog_message">Ok to publish?</string>
     <string name="share_dialog_title">Share this show</string>

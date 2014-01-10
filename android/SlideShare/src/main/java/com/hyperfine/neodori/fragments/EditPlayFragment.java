@@ -16,10 +16,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageSwitcher;
+import android.widget.PopupMenu;
 import android.widget.ViewSwitcher;
 
 import com.hyperfine.neodori.AsyncTaskTimer;
@@ -58,6 +61,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private Button m_cameraControl;
     private Button m_recordControl;
     private Button m_playstopControl;
+    private Button m_moreControl;
     private String m_imageFileName;
     private String m_audioFileName;
     private String m_slideUuid;
@@ -205,6 +209,61 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         if(D)Log.d(TAG, "EditPlayFragment.onCreateView");
 
         View view = inflater.inflate(R.layout.fragment_editplay, container, false);
+
+        m_moreControl = (Button)view.findViewById(R.id.control_more);
+        m_moreControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(D)Log.d(TAG, "EditPlayFragment.onMoreControlClicked");
+
+                PopupMenu pm = new PopupMenu(m_editPlayActivity, view);
+                pm.inflate(R.menu.menu_editplay_more);
+                Menu menu = pm.getMenu();
+
+                MenuItem deleteSlide = menu.findItem(R.id.menu_editplay_more_deleteslide);
+                deleteSlide.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        m_editPlayActivity.deleteSlide(m_slideUuid, m_imageFileName, m_audioFileName);
+                        return true;
+                    }
+                });
+
+                if (hasImage()) {
+                    MenuItem deleteImage = menu.findItem(R.id.menu_editplay_more_deleteimage);
+                    deleteImage.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            m_editPlayActivity.deleteImage(m_slideUuid, m_imageFileName);
+                            m_imageFileName = null;
+                            renderImage();
+                            return true;
+                        }
+                    });
+                }
+                else {
+                    menu.removeItem(R.id.menu_editplay_more_deleteimage);
+                }
+
+                if (hasAudio()) {
+                    MenuItem deleteAudio = menu.findItem(R.id.menu_editplay_more_deleteaudio);
+                    deleteAudio.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            m_editPlayActivity.deleteAudio(m_slideUuid, m_audioFileName);
+                            m_audioFileName = null;
+                            m_playstopControl.setEnabled(false);
+                            return true;
+                        }
+                    });
+                }
+                else {
+                    menu.removeItem(R.id.menu_editplay_more_deleteaudio);
+                }
+
+                pm.show();
+            }
+        });
 
         m_selectPhotoControl = (Button)view.findViewById(R.id.select_from_gallery_control);
         m_selectPhotoControl.setOnClickListener(new View.OnClickListener() {
@@ -687,6 +746,10 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
     private boolean hasAudio() {
         return m_audioFileName != null;
+    }
+
+    private boolean hasImage() {
+        return m_imageFileName != null;
     }
 
     private static String getNewImageFileName() {
