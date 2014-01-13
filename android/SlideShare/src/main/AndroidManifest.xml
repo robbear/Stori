@@ -12,8 +12,6 @@
         <activity android:name=".AboutActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
         <activity android:name=".cloudproviders.AlertActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
         <activity android:name=".cloudproviders.GoogleLogin" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
-        <activity android:name=".EditSlidesActivity" android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:launchMode="singleTask" android:theme="@android:style/Theme.Holo" >
-        </activity>
         <activity android:name=".PlaySlidesActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
         <activity android:name=".DownloadActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" >
             <intent-filter>
