@@ -231,7 +231,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             String title = m_ssj.getTitle();
             title = (title == null) ? getString(R.string.default_neodori_title) : title;
 
-            getActionBar().setTitle(String.format("%d of %d - %s", m_currentTabPosition + 1, count, title));
+            String format = getString(R.string.editplay_actionbar_format);
+            getActionBar().setTitle(String.format(format, m_currentTabPosition + 1, count, title));
         }
         catch (Exception e) {
             if(E)Log.d(TAG, "EditPlayActivity.onPageSelected", e);
