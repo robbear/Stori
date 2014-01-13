@@ -59,7 +59,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
     public final static int REQUEST_GOOGLE_PLAY_SERVICES_ERROR = 1;
     public final static int REQUEST_GOOGLE_LOGIN = 2;
-    public final static int REQUEST_GOOGLE_LOGIN_FROM_FRAGMENT = 3;
+    public final static int REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT = 3;
     public final static int REQUEST_IMAGE = 4;
     public final static int REQUEST_CAMERA = 5;
 
@@ -312,9 +312,10 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 finish();
             }
         }
-        else if (requestCode == REQUEST_GOOGLE_LOGIN_FROM_FRAGMENT) {
+        else if (requestCode == REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT) {
             if (resultCode == RESULT_OK) {
                 if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - handling REQUEST_GOOGLE_LOGIN_FROM_FRAGMENT");
+                initializeForChangeInAccount();
             }
             else {
                 // BUGBUG - handle login failure
@@ -387,7 +388,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         switchAccount.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                if (true) return true;  // BUGBUG TODO
                 AlertDialog.Builder adb = new AlertDialog.Builder(EditPlayActivity.this);
                 adb.setTitle(getString(R.string.switch_account_dialog_title));
                 adb.setCancelable(true);
@@ -411,7 +411,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                         s_amazonClientManager.wipe();
 
                         Intent intent = new Intent(EditPlayActivity.this, GoogleLogin.class);
-                        startActivityForResult(intent, REQUEST_GOOGLE_LOGIN_FROM_FRAGMENT);
+                        startActivityForResult(intent, REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT);
                     }
                 });
                 adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
