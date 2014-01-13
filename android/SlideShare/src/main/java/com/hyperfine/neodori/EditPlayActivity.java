@@ -191,6 +191,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
                 m_viewPager.setCurrentItem(position);
                 m_currentTabPosition = position;
+
+                setActionBarTitle();
             }
 
             @Override
@@ -218,6 +220,26 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         if (m_editPlayMode != EditPlayMode.Edit) {
             getActionBar().hide();
+        }
+    }
+
+    private void setActionBarTitle() {
+        if(D)Log.d(TAG, "EditPlayActivity.setActionBarTitle");
+
+        try {
+            int count = m_ssj.getSlideCount();
+            String title = m_ssj.getTitle();
+            title = (title == null) ? getString(R.string.default_neodori_title) : title;
+
+            getActionBar().setTitle(String.format("%d of %d - %s", m_currentTabPosition + 1, count, title));
+        }
+        catch (Exception e) {
+            if(E)Log.d(TAG, "EditPlayActivity.onPageSelected", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.d(TAG, "EditPlayActivity.onPageSelected", e);
+            e.printStackTrace();
         }
     }
 
@@ -287,6 +309,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         if(D)Log.d(TAG, String.format("EditPlayActivity.onResume: m_userUuid=%s", m_userUuid));
 
         m_viewPager.setCurrentItem(m_currentTabPosition);
+
+        setActionBarTitle();
     }
 
     @Override
@@ -501,18 +525,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             }
         }
 
-        try {
-            String title = m_ssj.getTitle();
-            getActionBar().setTitle(title == null ? getString(R.string.default_neodori_title) : title);
-        }
-        catch (Exception e) {
-            if(E)Log.e(TAG, "EditPlayActivity.initializeSlideShareJSON", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "EditPlayActivity.initializeSlideShareJSON", e);
-            e.printStackTrace();
-        }
+        setActionBarTitle();
 
         if(D)Log.d(TAG, "EditPlayActivity.initializeSlideShareJSON: here is the JSON:");
         Utilities.printSlideShareJSON(TAG, m_ssj);
@@ -578,7 +591,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 initializeViewPager();
                 initializeNewSlide(m_currentTabPosition);
 
-                getActionBar().setTitle(title == null ? getString(R.string.default_neodori_title) : title);
+                setActionBarTitle();
             }
         });
 
