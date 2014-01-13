@@ -23,7 +23,7 @@ public class EditPlayPagerAdapter extends FragmentStatePagerAdapter {
     public EditPlayPagerAdapter(FragmentManager fm) {
         super(fm);
 
-        if(D) Log.d(TAG, "EditPlayPagerAdapter constructor");
+        if(D)Log.d(TAG, "EditPlayPagerAdapter constructor");
     }
 
     public void setSlideShareJSON(SlideShareJSON ssj) {

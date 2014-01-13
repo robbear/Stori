@@ -38,7 +38,7 @@ public class EditSlidesActivity extends FragmentActivity implements ViewSwitcher
     public final static int REQUEST_GOOGLE_LOGIN = 2;
     public final static int REQUEST_GOOGLE_LOGIN_FROM_FRAGMENT = 3;
 
-    public static AmazonClientManager s_amazonClientManager = null;
+    //public static AmazonClientManager s_amazonClientManager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +58,7 @@ public class EditSlidesActivity extends FragmentActivity implements ViewSwitcher
         String userUuidString = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
         String userEmail = AmazonSharedPreferencesWrapper.getUserEmail(m_prefs);
 
-        s_amazonClientManager = new AmazonClientManager(m_prefs);
+        //s_amazonClientManager = new AmazonClientManager(m_prefs);
 
         if (userUuidString == null || userEmail == null) {
             if(D)Log.d(TAG, String.format("EditSlidesActivity.onCreate: userUuidString=%s, userEmail=%s, so calling GoogleLogin", userUuidString, userEmail));

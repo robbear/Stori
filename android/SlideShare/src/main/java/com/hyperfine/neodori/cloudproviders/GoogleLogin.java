@@ -14,7 +14,7 @@ import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.hyperfine.neodori.EditSlidesActivity;
+import com.hyperfine.neodori.EditPlayActivity;
 import com.hyperfine.neodori.R;
 import com.hyperfine.neodori.SSPreferences;
 
@@ -83,13 +83,13 @@ public class GoogleLogin extends AlertActivity {
                         new GooglePlayServicesNotAvailableException(result));
             }
 
-            String scope = "audience:server:client_id:" + EditSlidesActivity.s_amazonClientManager.getGoogleClientID();
+            String scope = "audience:server:client_id:" + EditPlayActivity.s_amazonClientManager.getGoogleClientID();
             if(D)Log.d(TAG, String.format("GoogleLogin.getAndUseAuthTokenBlocking - scope=%s", scope));
 
             String token = GoogleAuthUtil.getToken(getApplicationContext(), m_userAccountEmail, scope);
             if(D)Log.d(TAG, String.format("GoogleLogin.getAndUseAuthTokenBlocking - using token for login: %s", token));
 
-            EditSlidesActivity.s_amazonClientManager.login(new GoogleIDP(getApplicationContext(), token), this);
+            EditPlayActivity.s_amazonClientManager.login(new GoogleIDP(getApplicationContext(), token), this);
         }
         catch (UserRecoverableAuthException e) {
             if(D)Log.d(TAG, "GoogleLogin.getAndUseAuthTokenBlocking - app hasn't been authorized by user");
@@ -137,7 +137,7 @@ public class GoogleLogin extends AlertActivity {
 
         @Override
         public String getRoleARN() {
-            return EditSlidesActivity.s_amazonClientManager.getGoogleRoleARN();
+            return EditPlayActivity.s_amazonClientManager.getGoogleRoleARN();
         }
 
         @Override

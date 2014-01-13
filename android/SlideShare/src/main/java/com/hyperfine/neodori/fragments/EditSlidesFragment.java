@@ -979,8 +979,8 @@ public class EditSlidesFragment extends Fragment implements CloudStore.ICloudSto
                         edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, null);
                         edit.commit();
 
-                        EditSlidesActivity.s_amazonClientManager.clearCredentials();
-                        EditSlidesActivity.s_amazonClientManager.wipe();
+                        EditPlayActivity.s_amazonClientManager.clearCredentials();
+                        EditPlayActivity.s_amazonClientManager.wipe();
 
                         Intent intent = new Intent(m_activityParent, GoogleLogin.class);
                         m_activityParent.startActivityForResult(intent, EditSlidesActivity.REQUEST_GOOGLE_LOGIN_FROM_FRAGMENT);

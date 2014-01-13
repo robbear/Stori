@@ -9,7 +9,7 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.hyperfine.neodori.EditSlidesActivity;
+import com.hyperfine.neodori.EditPlayActivity;
 
 import static com.hyperfine.neodori.Config.D;
 import static com.hyperfine.neodori.Config.E;
@@ -42,13 +42,13 @@ public class GoogleLoginHelper {
                         new GooglePlayServicesNotAvailableException(result));
             }
 
-            String scope = "audience:server:client_id:" + EditSlidesActivity.s_amazonClientManager.getGoogleClientID();
+            String scope = "audience:server:client_id:" + EditPlayActivity.s_amazonClientManager.getGoogleClientID();
             if(D)Log.d(TAG, String.format("GoogleLoginHelper.getAndUseAuthToken - scope=%s", scope));
 
             String token = GoogleAuthUtil.getToken(m_context, m_userAccountEmail, scope);
             if(D)Log.d(TAG, String.format("GoogleLoginHelper.getAndUseAuthToken - using token for login: %s", token));
 
-            EditSlidesActivity.s_amazonClientManager.loginSynchronous(new GoogleIDP(m_context, token));
+            EditPlayActivity.s_amazonClientManager.loginSynchronous(new GoogleIDP(m_context, token));
             retVal = true;
         }
         catch (UserRecoverableAuthException e) {
@@ -86,7 +86,7 @@ public class GoogleLoginHelper {
 
         @Override
         public String getRoleARN() {
-            return EditSlidesActivity.s_amazonClientManager.getGoogleRoleARN();
+            return EditPlayActivity.s_amazonClientManager.getGoogleRoleARN();
         }
 
         @Override

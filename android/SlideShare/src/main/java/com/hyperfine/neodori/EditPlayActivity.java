@@ -199,6 +199,23 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         };
         m_viewPager.setOnPageChangeListener(m_pageChangeListener);
 
+        // Check for OOBE
+        try {
+            int count = m_ssj.getSlideCount();
+            if (count <= 0) {
+                if(D)Log.d(TAG, "EditPlayActivity.onCreate - OOBE case. Create first slide");
+                initializeNewSlide(m_currentTabPosition);
+            }
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditPlayActivity.onCreate", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditPlayActivity.onCreate", e);
+            e.printStackTrace();
+        }
+
         if (m_editPlayMode != EditPlayMode.Edit) {
             getActionBar().hide();
         }

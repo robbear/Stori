@@ -10,7 +10,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.hyperfine.neodori.EditSlidesActivity;
+import com.hyperfine.neodori.EditPlayActivity;
 import com.hyperfine.neodori.Utilities;
 
 import java.io.File;
@@ -49,7 +49,7 @@ public class AWSS3Provider implements ICloudProvider {
         GoogleLoginHelper glh = new GoogleLoginHelper(m_context, prefs);
         glh.getAndUseAuthToken();
 
-        m_s3Client = EditSlidesActivity.s_amazonClientManager.s3();
+        m_s3Client = EditPlayActivity.s_amazonClientManager.s3();
         m_s3Client.setRegion(Region.getRegion(Regions.US_WEST_2));
     }
 
