@@ -10,7 +10,7 @@ app.get('/slides/:user/:slidesharename', function(req, res) {
 
     utilities.sendOutputHtml("root", req, res, 'views/slides_header.html', 'views/slides_body.html',
         {
-            "PageTitle": "SlideShare",
+            "PageTitle": "neodori",
             "VersionString": utilities.versionString,
             "SSJ_URL": "\"" + config.slideResourceBaseUrl + uuidUser + "/" + slideShareName + "/" + config.slideShareJSONFilename + "\""
         });
