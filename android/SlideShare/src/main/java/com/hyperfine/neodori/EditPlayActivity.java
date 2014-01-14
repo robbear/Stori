@@ -683,7 +683,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             e.printStackTrace();
         }
 
-        updateSlideShareJSON(slideUuid, imageFileName, audioFileName);
+        updateSlideShareJSON(slideUuid, imageFileName, null, true);
     }
 
     public void deleteImage(String slideUuid, String imageFileName) {
@@ -710,7 +710,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             e.printStackTrace();
         }
 
-        updateSlideShareJSON(slideUuid, imageFileName, audioFileName);
+        updateSlideShareJSON(slideUuid, null, audioFileName, true);
     }
 
     public void deleteSlide(String slideUuid, String imageFileName, String audioFileName) {
@@ -853,7 +853,11 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     }
 
     public void updateSlideShareJSON(String slideUuid, String imageFileName, String audioFileName) {
-        if(D)Log.d(TAG, String.format("EditPlayActivity.updateSlideShareJSON: slideUuid=%s, imageFileName=%s, audioFileName=%s", slideUuid, imageFileName, audioFileName));
+        updateSlideShareJSON(slideUuid, imageFileName, audioFileName, false);
+    }
+
+    public void updateSlideShareJSON(String slideUuid, String imageFileName, String audioFileName, boolean forceNulls) {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.updateSlideShareJSON: slideUuid=%s, imageFileName=%s, audioFileName=%s, forceNulls=%b", slideUuid, imageFileName, audioFileName, forceNulls));
         if(D)Log.d(TAG, "Current JSON:");
         Utilities.printSlideShareJSON(TAG, m_ssj);
 
@@ -865,7 +869,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
             needsAdapterUpdate = (m_ssj.getSlide(slideUuid) == null);
 
-            m_ssj.upsertSlide(slideUuid, m_currentTabPosition, imageUrl, audioUrl);
+            m_ssj.upsertSlide(slideUuid, m_currentTabPosition, imageUrl, audioUrl, forceNulls);
             m_ssj.save(this, m_slideShareName, Config.slideShareJSONFilename);
         }
         catch (Exception e) {

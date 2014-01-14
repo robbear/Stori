@@ -557,7 +557,8 @@ public class Utilities {
     }
 
     public static String buildResourceUrlString(String userUuid, String slideShareName, String fileName) {
-        if (fileName == null) {
+        if (fileName == null || fileName.length() == 0) {
+            if(D)Log.d(TAG, "Utilities.buildResourceUrlString - returning null");
             return null;
         }
 
