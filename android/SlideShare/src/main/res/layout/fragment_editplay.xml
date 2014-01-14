@@ -12,7 +12,7 @@
         android:id="@+id/current_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000000"
+        android:background="#808080"
         android:inAnimation="@anim/fade_in"
         android:outAnimation="@anim/fade_out" />
 
@@ -26,54 +26,86 @@
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight=".10">
-            <Button
+            <ImageButton
                 android:id="@+id/edit_prev_control"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_width="48dp"
                 android:layout_centerInParent="true"
-                android:text="+"/>
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_plus" />
         </RelativeLayout>
         <LinearLayout
             android:orientation="vertical"
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight=".80">
-            <Button
-                android:id="@+id/select_from_gallery_control"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="Choose photo" />
-            <Button
-                android:id="@+id/camera_control"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="Camera" />
-            <Button
-                android:id="@+id/control_record"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Record" />
-            <Button
-                android:id="@+id/control_playback"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Play"/>
-            <Button
-                android:id="@+id/control_more"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="More..." />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_height="0dp"
+                android:layout_weight=".80"
+                android:layout_width="match_parent">
+                <ImageButton
+                    android:id="@+id/select_from_gallery_control"
+                    android:layout_height="48dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.3"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_selectimage" />
+                <ImageButton
+                    android:id="@+id/camera_control"
+                    android:layout_height="48dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.3"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_camera" />
+                <ImageButton
+                    android:id="@+id/control_more"
+                    android:layout_height="48dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.3"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/abc_ic_menu_moreoverflow_normal_holo_dark" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_height="0dp"
+                android:layout_weight=".20"
+                android:layout_width="match_parent">
+                <ImageButton
+                    android:id="@+id/control_record"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="48dp"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_record" />
+                <ImageButton
+                    android:id="@+id/control_playback"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="48dp"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_play" />
+            </LinearLayout>
         </LinearLayout>
         <RelativeLayout
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight=".10">
-            <Button
+            <ImageButton
                 android:id="@+id/edit_next_control"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_width="48dp"
                 android:layout_centerInParent="true"
-                android:text="+"/>
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_plus" />
         </RelativeLayout>
     </LinearLayout>
 

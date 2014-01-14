@@ -20,7 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.PopupMenu;
 import android.widget.ViewSwitcher;
@@ -55,13 +55,13 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private EditPlayActivity m_editPlayActivity;
     private String m_slideShareName;
     private ImageSwitcher m_imageSwitcher;
-    private Button m_insertBeforeControl;
-    private Button m_insertAfterControl;
-    private Button m_selectPhotoControl;
-    private Button m_cameraControl;
-    private Button m_recordControl;
-    private Button m_playstopControl;
-    private Button m_moreControl;
+    private ImageButton m_insertBeforeControl;
+    private ImageButton m_insertAfterControl;
+    private ImageButton m_selectPhotoControl;
+    private ImageButton m_cameraControl;
+    private ImageButton m_recordControl;
+    private ImageButton m_playstopControl;
+    private ImageButton m_moreControl;
     private String m_imageFileName;
     private String m_audioFileName;
     private String m_slideUuid;
@@ -180,7 +180,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         super.onResume();
 
         boolean hasCamera = Utilities.isCameraAvailable(m_editPlayActivity);
-        m_cameraControl.setVisibility(hasCamera ? View.VISIBLE : View.GONE);
+        m_cameraControl.setVisibility(hasCamera ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -213,7 +213,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
         View view = inflater.inflate(R.layout.fragment_editplay, container, false);
 
-        m_moreControl = (Button)view.findViewById(R.id.control_more);
+        m_moreControl = (ImageButton)view.findViewById(R.id.control_more);
         m_moreControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -262,7 +262,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
                         public boolean onMenuItemClick(MenuItem item) {
                             m_editPlayActivity.deleteAudio(m_slideUuid, m_audioFileName);
                             m_audioFileName = null;
-                            m_playstopControl.setEnabled(false);
+                            m_playstopControl.setVisibility(View.GONE);
                             return true;
                         }
                     });
@@ -275,7 +275,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             }
         });
 
-        m_selectPhotoControl = (Button)view.findViewById(R.id.select_from_gallery_control);
+        m_selectPhotoControl = (ImageButton)view.findViewById(R.id.select_from_gallery_control);
         m_selectPhotoControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -285,7 +285,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             }
         });
 
-        m_recordControl = (Button)view.findViewById(R.id.control_record);
+        m_recordControl = (ImageButton)view.findViewById(R.id.control_record);
         m_recordControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -300,8 +300,8 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             }
         });
 
-        m_playstopControl = (Button)view.findViewById(R.id.control_playback);
-        m_playstopControl.setEnabled(hasAudio());
+        m_playstopControl = (ImageButton)view.findViewById(R.id.control_playback);
+        m_playstopControl.setVisibility(hasAudio() ? View.VISIBLE : View.GONE);
         m_playstopControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -316,7 +316,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             }
         });
 
-        m_cameraControl = (Button)view.findViewById(R.id.camera_control);
+        m_cameraControl = (ImageButton)view.findViewById(R.id.camera_control);
         m_cameraControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -326,7 +326,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             }
         });
 
-        m_insertBeforeControl = (Button)view.findViewById(R.id.edit_prev_control);
+        m_insertBeforeControl = (ImageButton)view.findViewById(R.id.edit_prev_control);
         m_insertBeforeControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -335,7 +335,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             }
         });
 
-        m_insertAfterControl = (Button)view.findViewById(R.id.edit_next_control);
+        m_insertAfterControl = (ImageButton)view.findViewById(R.id.edit_next_control);
         m_insertAfterControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -531,7 +531,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             view.setVisibility(View.VISIBLE);
         }
         else {
-            view.setVisibility(View.GONE);
+            view.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -542,7 +542,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         m_imageFileName = null;
         m_editPlayActivity.deleteAudio(m_slideUuid, m_audioFileName);
         m_audioFileName = null;
-        m_playstopControl.setEnabled(false);
+        m_playstopControl.setVisibility(View.GONE);
         renderImage();
     }
 
@@ -645,7 +645,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             m_recorder.prepare();
             m_recorder.start();
             m_isRecording = true;
-            m_recordControl.setText("Stop recording");
+            m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stoprecording));
         }
         catch (IOException e) {
             if(E)Log.e(TAG, "EditPlayFragment.startRecording", e);
@@ -687,10 +687,10 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         m_recorder = null;
 
         m_isRecording = false;
-        m_recordControl.setText("Record");
+        m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
 
         if (success) {
-            m_playstopControl.setEnabled(true);
+            m_playstopControl.setVisibility(View.VISIBLE);
         }
         else {
             if(D)Log.d(TAG, String.format("EditPlayFragment.stopRecording - exception thrown on m_recorder.stop. Cleaning up %s", m_audioFileName));
@@ -734,7 +734,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             m_player.start();
 
             m_isPlaying = true;
-            m_playstopControl.setText("Stop playing");
+            m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stopplaying));
         }
         catch (IOException e) {
             if(E)Log.e(TAG, "EditPlayFragment.startPlaying", e);
@@ -781,7 +781,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         }
 
         m_isPlaying = false;
-        m_playstopControl.setText("Play");
+        m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_play));
     }
 
     private boolean hasAudio() {
