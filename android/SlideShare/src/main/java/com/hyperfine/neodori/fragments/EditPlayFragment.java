@@ -669,14 +669,33 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             return;
         }
 
-        m_recorder.stop();
+        boolean success = false;
+
+        try {
+            m_recorder.stop();
+            success = true;
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditPlayFragment.stopRecording", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditPlayFragment.stopRecording", e);
+            e.printStackTrace();
+        }
         m_recorder.release();
         m_recorder = null;
 
         m_isRecording = false;
         m_recordControl.setText("Record");
 
-        m_playstopControl.setEnabled(true);
+        if (success) {
+            m_playstopControl.setEnabled(true);
+        }
+        else {
+            if(D)Log.d(TAG, String.format("EditPlayFragment.stopRecording - exception thrown on m_recorder.stop. Cleaning up %s", m_audioFileName));
+            m_editPlayActivity.deleteAudio(m_slideUuid, m_audioFileName);
+        }
     }
 
     private void startPlaying() {
