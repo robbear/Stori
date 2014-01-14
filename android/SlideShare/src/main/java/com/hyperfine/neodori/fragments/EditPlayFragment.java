@@ -77,7 +77,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private EditPlayActivity.EditPlayMode m_editPlayMode = EditPlayActivity.EditPlayMode.Edit;
 
     public static EditPlayFragment newInstance(EditPlayActivity editPlayActivity, int position, String slideShareName, String slideUuid, SlideJSON sj) {
-        if(D)Log.d(TAG, "EditPlayFragment.newInstance");
+        if(D)Log.d(TAG, String.format("EditPlayFragment.newInstance: slideShareName=%s, slideUuid=%s", slideShareName, slideUuid));
 
         EditPlayFragment f = new EditPlayFragment();
 
@@ -219,6 +219,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             public void onClick(View view) {
                 if(D)Log.d(TAG, "EditPlayFragment.onMoreControlClicked");
 
+
                 PopupMenu pm = new PopupMenu(m_editPlayActivity, view);
                 pm.inflate(R.menu.menu_editplay_more);
                 Menu menu = pm.getMenu();
@@ -227,7 +228,13 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
                 deleteSlide.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        m_editPlayActivity.deleteSlide(m_slideUuid, m_imageFileName, m_audioFileName);
+                        int count = m_editPlayActivity.getSlideCount();
+                        if (count > 1) {
+                            m_editPlayActivity.deleteSlide(m_slideUuid, m_imageFileName, m_audioFileName);
+                        }
+                        else {
+                            deleteSlideData();
+                        }
                         return true;
                     }
                 });
@@ -526,6 +533,17 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         else {
             view.setVisibility(View.GONE);
         }
+    }
+
+    private void deleteSlideData() {
+        if(D)Log.d(TAG, "EditPlayFragment.deleteSlideData");
+
+        m_editPlayActivity.deleteImage(m_slideUuid, m_imageFileName);
+        m_imageFileName = null;
+        m_editPlayActivity.deleteAudio(m_slideUuid, m_audioFileName);
+        m_audioFileName = null;
+        m_playstopControl.setEnabled(false);
+        renderImage();
     }
 
     private void renderImage() {

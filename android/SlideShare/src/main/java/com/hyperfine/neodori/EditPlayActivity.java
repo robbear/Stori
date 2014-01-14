@@ -600,6 +600,25 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         ad.show();
     }
 
+    public int getSlideCount() {
+        if(D)Log.d(TAG, "EditPlayActivity.getSlideCount");
+
+        int count = 0;
+        try {
+            count = m_ssj.getSlideCount();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditPlayActivity.getSlideCount", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditPlayActivity.getSlideCount", e);
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+
     //
     // initializeForChangeInAccount
     // Called in response to the user selecting a new account.
@@ -732,6 +751,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             m_currentTabPosition--;
         }
         m_viewPager.setCurrentItem(m_currentTabPosition);
+        setActionBarTitle();
     }
 
     public void publishSlides() {
@@ -833,7 +853,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     }
 
     public void updateSlideShareJSON(String slideUuid, String imageFileName, String audioFileName) {
-        if(D)Log.d(TAG, "EditPlayActivity.updateSlideShareJSON");
+        if(D)Log.d(TAG, String.format("EditPlayActivity.updateSlideShareJSON: slideUuid=%s, imageFileName=%s, audioFileName=%s", slideUuid, imageFileName, audioFileName));
         if(D)Log.d(TAG, "Current JSON:");
         Utilities.printSlideShareJSON(TAG, m_ssj);
 
