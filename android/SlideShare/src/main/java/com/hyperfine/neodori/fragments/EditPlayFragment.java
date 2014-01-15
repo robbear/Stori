@@ -48,6 +48,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private final static String INSTANCE_STATE_IMAGEFILENAME = "instance_state_imagefilename";
     private final static String INSTANCE_STATE_AUDIOFILENAME = "instance_state_audiofilename";
     private final static String INSTANCE_STATE_SLIDESHARENAME = "instance_state_slidesharename";
+    private final static String INSTANCE_STATE_SLIDUUID = "instance_state_slideuuid";
     private final static String INSTANCE_STATE_TABPOSITION = "instance_state_tabposition";
     private final static String INSTANCE_STATE_SELECTEDTABPOSITION = "instance_state_selectedtabposition";
     private final static String INSTANCE_STATE_CURRENTCAMERAPHOTOFILEPATH = "instance_state_currentcameraphotofilepath";
@@ -142,6 +143,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             m_audioFileName = savedInstanceState.getString(INSTANCE_STATE_AUDIOFILENAME);
             m_imageFileName = savedInstanceState.getString(INSTANCE_STATE_IMAGEFILENAME);
             m_slideShareName = savedInstanceState.getString(INSTANCE_STATE_SLIDESHARENAME);
+            m_slideUuid = savedInstanceState.getString(INSTANCE_STATE_SLIDUUID);
             m_currentCameraPhotoFilePath = savedInstanceState.getString(INSTANCE_STATE_CURRENTCAMERAPHOTOFILEPATH);
         }
     }
@@ -157,6 +159,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         savedInstanceState.putString(INSTANCE_STATE_AUDIOFILENAME, m_audioFileName);
         savedInstanceState.putString(INSTANCE_STATE_IMAGEFILENAME, m_imageFileName);
         savedInstanceState.putString(INSTANCE_STATE_SLIDESHARENAME, m_slideShareName);
+        savedInstanceState.putString(INSTANCE_STATE_SLIDUUID, m_slideUuid);
         savedInstanceState.putString(INSTANCE_STATE_CURRENTCAMERAPHOTOFILEPATH, m_currentCameraPhotoFilePath);
     }
 
@@ -178,7 +181,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
     @Override
     public void onResume() {
-        if(D)Log.d(TAG, "EditPlayFragment.onResume");
+        if(D)Log.d(TAG, String.format("EditPlayFragment.onResume: m_slideUuid=%s", m_slideUuid));
 
         super.onResume();
 
