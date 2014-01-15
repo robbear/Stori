@@ -425,7 +425,7 @@ public class Utilities {
         return success;
     }
 
-    public static boolean copyGalleryImageToJPG(Context context, String slideShareName, String fileName, Intent intent) {
+    public static boolean copyGalleryImageToJPG(Context context, String slideShareName, String fileName, Uri uri) {
         if(D)Log.d(TAG, String.format("Utilities.copyGalleryImageToJPG: slideShareName=%s, fileName=%s", slideShareName, fileName));
 
         boolean success = false;
@@ -439,7 +439,7 @@ public class Utilities {
         }
 
         try {
-            is = context.getContentResolver().openInputStream(intent.getData());
+            is = context.getContentResolver().openInputStream(uri);
 
             File file = createFile(context, slideShareName, fileName);
             outStream = new FileOutputStream(file);

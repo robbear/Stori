@@ -1,10 +1,12 @@
 package com.hyperfine.neodori.fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Point;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -75,6 +77,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private int m_displayHeight = 0;
     private String m_currentCameraPhotoFilePath = null;
     private EditPlayActivity.EditPlayMode m_editPlayMode = EditPlayActivity.EditPlayMode.Edit;
+    private ProgressDialog m_copyFileProgressDialog = null;
 
     public static EditPlayFragment newInstance(EditPlayActivity editPlayActivity, int position, String slideShareName, String slideUuid, SlideJSON sj) {
         if(D)Log.d(TAG, String.format("EditPlayFragment.newInstance: slideShareName=%s, slideUuid=%s", slideShareName, slideUuid));
@@ -414,20 +417,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
                 imageFileName = getNewImageFileName();
             }
 
-            boolean success = Utilities.copyGalleryImageToJPG(m_editPlayActivity, m_slideShareName, imageFileName, intent);
-
-            if (success) {
-                // Display the image only upon successful save
-                m_imageFileName = imageFileName;
-                renderImage();
-            }
-            else {
-                // Clean up - remove the image file
-                Utilities.deleteFile(m_editPlayActivity, m_slideShareName, imageFileName);
-                m_imageFileName = null;
-            }
-
-            m_editPlayActivity.updateSlideShareJSON(m_slideUuid, m_imageFileName, m_audioFileName);
+            asyncCopyFile(CopyFileTaskType.Gallery, m_slideShareName, imageFileName, intent.getData(), null);
         }
         else if (requestCode == EditPlayActivity.REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
             if(D)Log.d(TAG, String.format("CreateSlidesFragment.onActivityResult for REQUEST_CAMERA: m_currentCameraPhotoFilePath=%s", m_currentCameraPhotoFilePath));
@@ -449,21 +439,7 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
                 imageFileName = getNewImageFileName();
             }
 
-            boolean success = Utilities.copyExternalStorageImageToJPG(m_editPlayActivity, m_slideShareName, imageFileName, m_currentCameraPhotoFilePath);
-            m_currentCameraPhotoFilePath = null;
-
-            if (success) {
-                // Display the image only upon successful save
-                m_imageFileName = imageFileName;
-                renderImage();
-            }
-            else {
-                // Clean up - remove the image file
-                Utilities.deleteFile(m_editPlayActivity, m_slideShareName, imageFileName);
-                m_imageFileName = null;
-            }
-
-            m_editPlayActivity.updateSlideShareJSON(m_slideUuid, m_imageFileName, m_audioFileName);
+            asyncCopyFile(CopyFileTaskType.Camera, m_slideShareName, imageFileName, null, m_currentCameraPhotoFilePath);
         }
         else {
             super.onActivityResult(requestCode, resultCode, intent);
@@ -798,5 +774,107 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
     private static String getNewAudioFileName() {
         return UUID.randomUUID().toString() + ".3gp";
+    }
+
+    //
+    // Async copy file class
+    //
+
+    private void asyncCopyFile(CopyFileTaskType fileType, String slideShareName, String fileName, Uri uri, String cameraPhotoFilePath) {
+        if(D)Log.d(TAG, "EditPlayFragment.asyncCopyFile");
+
+        m_copyFileProgressDialog = new ProgressDialog(m_editPlayActivity);
+        m_copyFileProgressDialog.setTitle(getString(R.string.editplay_copydialog_title));
+        m_copyFileProgressDialog.setCancelable(false);
+        m_copyFileProgressDialog.setIndeterminate(true);
+        m_copyFileProgressDialog.show();
+
+        CopyFileTaskParams cftp = new CopyFileTaskParams(fileType, slideShareName, fileName, uri, cameraPhotoFilePath);
+
+        try {
+            new CopyFileTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, cftp);
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditPlayFragment.asyncCopyFile", e);
+            e.printStackTrace();
+
+            m_copyFileProgressDialog.dismiss();
+            m_copyFileProgressDialog = null;
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditPlayFragment.asyncCopyFile", e);
+            e.printStackTrace();
+
+            m_copyFileProgressDialog.dismiss();
+            m_copyFileProgressDialog = null;
+        }
+    }
+
+    private enum CopyFileTaskType {
+        Gallery,
+        Camera
+    }
+
+    private class CopyFileTaskParams {
+        public CopyFileTaskParams(CopyFileTaskType fileType, String slideShareName, String fileName, Uri imageUri, String cameraPhotoFilePath) {
+            m_fileType = fileType;
+            m_slideShareName = slideShareName;
+            m_fileName = fileName;
+            m_imageUri = imageUri;
+            m_cameraPhotoFilePath = cameraPhotoFilePath;
+            m_success = false;
+        }
+
+        public CopyFileTaskType m_fileType;
+        public String m_slideShareName;
+        public String m_fileName;
+        public Uri m_imageUri;
+        public String m_cameraPhotoFilePath;
+        public Boolean m_success;
+    }
+
+    protected class CopyFileTask extends AsyncTask<Object, Void, CopyFileTaskParams> {
+
+        @Override
+        protected CopyFileTaskParams doInBackground(Object... params) {
+            if(D)Log.d(TAG, "EditPlayFragment.CopyFileTask.doInBackground");
+
+            CopyFileTaskParams cftp = (CopyFileTaskParams)params[0];
+
+            switch (cftp.m_fileType) {
+                case Gallery:
+                    cftp.m_success = Utilities.copyGalleryImageToJPG(m_editPlayActivity, cftp.m_slideShareName, cftp.m_fileName, cftp.m_imageUri);
+                    break;
+
+                case Camera:
+                    cftp.m_success = Utilities.copyExternalStorageImageToJPG(m_editPlayActivity, cftp.m_slideShareName, cftp.m_fileName, cftp.m_cameraPhotoFilePath);
+                    break;
+            }
+
+            return cftp;
+        }
+
+        @Override
+        protected void onPostExecute(CopyFileTaskParams cftp) {
+            if(D)Log.d(TAG, String.format("EditPlayFragment.CopyFileTask.onPostExecute: success=%b", cftp.m_success));
+
+            m_currentCameraPhotoFilePath = null;
+
+            if (cftp.m_success) {
+                // Display the image only upon successful save
+                m_imageFileName = cftp.m_fileName;
+                renderImage();
+            }
+            else {
+                // Clean up - remove the image file
+                Utilities.deleteFile(m_editPlayActivity, cftp.m_slideShareName, cftp.m_fileName);
+                m_imageFileName = null;
+            }
+
+            m_editPlayActivity.updateSlideShareJSON(m_slideUuid, m_imageFileName, m_audioFileName);
+
+            m_copyFileProgressDialog.dismiss();
+            m_copyFileProgressDialog = null;
+        }
     }
 }

@@ -769,13 +769,13 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 CloudStore cloudStore = new CloudStore(EditPlayActivity.this, m_userUuid,
                         m_slideShareName, Config.CLOUD_STORAGE_PROVIDER, EditPlayActivity.this);
 
-                cloudStore.saveAsync();
-
                 m_progressDialog = new ProgressDialog(EditPlayActivity.this);
                 m_progressDialog.setTitle(getString(R.string.upload_dialog_title));
                 m_progressDialog.setCancelable(false);
                 m_progressDialog.setIndeterminate(true);
                 m_progressDialog.show();
+
+                cloudStore.saveAsync();
             }
         });
         adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
