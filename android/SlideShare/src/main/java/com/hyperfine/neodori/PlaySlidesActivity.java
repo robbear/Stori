@@ -1,5 +1,9 @@
 package com.hyperfine.neodori;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.content.Context;
@@ -38,6 +42,8 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
     private String m_slideShareName;
     private int m_currentTabPosition = 0;
     private boolean m_loadedFromSavedInstanceState = false;
+    private boolean m_saveInstanceStateCalled = false;
+    private NeodoriService m_neodoriService = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +145,45 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
     }
 
     @Override
+    public void onDestroy() {
+        if(D)Log.d(TAG, "PlaySlidesActivity.onDestroy");
+
+        super.onDestroy();
+    }
+
+    @Override
+    public void onStart() {
+        if(D)Log.d(TAG, "PlaySlidesActivity.onStart");
+
+        super.onStart();
+
+        initializeNeodoriService();
+    }
+
+    @Override
+    public void onStop() {
+        if(D)Log.d(TAG, "PlaySlidesActivity.onStop");
+
+        super.onStop();
+
+        uninitializeNeodoriService();
+    }
+
+    @Override
+    public void onResume() {
+        if(D)Log.d(TAG, "PlaySlidesActivity.onResume");
+
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        if(D)Log.d(TAG, "PlaySlidesActivity.onPause");
+
+        super.onPause();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         if(D)Log.d(TAG, "PlaySlidesActivity.onSaveInstanceState");
 
@@ -147,6 +192,8 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         if(D)Log.d(TAG, String.format("PlaySlidesActivity.onSaveInstanceState: m_currentTabPosition=%d", m_currentTabPosition));
 
         savedInstanceState.putInt(INSTANCE_STATE_CURRENT_TAB, m_currentTabPosition);
+
+        m_saveInstanceStateCalled = true;
     }
 
     @Override
@@ -203,4 +250,44 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
 
         return m_currentTabPosition;
     }
+
+    protected void initializeNeodoriService()
+    {
+        if(D)Log.d(TAG, "PlaySlidesActivity.initializeNeodoriService");
+
+        Intent service = new Intent(this, NeodoriService.class);
+
+        if(D)Log.d(TAG, "PlaySlidesActivity.initializeNeodoriService - calling bindService");
+        bindService(service, m_connection, Context.BIND_AUTO_CREATE);
+    }
+
+    protected void uninitializeNeodoriService()
+    {
+        if(D)Log.d(TAG, String.format("PlaySlidesActivity.uninitializeNeodoriService: m_saveInstanceStateCalled=%b", m_saveInstanceStateCalled));
+
+        if (m_neodoriService != null && !m_saveInstanceStateCalled)
+        {
+            if(D)Log.d(TAG, "PlaySlidesActivity.uninitializeNeodoriService - calling unbindService");
+            unbindService(m_connection);
+        }
+
+        m_neodoriService = null;
+        m_saveInstanceStateCalled = false;
+    }
+
+    public ServiceConnection m_connection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service)
+        {
+            if(D)Log.d(TAG, "PlaySlidesActivity.onServiceConnected");
+
+            m_neodoriService = ((NeodoriService.NeodoriServiceBinder)service).getService();
+        }
+
+        public void onServiceDisconnected(ComponentName className)
+        {
+            if(D)Log.d(TAG, "PlaySlidesActivity.onServiceDisconnected");
+
+            m_neodoriService = null;
+        }
+    };
 }

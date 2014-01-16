@@ -2,8 +2,11 @@ package com.hyperfine.neodori;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.content.Context;
@@ -54,8 +57,10 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private String m_slideShareName;
     private int m_currentTabPosition = 0;
     private boolean m_loadedFromSavedInstanceState = false;
+    private boolean m_saveInstanceStateCalled = false;
     private EditPlayMode m_editPlayMode = EditPlayMode.Edit;
     private ProgressDialog m_progressDialog = null;
+    private NeodoriService m_neodoriService = null;
 
     public final static int REQUEST_GOOGLE_PLAY_SERVICES_ERROR = 1;
     public final static int REQUEST_GOOGLE_LOGIN = 2;
@@ -277,6 +282,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         savedInstanceState.putInt(INSTANCE_STATE_CURRENT_TAB, m_currentTabPosition);
         savedInstanceState.putInt(INSTANCE_STATE_EDITPLAYMODE, m_editPlayMode.getValue());
+
+        m_saveInstanceStateCalled = true;
     }
 
     @Override
@@ -291,6 +298,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         if(D)Log.d(TAG, "EditPlayActivity.onStart");
 
         super.onStart();
+
+        initializeNeodoriService();
     }
 
     @Override
@@ -298,6 +307,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         if(D)Log.d(TAG, "EditPlayActivity.onStop");
 
         super.onStop();
+
+        uninitializeNeodoriService();
     }
 
     @Override
@@ -915,4 +926,44 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         return m_currentTabPosition;
     }
+
+    protected void initializeNeodoriService()
+    {
+        if(D)Log.d(TAG, "EditPlayActivity.initializeNeodoriService");
+
+        Intent service = new Intent(this, NeodoriService.class);
+
+        if(D)Log.d(TAG, "EditPlayActivity.initializeNeodoriService - calling bindService");
+        bindService(service, m_connection, Context.BIND_AUTO_CREATE);
+    }
+
+    protected void uninitializeNeodoriService()
+    {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.uninitializeNeodoriService: m_saveInstanceStateCalled=%b", m_saveInstanceStateCalled));
+
+        if (m_neodoriService != null && !m_saveInstanceStateCalled)
+        {
+            if(D)Log.d(TAG, "EditPlayActivity.uninitializeNeodoriService - calling unbindService");
+            unbindService(m_connection);
+        }
+
+        m_neodoriService = null;
+        m_saveInstanceStateCalled = false;
+    }
+
+    public ServiceConnection m_connection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service)
+        {
+            if(D)Log.d(TAG, "EditPlayActivity.onServiceConnected");
+
+            m_neodoriService = ((NeodoriService.NeodoriServiceBinder)service).getService();
+        }
+
+        public void onServiceDisconnected(ComponentName className)
+        {
+            if(D)Log.d(TAG, "EditPlayActivity.onServiceDisconnected");
+
+            m_neodoriService = null;
+        }
+    };
 }
