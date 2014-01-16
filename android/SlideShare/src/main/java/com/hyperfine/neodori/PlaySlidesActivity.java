@@ -81,7 +81,7 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         m_playSlidesPagerAdapter = new PlaySlidesPagerAdapter(getSupportFragmentManager());
         m_playSlidesPagerAdapter.setSlideShareJSON(m_ssj);
         m_playSlidesPagerAdapter.setSlideShareName(m_slideShareName);
-        m_playSlidesPagerAdapter.setActivityParent(this);
+        m_playSlidesPagerAdapter.setPlaySlidesActivity(this);
 
         m_viewPager = (ViewPager)findViewById(R.id.view_pager);
         try {
@@ -176,5 +176,31 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
 
         if(D)Log.d(TAG, "PlaySlidesActivity.initializeSlideShareJSON: here is the JSON:");
         Utilities.printSlideShareJSON(TAG, m_ssj);
+    }
+
+    public int getSlidePosition(String slideUuid) {
+        if(D)Log.d(TAG, String.format("PlaySlidesActivity.getSlidePosition: slideUuid=%s", slideUuid));
+
+        int position = -1;
+
+        try {
+            position = m_ssj.getOrderIndex(slideUuid);
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "PlaySlidesActivity.getSlidePosition", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "PlaySlidesActivity.getSlidePosition", e);
+            e.printStackTrace();
+        }
+
+        return position;
+    }
+
+    public int getCurrentTabPosition() {
+        if(D)Log.d(TAG, String.format("PlaySlidesActivity.getCurrentTabPosition: returning %d", m_currentTabPosition));
+
+        return m_currentTabPosition;
     }
 }

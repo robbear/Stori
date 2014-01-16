@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 
+import com.hyperfine.neodori.PlaySlidesActivity;
 import com.hyperfine.neodori.SlideJSON;
 import com.hyperfine.neodori.SlideShareJSON;
 import com.hyperfine.neodori.fragments.PlaySlidesFragment;
@@ -19,7 +20,7 @@ public class PlaySlidesPagerAdapter extends FragmentStatePagerAdapter {
 
     private SlideShareJSON m_ssj;
     private String m_slideShareName;
-    private Activity m_activityParent;
+    private PlaySlidesActivity m_playSlidesActivity;
 
     public PlaySlidesPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -39,10 +40,10 @@ public class PlaySlidesPagerAdapter extends FragmentStatePagerAdapter {
         m_slideShareName = slideShareName;
     }
 
-    public void setActivityParent(Activity activityParent) {
-        if(D)Log.d(TAG, "PlaySlidesPagerAdapter.setContext");
+    public void setPlaySlidesActivity(PlaySlidesActivity playSlidesActivity) {
+        if(D)Log.d(TAG, "PlaySlidesPagerAdapter.setPlaySlidesActivity");
 
-        m_activityParent = activityParent;
+        m_playSlidesActivity = playSlidesActivity;
     }
 
     @Override
@@ -50,8 +51,10 @@ public class PlaySlidesPagerAdapter extends FragmentStatePagerAdapter {
         if(D)Log.d(TAG, String.format("PlaySlidesPagerAdapter.getItem(%d)", i));
 
         SlideJSON sj = null;
+        String slideUuid = null;
         try {
             sj = m_ssj.getSlide(i);
+            slideUuid = m_ssj.getSlideUuidByOrderIndex(i);
         }
         catch (Exception e) {
             if(E)Log.e(TAG, "PlaySlidesPagerAdapter.getItem", e);
@@ -62,7 +65,7 @@ public class PlaySlidesPagerAdapter extends FragmentStatePagerAdapter {
             e.printStackTrace();
         }
 
-        return PlaySlidesFragment.newInstance(m_activityParent, i, m_slideShareName, sj);
+        return PlaySlidesFragment.newInstance(m_playSlidesActivity, i, m_slideShareName, slideUuid, sj);
     }
 
     @Override

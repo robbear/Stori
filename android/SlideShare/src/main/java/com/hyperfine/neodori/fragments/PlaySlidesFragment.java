@@ -18,6 +18,7 @@ import android.widget.ViewSwitcher;
 
 import com.hyperfine.neodori.AsyncTaskTimer;
 import com.hyperfine.neodori.Config;
+import com.hyperfine.neodori.PlaySlidesActivity;
 import com.hyperfine.neodori.R;
 import com.hyperfine.neodori.SlideJSON;
 import com.hyperfine.neodori.Utilities;
@@ -36,13 +37,11 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
     private final static String INSTANCE_STATE_IMAGEFILENAME = "instance_state_imagefilename";
     private final static String INSTANCE_STATE_AUDIOFILENAME = "instance_state_audiofilename";
     private final static String INSTANCE_STATE_SLIDESHARENAME = "instance_state_slidesharename";
-    private final static String INSTANCE_STATE_TABPOSITION = "instance_state_tabposition";
-    private final static String INSTANCE_STATE_SELECTEDTABPOSITION = "instance_state_selectedtabposition";
+    private final static String INSTANCE_STATE_SLIDUUID = "instance_state_slideuuid";
 
-    private int m_tabPosition = -1;
-    private int m_selectedTabPosition = 0;
-    private Activity m_activityParent;
+    private PlaySlidesActivity m_playSlidesActivity;
     private String m_slideShareName;
+    private String m_slideUuid;
     private ImageSwitcher m_imageSwitcher;
     private String m_imageFileName;
     private String m_audioFileName;
@@ -53,23 +52,16 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
     private int m_displayWidth = 0;
     private int m_displayHeight = 0;
 
-    public static PlaySlidesFragment newInstance(Activity activityParent, int position, String slideShareName, SlideJSON sj) {
+    public static PlaySlidesFragment newInstance(PlaySlidesActivity playSlidesActivity, int position, String slideShareName, String slideUuid, SlideJSON sj) {
         if(D)Log.d(TAG, "PlaySlidesFragment.newInstance");
 
         PlaySlidesFragment f = new PlaySlidesFragment();
 
-        f.setTabPosition(position);
         f.setSlideShareName(slideShareName);
-        f.setSlideJSON(sj);
-        f.setActivityParent(activityParent);
+        f.setSlideJSON(slideUuid, sj);
+        f.setPlaySlidesActivity(playSlidesActivity);
 
         return f;
-    }
-
-    public void setTabPosition(int position) {
-        if(D)Log.d(TAG, String.format("PlaySlidesFragment.setTabPosition(%d)", position));
-
-        m_tabPosition = position;
     }
 
     public void setSlideShareName(String name) {
@@ -78,10 +70,11 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
         m_slideShareName = name;
     }
 
-    public void setSlideJSON(SlideJSON sj) {
+    public void setSlideJSON(String slideUuid, SlideJSON sj) {
         if(D)Log.d(TAG, "PlaySlidesFragment.setSlideJSON");
 
         try {
+            m_slideUuid = slideUuid;
             m_imageFileName = sj.getImageFilename();
             m_audioFileName = sj.getAudioFilename();
         }
@@ -95,10 +88,10 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
         }
     }
 
-    public void setActivityParent(Activity activityParent) {
-        if(D)Log.d(TAG, "PlaySlidesFragment.setActivityParent");
+    public void setPlaySlidesActivity(PlaySlidesActivity playSlidesActivity) {
+        if(D)Log.d(TAG, "PlaySlidesFragment.setPlaySlidesActivity");
 
-        m_activityParent = activityParent;
+        m_playSlidesActivity = playSlidesActivity;
     }
 
     @Override
@@ -110,11 +103,10 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
         if (savedInstanceState != null) {
             if(D)Log.d(TAG, "PlaySlidesFragment.onCreate - populating from savedInstanceState");
 
-            m_tabPosition = savedInstanceState.getInt(INSTANCE_STATE_TABPOSITION, -1);
-            m_selectedTabPosition = savedInstanceState.getInt(INSTANCE_STATE_SELECTEDTABPOSITION, -1);
             m_audioFileName = savedInstanceState.getString(INSTANCE_STATE_AUDIOFILENAME);
             m_imageFileName = savedInstanceState.getString(INSTANCE_STATE_IMAGEFILENAME);
             m_slideShareName = savedInstanceState.getString(INSTANCE_STATE_SLIDESHARENAME);
+            m_slideUuid = savedInstanceState.getString(INSTANCE_STATE_SLIDUUID);
         }
     }
 
@@ -124,11 +116,10 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
 
         super.onSaveInstanceState(savedInstanceState);
 
-        savedInstanceState.putInt(INSTANCE_STATE_TABPOSITION, m_tabPosition);
-        savedInstanceState.putInt(INSTANCE_STATE_SELECTEDTABPOSITION, m_selectedTabPosition);
         savedInstanceState.putString(INSTANCE_STATE_AUDIOFILENAME, m_audioFileName);
         savedInstanceState.putString(INSTANCE_STATE_IMAGEFILENAME, m_imageFileName);
         savedInstanceState.putString(INSTANCE_STATE_SLIDESHARENAME, m_slideShareName);
+        savedInstanceState.putString(INSTANCE_STATE_SLIDUUID, m_slideUuid);
     }
 
     @Override
@@ -160,7 +151,7 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
 
         super.onAttach(activity);
 
-        m_activityParent = activity;
+        m_playSlidesActivity = (PlaySlidesActivity)activity;
 
         Display display = activity.getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -215,7 +206,7 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
 
         super.onActivityCreated(savedInstanceState);
 
-        m_imageSwitcher.setFactory((ViewSwitcher.ViewFactory)m_activityParent);
+        m_imageSwitcher.setFactory((ViewSwitcher.ViewFactory)m_playSlidesActivity);
 
         // Seed the ImageSwitcher with a black background in order to inflate it
         // to non-zero dimensions.
@@ -228,11 +219,11 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
     }
 
     public void onTabPageSelected(int position) {
-        if(D)Log.d(TAG, String.format("PlaySlidesFragment.onTabPageSelected: m_tabPosition=%d, position=%d", m_tabPosition, position));
+        if(D)Log.d(TAG, String.format("PlaySlidesFragment.onTabPageSelected: position=%d", position));
 
-        m_selectedTabPosition = position;
+        int tabPosition = m_playSlidesActivity.getSlidePosition(m_slideUuid);
 
-        if (m_tabPosition == position) {
+        if (tabPosition == position) {
             if(D)Log.d(TAG, "PlaySlidesFragment.onTabPageSelected - starting audio timer");
             AsyncTaskTimer.startAsyncTaskTimer(1, Config.audioDelayMillis, this);
         }
@@ -242,11 +233,12 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
     }
 
     public void onAsyncTaskTimerComplete(long cookie) {
-        if(D)Log.d(TAG, String.format(
-                "PlaySlidesFragment.onAsyncTaskTimerComplete m_selectedTabPosition=%d, m_tabPosition=%d",
-                m_selectedTabPosition, m_tabPosition));
+        if(D)Log.d(TAG, "PlaySlidesFragment.onAsyncTaskTimerComplete");
 
-        if (m_selectedTabPosition == m_tabPosition) {
+        int selectedTabPosition = m_playSlidesActivity.getCurrentTabPosition();
+        int tabPosition = m_playSlidesActivity.getSlidePosition(m_slideUuid);
+
+        if (selectedTabPosition == tabPosition) {
             renderAudio();
         }
         else {
@@ -274,10 +266,10 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
                     targetH = m_displayHeight;
                 }
 
-                String filePath = Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_imageFileName);
+                String filePath = Utilities.getAbsoluteFilePath(m_playSlidesActivity, m_slideShareName, m_imageFileName);
                 Bitmap bitmap = Utilities.getConstrainedBitmap(filePath, targetW, targetH);
 
-                Drawable drawableImage = new BitmapDrawable(m_activityParent.getResources(), bitmap);
+                Drawable drawableImage = new BitmapDrawable(m_playSlidesActivity.getResources(), bitmap);
                 m_imageSwitcher.setImageDrawable(drawableImage);
             }
             catch (Exception e) {
@@ -323,7 +315,7 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
         });
 
         try {
-            String filePath = Utilities.getAbsoluteFilePath(m_activityParent, m_slideShareName, m_audioFileName);
+            String filePath = Utilities.getAbsoluteFilePath(m_playSlidesActivity, m_slideShareName, m_audioFileName);
             if(D)Log.d(TAG, String.format("PlaySlidesFragment.startPlaying: filePath=%s", filePath));
 
             File file = new File(filePath);
