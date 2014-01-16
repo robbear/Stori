@@ -774,6 +774,8 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private void asyncCopyFile(CopyFileTaskType fileType, String slideShareName, String fileName, Uri uri, String cameraPhotoFilePath) {
         if(D)Log.d(TAG, "EditPlayFragment.asyncCopyFile");
 
+        Utilities.freezeActivityOrientation(m_editPlayActivity);
+
         m_copyFileProgressDialog = new ProgressDialog(m_editPlayActivity);
         m_copyFileProgressDialog.setTitle(getString(R.string.editplay_copydialog_title));
         m_copyFileProgressDialog.setCancelable(false);
@@ -866,6 +868,8 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
             m_copyFileProgressDialog.dismiss();
             m_copyFileProgressDialog = null;
+
+            Utilities.unfreezeOrientation(m_editPlayActivity);
         }
     }
 }

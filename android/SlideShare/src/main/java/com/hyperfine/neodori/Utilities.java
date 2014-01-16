@@ -1,10 +1,13 @@
 package com.hyperfine.neodori;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -554,6 +557,25 @@ public class Utilities {
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.setType("text/plain");
         context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_dialog_title)));
+    }
+
+    public static void freezeActivityOrientation(Activity activity) {
+        if(D)Log.d(TAG, "Utilities.freezeOrientation");
+
+        if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+        {
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+        else
+        {
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
+
+    public static void unfreezeOrientation(Activity activity) {
+        if(D)Log.d(TAG, "Utilities.unfreezeOrientation");
+
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
     }
 
     public static String buildResourceUrlString(String userUuid, String slideShareName, String fileName) {
