@@ -889,4 +889,30 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         if(D)Log.d(TAG, "After update:");
         Utilities.printSlideShareJSON(TAG, m_ssj);
     }
+
+    public int getSlidePosition(String slideUuid) {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.getSlidePosition: slideUuid=%s", slideUuid));
+
+        int position = -1;
+
+        try {
+            position = m_ssj.getOrderIndex(slideUuid);
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditPlayActivity.getSlidePosition", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditPlayActivity.getSlidePosition", e);
+            e.printStackTrace();
+        }
+
+        return position;
+    }
+
+    public int getCurrentTabPosition() {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.getCurrentTabPosition: returning %d", m_currentTabPosition));
+
+        return m_currentTabPosition;
+    }
 }

@@ -49,12 +49,8 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private final static String INSTANCE_STATE_AUDIOFILENAME = "instance_state_audiofilename";
     private final static String INSTANCE_STATE_SLIDESHARENAME = "instance_state_slidesharename";
     private final static String INSTANCE_STATE_SLIDUUID = "instance_state_slideuuid";
-    private final static String INSTANCE_STATE_TABPOSITION = "instance_state_tabposition";
-    private final static String INSTANCE_STATE_SELECTEDTABPOSITION = "instance_state_selectedtabposition";
     private final static String INSTANCE_STATE_CURRENTCAMERAPHOTOFILEPATH = "instance_state_currentcameraphotofilepath";
 
-    private int m_tabPosition = -1;
-    private int m_selectedTabPosition = 0;
     private EditPlayActivity m_editPlayActivity;
     private String m_slideShareName;
     private ImageSwitcher m_imageSwitcher;
@@ -85,18 +81,11 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
         EditPlayFragment f = new EditPlayFragment();
 
-        f.setTabPosition(position);
         f.setSlideShareName(slideShareName);
         f.setSlideJSON(slideUuid, sj);
         f.setEditPlayActivity(editPlayActivity);
 
         return f;
-    }
-
-    public void setTabPosition(int position) {
-        if(D)Log.d(TAG, String.format("EditPlayFragment.setTabPosition(%d)", position));
-
-        m_tabPosition = position;
     }
 
     public void setSlideShareName(String name) {
@@ -138,8 +127,6 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         if (savedInstanceState != null) {
             if(D)Log.d(TAG, "EditPlayFragment.onCreate - populating from savedInstanceState");
 
-            m_tabPosition = savedInstanceState.getInt(INSTANCE_STATE_TABPOSITION, -1);
-            m_selectedTabPosition = savedInstanceState.getInt(INSTANCE_STATE_SELECTEDTABPOSITION, -1);
             m_audioFileName = savedInstanceState.getString(INSTANCE_STATE_AUDIOFILENAME);
             m_imageFileName = savedInstanceState.getString(INSTANCE_STATE_IMAGEFILENAME);
             m_slideShareName = savedInstanceState.getString(INSTANCE_STATE_SLIDESHARENAME);
@@ -154,8 +141,6 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
         super.onSaveInstanceState(savedInstanceState);
 
-        savedInstanceState.putInt(INSTANCE_STATE_TABPOSITION, m_tabPosition);
-        savedInstanceState.putInt(INSTANCE_STATE_SELECTEDTABPOSITION, m_selectedTabPosition);
         savedInstanceState.putString(INSTANCE_STATE_AUDIOFILENAME, m_audioFileName);
         savedInstanceState.putString(INSTANCE_STATE_IMAGEFILENAME, m_imageFileName);
         savedInstanceState.putString(INSTANCE_STATE_SLIDESHARENAME, m_slideShareName);
@@ -337,7 +322,8 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             @Override
             public void onClick(View v) {
                 if(D)Log.d(TAG, "EditPlayFragment.onInsertBeforeButtonClicked");
-                m_editPlayActivity.initializeNewSlide(m_selectedTabPosition);
+                int selectedTabPosition = m_editPlayActivity.getCurrentTabPosition();
+                m_editPlayActivity.initializeNewSlide(selectedTabPosition);
             }
         });
 
@@ -346,7 +332,8 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             @Override
             public void onClick(View v) {
                 if(D)Log.d(TAG, "EditPlayFragment.onInsertAfterButtonClicked");
-                m_editPlayActivity.initializeNewSlide(m_selectedTabPosition + 1);
+                int selectedTabPosition = m_editPlayActivity.getCurrentTabPosition();
+                m_editPlayActivity.initializeNewSlide(selectedTabPosition + 1);
             }
         });
 
@@ -462,14 +449,14 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     }
 
     public void onTabPageSelected(int position) {
-        if(D)Log.d(TAG, String.format("EditPlayFragment.onTabPageSelected: m_tabPosition=%d, position=%d", m_tabPosition, position));
+        if(D)Log.d(TAG, String.format("EditPlayFragment.onTabPageSelected: position=%d", position));
 
         m_editPlayMode = getActivityEditPlayMode();
         updateOverlay();
 
-        m_selectedTabPosition = position;
+        int tabPosition = m_editPlayActivity.getSlidePosition(m_slideUuid);
 
-        if (m_tabPosition == position) {
+        if (tabPosition == position) {
             if(D)Log.d(TAG, "EditPlayFragment.onTabPageSelected - starting audio timer");
             asyncStartAudio();
         }
@@ -490,11 +477,12 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     }
 
     public void onAsyncTaskTimerComplete(long cookie) {
-        if(D)Log.d(TAG, String.format(
-                "EditPlayFragment.onAsyncTaskTimerComplete m_selectedTabPosition=%d, m_tabPosition=%d",
-                m_selectedTabPosition, m_tabPosition));
+        if(D)Log.d(TAG, "EditPlayFragment.onAsyncTaskTimerComplete");
 
-        if (m_selectedTabPosition == m_tabPosition && m_editPlayMode != EditPlayActivity.EditPlayMode.Edit) {
+        int selectedTabPosition = m_editPlayActivity.getCurrentTabPosition();
+        int tabPosition = m_editPlayActivity.getSlidePosition(m_slideUuid);
+
+        if (selectedTabPosition == tabPosition && m_editPlayMode != EditPlayActivity.EditPlayMode.Edit) {
             startPlaying();
         }
         else {
