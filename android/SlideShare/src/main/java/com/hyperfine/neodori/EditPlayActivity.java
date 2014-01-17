@@ -46,6 +46,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
     private final static String INSTANCE_STATE_CURRENT_TAB = "instance_state_current_tab";
     private final static String INSTANCE_STATE_EDITPLAYMODE = "instance_state_editplaymode";
+    private final static String INSTANCE_STATE_ORIENTATION_CHANGED = "instance_state_orientation_changed";
 
     private SharedPreferences m_prefs;
     private String m_userUuid = null;
@@ -56,8 +57,9 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private File m_slideShareDirectory;
     private String m_slideShareName;
     private int m_currentTabPosition = 0;
+    private int m_orientation;
+    private boolean m_fOrientationChanged = false;
     private boolean m_loadedFromSavedInstanceState = false;
-    private boolean m_saveInstanceStateCalled = false;
     private EditPlayMode m_editPlayMode = EditPlayMode.Edit;
     private ProgressDialog m_progressDialog = null;
     private NeodoriService m_neodoriService = null;
@@ -166,6 +168,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             EditPlayMode pemDefault = EditPlayMode.Edit;
             int pemValue = savedInstanceState.getInt(INSTANCE_STATE_EDITPLAYMODE, pemDefault.getValue());
             m_editPlayMode = EditPlayMode.values()[pemValue];
+
+            m_fOrientationChanged = savedInstanceState.getBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, false);
         }
 
         initializeViewPager();
@@ -280,10 +284,12 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         if(D)Log.d(TAG, String.format("EditPlayActivity.onSaveInstanceState: m_currentTabPosition=%d", m_currentTabPosition));
 
+        int orientation = getResources().getConfiguration().orientation;
+        m_fOrientationChanged = m_orientation != orientation;
+
         savedInstanceState.putInt(INSTANCE_STATE_CURRENT_TAB, m_currentTabPosition);
         savedInstanceState.putInt(INSTANCE_STATE_EDITPLAYMODE, m_editPlayMode.getValue());
-
-        m_saveInstanceStateCalled = true;
+        savedInstanceState.putBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, m_fOrientationChanged);
     }
 
     @Override
@@ -316,6 +322,9 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         if(D)Log.d(TAG, "EditPlayActivity.onResume");
 
         super.onResume();
+
+        m_orientation = getResources().getConfiguration().orientation;
+        if(D)Log.d(TAG, String.format("EditPlayActivity.onResume: orientation = %d", m_orientation));
 
         m_userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
         if(D)Log.d(TAG, String.format("EditPlayActivity.onResume: m_userUuid=%s", m_userUuid));
@@ -937,22 +946,35 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         Intent service = new Intent(this, NeodoriService.class);
 
+        if (!m_fOrientationChanged) {
+            if(D)Log.d(TAG, "EditPlayActivity.initializeNeodoriService - calling startService in order to stay connected due to orientation change");
+            startService(service);
+        }
+
+        m_fOrientationChanged = false;
+
         if(D)Log.d(TAG, "EditPlayActivity.initializeNeodoriService - calling bindService");
         bindService(service, m_connection, Context.BIND_AUTO_CREATE);
     }
 
     protected void uninitializeNeodoriService()
     {
-        if(D)Log.d(TAG, String.format("EditPlayActivity.uninitializeNeodoriService: m_saveInstanceStateCalled=%b", m_saveInstanceStateCalled));
+        if(D)Log.d(TAG, String.format("EditPlayActivity.uninitializeNeodoriService: m_fOrientationChanged=%b", m_fOrientationChanged));
 
-        if (m_neodoriService != null && !m_saveInstanceStateCalled)
+        if (m_neodoriService != null && m_connection != null)
         {
             if(D)Log.d(TAG, "EditPlayActivity.uninitializeNeodoriService - calling unbindService");
             unbindService(m_connection);
         }
 
+        if (!m_fOrientationChanged)
+        {
+            if(D)Log.d(TAG, "EditPlayActivity.uninitializeNeodoriService - calling stopService");
+            Intent service = new Intent(this, NeodoriService.class);
+            stopService(service);
+        }
+
         m_neodoriService = null;
-        m_saveInstanceStateCalled = false;
     }
 
     public ServiceConnection m_connection = new ServiceConnection() {
