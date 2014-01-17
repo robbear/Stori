@@ -32,6 +32,8 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
     public final static String EXTRA_FROMURL = "extra_from_url";
 
     private final static String INSTANCE_STATE_CURRENT_TAB = "instance_state_current_tab";
+    private final static String INSTANCE_STATE_ORIENTATION_CHANGED = "instance_state_orientation_changed";
+    private final static String INSTANCE_STATE_IS_FROM_URL = "instance_state_is_from_url";
 
     private SharedPreferences m_prefs;
     private SlideShareJSON m_ssj;
@@ -42,7 +44,9 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
     private String m_slideShareName;
     private int m_currentTabPosition = 0;
     private boolean m_loadedFromSavedInstanceState = false;
-    private boolean m_saveInstanceStateCalled = false;
+    private int m_orientation;
+    private boolean m_fOrientationChanged = false;
+    private boolean m_isFromUrl = false;
     private NeodoriService m_neodoriService = null;
 
     @Override
@@ -54,9 +58,9 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
 
         setContentView(R.layout.activity_playslides);
 
-        boolean isFromUrl = getIntent().getBooleanExtra(EXTRA_FROMURL, false);
+        m_isFromUrl = getIntent().getBooleanExtra(EXTRA_FROMURL, false);
 
-        if (isFromUrl) {
+        if (m_isFromUrl) {
             m_slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME, SSPreferences.DEFAULT_PLAYSLIDESNAME);
             if(D)Log.d(TAG, String.format("PlaySlidesActivity.onCreate - playing from a downloaded URL reference: %s", m_slideShareName));
         }
@@ -82,6 +86,9 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         if (savedInstanceState != null) {
             m_loadedFromSavedInstanceState = true;
             m_currentTabPosition = savedInstanceState.getInt(INSTANCE_STATE_CURRENT_TAB, 0);
+            m_fOrientationChanged = savedInstanceState.getBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, false);
+            m_isFromUrl = savedInstanceState.getBoolean(INSTANCE_STATE_IS_FROM_URL, false);
+            if(D)Log.d(TAG, String.format("PlaySlidesActivity.onCreate - loading from savedInstanceState. m_isFromUrl=%b", m_isFromUrl));
         }
 
         m_playSlidesPagerAdapter = new PlaySlidesPagerAdapter(getSupportFragmentManager());
@@ -174,6 +181,9 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         if(D)Log.d(TAG, "PlaySlidesActivity.onResume");
 
         super.onResume();
+
+        m_orientation = getResources().getConfiguration().orientation;
+        if(D)Log.d(TAG, String.format("PlaySlidesActivity.onResume: orientation = %d", m_orientation));
     }
 
     @Override
@@ -191,9 +201,12 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
 
         if(D)Log.d(TAG, String.format("PlaySlidesActivity.onSaveInstanceState: m_currentTabPosition=%d", m_currentTabPosition));
 
-        savedInstanceState.putInt(INSTANCE_STATE_CURRENT_TAB, m_currentTabPosition);
+        int orientation = getResources().getConfiguration().orientation;
+        m_fOrientationChanged = m_orientation != orientation;
 
-        m_saveInstanceStateCalled = true;
+        savedInstanceState.putInt(INSTANCE_STATE_CURRENT_TAB, m_currentTabPosition);
+        savedInstanceState.putBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, m_fOrientationChanged);
+        savedInstanceState.putBoolean(INSTANCE_STATE_IS_FROM_URL, m_isFromUrl);
     }
 
     @Override
@@ -257,22 +270,42 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
 
         Intent service = new Intent(this, NeodoriService.class);
 
+        // Call startService always, unless we are dealing with an orientation change. We call
+        // startService in both the case of being launched from a URL, as well as being launched
+        // from EditPlayActivity.
+        if (!m_fOrientationChanged) {
+            if(D)Log.d(TAG, "PlaySlidesActivity.initializeNeodoriService - calling startService in order to stay connected due to orientation change");
+            startService(service);
+        }
+
+        m_fOrientationChanged = false;
+
         if(D)Log.d(TAG, "PlaySlidesActivity.initializeNeodoriService - calling bindService");
         bindService(service, m_connection, Context.BIND_AUTO_CREATE);
     }
 
     protected void uninitializeNeodoriService()
     {
-        if(D)Log.d(TAG, String.format("PlaySlidesActivity.uninitializeNeodoriService: m_saveInstanceStateCalled=%b", m_saveInstanceStateCalled));
+        if(D)Log.d(TAG, String.format("PlaySlidesActivity.uninitializeNeodoriService: m_fOrientationChanged=%b", m_fOrientationChanged));
 
-        if (m_neodoriService != null && !m_saveInstanceStateCalled)
+        // Always call unbindService
+        if (m_neodoriService != null && m_connection != null)
         {
-            if(D)Log.d(TAG, "PlaySlidesActivity.uninitializeNeodoriService - calling unbindService");
+            if(D)Log.d(TAG, "EditPlayActivity.uninitializeNeodoriService - calling unbindService");
             unbindService(m_connection);
         }
 
+        // Call stopService if we're not dealing with an orientation change AND PlaySlidesActivity
+        // was launched from a play url. We do not want to call stopService if PlaySlidesActivity
+        // was invoked from EditPlayActivity.
+        if (!m_fOrientationChanged && m_isFromUrl)
+        {
+            if(D)Log.d(TAG, "PlaySlidesActivity.uninitializeNeodoriService - calling stopService");
+            Intent service = new Intent(this, NeodoriService.class);
+            stopService(service);
+        }
+
         m_neodoriService = null;
-        m_saveInstanceStateCalled = false;
     }
 
     public ServiceConnection m_connection = new ServiceConnection() {

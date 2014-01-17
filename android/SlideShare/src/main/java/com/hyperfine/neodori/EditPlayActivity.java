@@ -59,6 +59,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private int m_currentTabPosition = 0;
     private int m_orientation;
     private boolean m_fOrientationChanged = false;
+    private boolean m_fStartingPlaySlidesActivity = false;
     private boolean m_loadedFromSavedInstanceState = false;
     private EditPlayMode m_editPlayMode = EditPlayMode.Edit;
     private ProgressDialog m_progressDialog = null;
@@ -305,6 +306,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         super.onStart();
 
+        m_fStartingPlaySlidesActivity = false;
         initializeNeodoriService();
     }
 
@@ -396,6 +398,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         preview.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                m_fStartingPlaySlidesActivity = true;
                 Intent intent = new Intent(EditPlayActivity.this, PlaySlidesActivity.class);
                 startActivity(intent);
                 return true;
@@ -946,6 +949,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         Intent service = new Intent(this, NeodoriService.class);
 
+        // We call startService always, unless this is due to a change in orientation.
         if (!m_fOrientationChanged) {
             if(D)Log.d(TAG, "EditPlayActivity.initializeNeodoriService - calling startService in order to stay connected due to orientation change");
             startService(service);
@@ -953,6 +957,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         m_fOrientationChanged = false;
 
+        // We always call bindService.
         if(D)Log.d(TAG, "EditPlayActivity.initializeNeodoriService - calling bindService");
         bindService(service, m_connection, Context.BIND_AUTO_CREATE);
     }
@@ -961,13 +966,22 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     {
         if(D)Log.d(TAG, String.format("EditPlayActivity.uninitializeNeodoriService: m_fOrientationChanged=%b", m_fOrientationChanged));
 
+        // We always call unbindService.
         if (m_neodoriService != null && m_connection != null)
         {
             if(D)Log.d(TAG, "EditPlayActivity.uninitializeNeodoriService - calling unbindService");
             unbindService(m_connection);
         }
 
-        if (!m_fOrientationChanged)
+        // We call stopService UNLESS we're dealing with an orientation change, OR we're
+        // launching PlaySlidesActivity. This will keep the instance of NeodoriService running
+        // in transitions between EditPlayActivity and PlaySlidesActivity.
+        //
+        // Note: We might consider allowing NeodoriService to shut down and restart between
+        // transitions between the two activities. This would be possible if there are no
+        // Neodori service semantics that need to run during the transition. If that's the
+        // case, we can remove the check for !m_fStartingPlaySlidesActivity in the conditional.
+        if (!m_fOrientationChanged && !m_fStartingPlaySlidesActivity)
         {
             if(D)Log.d(TAG, "EditPlayActivity.uninitializeNeodoriService - calling stopService");
             Intent service = new Intent(this, NeodoriService.class);
