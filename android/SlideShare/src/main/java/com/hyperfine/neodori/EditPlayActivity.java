@@ -927,6 +927,10 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         return m_currentTabPosition;
     }
 
+    public NeodoriService getNeodoriService() {
+        return m_neodoriService;
+    }
+
     protected void initializeNeodoriService()
     {
         if(D)Log.d(TAG, "EditPlayActivity.initializeNeodoriService");

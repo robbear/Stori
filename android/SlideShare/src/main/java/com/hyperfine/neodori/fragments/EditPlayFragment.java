@@ -156,6 +156,20 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     }
 
     @Override
+    public void onStart() {
+        if(D)Log.d(TAG, "EditPlayFragment.onStart");
+
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        if(D)Log.d(TAG, "EditPlayFragment.onStop");
+
+        super.onStop();
+    }
+
+    @Override
     public void onPause() {
         if(D)Log.d(TAG, "EditPlayFragment.onPause");
 
