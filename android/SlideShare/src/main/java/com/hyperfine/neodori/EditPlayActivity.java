@@ -34,6 +34,7 @@ import com.hyperfine.neodori.cloudproviders.GoogleLogin;
 import com.hyperfine.neodori.fragments.EditPlayFragment;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,6 +65,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private EditPlayMode m_editPlayMode = EditPlayMode.Edit;
     private ProgressDialog m_progressDialog = null;
     private NeodoriService m_neodoriService = null;
+    private ArrayList<NeodoriService.NeodoriServiceConnectionListener> m_neodoriServiceConnectionListeners = new ArrayList<NeodoriService.NeodoriServiceConnectionListener>();
 
     public final static int REQUEST_GOOGLE_PLAY_SERVICES_ERROR = 1;
     public final static int REQUEST_GOOGLE_LOGIN = 2;
@@ -939,12 +941,13 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         return m_currentTabPosition;
     }
 
-    public NeodoriService getNeodoriService() {
-        return m_neodoriService;
+    public boolean getOrientationChangedFlag() {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.getOrientationChangedFlag: %b", m_fOrientationChanged));
+
+        return m_fOrientationChanged;
     }
 
-    protected void initializeNeodoriService()
-    {
+    protected void initializeNeodoriService() {
         if(D)Log.d(TAG, "EditPlayActivity.initializeNeodoriService");
 
         Intent service = new Intent(this, NeodoriService.class);
@@ -962,8 +965,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         bindService(service, m_connection, Context.BIND_AUTO_CREATE);
     }
 
-    protected void uninitializeNeodoriService()
-    {
+    protected void uninitializeNeodoriService() {
         if(D)Log.d(TAG, String.format("EditPlayActivity.uninitializeNeodoriService: m_fOrientationChanged=%b", m_fOrientationChanged));
 
         // We always call unbindService.
@@ -997,6 +999,16 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             if(D)Log.d(TAG, "EditPlayActivity.onServiceConnected");
 
             m_neodoriService = ((NeodoriService.NeodoriServiceBinder)service).getService();
+
+            // Tell subscribing fragments
+            // Clone the arraylist so that mods on the array list due to actions in the callback do
+            // not result in a ConcurrentModificationException.
+            ArrayList<NeodoriService.NeodoriServiceConnectionListener> neodoriServiceConnectionListeners =
+                    new ArrayList<NeodoriService.NeodoriServiceConnectionListener>(m_neodoriServiceConnectionListeners);
+
+            for (NeodoriService.NeodoriServiceConnectionListener nscl : neodoriServiceConnectionListeners) {
+                nscl.onServiceConnected(m_neodoriService);
+            }
         }
 
         public void onServiceDisconnected(ComponentName className)
@@ -1004,6 +1016,39 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             if(D)Log.d(TAG, "EditPlayActivity.onServiceDisconnected");
 
             m_neodoriService = null;
+
+            // Tell subscribing fragments
+            // Clone the arraylist so that mods on the array list due to actions in the callback do
+            // not result in a ConcurrentModificationException.
+            ArrayList<NeodoriService.NeodoriServiceConnectionListener> neodoriServiceConnectionListeners =
+                    new ArrayList<NeodoriService.NeodoriServiceConnectionListener>(m_neodoriServiceConnectionListeners);
+
+            for (NeodoriService.NeodoriServiceConnectionListener nscl : neodoriServiceConnectionListeners) {
+                nscl.onServiceDisconnected();
+            }
         }
     };
+
+    public void registerNeodoriServiceConnectionListener(NeodoriService.NeodoriServiceConnectionListener listener) {
+        if(D)Log.d(TAG, "EditPlayActivity.registerNeodoriServiceConnectionListener");
+
+        if (!m_neodoriServiceConnectionListeners.contains(listener)) {
+            m_neodoriServiceConnectionListeners.add(listener);
+        }
+        if(D)Log.d(TAG, String.format("EditPlayActivity.registerNeodoriServiceConnectionListener: now have %d listeners", m_neodoriServiceConnectionListeners.size()));
+
+        if (m_neodoriService != null) {
+            if(D)Log.d(TAG, "EditPlayActivity.registerNeodoriServiceConnectionListener - already have m_neodoriService, so tell listener about it now");
+            listener.onServiceConnected(m_neodoriService);
+        }
+    }
+
+    public void unregisterNeodoriServiceConnectionListener(NeodoriService.NeodoriServiceConnectionListener listener) {
+        if(D)Log.d(TAG, "EditPlayActivity.unregisterNeodoriServiceConnectionListener");
+
+        if (m_neodoriServiceConnectionListeners.contains(listener)) {
+            m_neodoriServiceConnectionListeners.remove(listener);
+        }
+        if(D)Log.d(TAG, String.format("EditPlayActivity.unregisterNeodoriServiceConnectionListener: now have %d listeners", m_neodoriServiceConnectionListeners.size()));
+    }
 }

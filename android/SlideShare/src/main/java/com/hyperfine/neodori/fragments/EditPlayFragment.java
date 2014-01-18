@@ -13,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -30,6 +29,7 @@ import android.widget.ViewSwitcher;
 import com.hyperfine.neodori.AsyncTaskTimer;
 import com.hyperfine.neodori.Config;
 import com.hyperfine.neodori.EditPlayActivity;
+import com.hyperfine.neodori.NeodoriService;
 import com.hyperfine.neodori.R;
 import com.hyperfine.neodori.SlideJSON;
 import com.hyperfine.neodori.Utilities;
@@ -42,7 +42,8 @@ import java.util.UUID;
 import static com.hyperfine.neodori.Config.D;
 import static com.hyperfine.neodori.Config.E;
 
-public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncTaskTimerCallback {
+public class EditPlayFragment extends Fragment implements
+        AsyncTaskTimer.IAsyncTaskTimerCallback, NeodoriService.PlaybackStateListener, NeodoriService.NeodoriServiceConnectionListener {
     public final static String TAG = "EditPlayFragment";
 
     private final static String INSTANCE_STATE_IMAGEFILENAME = "instance_state_imagefilename";
@@ -64,11 +65,10 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private String m_imageFileName;
     private String m_audioFileName;
     private String m_slideUuid;
-    private MediaPlayer m_player;
     private MediaRecorder m_recorder;
+    private NeodoriService m_neodoriService = null;
 
     private FileInputStream m_fileInputStream;
-    private boolean m_isPlaying = false;
     private boolean m_isRecording = false;
     private int m_displayWidth = 0;
     private int m_displayHeight = 0;
@@ -160,6 +160,8 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         if(D)Log.d(TAG, "EditPlayFragment.onStart");
 
         super.onStart();
+
+        initializeNeodoriService();
     }
 
     @Override
@@ -167,6 +169,12 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         if(D)Log.d(TAG, "EditPlayFragment.onStop");
 
         super.onStop();
+
+        if (!m_editPlayActivity.getOrientationChangedFlag()) {
+            stopPlaying();
+        }
+
+        uninitializeNeodoriService();
     }
 
     @Override
@@ -174,8 +182,6 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         if(D)Log.d(TAG, "EditPlayFragment.onPause");
 
         super.onPause();
-
-        stopPlaying();
     }
 
     @Override
@@ -310,13 +316,19 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
         m_playstopControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(D)Log.d(TAG, String.format("EditPlayFragment.onPlayStopButtonClicked: %s playing", m_isPlaying ? "Stopping" : "Starting"));
+                if(D)Log.d(TAG, "EditPlayFragment.onPlayStopButtonClicked");
 
-                if (m_isPlaying) {
-                    stopPlaying();
-                }
-                else {
-                    startPlaying();
+                if (m_neodoriService != null) {
+                    NeodoriService.PlaybackState playbackState = m_neodoriService.getAudioPlaybackState(m_audioFileName);
+
+                    if (playbackState == NeodoriService.PlaybackState.Playing) {
+                        if(D)Log.d(TAG, "EditPlayFragment.onPlayStopButtonClicked - playbackState is Playing. Calling stopPlaying");
+                        stopPlaying();
+                    }
+                    else {
+                        if(D)Log.d(TAG, "EditPlayFragment.onPlayStopButtonClicked - playbackState is not Playing. Calling startPlaying");
+                        startPlaying();
+                    }
                 }
             }
         });
@@ -374,10 +386,15 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
                     case Play:
                         if (m_audioFileName != null) {
-                            if (m_isPlaying) {
-                                stopPlaying();
-                            } else {
-                                startPlaying();
+                            if (m_neodoriService != null) {
+                                NeodoriService.PlaybackState playbackState = m_neodoriService.getAudioPlaybackState(m_audioFileName);
+
+                                if (playbackState == NeodoriService.PlaybackState.Playing) {
+                                    stopPlaying();
+                                }
+                                else {
+                                    startPlaying();
+                                }
                             }
                         }
                         break;
@@ -682,8 +699,15 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
     private void startPlaying() {
         if(D)Log.d(TAG, "EditPlayFragment.startPlaying");
 
-        if (m_isPlaying) {
-            if(D)Log.d(TAG, "EditPlayFragment.startPlaying - m_isPlaying is true, so bailing");
+        if (m_neodoriService == null) {
+            if(D)Log.d(TAG, "EditPlayFragment.startPlaying - m_neodoriService is null, so bailing");
+            return;
+        }
+
+        NeodoriService.PlaybackState playbackState = m_neodoriService.getAudioPlaybackState(m_audioFileName);
+
+        if (playbackState == NeodoriService.PlaybackState.Playing) {
+            if(D)Log.d(TAG, "EditPlayFragment.startPlaying - playbackState is Playing, so bailing");
             return;
         }
 
@@ -692,76 +716,28 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
             return;
         }
 
-        m_player = new MediaPlayer();
-        m_player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                if(D)Log.d(TAG, "EditPlayFragment.onPlaybackCompletion");
-                stopPlaying();
-            }
-        });
+        m_neodoriService.startAudio(m_slideShareName, m_audioFileName);
 
-        try {
-            String filePath = Utilities.getAbsoluteFilePath(m_editPlayActivity, m_slideShareName, m_audioFileName);
-            if(D)Log.d(TAG, String.format("EditPlayFragment.startPlaying: filePath=%s", filePath));
-
-            File file = new File(filePath);
-            boolean retVal = file.setReadable(true, false);
-            if(D)Log.d(TAG, String.format("EditPlayFragment.startPlaying - set readable permissions on audio file returns %b", retVal));
-            m_fileInputStream = new FileInputStream(file);
-
-            m_player.setDataSource(m_fileInputStream.getFD());
-            m_player.prepare();
-            m_player.start();
-
-            m_isPlaying = true;
-            m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stopplaying));
-        }
-        catch (IOException e) {
-            if(E)Log.e(TAG, "EditPlayFragment.startPlaying", e);
-            e.printStackTrace();
-        }
-        catch (Exception e) {
-            if(E)Log.e(TAG, "EditPlayFragment.startPlaying", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "EditPlayFragment.startPlaying", e);
-            e.printStackTrace();
-        }
+        m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stopplaying));
     }
 
     private void stopPlaying() {
         if(D)Log.d(TAG, "EditPlayFragment.stopPlaying");
 
-        if (!m_isPlaying) {
-            if(D)Log.d(TAG, "EditPlayFragment.stopPlaying - m_isPlaying is false, so bailing");
+        if (m_neodoriService == null) {
+            if(D)Log.d(TAG, "EditPlayFragment.stopPlaying - m_neodoriService is null, so bailing");
             return;
         }
 
-        try {
-            if (m_fileInputStream != null) {
-                m_fileInputStream.close();
-            }
-        }
-        catch (Exception e) {
-            if(E)Log.e(TAG, "EditPlayFragment.stopPlaying", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "EditPlayFragment.stopPlaying", e);
-            e.printStackTrace();
-        }
-        finally {
-            m_fileInputStream = null;
+        NeodoriService.PlaybackState playbackState = m_neodoriService.getAudioPlaybackState(m_audioFileName);
+
+        if (playbackState == NeodoriService.PlaybackState.Stopped) {
+            if(D)Log.d(TAG, "EditPlayFragment.stopPlaying - playbackState is Stopped, so bailing");
+            return;
         }
 
-        if (m_player != null) {
-            m_player.release();
-            m_player = null;
-        }
+        m_neodoriService.stopAudio(m_audioFileName);
 
-        m_isPlaying = false;
         m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_play));
     }
 
@@ -779,6 +755,33 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
     private static String getNewAudioFileName() {
         return UUID.randomUUID().toString() + ".3gp";
+    }
+
+    @Override
+    public void onAudioStopped(String audioFileName) {
+        if(D)Log.d(TAG, String.format("EditPlayFragment.onAudioStopped: m_audioFileName=%s, audioFileName=%s", m_audioFileName, audioFileName));
+
+        if (m_audioFileName != null && m_audioFileName.equals(audioFileName)) {
+            m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_play));
+        }
+    }
+
+    @Override
+    public void onAudioPaused(String audioFileName) {
+        if(D)Log.d(TAG, String.format("EditPlayFragment.onAudioPaused: m_audioFileName=%s, audioFileName=%s", m_audioFileName, audioFileName));
+
+        if (m_audioFileName != null && m_audioFileName.equals(audioFileName)) {
+            m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stopplaying));
+        }
+    }
+
+    @Override
+    public void onAudioPlaying(String audioFileName) {
+        if(D)Log.d(TAG, String.format("EditPlayFragment.onAudioPlaying: m_audioFileName=%s, audioFileName=%s", m_audioFileName, audioFileName));
+
+        if (m_audioFileName != null && m_audioFileName.equals(audioFileName)) {
+            m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stopplaying));
+        }
     }
 
     //
@@ -885,5 +888,38 @@ public class EditPlayFragment extends Fragment implements AsyncTaskTimer.IAsyncT
 
             Utilities.unfreezeOrientation(m_editPlayActivity);
         }
+    }
+
+    protected void initializeNeodoriService() {
+        if(D)Log.d(TAG, "EditPlayFragment.initializeNeodoriService");
+
+        m_editPlayActivity.registerNeodoriServiceConnectionListener(this);
+    }
+
+    protected void uninitializeNeodoriService() {
+        if(D)Log.d(TAG, "EditPlayFragment.uninitializeNeodoriService");
+
+        if (m_neodoriService != null) {
+            m_neodoriService.unregisterPlaybackStateListener(this);
+        }
+
+        m_editPlayActivity.unregisterNeodoriServiceConnectionListener(this);
+    }
+
+
+    @Override
+    public void onServiceConnected(NeodoriService service) {
+        if(D)Log.d(TAG, "EditPlayFragment.onServiceConnected");
+
+        m_neodoriService = service;
+
+        m_neodoriService.registerPlaybackStateListener(this);
+    }
+
+    @Override
+    public void onServiceDisconnected() {
+        if(D)Log.d(TAG, "EditPlayFragment.onServiceDisconnected");
+
+        m_neodoriService = null;
     }
 }

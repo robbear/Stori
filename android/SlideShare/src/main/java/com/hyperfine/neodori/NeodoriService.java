@@ -10,6 +10,7 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static com.hyperfine.neodori.Config.D;
 import static com.hyperfine.neodori.Config.E;
@@ -18,14 +19,10 @@ public class NeodoriService extends Service {
     public static final String TAG = "NeodoriService";
 
     private MediaPlayer m_mediaPlayer;
-    private boolean m_isAudioPlaying = false;
+    private PlaybackState m_playbackState = PlaybackState.Stopped;
     private String m_audioFileName = null;
     private FileInputStream m_audioFileInputStream;
-    private IMediaPlayerNotifications m_mediaPlayerNotifications;
-
-    public interface IMediaPlayerNotifications {
-        public void onAudioPlaybackComplete(String audioFileName);
-    }
+    private ArrayList<PlaybackStateListener> m_playbackStateListeners = new ArrayList<PlaybackStateListener>();
 
     @Override
     public void onCreate() {
@@ -37,11 +34,85 @@ public class NeodoriService extends Service {
         if(D)Log.d(TAG, "NeodoriService.onDestroy");
     }
 
+    public interface NeodoriServiceConnectionListener {
+        void onServiceConnected(NeodoriService service);
+        void onServiceDisconnected();
+    }
+
     //********************************************************************************
     //
     // Audio methods
     //
     //********************************************************************************
+
+    public interface PlaybackStateListener {
+        void onAudioStopped(String audioFileName);
+        void onAudioPaused(String audioFileName);
+        void onAudioPlaying(String audioFileName);
+    }
+
+    public enum PlaybackState {
+        Stopped,
+        Paused,
+        Playing
+    }
+
+    public void registerPlaybackStateListener(PlaybackStateListener listener) {
+        if(D)Log.d(TAG, "NeodoriService.registerPlaybackStateListener");
+
+        if (!m_playbackStateListeners.contains(listener)) {
+            m_playbackStateListeners.add(listener);
+        }
+        if(D)Log.d(TAG, String.format("NeodoriService.registerPlaybackStateListener: now have %d listeners", m_playbackStateListeners.size()));
+
+        // Send the state immediately to the newly enlisted listener
+        switch (m_playbackState) {
+            case Stopped:
+                listener.onAudioStopped(m_audioFileName);
+                break;
+
+            case Paused:
+                listener.onAudioPaused(m_audioFileName);
+                break;
+
+            case Playing:
+                listener.onAudioPlaying(m_audioFileName);
+                break;
+        }
+    }
+
+    public void unregisterPlaybackStateListener(PlaybackStateListener listener) {
+        if(D)Log.d(TAG, "NeodoriService.unregisterPlaybackStateListener");
+
+        if (m_playbackStateListeners.contains(listener)) {
+            m_playbackStateListeners.remove(listener);
+        }
+        if(D)Log.d(TAG, String.format("NeodoriService.unregisterPlaybackStateListener: now have %d listeners", m_playbackStateListeners.size()));
+    }
+
+    public void reportPlaybackStateChanged(String audioFileName) {
+        if(D)Log.d(TAG, String.format("NeodoriService.reportPlaybackStateChanged: %s, audioFileName=%s", m_playbackState.toString(), audioFileName));
+
+        // Clone the arraylist so that mods on the array list due to actions in the callback do
+        // not result in a ConcurrentModificationException.
+        ArrayList<PlaybackStateListener> playbackStateListeners = new ArrayList<PlaybackStateListener>(m_playbackStateListeners);
+
+        for (PlaybackStateListener psl : playbackStateListeners) {
+            switch (m_playbackState) {
+                case Stopped:
+                    psl.onAudioStopped(audioFileName);
+                    break;
+
+                case Paused:
+                    psl.onAudioPaused(audioFileName);
+                    break;
+
+                case Playing:
+                    psl.onAudioPlaying(audioFileName);
+                    break;
+            }
+        }
+    }
 
     public void onAudioPlaybackComplete(MediaPlayer mp) {
         if(D)Log.d(TAG, "NeodoriService.onAudioPlaybackComplete");
@@ -49,16 +120,26 @@ public class NeodoriService extends Service {
         String audioFileName = m_audioFileName;
         stopAudio(m_audioFileName);
 
-        if (m_mediaPlayerNotifications != null) {
-            m_mediaPlayerNotifications.onAudioPlaybackComplete(audioFileName);
+        // m_playbackState set in stopAudio method
+        reportPlaybackStateChanged(audioFileName);
+    }
+
+    public PlaybackState getAudioPlaybackState(String audioFileName) {
+        if(D)Log.d(TAG, "NeodoriService.getAudioPlaybackState");
+
+        if (m_audioFileName != null && m_audioFileName.equals(audioFileName)) {
+            return m_playbackState;
+        }
+        else {
+            return PlaybackState.Stopped;
         }
     }
 
-    public void startAudio(String slideShareName, String audioFileName, IMediaPlayerNotifications mpn) {
+    public void startAudio(String slideShareName, String audioFileName) {
         if(D)Log.d(TAG, String.format("NeodoriService.startAudio: %s", audioFileName));
 
-        if (m_isAudioPlaying) {
-            if(D)Log.d(TAG, "NeodoriService.startAudio - m_isAudioPlaying is true, so bailing");
+        if (m_playbackState == PlaybackState.Playing) {
+            if(D)Log.d(TAG, "NeodoriService.startAudio - m_playbackState is Playing, so bailing");
             return;
         }
         if (audioFileName == null) {
@@ -67,7 +148,6 @@ public class NeodoriService extends Service {
         }
 
         m_audioFileName = audioFileName;
-        m_mediaPlayerNotifications = mpn;
 
         m_mediaPlayer = new MediaPlayer();
         m_mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -90,7 +170,7 @@ public class NeodoriService extends Service {
             m_mediaPlayer.prepare();
             m_mediaPlayer.start();
 
-            m_isAudioPlaying = true;
+            m_playbackState = PlaybackState.Playing;
         }
         catch (IOException e) {
             if(E)Log.e(TAG, "NeodoriService.startAudio", e);
@@ -109,8 +189,8 @@ public class NeodoriService extends Service {
     public void stopAudio(String audioFileName) {
         if(D)Log.d(TAG, String.format("NeodoriService.stopAudio: %s", audioFileName));
 
-        if (!m_isAudioPlaying) {
-            if(D)Log.d(TAG, "NeodoriService.stopAudio - m_isAudioPlaying is false, so bailing");
+        if (m_playbackState == PlaybackState.Stopped) {
+            if(D)Log.d(TAG, "NeodoriService.stopAudio - m_playbackState is Stopped, so bailing");
             return;
         }
         if (m_audioFileName == null) {
@@ -144,7 +224,7 @@ public class NeodoriService extends Service {
             m_mediaPlayer = null;
         }
 
-        m_isAudioPlaying = false;
+        m_playbackState = PlaybackState.Stopped;
         m_audioFileName = null;
     }
 
