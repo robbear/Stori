@@ -22,6 +22,7 @@ import com.hyperfine.neodori.adapters.PlaySlidesPagerAdapter;
 import com.hyperfine.neodori.fragments.PlaySlidesFragment;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.hyperfine.neodori.Config.D;
@@ -48,6 +49,7 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
     private boolean m_fOrientationChanged = false;
     private boolean m_isFromUrl = false;
     private NeodoriService m_neodoriService = null;
+    private ArrayList<NeodoriService.NeodoriServiceConnectionListener> m_neodoriServiceConnectionListeners = new ArrayList<NeodoriService.NeodoriServiceConnectionListener>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -264,6 +266,12 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         return m_currentTabPosition;
     }
 
+    public boolean getOrientationChangedFlag() {
+        if(D)Log.d(TAG, String.format("PlaySlidesActivity.getOrientationChangedFlag: %b", m_fOrientationChanged));
+
+        return m_fOrientationChanged;
+    }
+
     protected void initializeNeodoriService()
     {
         if(D)Log.d(TAG, "PlaySlidesActivity.initializeNeodoriService");
@@ -314,6 +322,16 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
             if(D)Log.d(TAG, "PlaySlidesActivity.onServiceConnected");
 
             m_neodoriService = ((NeodoriService.NeodoriServiceBinder)service).getService();
+
+            // Tell subscribing fragments
+            // Clone the arraylist so that mods on the array list due to actions in the callback do
+            // not result in a ConcurrentModificationException.
+            ArrayList<NeodoriService.NeodoriServiceConnectionListener> neodoriServiceConnectionListeners =
+                    new ArrayList<NeodoriService.NeodoriServiceConnectionListener>(m_neodoriServiceConnectionListeners);
+
+            for (NeodoriService.NeodoriServiceConnectionListener nscl : neodoriServiceConnectionListeners) {
+                nscl.onServiceConnected(m_neodoriService);
+            }
         }
 
         public void onServiceDisconnected(ComponentName className)
@@ -321,6 +339,39 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
             if(D)Log.d(TAG, "PlaySlidesActivity.onServiceDisconnected");
 
             m_neodoriService = null;
+
+            // Tell subscribing fragments
+            // Clone the arraylist so that mods on the array list due to actions in the callback do
+            // not result in a ConcurrentModificationException.
+            ArrayList<NeodoriService.NeodoriServiceConnectionListener> neodoriServiceConnectionListeners =
+                    new ArrayList<NeodoriService.NeodoriServiceConnectionListener>(m_neodoriServiceConnectionListeners);
+
+            for (NeodoriService.NeodoriServiceConnectionListener nscl : neodoriServiceConnectionListeners) {
+                nscl.onServiceDisconnected();
+            }
         }
     };
+
+    public void registerNeodoriServiceConnectionListener(NeodoriService.NeodoriServiceConnectionListener listener) {
+        if(D)Log.d(TAG, "PlaySlidesActivity.registerNeodoriServiceConnectionListener");
+
+        if (!m_neodoriServiceConnectionListeners.contains(listener)) {
+            m_neodoriServiceConnectionListeners.add(listener);
+        }
+        if(D)Log.d(TAG, String.format("PlaySlidesActivity.registerNeodoriServiceConnectionListener: now have %d listeners", m_neodoriServiceConnectionListeners.size()));
+
+        if (m_neodoriService != null) {
+            if(D)Log.d(TAG, "PlaySlidesActivity.registerNeodoriServiceConnectionListener - already have m_neodoriService, so tell listener about it now");
+            listener.onServiceConnected(m_neodoriService);
+        }
+    }
+
+    public void unregisterNeodoriServiceConnectionListener(NeodoriService.NeodoriServiceConnectionListener listener) {
+        if(D)Log.d(TAG, "PlaySlidesActivity.unregisterNeodoriServiceConnectionListener");
+
+        if (m_neodoriServiceConnectionListeners.contains(listener)) {
+            m_neodoriServiceConnectionListeners.remove(listener);
+        }
+        if(D)Log.d(TAG, String.format("PlaySlidesActivity.unregisterNeodoriServiceConnectionListener: now have %d listeners", m_neodoriServiceConnectionListeners.size()));
+    }
 }

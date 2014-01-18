@@ -513,6 +513,8 @@ public class EditPlayFragment extends Fragment implements
         int selectedTabPosition = m_editPlayActivity.getCurrentTabPosition();
         int tabPosition = m_editPlayActivity.getSlidePosition(m_slideUuid);
 
+        if(D)Log.d(TAG, String.format("EditPlayFragment.onAsyncTaskTimerComplete: selectedTabPosition=%d, tabPosition=%d", selectedTabPosition, tabPosition));
+
         if (selectedTabPosition == tabPosition && m_editPlayMode != EditPlayActivity.EditPlayMode.Edit) {
             startPlaying();
         }

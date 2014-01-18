@@ -18,19 +18,17 @@ import android.widget.ViewSwitcher;
 
 import com.hyperfine.neodori.AsyncTaskTimer;
 import com.hyperfine.neodori.Config;
+import com.hyperfine.neodori.NeodoriService;
 import com.hyperfine.neodori.PlaySlidesActivity;
 import com.hyperfine.neodori.R;
 import com.hyperfine.neodori.SlideJSON;
 import com.hyperfine.neodori.Utilities;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
 import static com.hyperfine.neodori.Config.D;
 import static com.hyperfine.neodori.Config.E;
 
-public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyncTaskTimerCallback {
+public class PlaySlidesFragment extends Fragment implements
+        AsyncTaskTimer.IAsyncTaskTimerCallback, NeodoriService.PlaybackStateListener, NeodoriService.NeodoriServiceConnectionListener {
 
     public final static String TAG = "PlaySlidesFragment";
 
@@ -45,12 +43,9 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
     private ImageSwitcher m_imageSwitcher;
     private String m_imageFileName;
     private String m_audioFileName;
-    private MediaPlayer m_player;
-    private FileInputStream m_fileInputStream;
-    private boolean m_isPlaying = false;
-    private boolean m_ignoreAudio = false;
     private int m_displayWidth = 0;
     private int m_displayHeight = 0;
+    private NeodoriService m_neodoriService = null;
 
     public static PlaySlidesFragment newInstance(PlaySlidesActivity playSlidesActivity, int position, String slideShareName, String slideUuid, SlideJSON sj) {
         if(D)Log.d(TAG, "PlaySlidesFragment.newInstance");
@@ -71,7 +66,7 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
     }
 
     public void setSlideJSON(String slideUuid, SlideJSON sj) {
-        if(D)Log.d(TAG, "PlaySlidesFragment.setSlideJSON");
+        if(D)Log.d(TAG, String.format("PlaySlidesFragment.setSlideJSON: slideUuid=%s", slideUuid));
 
         try {
             m_slideUuid = slideUuid;
@@ -130,12 +125,32 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
     }
 
     @Override
+    public void onStart() {
+        if(D)Log.d(TAG, "PlaySlidesFragment.onStart");
+
+        super.onStart();
+
+        initializeNeodoriService();
+    }
+
+    @Override
+    public void onStop() {
+        if(D)Log.d(TAG, "PlaySlidesFragment.onStop");
+
+        super.onStop();
+
+        if (!m_playSlidesActivity.getOrientationChangedFlag()) {
+            stopPlaying();
+        }
+
+        uninitializeNeodoriService();
+    }
+
+    @Override
     public void onPause() {
         if(D)Log.d(TAG, "PlaySlidesFragment.onPause");
 
         super.onPause();
-
-        stopPlaying();
     }
 
     @Override
@@ -186,8 +201,10 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
             public void onClick(View v) {
                 if(D)Log.d(TAG, "PlaySlidesFragment.onImageClicked");
 
-                if (m_audioFileName != null) {
-                    if (m_isPlaying) {
+                if (m_audioFileName != null && m_neodoriService != null) {
+                    NeodoriService.PlaybackState playbackState = m_neodoriService.getAudioPlaybackState(m_audioFileName);
+
+                    if (playbackState == NeodoriService.PlaybackState.Playing) {
                         stopPlaying();
                     }
                     else {
@@ -238,8 +255,10 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
         int selectedTabPosition = m_playSlidesActivity.getCurrentTabPosition();
         int tabPosition = m_playSlidesActivity.getSlidePosition(m_slideUuid);
 
+        if(D)Log.d(TAG, String.format("PlaySlidesFragment.onAsyncTaskTimerComplete: selectedTabPosition=%d, tabPosition=%d", selectedTabPosition, tabPosition));
+
         if (selectedTabPosition == tabPosition) {
-            renderAudio();
+            startPlaying();
         }
         else {
             stopPlaying();
@@ -283,96 +302,92 @@ public class PlaySlidesFragment extends Fragment implements AsyncTaskTimer.IAsyn
         }
     }
 
-    private void renderAudio() {
-        if(D)Log.d(TAG, "PlaySlidesFragment.renderAudio");
-
-        if (m_audioFileName != null) {
-            startPlaying();
-        }
-    }
-
     private void startPlaying() {
         if(D)Log.d(TAG, "PlaySlidesFragment.startPlaying");
 
-        if (m_isPlaying) {
+        if (m_neodoriService == null) {
+            if(D)Log.d(TAG, "PlaySlidesActivity.startPlaying - m_neodoriService is null, so bailing");
+            return;
+        }
+
+        NeodoriService.PlaybackState playbackState = m_neodoriService.getAudioPlaybackState(m_audioFileName);
+
+        if (playbackState == NeodoriService.PlaybackState.Playing) {
             if(D)Log.d(TAG, "PlaySlidesFragment.startPlaying - m_isPlaying is true, so bailing");
             return;
         }
 
-        if (m_ignoreAudio) {
-            if(D)Log.d(TAG, "PlaySlidesFragment.startPlaying - m_ignoreAudio is true, so skipping audio playback.");
-            m_ignoreAudio = false;
+        if (m_audioFileName == null) {
+            if(D)Log.d(TAG, "PlaySlidesFragment.startPlaying - m_audioFileName is null, so bailing");
             return;
         }
 
-        m_player = new MediaPlayer();
-        m_player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                if(D)Log.d(TAG, "PlaySlidesFragment.onPlaybackCompletion");
-                stopPlaying();
-            }
-        });
-
-        try {
-            String filePath = Utilities.getAbsoluteFilePath(m_playSlidesActivity, m_slideShareName, m_audioFileName);
-            if(D)Log.d(TAG, String.format("PlaySlidesFragment.startPlaying: filePath=%s", filePath));
-
-            File file = new File(filePath);
-            boolean retVal = file.setReadable(true, false);
-            if(D)Log.d(TAG, String.format("PlaySlidesFragment.startPlaying - set readable permissions on audio file returns %b", retVal));
-            m_fileInputStream = new FileInputStream(file);
-
-            m_player.setDataSource(m_fileInputStream.getFD());
-            m_player.prepare();
-            m_player.start();
-
-            m_isPlaying = true;
-        }
-        catch (IOException e) {
-            if(E)Log.e(TAG, "PlaySlidesFragment.startPlaying", e);
-            e.printStackTrace();
-        }
-        catch (Exception e) {
-            if(E)Log.e(TAG, "PlaySlidesFragment.startPlaying", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "PlaySlidesFragment.startPlaying", e);
-            e.printStackTrace();
-        }
+        m_neodoriService.startAudio(m_slideShareName, m_audioFileName);
     }
 
     private void stopPlaying() {
         if(D)Log.d(TAG, "PlaySlidesFragment.stopPlaying");
 
-        if (!m_isPlaying) {
-            if(D)Log.d(TAG, "PlaySlidesFragment.stopPlaying - m_isPlaying is false, so bailing");
+        if (m_neodoriService == null) {
+            if(D)Log.d(TAG, "PlaySlidesActivity.stopPlaying - m_neodoriService is null, so bailing");
             return;
         }
 
-        try {
-            if (m_fileInputStream != null) {
-                m_fileInputStream.close();
-            }
-        }
-        catch (Exception e) {
-            if(E)Log.e(TAG, "PlaySlidesFragment.stopPlaying", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "PlaySlidesFragment.stopPlaying", e);
-            e.printStackTrace();
-        }
-        finally {
-            m_fileInputStream = null;
+        NeodoriService.PlaybackState playbackState = m_neodoriService.getAudioPlaybackState(m_audioFileName);
+
+        if (playbackState == NeodoriService.PlaybackState.Stopped) {
+            if(D)Log.d(TAG, "PlaySlidesFragment.stopPlaying - playbackState is Stopped, so bailing");
+            return;
         }
 
-        if (m_player != null) {
-            m_player.release();
-            m_player = null;
+        m_neodoriService.stopAudio(m_audioFileName);
+    }
+
+    @Override
+    public void onAudioStopped(String audioFileName) {
+        if(D)Log.d(TAG, String.format("PlaySlidesFragment.onAudioStopped: m_audioFileName=%s, audioFileName=%s", m_audioFileName, audioFileName));
+    }
+
+    @Override
+    public void onAudioPaused(String audioFileName) {
+        if(D)Log.d(TAG, String.format("PlaySlidesFragment.onAudioPaused: m_audioFileName=%s, audioFileName=%s", m_audioFileName, audioFileName));
+    }
+
+    @Override
+    public void onAudioPlaying(String audioFileName) {
+        if(D)Log.d(TAG, String.format("PlaySlidesFragment.onAudioPlaying: m_audioFileName=%s, audioFileName=%s", m_audioFileName, audioFileName));
+    }
+
+    protected void initializeNeodoriService() {
+        if(D)Log.d(TAG, "PlaySlidesFragment.initializeNeodoriService");
+
+        m_playSlidesActivity.registerNeodoriServiceConnectionListener(this);
+    }
+
+    protected void uninitializeNeodoriService() {
+        if(D)Log.d(TAG, "PlaySlidesFragment.uninitializeNeodoriService");
+
+        if (m_neodoriService != null) {
+            m_neodoriService.unregisterPlaybackStateListener(this);
         }
 
-        m_isPlaying = false;
+        m_playSlidesActivity.unregisterNeodoriServiceConnectionListener(this);
+    }
+
+
+    @Override
+    public void onServiceConnected(NeodoriService service) {
+        if(D)Log.d(TAG, "PlaySlidesFragment.onServiceConnected");
+
+        m_neodoriService = service;
+
+        m_neodoriService.registerPlaybackStateListener(this);
+    }
+
+    @Override
+    public void onServiceDisconnected() {
+        if(D)Log.d(TAG, "PlaySlidesFragment.onServiceDisconnected");
+
+        m_neodoriService = null;
     }
 }
