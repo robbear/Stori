@@ -44,7 +44,6 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
     private File m_slideShareDirectory;
     private String m_slideShareName;
     private int m_currentTabPosition = 0;
-    private boolean m_loadedFromSavedInstanceState = false;
     private int m_orientation;
     private boolean m_fOrientationChanged = false;
     private boolean m_isFromUrl = false;
@@ -86,7 +85,6 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         initializeSlideShareJSON();
 
         if (savedInstanceState != null) {
-            m_loadedFromSavedInstanceState = true;
             m_currentTabPosition = savedInstanceState.getInt(INSTANCE_STATE_CURRENT_TAB, 0);
             m_fOrientationChanged = savedInstanceState.getBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, false);
             m_isFromUrl = savedInstanceState.getBoolean(INSTANCE_STATE_IS_FROM_URL, false);
@@ -121,11 +119,8 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
             public void onPageSelected(int position) {
                 if(D)Log.d(TAG, String.format("PlaySlidesActivity.onPageSelected: %d", position));
 
-                if (m_loadedFromSavedInstanceState) {
-                    if(D)Log.d(TAG, "PlaySlidesActivity.onPageSelected - loaded from SavedInstanceState, so don't notify fragments.");
-                    m_loadedFromSavedInstanceState = false;
-                }
-                else {
+                // Do not notify fragments if this is the result of an orientation change
+                if (!m_fOrientationChanged) {
                     FragmentManager fm = getSupportFragmentManager();
                     List<Fragment> fragments = fm.getFragments();
                     for (Fragment f : fragments) {

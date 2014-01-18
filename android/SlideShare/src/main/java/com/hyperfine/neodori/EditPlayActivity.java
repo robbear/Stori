@@ -61,7 +61,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private int m_orientation;
     private boolean m_fOrientationChanged = false;
     private boolean m_fStartingPlaySlidesActivity = false;
-    private boolean m_loadedFromSavedInstanceState = false;
     private EditPlayMode m_editPlayMode = EditPlayMode.Edit;
     private ProgressDialog m_progressDialog = null;
     private NeodoriService m_neodoriService = null;
@@ -165,7 +164,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         initializeSlideShareJSON();
 
         if (savedInstanceState != null) {
-            m_loadedFromSavedInstanceState = true;
             m_currentTabPosition = savedInstanceState.getInt(INSTANCE_STATE_CURRENT_TAB, 0);
 
             EditPlayMode pemDefault = EditPlayMode.Edit;
@@ -186,11 +184,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             public void onPageSelected(int position) {
                 if(D)Log.d(TAG, String.format("EditPlayActivity.onPageSelected: %d", position));
 
-                if (m_loadedFromSavedInstanceState) {
-                    if(D)Log.d(TAG, "EditPlayActivity.onPageSelected - loaded from SavedInstanceState, so don't notify fragments.");
-                    m_loadedFromSavedInstanceState = false;
-                }
-                else {
+                // Do not notify fragments if this is the result of an orientation change
+                if (!m_fOrientationChanged) {
                     FragmentManager fm = getSupportFragmentManager();
                     List<Fragment> fragments = fm.getFragments();
                     for (Fragment f : fragments) {
