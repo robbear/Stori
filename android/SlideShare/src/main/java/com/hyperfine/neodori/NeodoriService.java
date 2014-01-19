@@ -3,6 +3,7 @@ package com.hyperfine.neodori;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -226,6 +227,103 @@ public class NeodoriService extends Service {
 
         m_playbackState = PlaybackState.Stopped;
         m_audioFileName = null;
+    }
+
+    //********************************************************************************
+    //
+    // Recorder methods
+    //
+    //********************************************************************************
+
+    private MediaRecorder m_mediaRecorder;
+    private boolean m_isRecording = false;
+    private String m_recorderAudioFileName = null;
+
+    public boolean startRecording(String slideShareName, String audioFileName) {
+        if(D)Log.d(TAG, String.format("NeodoriService.startRecording: slideShareName=%s, audioFileName=%s", slideShareName, audioFileName));
+
+        if (m_isRecording) {
+            if(D)Log.d(TAG, "NeodoriService.startRecording - m_isRecording is true, so bailing");
+            return true;
+        }
+
+        if (audioFileName == null) {
+            if(D)Log.d(TAG, "NeodoriService.startRecording - audioFileName is null, so bailing");
+            return false;
+        }
+
+        boolean success = false;
+        m_recorderAudioFileName = audioFileName;
+
+        String filePath = Utilities.getAbsoluteFilePath(getApplicationContext(), slideShareName, m_recorderAudioFileName);
+        if(D)Log.d(TAG, String.format("NeodoriService.startRecording: filePath=%s", filePath));
+
+        m_mediaRecorder = new MediaRecorder();
+        m_mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        m_mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        m_mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        m_mediaRecorder.setOutputFile(filePath);
+
+        try {
+            m_mediaRecorder.prepare();
+            m_mediaRecorder.start();
+            m_isRecording = true;
+            success = true;
+        }
+        catch (IOException e) {
+            if(E)Log.e(TAG, "NeodoriService.startRecording", e);
+            e.printStackTrace();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "NeodoriService.startRecording", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "NeodoriService.startRecording", e);
+            e.printStackTrace();
+        }
+
+        return success;
+    }
+
+    public boolean stopRecording(String audioFileName) {
+        if(D)Log.d(TAG, String.format("NeodoriService.stopRecording: audioFileName=%s", audioFileName));
+
+        if (!m_isRecording) {
+            if(D)Log.d(TAG, "NeodoriService.stopRecording - m_isRecording is false so bailing");
+            return true;
+        }
+        if (m_recorderAudioFileName == null || !m_recorderAudioFileName.equals(audioFileName)) {
+            if(D)Log.d(TAG, "NeodoriService.stopRecording - m_recorderAudioFileName != audioFileName, so bailing");
+            return true;
+        }
+
+        boolean success = false;
+
+        try {
+            m_mediaRecorder.stop();
+            success = true;
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "NeodoriService.stopRecording", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "NeodoriService.stopRecording", e);
+            e.printStackTrace();
+        }
+        m_mediaRecorder.release();
+        m_mediaRecorder = null;
+
+        m_isRecording = false;
+
+        return success;
+    }
+
+    public boolean isRecording(String audioFileName) {
+        if(D)Log.d(TAG, String.format("NeodoriService.isRecording: %s", audioFileName));
+
+        return (m_recorderAudioFileName != null && m_recorderAudioFileName.equals(audioFileName) && m_isRecording);
     }
 
     //********************************************************************************

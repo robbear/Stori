@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Point;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -35,8 +34,6 @@ import com.hyperfine.neodori.SlideJSON;
 import com.hyperfine.neodori.Utilities;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.UUID;
 
 import static com.hyperfine.neodori.Config.D;
@@ -65,11 +62,8 @@ public class EditPlayFragment extends Fragment implements
     private String m_imageFileName;
     private String m_audioFileName;
     private String m_slideUuid;
-    private MediaRecorder m_recorder;
     private NeodoriService m_neodoriService = null;
 
-    private FileInputStream m_fileInputStream;
-    private boolean m_isRecording = false;
     private int m_displayWidth = 0;
     private int m_displayHeight = 0;
     private String m_currentCameraPhotoFilePath = null;
@@ -172,6 +166,7 @@ public class EditPlayFragment extends Fragment implements
 
         if (!m_editPlayActivity.getOrientationChangedFlag()) {
             stopPlaying();
+            stopRecording();
         }
 
         uninitializeNeodoriService();
@@ -300,9 +295,13 @@ public class EditPlayFragment extends Fragment implements
         m_recordControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(D)Log.d(TAG, String.format("EditPlayFormat.onRecordButtonClicked: %s recording", m_isRecording ? "Stopping" : "Starting"));
+                if (m_neodoriService == null) {
+                    return;
+                }
 
-                if (m_isRecording) {
+                if(D)Log.d(TAG, String.format("EditPlayFormat.onRecordButtonClicked: %s recording", m_neodoriService.isRecording(m_audioFileName) ? "Stopping" : "Starting"));
+
+                if (m_neodoriService.isRecording(m_audioFileName)) {
                     stopRecording();
                 }
                 else {
@@ -493,6 +492,7 @@ public class EditPlayFragment extends Fragment implements
         }
         else {
             stopPlaying();
+            stopRecording();
         }
     }
 
@@ -622,78 +622,34 @@ public class EditPlayFragment extends Fragment implements
     private void startRecording() {
         if(D)Log.d(TAG, "EditPlayFragment.startRecording");
 
-        if (m_isRecording) {
-            if(D)Log.d(TAG, "EditPlayFragment.startRecording - m_isRecording is true, so bailing");
-            return;
-        }
-
         if (m_audioFileName == null) {
             m_audioFileName = getNewAudioFileName();
             m_editPlayActivity.updateSlideShareJSON(m_slideUuid, m_imageFileName, m_audioFileName);
         }
 
-        String filePath = Utilities.getAbsoluteFilePath(m_editPlayActivity, m_slideShareName, m_audioFileName);
-        if(D)Log.d(TAG, String.format("EditPlayFragment.startRecording: filePath=%s", filePath));
-
-        m_recorder = new MediaRecorder();
-        m_recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        m_recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        m_recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        m_recorder.setOutputFile(filePath);
-
-        try {
-            m_recorder.prepare();
-            m_recorder.start();
-            m_isRecording = true;
+        boolean success = m_neodoriService.startRecording(m_slideShareName, m_audioFileName);
+        if (success) {
             m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stoprecording));
-        }
-        catch (IOException e) {
-            if(E)Log.e(TAG, "EditPlayFragment.startRecording", e);
-            e.printStackTrace();
-        }
-        catch (Exception e) {
-            if(E)Log.e(TAG, "EditPlayFragment.startRecording", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "EditPlayFragment.startRecording", e);
-            e.printStackTrace();
         }
     }
 
     private void stopRecording() {
         if(D)Log.d(TAG, "EditPlayFragment.stopRecording");
 
-        if (!m_isRecording) {
-            if(D)Log.d(TAG, "EditPlayFragment.stopRecording - m_isRecording is false so bailing");
+        if (m_neodoriService == null) {
+            if(D)Log.d(TAG, "EditPlayFragment.stopRecording - m_neodoriService is null, so bailing");
             return;
         }
 
-        boolean success = false;
+        boolean success = m_neodoriService.stopRecording(m_audioFileName);
 
-        try {
-            m_recorder.stop();
-            success = true;
-        }
-        catch (Exception e) {
-            if(E)Log.e(TAG, "EditPlayFragment.stopRecording", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "EditPlayFragment.stopRecording", e);
-            e.printStackTrace();
-        }
-        m_recorder.release();
-        m_recorder = null;
-
-        m_isRecording = false;
         m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
 
         if (success) {
             m_playstopControl.setVisibility(View.VISIBLE);
         }
         else {
-            if(D)Log.d(TAG, String.format("EditPlayFragment.stopRecording - exception thrown on m_recorder.stop. Cleaning up %s", m_audioFileName));
+            if(D)Log.d(TAG, String.format("EditPlayFragment.stopRecording - failure. Cleaning up %s", m_audioFileName));
             m_editPlayActivity.deleteAudio(m_slideUuid, m_audioFileName);
         }
     }
@@ -916,6 +872,10 @@ public class EditPlayFragment extends Fragment implements
         m_neodoriService = service;
 
         m_neodoriService.registerPlaybackStateListener(this);
+
+        if (m_neodoriService.isRecording(m_audioFileName)) {
+            m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stoprecording));
+        }
     }
 
     @Override
