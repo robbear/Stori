@@ -29,6 +29,14 @@ public class Config
     // Default inSampleSize scale factor for images
     public static final int imageScaleFactor = 4;
 
+    // Recording time limits - recordingTimeSegmentMillis * numRecordingSegments = 1 minute
+    // Note that recordingTimeSegmeentMillis indicates the resolution with which check for cancel.
+    public static final int recordingTimeSegmentMillis = 500;
+    public static final int numRecordingSegments = 120;
+
+    // Recording timeout vibrate duration
+    public static final int recordingTimeoutVibrateMillis = 500;
+
     // Use Google Play Services
     public static final boolean USE_GOOGLE_PLAY_SERVICES = true;
 

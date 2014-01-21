@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import static com.hyperfine.neodori.Config.D;
 import static com.hyperfine.neodori.Config.E;
 
-public class NeodoriService extends Service {
+public class NeodoriService extends Service implements AsyncTaskTimer.IAsyncTaskTimerCallback {
     public static final String TAG = "NeodoriService";
 
     private MediaPlayer m_mediaPlayer;
@@ -238,6 +238,48 @@ public class NeodoriService extends Service {
     private MediaRecorder m_mediaRecorder;
     private boolean m_isRecording = false;
     private String m_recorderAudioFileName = null;
+    private AsyncTaskTimer m_recordingLimitAsyncTaskTimer = null;
+    private boolean m_lastRecordingSuccess = false;
+    private ArrayList<RecordingStateListener> m_recordingStateListeners = new ArrayList<RecordingStateListener>();
+
+    public interface RecordingStateListener {
+        public void onRecordingTimeLimit(boolean success, String audioFileName);
+    }
+
+    private void reportRecordingTimeOut(String audioFileName) {
+        if(D)Log.d(TAG, "NeodoriService.reportRecordingTimeOut");
+
+        // Clone the arraylist so that mods on the array list due to actions in the callback do
+        // not result in a ConcurrentModificationException.
+        ArrayList<RecordingStateListener> recordingStateListeners = new ArrayList<RecordingStateListener>(m_recordingStateListeners);
+
+        for (RecordingStateListener rsl : recordingStateListeners) {
+            rsl.onRecordingTimeLimit(m_lastRecordingSuccess, audioFileName);
+        }
+    }
+
+    public void registerRecordingStateListener(RecordingStateListener listener) {
+        if(D)Log.d(TAG, "NeodoriService.registerRecordingStateListener");
+
+        if (!m_recordingStateListeners.contains(listener)) {
+            m_recordingStateListeners.add(listener);
+        }
+        if(D)Log.d(TAG, String.format("NeodoriService.registerRecordingStateListener: now have %d listeners", m_recordingStateListeners.size()));
+
+        if (m_recordingLimitAsyncTaskTimer == null) {
+            if(D)Log.d(TAG, "NeodoriService.registerRecordingStateListener: m_recordingLimitAsyncTaskTimer is null, so notifying listener");
+            listener.onRecordingTimeLimit(m_lastRecordingSuccess, m_recorderAudioFileName);
+        }
+    }
+
+    public void unregisterRecordingStateListener(RecordingStateListener listener) {
+        if(D)Log.d(TAG, "NeodoriService.unregisterRecordingStateListener");
+
+        if (m_recordingStateListeners.contains(listener)) {
+            m_recordingStateListeners.remove(listener);
+        }
+        if(D)Log.d(TAG, String.format("NeodoriService.unregisterRecordingkStateListener: now have %d listeners", m_recordingStateListeners.size()));
+    }
 
     public boolean startRecording(String slideShareName, String audioFileName) {
         if(D)Log.d(TAG, String.format("NeodoriService.startRecording: slideShareName=%s, audioFileName=%s", slideShareName, audioFileName));
@@ -269,6 +311,8 @@ public class NeodoriService extends Service {
             m_mediaRecorder.start();
             m_isRecording = true;
             success = true;
+
+            m_recordingLimitAsyncTaskTimer = AsyncTaskTimer.startAsyncTaskTimer(1, Config.recordingTimeSegmentMillis, Config.numRecordingSegments, this);
         }
         catch (IOException e) {
             if(E)Log.e(TAG, "NeodoriService.startRecording", e);
@@ -289,6 +333,12 @@ public class NeodoriService extends Service {
     public boolean stopRecording(String audioFileName) {
         if(D)Log.d(TAG, String.format("NeodoriService.stopRecording: audioFileName=%s", audioFileName));
 
+        if (m_recordingLimitAsyncTaskTimer != null) {
+            if(D)Log.d(TAG, "NeodoriService.stopRecording - killing m_recordingLimitAsyncTaskTimer");
+            m_recordingLimitAsyncTaskTimer.cancel(false);
+            m_recordingLimitAsyncTaskTimer = null;
+        }
+
         if (!m_isRecording) {
             if(D)Log.d(TAG, "NeodoriService.stopRecording - m_isRecording is false so bailing");
             return true;
@@ -298,11 +348,11 @@ public class NeodoriService extends Service {
             return true;
         }
 
-        boolean success = false;
+        m_lastRecordingSuccess = false;
 
         try {
             m_mediaRecorder.stop();
-            success = true;
+            m_lastRecordingSuccess = true;
         }
         catch (Exception e) {
             if(E)Log.e(TAG, "NeodoriService.stopRecording", e);
@@ -316,8 +366,22 @@ public class NeodoriService extends Service {
         m_mediaRecorder = null;
 
         m_isRecording = false;
+        m_recorderAudioFileName = null;
 
-        return success;
+        return m_lastRecordingSuccess;
+    }
+
+    @Override
+    public void onAsyncTaskTimerComplete(long cookie) {
+        if(D)Log.d(TAG, String.format("NeodoriService.onAsyncTaskTimerComplete: cookie=%d", cookie));
+
+        String audioFileName = m_recorderAudioFileName;
+
+        // Prevent stopRecording from attempting to cancel the timer by nulling it here.
+        m_recordingLimitAsyncTaskTimer = null;
+        stopRecording(audioFileName);
+
+        reportRecordingTimeOut(audioFileName);
     }
 
     public boolean isRecording(String audioFileName) {

@@ -2,11 +2,15 @@ package com.hyperfine.neodori.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
@@ -40,7 +44,8 @@ import static com.hyperfine.neodori.Config.D;
 import static com.hyperfine.neodori.Config.E;
 
 public class EditPlayFragment extends Fragment implements
-        AsyncTaskTimer.IAsyncTaskTimerCallback, NeodoriService.PlaybackStateListener, NeodoriService.NeodoriServiceConnectionListener {
+        AsyncTaskTimer.IAsyncTaskTimerCallback, NeodoriService.PlaybackStateListener,
+        NeodoriService.RecordingStateListener, NeodoriService.NeodoriServiceConnectionListener {
     public final static String TAG = "EditPlayFragment";
 
     private final static String INSTANCE_STATE_IMAGEFILENAME = "instance_state_imagefilename";
@@ -630,6 +635,7 @@ public class EditPlayFragment extends Fragment implements
         boolean success = m_neodoriService.startRecording(m_slideShareName, m_audioFileName);
         if (success) {
             m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stoprecording));
+            m_playstopControl.setEnabled(false);
         }
     }
 
@@ -644,14 +650,57 @@ public class EditPlayFragment extends Fragment implements
         boolean success = m_neodoriService.stopRecording(m_audioFileName);
 
         m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
+        m_playstopControl.setEnabled(true);
 
         if (success) {
             m_playstopControl.setVisibility(View.VISIBLE);
         }
         else {
             if(D)Log.d(TAG, String.format("EditPlayFragment.stopRecording - failure. Cleaning up %s", m_audioFileName));
+            m_playstopControl.setVisibility(View.GONE);
             m_editPlayActivity.deleteAudio(m_slideUuid, m_audioFileName);
         }
+    }
+
+    public void onRecordingTimeLimit(boolean success, String audioFileName) {
+        if(D)Log.d(TAG, String.format("EditPlayFragment.onRecordingTimeLimit: m_audioFileName=%s, audioFileName=%s", m_audioFileName, audioFileName));
+
+        if (m_audioFileName == null || !m_audioFileName.equals(audioFileName)) {
+            if(D)Log.d(TAG, "EditPlayFragment.onRecordingTimeLimit - audioFileName doesn't match, so bailing");
+            return;
+        }
+
+        playBeep();
+        vibrateDevice();
+        m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
+        m_playstopControl.setEnabled(true);
+
+        if (success) {
+            m_playstopControl.setVisibility(View.VISIBLE);
+        }
+        else {
+            if(D)Log.d(TAG, String.format("EditPlayFragment.onRecordingTimeLimit - failure. Cleaning up %s", m_audioFileName));
+            m_playstopControl.setVisibility(View.GONE);
+            m_editPlayActivity.deleteAudio(m_slideUuid, m_audioFileName);
+        }
+    }
+
+    private void playBeep() {
+        if(D)Log.d(TAG, "EditPlayFragment.playBeep");
+
+        try {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(m_editPlayActivity, notification);
+            r.play();
+        }
+        catch (Exception e) {}
+    }
+
+    private void vibrateDevice() {
+        if(D)Log.d(TAG, "EditPlayFragment.vibrateDevice");
+
+        Vibrator v = (Vibrator)m_editPlayActivity.getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(Config.recordingTimeoutVibrateMillis);
     }
 
     private void startPlaying() {
@@ -677,6 +726,7 @@ public class EditPlayFragment extends Fragment implements
         m_neodoriService.startAudio(m_slideShareName, m_audioFileName);
 
         m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stopplaying));
+        m_recordControl.setEnabled(false);
     }
 
     private void stopPlaying() {
@@ -697,6 +747,7 @@ public class EditPlayFragment extends Fragment implements
         m_neodoriService.stopAudio(m_audioFileName);
 
         m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_play));
+        m_recordControl.setEnabled(true);
     }
 
     private boolean hasAudio() {
@@ -721,6 +772,7 @@ public class EditPlayFragment extends Fragment implements
 
         if (m_audioFileName != null && m_audioFileName.equals(audioFileName)) {
             m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_play));
+            m_recordControl.setEnabled(true);
         }
     }
 
@@ -730,6 +782,7 @@ public class EditPlayFragment extends Fragment implements
 
         if (m_audioFileName != null && m_audioFileName.equals(audioFileName)) {
             m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stopplaying));
+            m_recordControl.setEnabled(false);
         }
     }
 
@@ -739,6 +792,7 @@ public class EditPlayFragment extends Fragment implements
 
         if (m_audioFileName != null && m_audioFileName.equals(audioFileName)) {
             m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stopplaying));
+            m_recordControl.setEnabled(false);
         }
     }
 
@@ -859,6 +913,7 @@ public class EditPlayFragment extends Fragment implements
 
         if (m_neodoriService != null) {
             m_neodoriService.unregisterPlaybackStateListener(this);
+            m_neodoriService.unregisterRecordingStateListener(this);
         }
 
         m_editPlayActivity.unregisterNeodoriServiceConnectionListener(this);
@@ -872,9 +927,11 @@ public class EditPlayFragment extends Fragment implements
         m_neodoriService = service;
 
         m_neodoriService.registerPlaybackStateListener(this);
+        m_neodoriService.registerRecordingStateListener(this);
 
         if (m_neodoriService.isRecording(m_audioFileName)) {
             m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stoprecording));
+            m_playstopControl.setEnabled(false);
         }
     }
 
