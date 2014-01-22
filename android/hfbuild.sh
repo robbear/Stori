@@ -10,7 +10,7 @@ E_BADARGS=65
 
 usage()
 {
-    echo "hfbuild - command line tool to build neodori indicating sku as first parameter"
+    echo "hfbuild - command line tool to build Stori indicating sku as first parameter"
     echo "usage: hfbuild <trial|release|amazon|amazon_trial> <debug|release> <buildstring> <password> [install]"
     echo ""
 }
@@ -40,15 +40,15 @@ copyTrunkTreeToBuildTree()
 {
     echo "---"
     echo "Copying trunk tree to build tree"
-    cp -R SlideShare/keystore/ build/keystore/
-    cp -R SlideShare/libs/ build/libs/
+    cp -R Stori/keystore/ build/keystore/
+    cp -R Stori/libs/ build/libs/
     cp -R proguard/ build/proguard/
-    cp -R SlideShare/src/main/res/ build/res/
-    cp -R SlideShare/src/main/java/ build/src/
+    cp -R Stori/src/main/res/ build/res/
+    cp -R Stori/src/main/java/ build/src/
     cp -R ../google-play-services_lib build
     cp ./.classpath build
     cp ./.project build
-    cp ./SlideShare/src/main/AndroidManifest.xml build
+    cp ./Stori/src/main/AndroidManifest.xml build
     cp ./project.properties build
     cp ./build.xml build
     cp ./ant.properties build
@@ -86,14 +86,14 @@ setBuildStringForRelease()
 {
     echo "---"
     echo "Setting build string for release sku"
-    sed -i -e 's/g000000000000/'$1'/g' build/src/com/hyperfine/neodori/Config.java
+    sed -i -e 's/g000000000000/'$1'/g' build/src/com/stori-app/storii/Config.java
 }
 
 setBuildStringForTrial()
 {
     echo "---"
     echo "Setting build string for trial sku"
-    sed -i -e 's/g000000000000/'$1'/g' build/src/com/hyperfine/neodori/Config.java
+    sed -i -e 's/g000000000000/'$1'/g' build/src/com/stori-app/stori/Config.java
 }
 
 fixAntPropertiesForPassword()
