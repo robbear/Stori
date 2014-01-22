@@ -54,9 +54,9 @@ public class Config
     //
     public static final String AWS_BUCKET_NAME = "hfstori";
     public static final String FB_ROLE_ARN = "ROLE_ARN";
-    public static final String GOOGLE_ROLE_ARN = "arn:aws:iam::226207118720:role/GoogleWIFS3FileStore";
+    public static final String GOOGLE_ROLE_ARN = "arn:aws:iam::226207118720:role/GoogleWIFS3FileStoreForStori";
     public static final String AMAZON_ROLE_ARN = "ROLE_ARN";
-    public static final String GOOGLE_CLIENT_ID = "577074179012-7rn9q34trpofjfjesjcm7kad7ta06rmd.apps.googleusercontent.com";
+    public static final String GOOGLE_CLIENT_ID = "335249838846-jtic9s13ib0u5lv6rmhamn7sbdmq86mc.apps.googleusercontent.com";
 
     //
     // Base cloud urls - support for CLOUD_STORAGE_PROVIDER setting
