@@ -1,4 +1,4 @@
-package com.stori-app.stori.adapters;
+package com.stori.stori.adapters;
 
 import android.app.Activity;
 import android.support.v4.app.FragmentManager;
@@ -6,13 +6,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 
-import com.stori-app.stori.PlaySlidesActivity;
-import com.stori-app.stori.SlideJSON;
-import com.stori-app.stori.SlideShareJSON;
-import com.stori-app.stori.fragments.PlaySlidesFragment;
+import com.stori.stori.PlaySlidesActivity;
+import com.stori.stori.SlideJSON;
+import com.stori.stori.SlideShareJSON;
+import com.stori.stori.fragments.PlaySlidesFragment;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class PlaySlidesPagerAdapter extends FragmentStatePagerAdapter {
 

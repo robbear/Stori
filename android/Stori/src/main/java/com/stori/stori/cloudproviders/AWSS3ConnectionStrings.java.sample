@@ -1,4 +1,4 @@
-package com.stori-app.stori.cloudproviders;
+package com.stori.stori.cloudproviders;
 
 public class AWSS3ConnectionStrings {
     public final static String ACCESS_KEY_ID = "access_key_id";

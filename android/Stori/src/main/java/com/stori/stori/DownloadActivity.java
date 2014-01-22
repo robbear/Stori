@@ -1,4 +1,4 @@
-package com.stori-app.stori;
+package com.stori.stori;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -25,8 +25,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class DownloadActivity extends FragmentActivity {
     public final static String TAG = "DownloadActivity";

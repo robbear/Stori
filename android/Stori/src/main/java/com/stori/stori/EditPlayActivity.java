@@ -1,4 +1,4 @@
-package com.stori-app.stori;
+package com.stori.stori;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -27,19 +27,19 @@ import android.widget.ViewSwitcher;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.stori-app.stori.adapters.EditPlayPagerAdapter;
-import com.stori-app.stori.cloudproviders.AmazonClientManager;
-import com.stori-app.stori.cloudproviders.AmazonSharedPreferencesWrapper;
-import com.stori-app.stori.cloudproviders.GoogleLogin;
-import com.stori-app.stori.fragments.EditPlayFragment;
+import com.stori.stori.adapters.EditPlayPagerAdapter;
+import com.stori.stori.cloudproviders.AmazonClientManager;
+import com.stori.stori.cloudproviders.AmazonSharedPreferencesWrapper;
+import com.stori.stori.cloudproviders.GoogleLogin;
+import com.stori.stori.fragments.EditPlayFragment;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.ViewFactory, CloudStore.ICloudStoreCallback {
     public final static String TAG = "EditPlayActivity";

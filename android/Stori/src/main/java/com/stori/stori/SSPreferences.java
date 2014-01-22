@@ -1,4 +1,4 @@
-package com.stori-app.stori;
+package com.stori.stori;
 
 public class SSPreferences {
     public final static String TAG = "SSPreferences";

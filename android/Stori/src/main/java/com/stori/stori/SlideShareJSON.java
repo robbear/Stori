@@ -1,4 +1,4 @@
-package com.stori-app.stori;
+package com.stori.stori;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -13,8 +13,8 @@ import org.json.JSONObject;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 //
 // SlideShareJSON example:

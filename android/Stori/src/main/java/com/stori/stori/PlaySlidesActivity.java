@@ -1,4 +1,4 @@
-package com.stori-app.stori;
+package com.stori.stori;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -18,15 +18,15 @@ import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.ViewSwitcher;
 
-import com.stori-app.stori.adapters.PlaySlidesPagerAdapter;
-import com.stori-app.stori.fragments.PlaySlidesFragment;
+import com.stori.stori.adapters.PlaySlidesPagerAdapter;
+import com.stori.stori.fragments.PlaySlidesFragment;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher.ViewFactory {
     public final static String TAG = "PlaySlidesActivity";

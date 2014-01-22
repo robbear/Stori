@@ -1,17 +1,17 @@
-package com.stori-app.stori;
+package com.stori.stori;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.stori-app.stori.cloudproviders.AWSS3Provider;
-import com.stori-app.stori.cloudproviders.AmazonClientManager;
-import com.stori-app.stori.cloudproviders.ICloudProvider;
+import com.stori.stori.cloudproviders.AWSS3Provider;
+import com.stori.stori.cloudproviders.AmazonClientManager;
+import com.stori.stori.cloudproviders.ICloudProvider;
 
 import java.util.concurrent.RejectedExecutionException;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class CloudStore {
     public final static String TAG = "CloudStore";

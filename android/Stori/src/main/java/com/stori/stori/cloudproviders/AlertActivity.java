@@ -1,4 +1,4 @@
-package com.stori-app.stori.cloudproviders;
+package com.stori.stori.cloudproviders;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -7,8 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class AlertActivity extends Activity {
     public final static String TAG = "AlertActivity";

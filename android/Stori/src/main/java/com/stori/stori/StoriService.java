@@ -1,4 +1,4 @@
-package com.stori-app.stori;
+package com.stori.stori;
 
 import android.app.Service;
 import android.content.Intent;
@@ -13,8 +13,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTimerCallback {
     public static final String TAG = "StoriService";

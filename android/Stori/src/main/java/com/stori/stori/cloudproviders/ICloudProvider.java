@@ -1,4 +1,4 @@
-package com.stori-app.stori.cloudproviders;
+package com.stori.stori.cloudproviders;
 
 import android.content.SharedPreferences;
 

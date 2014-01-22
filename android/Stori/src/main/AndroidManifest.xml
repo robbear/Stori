@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.stori-app.stori"
+    package="com.stori.stori"
     android:versionCode="100"
     android:versionName="1.0.0" >
 
@@ -47,7 +47,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="com.stori-app.stori"
+                    android:host="com.stori.stori"
                     android:scheme="amzn" />
             </intent-filter>
         </activity>

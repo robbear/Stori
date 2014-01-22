@@ -1,4 +1,4 @@
-package com.stori-app.stori.fragments;
+package com.stori.stori.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -29,19 +29,19 @@ import android.widget.ImageSwitcher;
 import android.widget.PopupMenu;
 import android.widget.ViewSwitcher;
 
-import com.stori-app.stori.AsyncTaskTimer;
-import com.stori-app.stori.Config;
-import com.stori-app.stori.EditPlayActivity;
-import com.stori-app.stori.StoriService;
-import com.stori-app.stori.R;
-import com.stori-app.stori.SlideJSON;
-import com.stori-app.stori.Utilities;
+import com.stori.stori.AsyncTaskTimer;
+import com.stori.stori.Config;
+import com.stori.stori.EditPlayActivity;
+import com.stori.stori.StoriService;
+import com.stori.stori.R;
+import com.stori.stori.SlideJSON;
+import com.stori.stori.Utilities;
 
 import java.io.File;
 import java.util.UUID;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class EditPlayFragment extends Fragment implements
         AsyncTaskTimer.IAsyncTaskTimerCallback, StoriService.PlaybackStateListener,

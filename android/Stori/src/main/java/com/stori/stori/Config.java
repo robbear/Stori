@@ -2,7 +2,7 @@
 // Copyright (c) 2011 Hyperfine Software Corp.
 // All rights reserved
 //
-package com.stori-app.stori;
+package com.stori.stori;
 
 import java.net.URI;
 import java.util.GregorianCalendar;
@@ -18,7 +18,7 @@ public class Config
     public static final boolean isAmazon = false;
     
     // Recent search authority string
-    public static final String RECENT_AUTHORITY = "authority.stori.stori-app.com";
+    public static final String RECENT_AUTHORITY = "authority.stori-app.stori.com";
 
     // Default setting for notifications
     public static final boolean NOTIFICATIONS_ON_BY_DEFAULT = true;

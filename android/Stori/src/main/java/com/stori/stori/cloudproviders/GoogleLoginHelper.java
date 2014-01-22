@@ -1,4 +1,4 @@
-package com.stori-app.stori.cloudproviders;
+package com.stori.stori.cloudproviders;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,10 +9,10 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.stori-app.stori.EditPlayActivity;
+import com.stori.stori.EditPlayActivity;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class GoogleLoginHelper {
     public static final String TAG = "GoogleLoginHelper";

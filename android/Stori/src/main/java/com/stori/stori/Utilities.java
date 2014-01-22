@@ -1,4 +1,4 @@
-package com.stori-app.stori;
+package com.stori.stori;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,7 +14,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import com.stori-app.stori.cloudproviders.AmazonSharedPreferencesWrapper;
+import com.stori.stori.cloudproviders.AmazonSharedPreferencesWrapper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,8 +26,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class Utilities {
     public final static String TAG = "Utilities";

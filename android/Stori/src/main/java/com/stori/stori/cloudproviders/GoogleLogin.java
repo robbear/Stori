@@ -1,4 +1,4 @@
-package com.stori-app.stori.cloudproviders;
+package com.stori.stori.cloudproviders;
 
 import android.accounts.AccountManager;
 import android.content.Context;
@@ -14,12 +14,12 @@ import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.stori-app.stori.EditPlayActivity;
-import com.stori-app.stori.R;
-import com.stori-app.stori.SSPreferences;
+import com.stori.stori.EditPlayActivity;
+import com.stori.stori.R;
+import com.stori.stori.SSPreferences;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class GoogleLogin extends AlertActivity {
     public static final String TAG = "GoogleLogin";

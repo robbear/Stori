@@ -1,4 +1,4 @@
-package com.stori-app.stori.cloudproviders;
+package com.stori.stori.cloudproviders;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,14 +10,14 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.stori-app.stori.EditPlayActivity;
-import com.stori-app.stori.Utilities;
+import com.stori.stori.EditPlayActivity;
+import com.stori.stori.Utilities;
 
 import java.io.File;
 import java.io.FileInputStream;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class AWSS3Provider implements ICloudProvider {
     public final static String TAG = "AWSS3Provider";

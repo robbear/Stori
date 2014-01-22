@@ -1,4 +1,4 @@
-package com.stori-app.stori;
+package com.stori.stori;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import static com.stori-app.stori.Config.D;
+import static com.stori.stori.Config.D;
 
 //
 // About Stori

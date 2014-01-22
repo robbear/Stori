@@ -1,12 +1,12 @@
-package com.stori-app.stori;
+package com.stori.stori;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 import java.util.concurrent.RejectedExecutionException;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class AsyncTaskTimer extends AsyncTask<Object, Void, AsyncTaskTimer.AsyncTaskTimerParams> {
     public final static String TAG = "AsyncTaskTimer";

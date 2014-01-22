@@ -1,17 +1,17 @@
-package com.stori-app.stori.adapters;
+package com.stori.stori.adapters;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 
-import com.stori-app.stori.EditPlayActivity;
-import com.stori-app.stori.SlideJSON;
-import com.stori-app.stori.SlideShareJSON;
-import com.stori-app.stori.fragments.EditPlayFragment;
+import com.stori.stori.EditPlayActivity;
+import com.stori.stori.SlideJSON;
+import com.stori.stori.SlideShareJSON;
+import com.stori.stori.fragments.EditPlayFragment;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class EditPlayPagerAdapter extends FragmentStatePagerAdapter {
     public final static String TAG = "EditPlayPagerAdapter";

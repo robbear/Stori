@@ -1,4 +1,4 @@
-package com.stori-app.stori;
+package com.stori.stori;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -16,8 +16,8 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.Scroller;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class HorizontalListView extends AdapterView<ListAdapter> {
     public final static String TAG = "HorizontalListView";

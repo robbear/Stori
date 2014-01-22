@@ -1,4 +1,4 @@
-package com.stori-app.stori.fragments;
+package com.stori.stori.fragments;
 
 import android.app.Activity;
 import android.graphics.Point;
@@ -16,16 +16,16 @@ import android.view.ViewGroup;
 import android.widget.ImageSwitcher;
 import android.widget.ViewSwitcher;
 
-import com.stori-app.stori.AsyncTaskTimer;
-import com.stori-app.stori.Config;
-import com.stori-app.stori.StoriService;
-import com.stori-app.stori.PlaySlidesActivity;
-import com.stori-app.stori.R;
-import com.stori-app.stori.SlideJSON;
-import com.stori-app.stori.Utilities;
+import com.stori.stori.AsyncTaskTimer;
+import com.stori.stori.Config;
+import com.stori.stori.StoriService;
+import com.stori.stori.PlaySlidesActivity;
+import com.stori.stori.R;
+import com.stori.stori.SlideJSON;
+import com.stori.stori.Utilities;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 public class PlaySlidesFragment extends Fragment implements
         AsyncTaskTimer.IAsyncTaskTimerCallback, StoriService.PlaybackStateListener, StoriService.StoriServiceConnectionListener {

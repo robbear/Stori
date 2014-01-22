@@ -1,5 +1,5 @@
 
-package com.stori-app.stori.cloudproviders;
+package com.stori.stori.cloudproviders;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -8,10 +8,10 @@ import android.util.Log;
 
 import com.amazonaws.auth.WebIdentityFederationSessionCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.stori-app.stori.Config;
+import com.stori.stori.Config;
 
-import static com.stori-app.stori.Config.D;
-import static com.stori-app.stori.Config.E;
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
 
 /**
  * This class is used to get clients to the various AWS services.  Before accessing a client 
