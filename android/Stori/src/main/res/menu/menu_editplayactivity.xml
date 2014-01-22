@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_editplayactivity_preview"
+        android:title="@string/menu_editplayactivity_preview" />
+    <item
+        android:id="@+id/menu_editplayactivity_publish"
+        android:title="@string/menu_editplayactivity_publish" />
+    <item
+        android:id="@+id/menu_editplayactivity_share"
+        android:title="@string/menu_editplayactivity_share" />
+    <item
+        android:id="@+id/menu_editplayactivity_createnew"
+        android:title="@string/menu_editplayactivity_createnew" />
+    <item
+        android:id="@+id/menu_editplayactivity_switchaccount"
+        android:title="@string/menu_editplayactivity_switchaccount" />
+    <item
+        android:id="@+id/menu_editplayactivity_about"
+        android:title="@string/menu_editplayactivity_about" />
+</menu>

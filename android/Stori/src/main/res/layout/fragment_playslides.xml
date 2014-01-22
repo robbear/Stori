@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_playslides"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical"
+    android:layout_centerHorizontal="true">
+
+    <ImageSwitcher
+        android:id="@+id/current_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:inAnimation="@anim/fade_in"
+        android:outAnimation="@anim/fade_out" />
+
+</LinearLayout>
