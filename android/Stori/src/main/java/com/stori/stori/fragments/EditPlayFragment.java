@@ -607,7 +607,7 @@ public class EditPlayFragment extends Fragment implements
         if(D)Log.d(TAG, "EditPlayFragment.selectImageFromCamera");
 
         String imageFileName = getNewImageFileName();
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/SlideShare";
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + Config.cameraImageFolderName;
         File pictureDirPath = new File(path);
         if (!pictureDirPath.exists()) {
             if(D)Log.d(TAG, "****** creating directory");

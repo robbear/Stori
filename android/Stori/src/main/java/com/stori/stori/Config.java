@@ -37,6 +37,9 @@ public class Config
     // Recording timeout vibrate duration
     public static final int recordingTimeoutVibrateMillis = 500;
 
+    // Camera file folder name for snapshots taken within Stori
+    public static final String cameraImageFolderName = "Stori";
+
     // Use Google Play Services
     public static final boolean USE_GOOGLE_PLAY_SERVICES = true;
 
