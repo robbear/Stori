@@ -1,8 +1,8 @@
 {
-    "name": "neodoridotcom",
+    "name": "stori-appdotcom",
     "version": "1.0.0",
     "author": "Hyperfine Software <info@hyperfine.com>",
-    "description": "neodori web site",
+    "description": "Stori web site",
     "dependencies": {
 	"bunyan": "0.20.0",
 	"connect": "2.9.0",
@@ -18,8 +18,8 @@
 	"start": "node server.js"
     },
     "domains": [
-	"neodori.com",
-	"www.neodori.com"
+	"stori-app.com",
+	"www.stori-app.com"
     ],
-    "subdomain": "neodoridotcom"
+    "subdomain": "stori-appdotcom"
 }

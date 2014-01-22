@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Command line build tool to build neodori web
+# Command line build tool to build Stori web
 # usage: jitsubuild.sh <test1|test2|test3|production>
 
 EXPECTED_ARGS=1
@@ -25,7 +25,7 @@ trap 'error_handler ${LINENO} ${$?}' ERR
 
 usage()
 {
-  echo "jitsubuild - command line tool to build neodori web"
+  echo "jitsubuild - command line tool to build Stori web"
   echo "usage: ./jitsubuild.sh <test1|test2|test3|production>"
   echo ""
 }
@@ -91,7 +91,7 @@ fixPackageJsonForDeployment()
 {
   echo "---"
   echo "Updating package.json with deployment subdomain"
-  sed -e "s/\"name\": \"neodoridotcom\"/\"name\": \"$SUBDOMAIN_NAME\"/g" -e "s/\"subdomain\": \"neodoridotcom\"/\"subdomain\": \"$SUBDOMAIN_NAME\"/g" -e "s/\"domains\"/\"$DOMAINS_KEY\"/g" <./build/NodeWebSite/package.json >./build/temp.json
+  sed -e "s/\"name\": \"stori-appdotcom\"/\"name\": \"$SUBDOMAIN_NAME\"/g" -e "s/\"subdomain\": \"stori-appdotcom\"/\"subdomain\": \"$SUBDOMAIN_NAME\"/g" -e "s/\"domains\"/\"$DOMAINS_KEY\"/g" <./build/NodeWebSite/package.json >./build/temp.json
   rm ./build/NodeWebSite/package.json
   mv ./build/temp.json ./build/NodeWebSite/package.json
 }
@@ -127,7 +127,7 @@ case "$1" in
     DOMAINS_KEY="domains_ignore"
     ;;
   'production')
-    SUBDOMAIN_NAME="neodoridotcom"
+    SUBDOMAIN_NAME="stori-appdotcom"
     DOMAINS_KEY="domains"
     ;;
   *)
