@@ -604,6 +604,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 String title = titleText.getText().toString();
 
                 dialog.dismiss();
+                Utilities.unfreezeOrientation(EditPlayActivity.this);
 
                 initializeSlideShareJSON();
                 setSlideShareTitle(title);
@@ -616,6 +617,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             }
         });
 
+        // TODO: Fix #14 and #15. This is a temporary workaround.
+        Utilities.freezeActivityOrientation(this);
         AlertDialog ad = adb.create();
         ad.show();
     }

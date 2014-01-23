@@ -26,28 +26,48 @@ public class GoogleLogin extends AlertActivity {
     public static int ACCOUNT_PICKER_RESULT = 1;
     public static int USER_AUTHORIZATION_RESULT = 2;
 
+    private final static String INSTANCE_STATE_ACCOUNT_PICKER = "instance_state_account_picker";
+
     private SharedPreferences m_prefs;
     private String m_userAccountEmail;
+    private boolean m_fAccountPickerUp = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(D)Log.d(TAG, "GoogleLogin.onCreate");
+        if(D)Log.d(TAG, String.format("GoogleLogin.onCreate: savedInstanceState %s null", savedInstanceState == null ? "is" : "is not"));
 
         setContentView(R.layout.activity_googlelogin);
+
+        if (savedInstanceState != null) {
+            m_fAccountPickerUp = savedInstanceState.getBoolean(INSTANCE_STATE_ACCOUNT_PICKER);
+        }
 
         m_prefs = getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
         m_userAccountEmail = AmazonSharedPreferencesWrapper.getUserEmail(m_prefs);
         if(D)Log.d(TAG, String.format("GoogleLogin.onCreate - m_userAccountEmail=%s", m_userAccountEmail));
 
-        if (m_userAccountEmail == null) {
-            if(D)Log.d(TAG, "GoogleLogin.onCreate - m_userAccountEmail is null so calling AccountPicker");
-            Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[] {GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
-            startActivityForResult(intent, ACCOUNT_PICKER_RESULT);
-            return;
+        if (m_fAccountPickerUp) {
+            if(D)Log.d(TAG, "GoogleLogin.onCreate - account picker is already up, so bailing");
         }
+        else {
+            if (m_userAccountEmail == null) {
+                if(D)Log.d(TAG, "GoogleLogin.onCreate - m_userAccountEmail is null so calling AccountPicker");
+                m_fAccountPickerUp = true;
+                Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[] {GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
+                startActivityForResult(intent, ACCOUNT_PICKER_RESULT);
+                return;
+            }
 
-        getAndUseAuthTokenInAsyncTask();
+            getAndUseAuthTokenInAsyncTask();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        if(D)Log.d(TAG, "GoogleLogin.onSaveInstanceState");
+
+        savedInstanceState.putBoolean(INSTANCE_STATE_ACCOUNT_PICKER, m_fAccountPickerUp);
     }
 
     @Override
