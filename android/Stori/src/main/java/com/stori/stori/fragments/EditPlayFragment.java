@@ -60,7 +60,6 @@ public class EditPlayFragment extends Fragment implements
     private ImageButton m_insertBeforeControl;
     private ImageButton m_insertAfterControl;
     private ImageButton m_selectPhotoControl;
-    private ImageButton m_cameraControl;
     private ImageButton m_recordControl;
     private ImageButton m_playstopControl;
     private ImageButton m_moreControl;
@@ -189,9 +188,6 @@ public class EditPlayFragment extends Fragment implements
         if(D)Log.d(TAG, String.format("EditPlayFragment.onResume: m_slideUuid=%s", m_slideUuid));
 
         super.onResume();
-
-        boolean hasCamera = Utilities.isCameraAvailable(m_editPlayActivity);
-        m_cameraControl.setVisibility(hasCamera ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -289,10 +285,46 @@ public class EditPlayFragment extends Fragment implements
         m_selectPhotoControl = (ImageButton)view.findViewById(R.id.select_from_gallery_control);
         m_selectPhotoControl.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 if(D)Log.d(TAG, "EditPlayFragment.onSelectPhotoControlClicked");
 
-                selectImageFromGallery();
+                PopupMenu pm = new PopupMenu(m_editPlayActivity, view);
+                pm.inflate(R.menu.menu_editplay_imageselection);
+                Menu menu = pm.getMenu();
+
+                MenuItem photos = menu.findItem(R.id.menu_editplay_imageselection_photos);
+                photos.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        selectImageFromGallery();
+                        return true;
+                    }
+                });
+
+                if (Utilities.isCameraAvailable(m_editPlayActivity)) {
+                    MenuItem camera = menu.findItem(R.id.menu_editplay_imageselection_camera);
+                    camera.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            selectImageFromCamera();
+                            return true;
+                        }
+                    });
+                }
+                else {
+                    menu.removeItem(R.id.menu_editplay_imageselection_camera);
+                }
+
+                MenuItem internet = menu.findItem(R.id.menu_editplay_imageselection_url);
+                internet.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        // TODO
+                        return true;
+                    }
+                });
+
+                pm.show();
             }
         });
 
@@ -334,16 +366,6 @@ public class EditPlayFragment extends Fragment implements
                         startPlaying();
                     }
                 }
-            }
-        });
-
-        m_cameraControl = (ImageButton)view.findViewById(R.id.camera_control);
-        m_cameraControl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(D)Log.d(TAG, "EditPlayFragment.onCameraClicked");
-
-                selectImageFromCamera();
             }
         });
 

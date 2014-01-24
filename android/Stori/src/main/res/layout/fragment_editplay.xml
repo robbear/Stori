@@ -55,13 +55,13 @@
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_selectimage" />
                 <ImageButton
-                    android:id="@+id/camera_control"
-                    android:layout_height="48dp"
+                    android:id="@+id/control_record"
                     android:layout_width="0dp"
                     android:layout_weight="0.3"
+                    android:layout_height="48dp"
                     android:background="@null"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_camera" />
+                    android:src="@drawable/ic_record" />
                 <ImageButton
                     android:id="@+id/control_more"
                     android:layout_height="48dp"
@@ -76,14 +76,6 @@
                 android:layout_height="0dp"
                 android:layout_weight=".20"
                 android:layout_width="match_parent">
-                <ImageButton
-                    android:id="@+id/control_record"
-                    android:layout_width="0dp"
-                    android:layout_weight="0.5"
-                    android:layout_height="48dp"
-                    android:background="@null"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_record" />
                 <ImageButton
                     android:id="@+id/control_playback"
                     android:layout_width="0dp"
