@@ -269,7 +269,7 @@ public class EditPlayFragment extends Fragment implements
                         public boolean onMenuItemClick(MenuItem item) {
                             m_editPlayActivity.deleteAudio(m_slideUuid, m_audioFileName);
                             m_audioFileName = null;
-                            m_playstopControl.setVisibility(View.GONE);
+                            displayPlayStopControl();
                             return true;
                         }
                     });
@@ -348,7 +348,7 @@ public class EditPlayFragment extends Fragment implements
         });
 
         m_playstopControl = (ImageButton)view.findViewById(R.id.control_playback);
-        m_playstopControl.setVisibility(hasAudio() ? View.VISIBLE : View.GONE);
+        displayPlayStopControl();
         m_playstopControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -569,7 +569,7 @@ public class EditPlayFragment extends Fragment implements
         m_imageFileName = null;
         m_editPlayActivity.deleteAudio(m_slideUuid, m_audioFileName);
         m_audioFileName = null;
-        m_playstopControl.setVisibility(View.GONE);
+        displayPlayStopControl();
         renderImage();
     }
 
@@ -674,14 +674,13 @@ public class EditPlayFragment extends Fragment implements
         m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
         m_playstopControl.setEnabled(true);
 
-        if (success) {
-            m_playstopControl.setVisibility(View.VISIBLE);
-        }
-        else {
+        if (!success) {
             if(D)Log.d(TAG, String.format("EditPlayFragment.stopRecording - failure. Cleaning up %s", m_audioFileName));
-            m_playstopControl.setVisibility(View.GONE);
             m_editPlayActivity.deleteAudio(m_slideUuid, m_audioFileName);
+            m_audioFileName = null;
         }
+
+        displayPlayStopControl();
     }
 
     public void onRecordingTimeLimit(boolean success, String audioFileName) {
@@ -697,14 +696,13 @@ public class EditPlayFragment extends Fragment implements
         m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
         m_playstopControl.setEnabled(true);
 
-        if (success) {
-            m_playstopControl.setVisibility(View.VISIBLE);
-        }
-        else {
+        if (!success) {
             if(D)Log.d(TAG, String.format("EditPlayFragment.onRecordingTimeLimit - failure. Cleaning up %s", m_audioFileName));
-            m_playstopControl.setVisibility(View.GONE);
             m_editPlayActivity.deleteAudio(m_slideUuid, m_audioFileName);
+            m_audioFileName = null;
         }
+
+        displayPlayStopControl();
     }
 
     private void playBeep() {
@@ -723,6 +721,12 @@ public class EditPlayFragment extends Fragment implements
 
         Vibrator v = (Vibrator)m_editPlayActivity.getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(Config.recordingTimeoutVibrateMillis);
+    }
+
+    private void displayPlayStopControl() {
+        if(D)Log.d(TAG, "EditPlayFragment.displayPlayStopControl");
+
+        m_playstopControl.setVisibility(hasAudio() ? View.VISIBLE : View.GONE);
     }
 
     private void startPlaying() {

@@ -83,6 +83,7 @@
                     android:layout_height="48dp"
                     android:background="@null"
                     android:scaleType="fitCenter"
+                    android:visibility="gone"
                     android:src="@drawable/ic_play" />
             </LinearLayout>
         </LinearLayout>
