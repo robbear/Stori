@@ -225,12 +225,10 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             e.printStackTrace();
         }
 
-        if (m_editPlayMode != EditPlayMode.Edit) {
-            getActionBar().hide();
-        }
+        setActionBarTitle();
     }
 
-    private void setActionBarTitle() {
+    public void setActionBarTitle() {
         if(D)Log.d(TAG, "EditPlayActivity.setActionBarTitle");
 
         try {
@@ -240,6 +238,13 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
             String format = getString(R.string.editplay_actionbar_format);
             getActionBar().setTitle(String.format(format, m_currentTabPosition + 1, count, title));
+
+            if (m_editPlayMode == EditPlayMode.Edit) {
+                getActionBar().show();
+            }
+            else {
+                getActionBar().hide();
+            }
         }
         catch (Exception e) {
             if(E)Log.d(TAG, "EditPlayActivity.onPageSelected", e);

@@ -425,6 +425,8 @@ public class EditPlayFragment extends Fragment implements
                         }
                         break;
                 }
+
+                m_editPlayActivity.setActionBarTitle();
             }
         });
 
