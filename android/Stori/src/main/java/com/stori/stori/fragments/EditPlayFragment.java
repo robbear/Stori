@@ -63,6 +63,8 @@ public class EditPlayFragment extends Fragment implements
     private ImageButton m_recordControl;
     private ImageButton m_playstopControl;
     private ImageButton m_moreControl;
+    private ImageButton m_nextControl;
+    private ImageButton m_prevControl;
     private String m_imageFileName;
     private String m_audioFileName;
     private String m_slideUuid;
@@ -188,6 +190,8 @@ public class EditPlayFragment extends Fragment implements
         if(D)Log.d(TAG, String.format("EditPlayFragment.onResume: m_slideUuid=%s", m_slideUuid));
 
         super.onResume();
+
+        displayNextPrevControls();
     }
 
     @Override
@@ -219,6 +223,44 @@ public class EditPlayFragment extends Fragment implements
         if(D)Log.d(TAG, "EditPlayFragment.onCreateView");
 
         View view = inflater.inflate(R.layout.fragment_editplay, container, false);
+
+        m_nextControl = (ImageButton)view.findViewById(R.id.control_next_slide);
+        m_nextControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(D)Log.d(TAG, "EditPlayFragment.onNextControlClicked");
+
+                int position = m_editPlayActivity.getSlidePosition(m_slideUuid);
+                int count = m_editPlayActivity.getSlideCount();
+
+                position++;
+                if (position >= count) {
+                    if(D)Log.d(TAG, "EditPlayFragment.onNextControlClicked - error in position, so bailing");
+                    return;
+                }
+
+                m_editPlayActivity.setCurrentTabPosition(position);
+            }
+        });
+
+        m_prevControl = (ImageButton)view.findViewById(R.id.control_previous_slide);
+        m_prevControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(D)Log.d(TAG, "EditPlayFragment.onPrevControlClicked");
+
+                int position = m_editPlayActivity.getSlidePosition(m_slideUuid);
+                int count = m_editPlayActivity.getSlideCount();
+
+                position--;
+                if (position < 0) {
+                    if(D)Log.d(TAG, "EditPlayFragment.onPrevControlClicked - error in position, so bailing");
+                    return;
+                }
+
+                m_editPlayActivity.setCurrentTabPosition(position);
+            }
+        });
 
         m_moreControl = (ImageButton)view.findViewById(R.id.control_more);
         m_moreControl.setOnClickListener(new View.OnClickListener() {
@@ -513,6 +555,8 @@ public class EditPlayFragment extends Fragment implements
         m_editPlayMode = getActivityEditPlayMode();
         updateOverlay();
 
+        displayNextPrevControls();
+
         int tabPosition = m_editPlayActivity.getSlidePosition(m_slideUuid);
 
         if (tabPosition == position) {
@@ -728,7 +772,27 @@ public class EditPlayFragment extends Fragment implements
     private void displayPlayStopControl() {
         if(D)Log.d(TAG, "EditPlayFragment.displayPlayStopControl");
 
-        m_playstopControl.setVisibility(hasAudio() ? View.VISIBLE : View.GONE);
+        m_playstopControl.setVisibility(hasAudio() ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    private void displayNextPrevControls() {
+        int count = m_editPlayActivity.getSlideCount();
+        int position = m_editPlayActivity.getSlidePosition(m_slideUuid);
+
+        if(D)Log.d(TAG, String.format("EditPlayFragment.displayNextPrevControls: position=%d, count=%d", position, count));
+
+        if (position == 0) {
+            m_prevControl.setVisibility(View.INVISIBLE);
+            m_nextControl.setVisibility((count == 1) ? View.INVISIBLE : View.VISIBLE);
+        }
+        else if (position == count - 1) {
+            m_nextControl.setVisibility(View.INVISIBLE);
+            m_prevControl.setVisibility((count == 1) ? View.INVISIBLE : View.VISIBLE);
+        }
+        else {
+            m_nextControl.setVisibility(View.VISIBLE);
+            m_prevControl.setVisibility(View.VISIBLE);
+        }
     }
 
     private void startPlaying() {

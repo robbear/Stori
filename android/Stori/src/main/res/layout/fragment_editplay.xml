@@ -77,14 +77,32 @@
                 android:layout_weight=".20"
                 android:layout_width="match_parent">
                 <ImageButton
-                    android:id="@+id/control_playback"
+                    android:id="@+id/control_previous_slide"
                     android:layout_width="0dp"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.3"
                     android:layout_height="48dp"
                     android:background="@null"
                     android:scaleType="fitCenter"
-                    android:visibility="gone"
+                    android:visibility="invisible"
+                    android:src="@drawable/ic_arrow_left" />
+                <ImageButton
+                    android:id="@+id/control_playback"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.3"
+                    android:layout_height="48dp"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:visibility="invisible"
                     android:src="@drawable/ic_play" />
+                <ImageButton
+                    android:id="@+id/control_next_slide"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.3"
+                    android:layout_height="48dp"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:visibility="invisible"
+                    android:src="@drawable/ic_arrow_right" />
             </LinearLayout>
         </LinearLayout>
         <RelativeLayout

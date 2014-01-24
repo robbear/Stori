@@ -950,6 +950,13 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         return m_fOrientationChanged;
     }
 
+    public void setCurrentTabPosition(int position) {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.setCurrentTabPosition: %d", position));
+
+        m_currentTabPosition = position;
+        m_viewPager.setCurrentItem(m_currentTabPosition);
+    }
+
     protected void initializeStoriService() {
         if(D)Log.d(TAG, "EditPlayActivity.initializeStoriService");
 
