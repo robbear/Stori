@@ -86,14 +86,14 @@ setBuildStringForRelease()
 {
     echo "---"
     echo "Setting build string for release sku"
-    sed -i -e 's/g000000000000/'$1'/g' build/src/com/stori-app/storii/Config.java
+    sed -i -e 's/g000000000000/'$1'/g' build/src/com/stori/stori/Config.java
 }
 
 setBuildStringForTrial()
 {
     echo "---"
     echo "Setting build string for trial sku"
-    sed -i -e 's/g000000000000/'$1'/g' build/src/com/stori-app/stori/Config.java
+    sed -i -e 's/g000000000000/'$1'/g' build/src/com/stori/stori/Config.java
 }
 
 fixAntPropertiesForPassword()
