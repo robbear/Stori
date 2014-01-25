@@ -228,6 +228,25 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         setActionBarTitle();
     }
 
+    public String getSlidesTitle() {
+        if(D)Log.d(TAG, "EditPlayActivity.getSlidesTitle");
+
+        String title = null;
+        try {
+            title = m_ssj.getTitle();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditPlayActivity.getSlidesTitle", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditPlayActivity.getSlidesTitle", e);
+            e.printStackTrace();
+        }
+
+        return title;
+    }
+
     public void setActionBarTitle() {
         if(D)Log.d(TAG, "EditPlayActivity.setActionBarTitle");
 
@@ -247,11 +266,11 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             }
         }
         catch (Exception e) {
-            if(E)Log.d(TAG, "EditPlayActivity.onPageSelected", e);
+            if(E)Log.e(TAG, "EditPlayActivity.setActionBarTitle", e);
             e.printStackTrace();
         }
         catch (OutOfMemoryError e) {
-            if(E)Log.d(TAG, "EditPlayActivity.onPageSelected", e);
+            if(E)Log.e(TAG, "EditPlayActivity.setActionBarTitle", e);
             e.printStackTrace();
         }
     }

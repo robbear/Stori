@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.stori.stori.AsyncTaskTimer;
@@ -65,6 +66,8 @@ public class EditPlayFragment extends Fragment implements
     private ImageButton m_moreControl;
     private ImageButton m_nextControl;
     private ImageButton m_prevControl;
+    private TextView m_slidePositionTextControl;
+    private TextView m_titleControl;
     private String m_imageFileName;
     private String m_audioFileName;
     private String m_slideUuid;
@@ -192,6 +195,7 @@ public class EditPlayFragment extends Fragment implements
         super.onResume();
 
         displayNextPrevControls();
+        displaySlideTitleAndPosition();
     }
 
     @Override
@@ -223,6 +227,9 @@ public class EditPlayFragment extends Fragment implements
         if(D)Log.d(TAG, "EditPlayFragment.onCreateView");
 
         View view = inflater.inflate(R.layout.fragment_editplay, container, false);
+
+        m_slidePositionTextControl = (TextView)view.findViewById(R.id.control_slide_position);
+        m_titleControl = (TextView)view.findViewById(R.id.control_title);
 
         m_nextControl = (ImageButton)view.findViewById(R.id.control_next_slide);
         m_nextControl.setOnClickListener(new View.OnClickListener() {
@@ -556,6 +563,7 @@ public class EditPlayFragment extends Fragment implements
         updateOverlay();
 
         displayNextPrevControls();
+        displaySlideTitleAndPosition();
 
         int tabPosition = m_editPlayActivity.getSlidePosition(m_slideUuid);
 
@@ -793,6 +801,17 @@ public class EditPlayFragment extends Fragment implements
             m_nextControl.setVisibility(View.VISIBLE);
             m_prevControl.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void displaySlideTitleAndPosition() {
+        int count = m_editPlayActivity.getSlideCount();
+        int position = m_editPlayActivity.getSlidePosition(m_slideUuid);
+        String title = m_editPlayActivity.getSlidesTitle();
+
+        if(D)Log.d(TAG, String.format("EditPlayFragment.displaySlideTitleAndPosition: position=%d, count=%d, title=%s", position, count, title));
+
+        m_titleControl.setText(title);
+        m_slidePositionTextControl.setText(String.format(getString(R.string.slide_position_format), position + 1, count));
     }
 
     private void startPlaying() {

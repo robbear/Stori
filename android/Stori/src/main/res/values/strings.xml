@@ -7,7 +7,7 @@
     <string name="app_name">Stori</string>
     <string name="cancel_text">Cancel</string>
     <string name="copyright">Version %1$s (%2$d)\n\nBuild %3$s\n\nTips and help at http://stori-app.com\n\nCopyright \u00a9 2013-2014 Hyperfine Software Corp. http://hyperfine.com</string>
-    <string name="default_stori_title">My Slides</string>
+    <string name="default_stori_title">My Stori</string>
     <string name="default_stori_description">My Stori slides</string>
     <string name="download_dialog_message">Downloading...</string>
     <string name="download_dialog_message_format">Downloading %1$d of %2$d...</string>
@@ -43,6 +43,7 @@
     <string name="share_dialog_title">Share this show</string>
     <string name="share_email_body_format">I want to share a %1$s slide show with you! To view the show, click on %2$s or paste the address into your browser.\n\nInstall the %1$s application (coming soon!):\n\n iOS: {App Store application address}\nAndroid: {Google Play application address}</string>
     <string name="share_email_subject_format">You have a new %1$s show to view!</string>
+    <string name="slide_position_format">%1$d of %2$d</string>
     <string name="switch_account_dialog_title">Switch account?</string>
     <string name="switch_account_dialog_message">If you switch your account, you will lose any unpublished changes to your current work. Continue?</string>
     <string name="upload_dialog_title">Uploading...</string>
