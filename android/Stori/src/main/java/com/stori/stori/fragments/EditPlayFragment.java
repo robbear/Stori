@@ -58,12 +58,14 @@ public class EditPlayFragment extends Fragment implements
     private EditPlayActivity m_editPlayActivity;
     private String m_slideShareName;
     private ImageSwitcher m_imageSwitcher;
+    private ImageButton m_mainMenuControl;
     private ImageButton m_insertBeforeControl;
     private ImageButton m_insertAfterControl;
     private ImageButton m_selectPhotoControl;
+    private ImageButton m_cameraControl;
     private ImageButton m_recordControl;
     private ImageButton m_playstopControl;
-    private ImageButton m_moreControl;
+    private ImageButton m_trashControl;
     private ImageButton m_nextControl;
     private ImageButton m_prevControl;
     private TextView m_slidePositionTextControl;
@@ -269,15 +271,73 @@ public class EditPlayFragment extends Fragment implements
             }
         });
 
-        m_moreControl = (ImageButton)view.findViewById(R.id.control_more);
-        m_moreControl.setOnClickListener(new View.OnClickListener() {
+        m_mainMenuControl = (ImageButton)view.findViewById(R.id.control_main_menu);
+        m_mainMenuControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(D)Log.d(TAG, "EditPlayFragment.onMoreControlClicked");
-
+                if(D)Log.d(TAG, "EditPlayFragment.onMainMenuClicked");
 
                 PopupMenu pm = new PopupMenu(m_editPlayActivity, view);
-                pm.inflate(R.menu.menu_editplay_more);
+                pm.inflate(R.menu.menu_editplayactivity);
+                Menu menu = pm.getMenu();
+
+                MenuItem preview = menu.findItem(R.id.menu_editplayactivity_preview);
+                preview.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        m_editPlayActivity.previewSlides();
+                        return true;
+                    }
+                });
+
+                MenuItem publish = menu.findItem(R.id.menu_editplayactivity_publish);
+                publish.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        m_editPlayActivity.publishSlides();
+                        return true;
+                    }
+                });
+
+                MenuItem createNew = menu.findItem(R.id.menu_editplayactivity_createnew);
+                createNew.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        m_editPlayActivity.createNewSlideShow();
+                        return true;
+                    }
+                });
+
+                MenuItem switchAccount = menu.findItem(R.id.menu_editplayactivity_switchaccount);
+                switchAccount.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        m_editPlayActivity.switchAccount();
+                        return true;
+                    }
+                });
+
+                MenuItem about = menu.findItem(R.id.menu_editplayactivity_about);
+                about.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        m_editPlayActivity.launchAboutActivity();
+                        return true;
+                    }
+                });
+
+                pm.show();
+            }
+        });
+
+        m_trashControl = (ImageButton)view.findViewById(R.id.control_more);
+        m_trashControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(D)Log.d(TAG, "EditPlayFragment.onTrashControlClicked");
+
+                PopupMenu pm = new PopupMenu(m_editPlayActivity, view);
+                pm.inflate(R.menu.menu_editplay_trash);
                 Menu menu = pm.getMenu();
 
                 MenuItem deleteSlide = menu.findItem(R.id.menu_editplay_more_deleteslide);
@@ -331,49 +391,25 @@ public class EditPlayFragment extends Fragment implements
             }
         });
 
+        m_cameraControl = (ImageButton)view.findViewById(R.id.control_camera);
+        m_cameraControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(D)Log.d(TAG, "EditPlayFragment.onCameraControlClicked");
+
+                if (Utilities.isCameraAvailable(m_editPlayActivity)) {
+                    selectImageFromCamera();
+                }
+            }
+        });
+
         m_selectPhotoControl = (ImageButton)view.findViewById(R.id.select_from_gallery_control);
         m_selectPhotoControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(D)Log.d(TAG, "EditPlayFragment.onSelectPhotoControlClicked");
 
-                PopupMenu pm = new PopupMenu(m_editPlayActivity, view);
-                pm.inflate(R.menu.menu_editplay_imageselection);
-                Menu menu = pm.getMenu();
-
-                MenuItem photos = menu.findItem(R.id.menu_editplay_imageselection_photos);
-                photos.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        selectImageFromGallery();
-                        return true;
-                    }
-                });
-
-                if (Utilities.isCameraAvailable(m_editPlayActivity)) {
-                    MenuItem camera = menu.findItem(R.id.menu_editplay_imageselection_camera);
-                    camera.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            selectImageFromCamera();
-                            return true;
-                        }
-                    });
-                }
-                else {
-                    menu.removeItem(R.id.menu_editplay_imageselection_camera);
-                }
-
-                MenuItem internet = menu.findItem(R.id.menu_editplay_imageselection_url);
-                internet.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        // TODO
-                        return true;
-                    }
-                });
-
-                pm.show();
+                selectImageFromGallery();
             }
         });
 
@@ -474,8 +510,6 @@ public class EditPlayFragment extends Fragment implements
                         }
                         break;
                 }
-
-                m_editPlayActivity.setActionBarTitle();
             }
         });
 

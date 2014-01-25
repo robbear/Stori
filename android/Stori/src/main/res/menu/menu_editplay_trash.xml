@@ -3,11 +3,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_editplay_more_deleteslide"
-        android:title="@string/menu_editplay_more_deleteslide" />
+        android:title="@string/menu_editplay_trash_deleteslide" />
     <item
         android:id="@+id/menu_editplay_more_deleteimage"
-        android:title="@string/menu_editplay_more_deleteimage" />
+        android:title="@string/menu_editplay_trash_deleteimage" />
     <item
         android:id="@+id/menu_editplay_more_deleteaudio"
-        android:title="@string/menu_editplay_more_deleteaudio" />
+        android:title="@string/menu_editplay_trash_deleteaudio" />
 </menu>

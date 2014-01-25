@@ -32,12 +32,9 @@
     <string name="menu_editplayactivity_publish">Publish</string>
     <string name="menu_editplayactivity_share">Share</string>
     <string name="menu_editplayactivity_switchaccount">Switch account</string>
-    <string name="menu_editplay_imageselection_photos">Photos</string>
-    <string name="menu_editplay_imageselection_camera">Camera</string>
-    <string name="menu_editplay_imageselection_url">Url</string>
-    <string name="menu_editplay_more_deleteslide">Remove slide</string>
-    <string name="menu_editplay_more_deleteimage">Remove image</string>
-    <string name="menu_editplay_more_deleteaudio">Remove audio</string>
+    <string name="menu_editplay_trash_deleteslide">Remove slide</string>
+    <string name="menu_editplay_trash_deleteimage">Remove image</string>
+    <string name="menu_editplay_trash_deleteaudio">Remove audio</string>
     <string name="publish_dialog_title">Publish</string>
     <string name="publish_dialog_message">Ok to publish?</string>
     <string name="share_dialog_title">Share this show</string>

@@ -107,6 +107,9 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         setContentView(R.layout.activity_editplay);
 
+        // Always hide the Action Bar
+        getActionBar().hide();
+
         boolean isFromUrl = getIntent().getBooleanExtra(EXTRA_FROMURL, false);
 
         if (isFromUrl) {
@@ -198,8 +201,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
                 m_viewPager.setCurrentItem(position);
                 m_currentTabPosition = position;
-
-                setActionBarTitle();
             }
 
             @Override
@@ -224,8 +225,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             if(E)Log.e(TAG, "EditPlayActivity.onCreate", e);
             e.printStackTrace();
         }
-
-        setActionBarTitle();
     }
 
     public String getSlidesTitle() {
@@ -247,6 +246,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         return title;
     }
 
+    /* NEVER
     public void setActionBarTitle() {
         if(D)Log.d(TAG, "EditPlayActivity.setActionBarTitle");
 
@@ -274,6 +274,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             e.printStackTrace();
         }
     }
+    */
 
     private void initializeViewPager() {
         if(D)Log.d(TAG, "EditPlayActivity.initializeViewPager");
@@ -353,8 +354,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         if(D)Log.d(TAG, String.format("EditPlayActivity.onResume: m_userUuid=%s", m_userUuid));
 
         m_viewPager.setCurrentItem(m_currentTabPosition);
-
-        setActionBarTitle();
     }
 
     @Override
@@ -398,120 +397,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if(D)Log.d(TAG, "EditPlayActivity.onPrepareOptionsMenu");
-
-        boolean isPublished = SlideShareJSON.isSlideSharePublished(this, m_slideShareName);
-
-        menu.findItem(R.id.menu_editplayactivity_share).setVisible(isPublished);
-
-        return true;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if(D)Log.d(TAG, "EditPlayActivity.onCreateOptionsMenu");
-
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_editplayactivity, menu);
-
-        MenuItem preview = menu.findItem(R.id.menu_editplayactivity_preview);
-        preview.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                m_fStartingPlaySlidesActivity = true;
-                Intent intent = new Intent(EditPlayActivity.this, PlaySlidesActivity.class);
-                startActivity(intent);
-                return true;
-            }
-        });
-
-        MenuItem publish = menu.findItem(R.id.menu_editplayactivity_publish);
-        publish.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                publishSlides();
-                return true;
-            }
-        });
-
-        MenuItem shareSlides = menu.findItem(R.id.menu_editplayactivity_share);
-        shareSlides.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Utilities.shareShow(EditPlayActivity.this, m_userUuid, m_slideShareName);
-                return true;
-            }
-        });
-
-        MenuItem createNew = menu.findItem(R.id.menu_editplayactivity_createnew);
-        createNew.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                createNewSlideShow();
-                return true;
-            }
-        });
-
-        MenuItem switchAccount = menu.findItem(R.id.menu_editplayactivity_switchaccount);
-        switchAccount.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                AlertDialog.Builder adb = new AlertDialog.Builder(EditPlayActivity.this);
-                adb.setTitle(getString(R.string.switch_account_dialog_title));
-                adb.setCancelable(true);
-                adb.setMessage(getString(R.string.switch_account_dialog_message));
-                adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if(D)Log.d(TAG, "EditPlayActivity.onMenuClick - switching account");
-                        dialog.dismiss();
-
-                        String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
-
-                        Utilities.deleteSlideShareDirectory(EditPlayActivity.this, slideShareName);
-
-                        if(D)Log.d(TAG, "EditPlayActivity.onMenuClick - switching account: nulling out PREFS_EDITPROJECTNAME");
-                        SharedPreferences.Editor edit = m_prefs.edit();
-                        edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, null);
-                        edit.commit();
-
-                        s_amazonClientManager.clearCredentials();
-                        s_amazonClientManager.wipe();
-
-                        Intent intent = new Intent(EditPlayActivity.this, GoogleLogin.class);
-                        startActivityForResult(intent, REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT);
-                    }
-                });
-                adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-                AlertDialog ad = adb.create();
-                ad.show();
-
-                return true;
-            }
-        });
-
-        MenuItem about = menu.findItem(R.id.menu_editplayactivity_about);
-        about.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(EditPlayActivity.this, AboutActivity.class);
-                startActivity(intent);
-
-                return true;
-            }
-        });
-
-        return true;
-    }
-
-    @Override
     public View makeView() {
         if(D)Log.d(TAG, "EditPlayActivity.makeView");
 
@@ -519,6 +404,67 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         view.setScaleType(ImageView.ScaleType.FIT_CENTER);
         view.setLayoutParams(new ImageSwitcher.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         return view;
+    }
+
+    public void previewSlides() {
+        if(D)Log.d(TAG, "EditPlayActivity.previewSlides");
+
+        m_fStartingPlaySlidesActivity = true;
+        Intent intent = new Intent(EditPlayActivity.this, PlaySlidesActivity.class);
+        startActivity(intent);
+    }
+
+    public void shareSlides() {
+        if(D)Log.d(TAG, "EditPlayActivity.shareSlides");
+
+        Utilities.shareShow(this, m_userUuid, m_slideShareName);
+    }
+
+    public void launchAboutActivity() {
+        if(D)Log.d(TAG, "EditPlayActivity.launchAboutActivity");
+
+        Intent intent = new Intent(EditPlayActivity.this, AboutActivity.class);
+        startActivity(intent);
+    }
+
+    public void switchAccount() {
+        if(D)Log.d(TAG, "EditPlayActivity.switchAccount");
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(EditPlayActivity.this);
+        adb.setTitle(getString(R.string.switch_account_dialog_title));
+        adb.setCancelable(true);
+        adb.setMessage(getString(R.string.switch_account_dialog_message));
+        adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(D)Log.d(TAG, "EditPlayActivity.switchAccount - switching account");
+                dialog.dismiss();
+
+                String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
+
+                Utilities.deleteSlideShareDirectory(EditPlayActivity.this, slideShareName);
+
+                if(D)Log.d(TAG, "EditPlayActivity.switchAccount - switching account: nulling out PREFS_EDITPROJECTNAME");
+                SharedPreferences.Editor edit = m_prefs.edit();
+                edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, null);
+                edit.commit();
+
+                s_amazonClientManager.clearCredentials();
+                s_amazonClientManager.wipe();
+
+                Intent intent = new Intent(EditPlayActivity.this, GoogleLogin.class);
+                startActivityForResult(intent, REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT);
+            }
+        });
+        adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
     }
 
     //
@@ -569,8 +515,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 }
             }
         }
-
-        setActionBarTitle();
 
         if(D)Log.d(TAG, "EditPlayActivity.initializeSlideShareJSON: here is the JSON:");
         Utilities.printSlideShareJSON(TAG, m_ssj);
@@ -636,8 +580,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 m_currentTabPosition = 0;
                 initializeViewPager();
                 initializeNewSlide(m_currentTabPosition);
-
-                setActionBarTitle();
             }
         });
 
@@ -680,7 +622,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     // createNewSlideShow
     // Called in response to the user choosing to create a new slide show.
     //
-    private void createNewSlideShow() {
+    public void createNewSlideShow() {
         if(D)Log.d(TAG, "EditPlayActivity.createNewSlideShow");
 
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
@@ -798,7 +740,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             m_currentTabPosition--;
         }
         m_viewPager.setCurrentItem(m_currentTabPosition);
-        setActionBarTitle();
     }
 
     public void publishSlides() {
