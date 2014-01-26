@@ -28,46 +28,71 @@
                 android:layout_height="0dp"
                 android:layout_weight=".20"
                 android:layout_width="match_parent">
-                <ImageButton
-                    android:id="@+id/select_from_gallery_control"
+                <RelativeLayout
                     android:layout_height="32dp"
                     android:layout_width="0dp"
-                    android:layout_weight="0.2"
-                    android:background="@null"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_selectimage" />
-                <ImageButton
-                    android:id="@+id/control_camera"
+                    android:layout_weight="0.2">
+                    <ImageButton
+                        android:id="@+id/select_from_gallery_control"
+                        android:layout_height="32dp"
+                        android:layout_width="32dp"
+                        android:layout_centerInParent="true"
+                        android:background="@null"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_selectimage" />
+                </RelativeLayout>
+                <RelativeLayout
                     android:layout_height="32dp"
                     android:layout_width="0dp"
-                    android:layout_weight="0.2"
-                    android:background="@null"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_camera" />
-                <ImageButton
-                    android:id="@+id/control_record"
-                    android:layout_width="0dp"
-                    android:layout_weight="0.2"
-                    android:layout_height="32dp"
-                    android:background="@null"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_record" />
-                <ImageButton
-                    android:id="@+id/control_more"
+                    android:layout_weight="0.2">
+                    <ImageButton
+                        android:id="@+id/control_camera"
+                        android:layout_height="32dp"
+                        android:layout_width="32dp"
+                        android:layout_centerInParent="true"
+                        android:background="@null"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_camera" />
+                </RelativeLayout>
+                <RelativeLayout
                     android:layout_height="32dp"
                     android:layout_width="0dp"
-                    android:layout_weight="0.2"
-                    android:background="@null"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_trash" />
-                <ImageButton
-                    android:id="@+id/control_main_menu"
+                    android:layout_weight="0.2">
+                    <ImageButton
+                        android:id="@+id/control_record"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_centerInParent="true"
+                        android:background="@null"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_record" />
+                </RelativeLayout>
+                <RelativeLayout
                     android:layout_height="32dp"
                     android:layout_width="0dp"
-                    android:layout_weight="0.2"
-                    android:background="@null"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_three_dot" />
+                    android:layout_weight="0.2">
+                    <ImageButton
+                        android:id="@+id/control_more"
+                        android:layout_height="32dp"
+                        android:layout_width="32dp"
+                        android:layout_centerInParent="true"
+                        android:background="@null"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_trash" />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_height="32dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.2">
+                    <ImageButton
+                        android:id="@+id/control_main_menu"
+                        android:layout_height="32dp"
+                        android:layout_width="32dp"
+                        android:layout_centerInParent="true"
+                        android:background="@null"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_three_dot" />
+                </RelativeLayout>
             </LinearLayout>
             <RelativeLayout
                 android:layout_height="0dp"
@@ -102,33 +127,48 @@
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
                     android:layout_above="@+id/panel_slidepositioncount">
-                    <ImageButton
-                        android:id="@+id/control_previous_slide"
-                        android:layout_width="0dp"
-                        android:layout_weight="0.3"
+                    <RelativeLayout
                         android:layout_height="32dp"
-                        android:background="@null"
-                        android:scaleType="fitCenter"
-                        android:visibility="invisible"
-                        android:src="@drawable/ic_arrow_left" />
-                    <ImageButton
-                        android:id="@+id/control_playback"
                         android:layout_width="0dp"
-                        android:layout_weight="0.3"
+                        android:layout_weight="0.3">
+                        <ImageButton
+                            android:id="@+id/control_previous_slide"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_centerInParent="true"
+                            android:background="@null"
+                            android:scaleType="fitCenter"
+                            android:visibility="invisible"
+                            android:src="@drawable/ic_arrow_left" />
+                    </RelativeLayout>
+                    <RelativeLayout
                         android:layout_height="32dp"
-                        android:background="@null"
-                        android:scaleType="fitCenter"
-                        android:visibility="invisible"
-                        android:src="@drawable/ic_play" />
+                        android:layout_width="0dp"
+                        android:layout_weight="0.3">
+                        <ImageButton
+                            android:id="@+id/control_playback"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_centerInParent="true"
+                            android:background="@null"
+                            android:scaleType="fitCenter"
+                            android:visibility="invisible"
+                            android:src="@drawable/ic_play" />
+                    </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_height="32dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.3">
                     <ImageButton
                         android:id="@+id/control_next_slide"
-                        android:layout_width="0dp"
-                        android:layout_weight="0.3"
+                        android:layout_width="32dp"
                         android:layout_height="32dp"
+                        android:layout_centerInParent="true"
                         android:background="@null"
                         android:scaleType="fitCenter"
                         android:visibility="invisible"
                         android:src="@drawable/ic_arrow_right" />
+                   </RelativeLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/panel_slidepositioncount"
