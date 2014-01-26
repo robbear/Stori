@@ -144,8 +144,6 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         if (savedInstanceState != null) {
             m_viewPager.setCurrentItem(m_currentTabPosition);
         }
-
-        getActionBar().hide();
     }
 
     @Override

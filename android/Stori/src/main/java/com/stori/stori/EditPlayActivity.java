@@ -104,9 +104,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         setContentView(R.layout.activity_editplay);
 
-        // Always hide the Action Bar
-        getActionBar().hide();
-
         boolean isFromUrl = getIntent().getBooleanExtra(EXTRA_FROMURL, false);
 
         if (isFromUrl) {

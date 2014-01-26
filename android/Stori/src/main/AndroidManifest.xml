@@ -12,7 +12,7 @@
         <activity android:name=".AboutActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
         <activity android:name=".cloudproviders.AlertActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
         <activity android:name=".cloudproviders.GoogleLogin" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
-        <activity android:name=".PlaySlidesActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" />
+        <activity android:name=".PlaySlidesActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo.NoActionBar" />
         <activity android:name=".DownloadActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -29,7 +29,7 @@
                     android:pathPrefix="/slides/" />
             </intent-filter>
         </activity>
-        <activity android:name=".EditPlayActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo" >
+        <activity android:name=".EditPlayActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Holo.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
