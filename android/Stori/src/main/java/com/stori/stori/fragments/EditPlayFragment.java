@@ -485,14 +485,16 @@ public class EditPlayFragment extends Fragment implements
                         m_editPlayMode = EditPlayActivity.EditPlayMode.PlayEdit;
                         setActivityEditPlayMode(m_editPlayMode);
                         updateOverlay();
-                        startPlaying();
+                        // No more audio upon tapping image
+                        //startPlaying();
                         break;
 
                     case PlayEdit:
                         m_editPlayMode = EditPlayActivity.EditPlayMode.Edit;
                         setActivityEditPlayMode(m_editPlayMode);
                         updateOverlay();
-                        stopPlaying();
+                        // No more audio stop upon tapping image
+                        //stopPlaying();
                         break;
 
                     case Play:
@@ -532,9 +534,11 @@ public class EditPlayFragment extends Fragment implements
         m_editPlayMode = getActivityEditPlayMode();
         updateOverlay();
 
+        /* NEVER
         if (savedInstanceState == null) {
             asyncStartAudio();
         }
+        */
     }
 
     @Override
@@ -602,8 +606,10 @@ public class EditPlayFragment extends Fragment implements
         int tabPosition = m_editPlayActivity.getSlidePosition(m_slideUuid);
 
         if (tabPosition == position) {
+            /* NEVER
             if(D)Log.d(TAG, "EditPlayFragment.onTabPageSelected - starting audio timer");
             asyncStartAudio();
+            */
         }
         else {
             stopPlaying();
