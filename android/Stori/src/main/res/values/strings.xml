@@ -35,6 +35,8 @@
     <string name="menu_editplay_trash_deleteslide">Remove slide</string>
     <string name="menu_editplay_trash_deleteimage">Remove image</string>
     <string name="menu_editplay_trash_deleteaudio">Remove audio</string>
+    <string name="menu_playslidesactivity_savephoto">Save this photo</string>
+    <string name="menu_playslidesactivity_saveallphotos">Save all photos</string>
     <string name="publish_dialog_title">Publish</string>
     <string name="publish_dialog_message">Ok to publish?</string>
     <string name="share_dialog_title">Share this show</string>

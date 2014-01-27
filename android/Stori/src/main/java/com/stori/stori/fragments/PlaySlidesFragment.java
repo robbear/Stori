@@ -11,10 +11,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -168,6 +171,11 @@ public class PlaySlidesFragment extends Fragment implements
 
         super.onResume();
 
+        if (m_playSlidesActivity.isFromUrl()) {
+            if(D)Log.d(TAG, "PlaySlidesFragment.onResume - PlaySlidesActivity is from URL, so turning on menu control");
+            m_mainMenuControl.setVisibility(View.VISIBLE);
+        }
+
         displayNextPrevControls();
         displaySlideTitleAndPosition();
     }
@@ -253,6 +261,38 @@ public class PlaySlidesFragment extends Fragment implements
             @Override
             public void onClick(View view) {
                 if(D)Log.d(TAG, "PlaySlidesFragment.onMainMenuClicked");
+
+                PopupMenu pm = new PopupMenu(m_playSlidesActivity, view);
+                pm.inflate(R.menu.menu_playslidesactivity);
+                Menu menu = pm.getMenu();
+
+                MenuItem savePhoto = menu.findItem(R.id.menu_playslidesactivity_savephoto);
+                savePhoto.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        m_playSlidesActivity.savePhoto(m_slideUuid);
+                        return true;
+                    }
+                });
+
+                MenuItem saveAllPhotos = menu.findItem(R.id.menu_playslidesactivity_saveallphotos);
+                saveAllPhotos.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        return true;
+                    }
+                });
+
+                MenuItem about = menu.findItem(R.id.menu_playslidesactivity_about);
+                about.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        m_playSlidesActivity.launchAboutActivity();
+                        return true;
+                    }
+                });
+
+                pm.show();
             }
         });
 

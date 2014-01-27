@@ -514,6 +514,59 @@ public class Utilities {
         return success;
     }
 
+    public static boolean copyFile(File src, File dest) {
+        if(D)Log.d(TAG, String.format("Utilities.copyFile: src=%s, dest=%s", src.getAbsolutePath(), dest.getAbsolutePath()));
+
+        boolean success = false;
+        InputStream is = null;
+        OutputStream os = null;
+
+        try {
+            dest.createNewFile();
+
+            is = new FileInputStream(src);
+            os = new FileOutputStream(dest);
+
+            byte[] buffer = new byte[10240];
+            int len;
+            while ((len = is.read(buffer)) > 0) {
+                os.write(buffer, 0, len);
+            }
+
+            success = true;
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "Utilities.copyFile", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "Utilities.copyFile", e);
+            e.printStackTrace();
+        }
+        finally {
+            if (is != null) {
+                try {
+                    is.close();
+                }
+                catch (Exception e) {}
+            }
+            if (os != null) {
+                try {
+                    os.close();
+                }
+                catch (Exception e) {}
+            }
+        }
+
+        if (!success) {
+            if (dest.exists()) {
+                dest.delete();
+            }
+        }
+
+        return success;
+    }
+
     public static void printSlideShareJSON(String tag, SlideShareJSON ssj) {
         try {
             if(D)Log.d(tag, ssj.toString(JSON_INDENT_SPACES));

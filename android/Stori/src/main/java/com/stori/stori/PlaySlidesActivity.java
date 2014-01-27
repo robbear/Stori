@@ -3,6 +3,7 @@ package com.stori.stori;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -245,6 +246,13 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         Utilities.printSlideShareJSON(TAG, m_ssj);
     }
 
+    public void launchAboutActivity() {
+        if(D)Log.d(TAG, "PlaySlidesActivity.launchAboutActivity");
+
+        Intent intent = new Intent(PlaySlidesActivity.this, AboutActivity.class);
+        startActivity(intent);
+    }
+
     public String getSlidesTitle() {
         if(D)Log.d(TAG, "PlaySlidesActivity.getSlidesTitle");
 
@@ -262,6 +270,50 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         }
 
         return title;
+    }
+
+    public boolean savePhoto(String slideUuid) {
+        if(D)Log.d(TAG, String.format("PlaySlidesActivity.savePhoto: slideUuid=%s", slideUuid));
+
+        if (m_ssj == null) {
+            if(D)Log.d(TAG, "PlaySlidesActivity.savePhoto - m_ssj is null, so bailing.");
+            return false;
+        }
+
+        boolean success = false;
+
+        try {
+            SlideJSON sj = m_ssj.getSlide(slideUuid);
+            String imageFileName = sj.getImageFilename();
+            if(D)Log.d(TAG, String.format("PlaySlidesActivity.saveSlide: %s", imageFileName));
+
+            File fileSource = new File(m_slideShareDirectory, imageFileName);
+
+            File filePathDest = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), Config.copiedImageFolderName);
+            if (!filePathDest.exists()) {
+                filePathDest.mkdir();
+            }
+
+            File fileDest = new File(filePathDest, imageFileName);
+
+            success = Utilities.copyFile(fileSource, fileDest);
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "PlaySlidesActivity.savePhoto", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "PlaySlidesActivity.savePhoto", e);
+            e.printStackTrace();
+        }
+
+        return success;
+    }
+
+    public boolean saveAllPhotos() {
+        if(D)Log.d(TAG, "PlaySlidesActivity.saveAllPhotos");
+
+        return false;
     }
 
     public int getSlidePosition(String slideUuid) {
@@ -314,6 +366,12 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         }
 
         return count;
+    }
+
+    public boolean isFromUrl() {
+        if(D)Log.d(TAG, String.format("PlaySlidesActivity.isFromUrl: %b", m_isFromUrl));
+
+        return m_isFromUrl;
     }
 
     public boolean getOrientationChangedFlag() {

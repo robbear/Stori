@@ -39,6 +39,7 @@ public class Config
 
     // Camera file folder name for snapshots taken within Stori
     public static final String cameraImageFolderName = "Stori";
+    public static final String copiedImageFolderName = "StoriDownloads";
 
     // Use Google Play Services
     public static final boolean USE_GOOGLE_PLAY_SERVICES = true;
