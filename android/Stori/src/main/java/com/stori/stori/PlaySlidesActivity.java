@@ -35,6 +35,7 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
     private final static String INSTANCE_STATE_CURRENT_TAB = "instance_state_current_tab";
     private final static String INSTANCE_STATE_ORIENTATION_CHANGED = "instance_state_orientation_changed";
     private final static String INSTANCE_STATE_IS_FROM_URL = "instance_state_is_from_url";
+    private final static String INSTANCE_STATE_IS_OVERLAY_VISIBLE = "instance_state_is_overlay_visible";
 
     private SharedPreferences m_prefs;
     private SlideShareJSON m_ssj;
@@ -44,11 +45,20 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
     private File m_slideShareDirectory;
     private String m_slideShareName;
     private int m_currentTabPosition = 0;
+    private boolean m_fOverlayVisible = true;
     private int m_orientation;
     private boolean m_fOrientationChanged = false;
     private boolean m_isFromUrl = false;
     private StoriService m_storiService = null;
     private ArrayList<StoriService.StoriServiceConnectionListener> m_storiServiceConnectionListeners = new ArrayList<StoriService.StoriServiceConnectionListener>();
+
+    public boolean getOverlayVisible() {
+        return m_fOverlayVisible;
+    }
+
+    public void setOverlayVisible(boolean isVisible) {
+        m_fOverlayVisible = isVisible;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +98,7 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
             m_currentTabPosition = savedInstanceState.getInt(INSTANCE_STATE_CURRENT_TAB, 0);
             m_fOrientationChanged = savedInstanceState.getBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, false);
             m_isFromUrl = savedInstanceState.getBoolean(INSTANCE_STATE_IS_FROM_URL, false);
+            m_fOverlayVisible = savedInstanceState.getBoolean(INSTANCE_STATE_IS_OVERLAY_VISIBLE, true);
             if(D)Log.d(TAG, String.format("PlaySlidesActivity.onCreate - loading from savedInstanceState. m_isFromUrl=%b", m_isFromUrl));
         }
 
@@ -202,6 +213,7 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         savedInstanceState.putInt(INSTANCE_STATE_CURRENT_TAB, m_currentTabPosition);
         savedInstanceState.putBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, m_fOrientationChanged);
         savedInstanceState.putBoolean(INSTANCE_STATE_IS_FROM_URL, m_isFromUrl);
+        savedInstanceState.putBoolean(INSTANCE_STATE_IS_OVERLAY_VISIBLE, m_fOverlayVisible);
     }
 
     @Override
@@ -233,6 +245,25 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         Utilities.printSlideShareJSON(TAG, m_ssj);
     }
 
+    public String getSlidesTitle() {
+        if(D)Log.d(TAG, "PlaySlidesActivity.getSlidesTitle");
+
+        String title = null;
+        try {
+            title = m_ssj.getTitle();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "PlaySlidesActivity.getSlidesTitle", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "PlaySlidesActivity.getSlidesTitle", e);
+            e.printStackTrace();
+        }
+
+        return title;
+    }
+
     public int getSlidePosition(String slideUuid) {
         if(D)Log.d(TAG, String.format("PlaySlidesActivity.getSlidePosition: slideUuid=%s", slideUuid));
 
@@ -257,6 +288,32 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         if(D)Log.d(TAG, String.format("PlaySlidesActivity.getCurrentTabPosition: returning %d", m_currentTabPosition));
 
         return m_currentTabPosition;
+    }
+
+    public void setCurrentTabPosition(int position) {
+        if(D)Log.d(TAG, String.format("PlaySlidesActivity.setCurrentTabPosition: %d", position));
+
+        m_currentTabPosition = position;
+        m_viewPager.setCurrentItem(m_currentTabPosition);
+    }
+
+    public int getSlideCount() {
+        if(D)Log.d(TAG, "PlaySlidesActivity.getSlideCount");
+
+        int count = 0;
+        try {
+            count = m_ssj.getSlideCount();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "PlaySlidesActivity.getSlideCount", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "PlaySlidesActivity.getSlideCount", e);
+            e.printStackTrace();
+        }
+
+        return count;
     }
 
     public boolean getOrientationChangedFlag() {

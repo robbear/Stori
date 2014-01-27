@@ -13,7 +13,9 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
+import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.stori.stori.AsyncTaskTimer;
@@ -41,6 +43,13 @@ public class PlaySlidesFragment extends Fragment implements
     private String m_slideShareName;
     private String m_slideUuid;
     private ImageSwitcher m_imageSwitcher;
+    private ImageButton m_mainMenuControl;
+    private ImageButton m_playstopControl;
+    private ImageButton m_nextControl;
+    private ImageButton m_prevControl;
+    private TextView m_slidePositionTextControl;
+    private TextView m_titleControl;
+    private boolean m_fOverlayVisible = true;
     private String m_imageFileName;
     private String m_audioFileName;
     private int m_displayWidth = 0;
@@ -158,6 +167,9 @@ public class PlaySlidesFragment extends Fragment implements
         if(D)Log.d(TAG, "PlaySlidesFragment.onResume");
 
         super.onResume();
+
+        displayNextPrevControls();
+        displaySlideTitleAndPosition();
     }
 
     @Override
@@ -195,22 +207,86 @@ public class PlaySlidesFragment extends Fragment implements
 
         View view = inflater.inflate(R.layout.fragment_playslides, container, false);
 
+        m_slidePositionTextControl = (TextView)view.findViewById(R.id.control_slide_position);
+        m_titleControl = (TextView)view.findViewById(R.id.control_title);
+
+        m_nextControl = (ImageButton)view.findViewById(R.id.control_next_slide);
+        m_nextControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(D)Log.d(TAG, "PlaySlidesFragment.onNextControlClicked");
+
+                int position = m_playSlidesActivity.getSlidePosition(m_slideUuid);
+                int count = m_playSlidesActivity.getSlideCount();
+
+                position++;
+                if (position >= count) {
+                    if(D)Log.d(TAG, "PlaySlidesFragment.onNextControlClicked - error in position, so bailing");
+                    return;
+                }
+
+                m_playSlidesActivity.setCurrentTabPosition(position);
+            }
+        });
+
+        m_prevControl = (ImageButton)view.findViewById(R.id.control_previous_slide);
+        m_prevControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(D)Log.d(TAG, "PlaySlidesFragment.onPrevControlClicked");
+
+                int position = m_playSlidesActivity.getSlidePosition(m_slideUuid);
+                int count = m_playSlidesActivity.getSlideCount();
+
+                position--;
+                if (position < 0) {
+                    if(D)Log.d(TAG, "PlaySlidesFragment.onPrevControlClicked - error in position, so bailing");
+                    return;
+                }
+
+                m_playSlidesActivity.setCurrentTabPosition(position);
+            }
+        });
+
+        m_mainMenuControl = (ImageButton)view.findViewById(R.id.control_main_menu);
+        m_mainMenuControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(D)Log.d(TAG, "PlaySlidesFragment.onMainMenuClicked");
+            }
+        });
+
+        m_playstopControl = (ImageButton)view.findViewById(R.id.control_playback);
+        displayPlayStopControl();
+        m_playstopControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(D)Log.d(TAG, "PlaySlidesFragment.onPlayStopButtonClicked");
+
+                if (m_storiService != null) {
+                    StoriService.PlaybackState playbackState = m_storiService.getAudioPlaybackState(m_audioFileName);
+
+                    if (playbackState == StoriService.PlaybackState.Playing) {
+                        if(D)Log.d(TAG, "PlaySlidesFragment.onPlayStopButtonClicked - playbackState is Playing. Calling stopPlaying");
+                        stopPlaying();
+                    }
+                    else {
+                        if(D)Log.d(TAG, "PlaySlidesFragment.onPlayStopButtonClicked - playbackState is not Playing. Calling startPlaying");
+                        startPlaying();
+                    }
+                }
+            }
+        });
+
         m_imageSwitcher = (ImageSwitcher)view.findViewById(R.id.current_image);
         m_imageSwitcher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(D)Log.d(TAG, "PlaySlidesFragment.onImageClicked");
 
-                if (m_audioFileName != null && m_storiService != null) {
-                    StoriService.PlaybackState playbackState = m_storiService.getAudioPlaybackState(m_audioFileName);
-
-                    if (playbackState == StoriService.PlaybackState.Playing) {
-                        stopPlaying();
-                    }
-                    else {
-                        startPlaying();
-                    }
-                }
+                m_fOverlayVisible = !m_fOverlayVisible;
+                m_playSlidesActivity.setOverlayVisible(m_fOverlayVisible);
+                updateOverlay();
             }
         });
 
@@ -230,6 +306,9 @@ public class PlaySlidesFragment extends Fragment implements
         m_imageSwitcher.setImageResource(R.drawable.ic_black);
         renderImage();
 
+        m_fOverlayVisible = m_playSlidesActivity.getOverlayVisible();
+        updateOverlay();
+
         if (savedInstanceState == null) {
             AsyncTaskTimer.startAsyncTaskTimer(1, Config.audioDelayMillis, this);
         }
@@ -237,6 +316,12 @@ public class PlaySlidesFragment extends Fragment implements
 
     public void onTabPageSelected(int position) {
         if(D)Log.d(TAG, String.format("PlaySlidesFragment.onTabPageSelected: position=%d", position));
+
+        m_fOverlayVisible = m_playSlidesActivity.getOverlayVisible();
+        updateOverlay();
+
+        displayNextPrevControls();
+        displaySlideTitleAndPosition();
 
         int tabPosition = m_playSlidesActivity.getSlidePosition(m_slideUuid);
 
@@ -263,6 +348,13 @@ public class PlaySlidesFragment extends Fragment implements
         else {
             stopPlaying();
         }
+    }
+
+    private void updateOverlay() {
+        if(D)Log.d(TAG, String.format("PlaySlidesFragment.updateOverlay: m_fOverlayVisible=%b", m_fOverlayVisible));
+
+        View view = getView().findViewById(R.id.overlay_panel);
+        view.setVisibility(m_fOverlayVisible ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void renderImage() {
@@ -302,6 +394,43 @@ public class PlaySlidesFragment extends Fragment implements
         }
     }
 
+    private void displayPlayStopControl() {
+        if(D)Log.d(TAG, "PlaySlidesFragment.displayPlayStopControl");
+
+        m_playstopControl.setVisibility(hasAudio() ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    private void displayNextPrevControls() {
+        int count = m_playSlidesActivity.getSlideCount();
+        int position = m_playSlidesActivity.getSlidePosition(m_slideUuid);
+
+        if(D)Log.d(TAG, String.format("PlaySlidesFragment.displayNextPrevControls: position=%d, count=%d", position, count));
+
+        if (position == 0) {
+            m_prevControl.setVisibility(View.INVISIBLE);
+            m_nextControl.setVisibility((count == 1) ? View.INVISIBLE : View.VISIBLE);
+        }
+        else if (position == count - 1) {
+            m_nextControl.setVisibility(View.INVISIBLE);
+            m_prevControl.setVisibility((count == 1) ? View.INVISIBLE : View.VISIBLE);
+        }
+        else {
+            m_nextControl.setVisibility(View.VISIBLE);
+            m_prevControl.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void displaySlideTitleAndPosition() {
+        int count = m_playSlidesActivity.getSlideCount();
+        int position = m_playSlidesActivity.getSlidePosition(m_slideUuid);
+        String title = m_playSlidesActivity.getSlidesTitle();
+
+        if(D)Log.d(TAG, String.format("PlaySlidesFragment.displaySlideTitleAndPosition: position=%d, count=%d, title=%s", position, count, title));
+
+        m_titleControl.setText(title);
+        m_slidePositionTextControl.setText(String.format(getString(R.string.slide_position_format), position + 1, count));
+    }
+
     private void startPlaying() {
         if(D)Log.d(TAG, "PlaySlidesFragment.startPlaying");
 
@@ -323,6 +452,8 @@ public class PlaySlidesFragment extends Fragment implements
         }
 
         m_storiService.startAudio(m_slideShareName, m_audioFileName);
+
+        m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stopplaying));
     }
 
     private void stopPlaying() {
@@ -341,21 +472,39 @@ public class PlaySlidesFragment extends Fragment implements
         }
 
         m_storiService.stopAudio(m_audioFileName);
+
+        m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_play));
     }
 
     @Override
     public void onAudioStopped(String audioFileName) {
         if(D)Log.d(TAG, String.format("PlaySlidesFragment.onAudioStopped: m_audioFileName=%s, audioFileName=%s", m_audioFileName, audioFileName));
+
+        if (m_audioFileName != null && m_audioFileName.equals(audioFileName)) {
+            m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_play));
+        }
     }
 
     @Override
     public void onAudioPaused(String audioFileName) {
         if(D)Log.d(TAG, String.format("PlaySlidesFragment.onAudioPaused: m_audioFileName=%s, audioFileName=%s", m_audioFileName, audioFileName));
+
+        if (m_audioFileName != null && m_audioFileName.equals(audioFileName)) {
+            m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stopplaying));
+        }
     }
 
     @Override
     public void onAudioPlaying(String audioFileName) {
         if(D)Log.d(TAG, String.format("PlaySlidesFragment.onAudioPlaying: m_audioFileName=%s, audioFileName=%s", m_audioFileName, audioFileName));
+
+        if (m_audioFileName != null && m_audioFileName.equals(audioFileName)) {
+            m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stopplaying));
+        }
+    }
+
+    private boolean hasAudio() {
+        return m_audioFileName != null;
     }
 
     protected void initializeStoriService() {
