@@ -40,11 +40,6 @@ public class AWSS3Provider implements ICloudProvider {
     public void initializeProvider(String userUuid, SharedPreferences prefs) throws Exception {
         if(D)Log.d(TAG, String.format("AWSS3Provider.initializeProvider: userUuid=%s", userUuid));
 
-        /* NEVER
-        m_s3Client = new AmazonS3Client(new BasicAWSCredentials(AWSS3ConnectionStrings.ACCESS_KEY_ID, AWSS3ConnectionStrings.SECRET_KEY));
-        m_s3Client.setRegion(Region.getRegion(Regions.US_WEST_2));
-        */
-
         m_userUuid = userUuid;
 
         GoogleLoginHelper glh = new GoogleLoginHelper(m_context, prefs);
