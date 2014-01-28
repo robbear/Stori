@@ -1,6 +1,8 @@
 package com.stori.stori.fragments;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -26,6 +28,7 @@ import android.widget.ViewSwitcher;
 import com.stori.stori.AsyncCopyFileTask;
 import com.stori.stori.AsyncTaskTimer;
 import com.stori.stori.Config;
+import com.stori.stori.SSPreferences;
 import com.stori.stori.StoriService;
 import com.stori.stori.PlaySlidesActivity;
 import com.stori.stori.R;
@@ -63,6 +66,7 @@ public class PlaySlidesFragment extends Fragment implements
     private int m_displayWidth = 0;
     private int m_displayHeight = 0;
     private StoriService m_storiService = null;
+    private SharedPreferences m_prefs;
 
     public static PlaySlidesFragment newInstance(PlaySlidesActivity playSlidesActivity, int position, String slideShareName, String slideUuid, SlideJSON sj) {
         if(D)Log.d(TAG, "PlaySlidesFragment.newInstance");
@@ -192,6 +196,8 @@ public class PlaySlidesFragment extends Fragment implements
         super.onAttach(activity);
 
         m_playSlidesActivity = (PlaySlidesActivity)activity;
+
+        m_prefs = m_playSlidesActivity.getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
 
         Display display = activity.getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -411,7 +417,10 @@ public class PlaySlidesFragment extends Fragment implements
         if(D)Log.d(TAG, String.format("PlaySlidesFragment.onAsyncTaskTimerComplete: selectedTabPosition=%d, tabPosition=%d", selectedTabPosition, tabPosition));
 
         if (selectedTabPosition == tabPosition) {
-            startPlaying();
+            boolean fAutoPlay = m_prefs.getBoolean(SSPreferences.PREFS_PLAYSLIDESAUTOAUDIO, SSPreferences.DEFAULT_PLAYSLIDESAUTOAUDIO);
+            if (fAutoPlay) {
+                startPlaying();
+            }
         }
         else {
             stopPlaying();
