@@ -2,6 +2,9 @@ package com.stori.stori.fragments;
 
 import android.app.Activity;
 import android.graphics.Point;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -28,6 +31,8 @@ import com.stori.stori.PlaySlidesActivity;
 import com.stori.stori.R;
 import com.stori.stori.SlideJSON;
 import com.stori.stori.Utilities;
+
+import java.io.File;
 
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
@@ -270,7 +275,7 @@ public class PlaySlidesFragment extends Fragment implements
                 savePhoto.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        savePhotos(new String[] {m_slideUuid});
+                        savePhotos(new String[]{m_slideUuid});
                         return true;
                     }
                 });
@@ -496,6 +501,26 @@ public class PlaySlidesFragment extends Fragment implements
 
     public void onCopyComplete(boolean success, String[] fileNames, String slideShareName) {
         if(D)Log.d(TAG, String.format("PlaySlidesFragment.onCopyComplete: success=%b", success));
+
+        if (success && fileNames != null) {
+            //
+            // Notify the system regarding the media location
+            //
+            File filePathDest = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), Config.copiedImageFolderName);
+            String[] paths = new String[fileNames.length];
+
+            for (int i = 0; i < fileNames.length; i++) {
+                paths[i] = filePathDest.getAbsolutePath() + "/" + fileNames[i];
+            }
+
+            MediaScannerConnection.scanFile(m_playSlidesActivity, paths, null,
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        @Override
+                        public void onScanCompleted(final String path, final Uri uri) {
+                            if(D)Log.d(TAG, String.format("PlaySlidesFragment.onScanCompleted: path=%s, uri=%s", path, uri.toString()));
+                        }
+                    });
+        }
     }
 
     private void startPlaying() {
