@@ -272,48 +272,52 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         return title;
     }
 
-    public boolean savePhoto(String slideUuid) {
-        if(D)Log.d(TAG, String.format("PlaySlidesActivity.savePhoto: slideUuid=%s", slideUuid));
+    public String getImageFileNameForSlide(String slideUuid) {
+        if(D)Log.d(TAG, String.format("PlaySlidesActivity.getImageFileNameForSlide: slideUuid=%s", slideUuid));
 
-        if (m_ssj == null) {
-            if(D)Log.d(TAG, "PlaySlidesActivity.savePhoto - m_ssj is null, so bailing.");
-            return false;
-        }
-
-        boolean success = false;
+        String imageFileName = null;
 
         try {
             SlideJSON sj = m_ssj.getSlide(slideUuid);
-            String imageFileName = sj.getImageFilename();
-            if(D)Log.d(TAG, String.format("PlaySlidesActivity.saveSlide: %s", imageFileName));
-
-            File fileSource = new File(m_slideShareDirectory, imageFileName);
-
-            File filePathDest = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), Config.copiedImageFolderName);
-            if (!filePathDest.exists()) {
-                filePathDest.mkdir();
-            }
-
-            File fileDest = new File(filePathDest, imageFileName);
-
-            success = Utilities.copyFile(fileSource, fileDest);
+            imageFileName = sj.getImageFilename();
         }
         catch (Exception e) {
-            if(E)Log.e(TAG, "PlaySlidesActivity.savePhoto", e);
+            if(E)Log.e(TAG, "PlaySlidesActivity.getImageFileNameForSlide", e);
             e.printStackTrace();
         }
         catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "PlaySlidesActivity.savePhoto", e);
+            if(E)Log.e(TAG, "PlaySlidesActivity.getImageFileNameForSlide", e);
             e.printStackTrace();
         }
 
-        return success;
+        return imageFileName;
     }
 
-    public boolean saveAllPhotos() {
-        if(D)Log.d(TAG, "PlaySlidesActivity.saveAllPhotos");
+    public String[] getAllImageFileNames() {
+        if(D)Log.d(TAG, "PlaySlidesActivity.getAllImageFileNames");
 
-        return false;
+        String[] fileNames = null;
+
+        try {
+            int count = m_ssj.getSlideCount();
+            if (count > 0) {
+                fileNames = new String[count];
+                for (int i = 0; i < count; i++) {
+                    SlideJSON ssj = m_ssj.getSlide(i);
+                    fileNames[i] = ssj.getImageFilename();
+                }
+            }
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "PlaySlidesActivity.getAllImageFileNames", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "PlaySlidesActivity.getAllImageFileNames", e);
+            e.printStackTrace();
+        }
+
+        return fileNames;
     }
 
     public int getSlidePosition(String slideUuid) {

@@ -553,7 +553,7 @@ public class EditPlayFragment extends Fragment implements
             }
 
             AsyncCopyFileTask acft = new AsyncCopyFileTask();
-            acft.copyFile(AsyncCopyFileTask.CopyFileTaskType.Gallery, m_editPlayActivity, this, m_slideShareName, imageFileName, intent.getData(), null);
+            acft.copyFile(AsyncCopyFileTask.CopyFileTaskType.Gallery, m_editPlayActivity, this, m_slideShareName, new String[] {imageFileName}, intent.getData(), null);
         }
         else if (requestCode == EditPlayActivity.REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
             if(D)Log.d(TAG, String.format("CreateSlidesFragment.onActivityResult for REQUEST_CAMERA: m_currentCameraPhotoFilePath=%s", m_currentCameraPhotoFilePath));
@@ -576,7 +576,7 @@ public class EditPlayFragment extends Fragment implements
             }
 
             AsyncCopyFileTask acft = new AsyncCopyFileTask();
-            acft.copyFile(AsyncCopyFileTask.CopyFileTaskType.Camera, m_editPlayActivity, this, m_slideShareName, imageFileName, null, m_currentCameraPhotoFilePath);
+            acft.copyFile(AsyncCopyFileTask.CopyFileTaskType.Camera, m_editPlayActivity, this, m_slideShareName, new String[] {imageFileName}, null, m_currentCameraPhotoFilePath);
         }
         else {
             super.onActivityResult(requestCode, resultCode, intent);
@@ -948,19 +948,19 @@ public class EditPlayFragment extends Fragment implements
         }
     }
 
-    public void onCopyComplete(boolean success, String fileName, String slideShareName) {
-        if(D)Log.d(TAG, String.format("EditPlayFragment.onCopyComplete: success=%b, fileName=%s, slideShareName=%s", success, fileName, slideShareName));
+    public void onCopyComplete(boolean success, String[] fileNames, String slideShareName) {
+        if(D)Log.d(TAG, String.format("EditPlayFragment.onCopyComplete: success=%b, fileName=%s, slideShareName=%s", success, fileNames[0], slideShareName));
 
         m_currentCameraPhotoFilePath = null;
 
         if (success) {
             // Display the image only upon successful save
-            m_imageFileName = fileName;
+            m_imageFileName = fileNames[0];
             renderImage();
         }
         else {
             // Clean up - remove the image file
-            Utilities.deleteFile(m_editPlayActivity, slideShareName, fileName);
+            Utilities.deleteFile(m_editPlayActivity, slideShareName, fileNames[0]);
             m_imageFileName = null;
         }
 

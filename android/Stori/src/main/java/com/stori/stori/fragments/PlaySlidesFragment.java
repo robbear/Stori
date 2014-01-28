@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -21,6 +20,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.stori.stori.AsyncCopyFileTask;
 import com.stori.stori.AsyncTaskTimer;
 import com.stori.stori.Config;
 import com.stori.stori.StoriService;
@@ -33,7 +33,7 @@ import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
 
 public class PlaySlidesFragment extends Fragment implements
-        AsyncTaskTimer.IAsyncTaskTimerCallback, StoriService.PlaybackStateListener, StoriService.StoriServiceConnectionListener {
+        AsyncTaskTimer.IAsyncTaskTimerCallback, StoriService.PlaybackStateListener, StoriService.StoriServiceConnectionListener, AsyncCopyFileTask.AsyncCopyFileTaskCallbacks {
 
     public final static String TAG = "PlaySlidesFragment";
 
@@ -270,7 +270,7 @@ public class PlaySlidesFragment extends Fragment implements
                 savePhoto.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        m_playSlidesActivity.savePhoto(m_slideUuid);
+                        savePhotos(new String[] {m_slideUuid});
                         return true;
                     }
                 });
@@ -279,6 +279,7 @@ public class PlaySlidesFragment extends Fragment implements
                 saveAllPhotos.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
+                        savePhotos(null);
                         return true;
                     }
                 });
@@ -352,6 +353,28 @@ public class PlaySlidesFragment extends Fragment implements
         if (savedInstanceState == null) {
             AsyncTaskTimer.startAsyncTaskTimer(1, Config.audioDelayMillis, this);
         }
+    }
+
+    private void savePhotos(String[] slideUuids) {
+        if(D)Log.d(TAG, "PlaySlidesFragment.savePhotos");
+
+        String[] fileNames = null;
+
+        if (slideUuids == null) {
+            if(D)Log.d(TAG, "PlaySlidesFragment.savePhotos - slideUuids is null, so requesting all photos");
+            fileNames = m_playSlidesActivity.getAllImageFileNames();
+        }
+
+        if (slideUuids != null) {
+            fileNames = new String[slideUuids.length];
+            for (int i = 0; i < slideUuids.length; i++) {
+                fileNames[i] = m_playSlidesActivity.getImageFileNameForSlide(slideUuids[i]);
+            }
+        }
+
+        AsyncCopyFileTask acft = new AsyncCopyFileTask();
+
+        acft.copyFile(AsyncCopyFileTask.CopyFileTaskType.File, m_playSlidesActivity, PlaySlidesFragment.this, m_slideShareName, fileNames, null, null);
     }
 
     public void onTabPageSelected(int position) {
@@ -469,6 +492,10 @@ public class PlaySlidesFragment extends Fragment implements
 
         m_titleControl.setText(title);
         m_slidePositionTextControl.setText(String.format(getString(R.string.slide_position_format), position + 1, count));
+    }
+
+    public void onCopyComplete(boolean success, String[] fileNames, String slideShareName) {
+        if(D)Log.d(TAG, String.format("PlaySlidesFragment.onCopyComplete: success=%b", success));
     }
 
     private void startPlaying() {
