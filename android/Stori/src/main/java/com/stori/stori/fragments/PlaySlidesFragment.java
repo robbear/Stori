@@ -197,7 +197,7 @@ public class PlaySlidesFragment extends Fragment implements
 
         m_playSlidesActivity = (PlaySlidesActivity)activity;
 
-        m_prefs = m_playSlidesActivity.getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
+        m_prefs = m_playSlidesActivity.getSharedPreferences(SSPreferences.PREFS(activity), Context.MODE_PRIVATE);
 
         Display display = activity.getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -417,7 +417,7 @@ public class PlaySlidesFragment extends Fragment implements
         if(D)Log.d(TAG, String.format("PlaySlidesFragment.onAsyncTaskTimerComplete: selectedTabPosition=%d, tabPosition=%d", selectedTabPosition, tabPosition));
 
         if (selectedTabPosition == tabPosition) {
-            boolean fAutoPlay = m_prefs.getBoolean(SSPreferences.PREFS_PLAYSLIDESAUTOAUDIO, SSPreferences.DEFAULT_PLAYSLIDESAUTOAUDIO);
+            boolean fAutoPlay = m_prefs.getBoolean(SSPreferences.PREFS_PLAYSLIDESAUTOAUDIO(m_playSlidesActivity), SSPreferences.DEFAULT_PLAYSLIDESAUTOAUDIO);
             if (fAutoPlay) {
                 startPlaying();
             }

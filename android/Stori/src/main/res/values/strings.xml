@@ -54,4 +54,9 @@
     <string name="yes_text">Yes</string>
     <string name="no_text">No</string>
 
+    <string name="PREFS">stori</string>
+    <string name="PREFS_EDITPROJECTNAME">prefs_editprojectname</string>
+    <string name="PREFS_PLAYSLIDESNAME">prefs_playslidesname</string>
+    <string name="PREFS_PLAYSLIDESAUTOAUDIO">prefs_playslidesautoaudio</string>
+
 </resources>

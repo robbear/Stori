@@ -66,18 +66,18 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         if(D)Log.d(TAG, "PlaySlidesActivity.onCreate");
 
         super.onCreate(savedInstanceState);
-        m_prefs = getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
+        m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
 
         setContentView(R.layout.activity_playslides);
 
         m_isFromUrl = getIntent().getBooleanExtra(EXTRA_FROMURL, false);
 
         if (m_isFromUrl) {
-            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME, SSPreferences.DEFAULT_PLAYSLIDESNAME);
+            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), SSPreferences.DEFAULT_PLAYSLIDESNAME);
             if(D)Log.d(TAG, String.format("PlaySlidesActivity.onCreate - playing from a downloaded URL reference: %s", m_slideShareName));
         }
         else {
-            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
+            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(this), SSPreferences.DEFAULT_EDITPROJECTNAME);
             if(D)Log.d(TAG, String.format("PlaySlidesActivity.onCreate - playing a preview: %s", m_slideShareName));
         }
         if (m_slideShareName == null) {

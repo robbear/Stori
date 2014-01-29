@@ -58,7 +58,7 @@ public class CloudStore {
                         break;
                 }
 
-                icp.initializeProvider(m_userUuid, m_context.getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE));
+                icp.initializeProvider(m_userUuid, m_context.getSharedPreferences(SSPreferences.PREFS(m_context), Context.MODE_PRIVATE));
                 icp.deleteVirtualDirectory(m_slideShareName);
 
                 for (String fileName : imageFileNames) {

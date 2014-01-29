@@ -46,7 +46,7 @@ public class DownloadActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         if(D)Log.d(TAG, "DownloadActivity.onCreate");
 
-        m_prefs = getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
+        m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
 
         // Lock the orientation down
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
@@ -306,14 +306,14 @@ public class DownloadActivity extends FragmentActivity {
             if (m_urlsToDownload.size() <= 0) {
                 if(D)Log.d(TAG, "DownloadActivity.DownloadTask.onPostExecute - all downloads complete");
 
-                String oldSlideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME, SSPreferences.DEFAULT_PLAYSLIDESNAME);
+                String oldSlideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(DownloadActivity.this), SSPreferences.DEFAULT_PLAYSLIDESNAME);
                 if (oldSlideShareName != null && !oldSlideShareName.equals(m_slideShareName)) {
                     if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.onPostExecute: deleting old slideshare playslide directory for %s", oldSlideShareName));
                     Utilities.deleteSlideShareDirectory(DownloadActivity.this, oldSlideShareName);
                 }
 
                 SharedPreferences.Editor edit = m_prefs.edit();
-                edit.putString(SSPreferences.PREFS_PLAYSLIDESNAME, m_slideShareName);
+                edit.putString(SSPreferences.PREFS_PLAYSLIDESNAME(DownloadActivity.this), m_slideShareName);
                 edit.commit();
 
                 Intent intent = new Intent(DownloadActivity.this, PlaySlidesActivity.class);

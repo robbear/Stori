@@ -1,12 +1,12 @@
 package com.stori.stori;
 
-public class SSPreferences {
-    public final static String TAG = "SSPreferences";
+import android.content.Context;
 
-    public final static String PREFS = "stori";
-    public final static String PREFS_EDITPROJECTNAME = "prefs_editprojectname";
-    public final static String PREFS_PLAYSLIDESNAME = "prefs_playslidesname";
-    public final static String PREFS_PLAYSLIDESAUTOAUDIO = "prefs_playslidesautoaudio";
+public class SSPreferences {
+    public static String PREFS(Context context) { return context.getString(R.string.PREFS); }
+    public static String PREFS_EDITPROJECTNAME(Context context) { return context.getString(R.string.PREFS_EDITPROJECTNAME); }
+    public static String PREFS_PLAYSLIDESNAME(Context context) { return context.getString(R.string.PREFS_PLAYSLIDESNAME); }
+    public static String PREFS_PLAYSLIDESAUTOAUDIO(Context context) { return context.getString(R.string.PREFS_PLAYSLIDESAUTOAUDIO); }
 
     public final static String DEFAULT_EDITPROJECTNAME = null;
     public final static String DEFAULT_PLAYSLIDESNAME = null;

@@ -100,7 +100,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         super.onCreate(savedInstanceState);
 
-        m_prefs = getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
+        m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
 
         setContentView(R.layout.activity_editplay);
 
@@ -108,7 +108,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         if (isFromUrl) {
             m_editPlayMode = EditPlayMode.Play;
-            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME, SSPreferences.DEFAULT_PLAYSLIDESNAME);
+            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), SSPreferences.DEFAULT_PLAYSLIDESNAME);
             if(D)Log.d(TAG, String.format("EditPlayActivity.onCreate - playing from a downloaded URL reference: %s", m_slideShareName));
 
             if (m_slideShareName == null) {
@@ -138,7 +138,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 startActivityForResult(intent, REQUEST_GOOGLE_LOGIN);
             }
 
-            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
+            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(this), SSPreferences.DEFAULT_EDITPROJECTNAME);
             if(D)Log.d(TAG, String.format("EditPlayActivity.onCreate - in edit mode: %s", m_slideShareName));
 
             if (m_slideShareName == null) {
@@ -146,7 +146,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 m_slideShareName = UUID.randomUUID().toString();
 
                 SharedPreferences.Editor edit = m_prefs.edit();
-                edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, m_slideShareName);
+                edit.putString(SSPreferences.PREFS_EDITPROJECTNAME(this), m_slideShareName);
                 edit.commit();
             }
         }
@@ -434,13 +434,13 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 if(D)Log.d(TAG, "EditPlayActivity.switchAccount - switching account");
                 dialog.dismiss();
 
-                String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME, SSPreferences.DEFAULT_EDITPROJECTNAME);
+                String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(EditPlayActivity.this), SSPreferences.DEFAULT_EDITPROJECTNAME);
 
                 Utilities.deleteSlideShareDirectory(EditPlayActivity.this, slideShareName);
 
                 if(D)Log.d(TAG, "EditPlayActivity.switchAccount - switching account: nulling out PREFS_EDITPROJECTNAME");
                 SharedPreferences.Editor edit = m_prefs.edit();
-                edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, null);
+                edit.putString(SSPreferences.PREFS_EDITPROJECTNAME(EditPlayActivity.this), null);
                 edit.commit();
 
                 s_amazonClientManager.clearCredentials();
@@ -536,7 +536,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         if(D)Log.d(TAG, String.format("EditPlayActivity.initializeNewSlideShow - new slideShareName: %s", m_slideShareName));
 
         SharedPreferences.Editor edit = m_prefs.edit();
-        edit.putString(SSPreferences.PREFS_EDITPROJECTNAME, m_slideShareName);
+        edit.putString(SSPreferences.PREFS_EDITPROJECTNAME(this), m_slideShareName);
         edit.commit();
 
         Utilities.createOrGetSlideShareDirectory(this, m_slideShareName);

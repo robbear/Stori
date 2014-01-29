@@ -37,7 +37,7 @@ public class Utilities {
     public static String getUserUuidString(Context context) {
         if(D)Log.d(TAG, "Utilities.getUserUuidString");
 
-        SharedPreferences prefs = context.getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences(SSPreferences.PREFS(context), Context.MODE_PRIVATE);
         String uuid = AmazonSharedPreferencesWrapper.getUsername(prefs);
 
         if(D)Log.d(TAG, String.format("Utilities.getUserUuidString returning %s", uuid));

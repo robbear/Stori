@@ -43,7 +43,7 @@ public class GoogleLogin extends AlertActivity {
             m_fAccountPickerUp = savedInstanceState.getBoolean(INSTANCE_STATE_ACCOUNT_PICKER);
         }
 
-        m_prefs = getSharedPreferences(SSPreferences.PREFS, Context.MODE_PRIVATE);
+        m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
         m_userAccountEmail = AmazonSharedPreferencesWrapper.getUserEmail(m_prefs);
         if(D)Log.d(TAG, String.format("GoogleLogin.onCreate - m_userAccountEmail=%s", m_userAccountEmail));
 
