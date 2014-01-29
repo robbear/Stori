@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.content.Context;
@@ -100,7 +101,10 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         super.onCreate(savedInstanceState);
 
-        m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
+        // User may enter the app for the first time through EditPlayActivity, so setDefaultValues
+        PreferenceManager.setDefaultValues(this, SSPreferences.PREFS(this), Context.MODE_PRIVATE, R.xml.settings_screen, false);
+
+        m_prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         setContentView(R.layout.activity_editplay);
 
@@ -414,10 +418,17 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         Utilities.shareShow(this, m_userUuid, m_slideShareName);
     }
 
+    public void launchSettingsActivity() {
+        if(D)Log.d(TAG, "EditPlayActivity.launchSettingsActivity");
+
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
     public void launchAboutActivity() {
         if(D)Log.d(TAG, "EditPlayActivity.launchAboutActivity");
 
-        Intent intent = new Intent(EditPlayActivity.this, AboutActivity.class);
+        Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
     }
 

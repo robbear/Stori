@@ -30,6 +30,7 @@
     <string name="menu_editplayactivity_createnew">Create new</string>
     <string name="menu_editplayactivity_preview">Preview</string>
     <string name="menu_editplayactivity_publish">Publish</string>
+    <string name="menu_editplayactivity_settings">Settings</string>
     <string name="menu_editplayactivity_share">Share</string>
     <string name="menu_editplayactivity_switchaccount">Switch account</string>
     <string name="menu_editplay_trash_deleteslide">Remove slide</string>
@@ -37,8 +38,11 @@
     <string name="menu_editplay_trash_deleteaudio">Remove audio</string>
     <string name="menu_playslidesactivity_savephoto">Save this photo</string>
     <string name="menu_playslidesactivity_saveallphotos">Save all photos</string>
+    <string name="menu_playslidesactivity_settings">Settings</string>
     <string name="publish_dialog_title">Publish</string>
     <string name="publish_dialog_message">Ok to publish?</string>
+    <string name="settings_autoaudio_title">Play audio automatically</string>
+    <string name="settings_autoaudio_summary">Play audio when a picture is brought into view during preview or play back</string>
     <string name="share_dialog_title">Share this show</string>
     <string name="share_email_body_format">I want to share a %1$s slide show with you! To view the show, click on %2$s or paste the address into your browser.\n\nInstall the %1$s application (coming soon!):\n\n iOS: {App Store application address}\nAndroid: {Google Play application address}</string>
     <string name="share_email_subject_format">You have a new %1$s show to view!</string>
@@ -54,6 +58,7 @@
     <string name="yes_text">Yes</string>
     <string name="no_text">No</string>
 
+    <!-- Everything below here should NOT be translated -->
     <string name="PREFS">stori</string>
     <string name="PREFS_EDITPROJECTNAME">prefs_editprojectname</string>
     <string name="PREFS_PLAYSLIDESNAME">prefs_playslidesname</string>

@@ -2,6 +2,7 @@ package com.stori.stori;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.stori.stori.cloudproviders.AWSS3Provider;
@@ -58,7 +59,8 @@ public class CloudStore {
                         break;
                 }
 
-                icp.initializeProvider(m_userUuid, m_context.getSharedPreferences(SSPreferences.PREFS(m_context), Context.MODE_PRIVATE));
+                PreferenceManager.setDefaultValues(m_context, SSPreferences.PREFS(m_context), Context.MODE_PRIVATE, R.xml.settings_screen, false);
+                icp.initializeProvider(m_userUuid, PreferenceManager.getDefaultSharedPreferences(m_context));
                 icp.deleteVirtualDirectory(m_slideShareName);
 
                 for (String fileName : imageFileNames) {

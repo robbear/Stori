@@ -316,6 +316,15 @@ public class EditPlayFragment extends Fragment implements
                     }
                 });
 
+                MenuItem settings = menu.findItem(R.id.menu_editplayactivity_settings);
+                settings.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        m_editPlayActivity.launchSettingsActivity();
+                        return true;
+                    }
+                });
+
                 MenuItem about = menu.findItem(R.id.menu_editplayactivity_about);
                 about.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
@@ -553,7 +562,7 @@ public class EditPlayFragment extends Fragment implements
             }
 
             AsyncCopyFileTask acft = new AsyncCopyFileTask();
-            acft.copyFile(AsyncCopyFileTask.CopyFileTaskType.Gallery, m_editPlayActivity, this, m_slideShareName, new String[] {imageFileName}, intent.getData(), null);
+            acft.copyFile(AsyncCopyFileTask.CopyFileTaskType.Gallery, m_editPlayActivity, this, m_slideShareName, new String[]{imageFileName}, intent.getData(), null);
         }
         else if (requestCode == EditPlayActivity.REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
             if(D)Log.d(TAG, String.format("CreateSlidesFragment.onActivityResult for REQUEST_CAMERA: m_currentCameraPhotoFilePath=%s", m_currentCameraPhotoFilePath));

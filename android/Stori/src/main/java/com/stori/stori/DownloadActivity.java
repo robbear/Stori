@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
@@ -46,7 +47,8 @@ public class DownloadActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         if(D)Log.d(TAG, "DownloadActivity.onCreate");
 
-        m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
+        PreferenceManager.setDefaultValues(this, SSPreferences.PREFS(this), Context.MODE_PRIVATE, R.xml.settings_screen, false);
+        m_prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Lock the orientation down
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)

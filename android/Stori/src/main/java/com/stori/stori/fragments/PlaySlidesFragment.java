@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -180,10 +181,7 @@ public class PlaySlidesFragment extends Fragment implements
 
         super.onResume();
 
-        if (m_playSlidesActivity.isFromUrl()) {
-            if(D)Log.d(TAG, "PlaySlidesFragment.onResume - PlaySlidesActivity is from URL, so turning on menu control");
-            m_mainMenuControl.setVisibility(View.VISIBLE);
-        }
+        m_mainMenuControl.setVisibility(View.VISIBLE);
 
         displayNextPrevControls();
         displaySlideTitleAndPosition();
@@ -197,7 +195,8 @@ public class PlaySlidesFragment extends Fragment implements
 
         m_playSlidesActivity = (PlaySlidesActivity)activity;
 
-        m_prefs = m_playSlidesActivity.getSharedPreferences(SSPreferences.PREFS(activity), Context.MODE_PRIVATE);
+        PreferenceManager.setDefaultValues(activity, SSPreferences.PREFS(activity), Context.MODE_PRIVATE, R.xml.settings_screen, false);
+        m_prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 
         Display display = activity.getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -277,20 +276,35 @@ public class PlaySlidesFragment extends Fragment implements
                 pm.inflate(R.menu.menu_playslidesactivity);
                 Menu menu = pm.getMenu();
 
-                MenuItem savePhoto = menu.findItem(R.id.menu_playslidesactivity_savephoto);
-                savePhoto.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        savePhotos(new String[]{m_slideUuid});
-                        return true;
-                    }
-                });
+                if (m_playSlidesActivity.isFromUrl()) {
+                    MenuItem savePhoto = menu.findItem(R.id.menu_playslidesactivity_savephoto);
+                    savePhoto.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            savePhotos(new String[]{m_slideUuid});
+                            return true;
+                        }
+                    });
 
-                MenuItem saveAllPhotos = menu.findItem(R.id.menu_playslidesactivity_saveallphotos);
-                saveAllPhotos.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    MenuItem saveAllPhotos = menu.findItem(R.id.menu_playslidesactivity_saveallphotos);
+                    saveAllPhotos.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            savePhotos(null);
+                            return true;
+                        }
+                    });
+                }
+                else {
+                    menu.removeItem(R.id.menu_playslidesactivity_savephoto);
+                    menu.removeItem(R.id.menu_playslidesactivity_saveallphotos);
+                }
+
+                MenuItem settings = menu.findItem(R.id.menu_playslidesactivity_settings);
+                settings.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        savePhotos(null);
+                        m_playSlidesActivity.launchSettingsActivity();
                         return true;
                     }
                 });
@@ -418,6 +432,7 @@ public class PlaySlidesFragment extends Fragment implements
 
         if (selectedTabPosition == tabPosition) {
             boolean fAutoPlay = m_prefs.getBoolean(SSPreferences.PREFS_PLAYSLIDESAUTOAUDIO(m_playSlidesActivity), SSPreferences.DEFAULT_PLAYSLIDESAUTOAUDIO(m_playSlidesActivity));
+            if(D)Log.d(TAG, String.format("PlaySlidesFragment.onAsyncTaskTimerComplete: fAutoPlay=%b", fAutoPlay));
             if (fAutoPlay) {
                 startPlaying();
             }

@@ -3,8 +3,8 @@ package com.stori.stori;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Environment;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.content.Context;
@@ -66,7 +66,11 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         if(D)Log.d(TAG, "PlaySlidesActivity.onCreate");
 
         super.onCreate(savedInstanceState);
-        m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
+
+        // User may enter the app for the first time through PlaySlidesActivity, so setDefaultValues
+        PreferenceManager.setDefaultValues(this, SSPreferences.PREFS(this), Context.MODE_PRIVATE, R.xml.settings_screen, false);
+
+        m_prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         setContentView(R.layout.activity_playslides);
 
@@ -246,10 +250,17 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         Utilities.printSlideShareJSON(TAG, m_ssj);
     }
 
+    public void launchSettingsActivity() {
+        if(D)Log.d(TAG, "PlaySlidesActivity.launchSettingsActivity");
+
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
     public void launchAboutActivity() {
         if(D)Log.d(TAG, "PlaySlidesActivity.launchAboutActivity");
 
-        Intent intent = new Intent(PlaySlidesActivity.this, AboutActivity.class);
+        Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
     }
 

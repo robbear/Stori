@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -43,7 +44,8 @@ public class GoogleLogin extends AlertActivity {
             m_fAccountPickerUp = savedInstanceState.getBoolean(INSTANCE_STATE_ACCOUNT_PICKER);
         }
 
-        m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
+        PreferenceManager.setDefaultValues(this, SSPreferences.PREFS(this), Context.MODE_PRIVATE, R.xml.settings_screen, false);
+        m_prefs = PreferenceManager.getDefaultSharedPreferences(this);
         m_userAccountEmail = AmazonSharedPreferencesWrapper.getUserEmail(m_prefs);
         if(D)Log.d(TAG, String.format("GoogleLogin.onCreate - m_userAccountEmail=%s", m_userAccountEmail));
 
