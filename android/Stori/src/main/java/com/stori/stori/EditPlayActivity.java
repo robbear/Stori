@@ -412,6 +412,26 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         startActivity(intent);
     }
 
+    public boolean isPublished() {
+        if(D)Log.d(TAG, "EditPlayActivity.isPublished");
+
+        boolean isPublished = false;
+
+        try {
+            isPublished = m_ssj.isPublished();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditPlayActivity.isPublished", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditPlayActivity.isPublished", e);
+            e.printStackTrace();
+        }
+
+        return isPublished;
+    }
+
     public void shareSlides() {
         if(D)Log.d(TAG, "EditPlayActivity.shareSlides");
 

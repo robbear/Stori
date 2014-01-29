@@ -298,6 +298,20 @@ public class EditPlayFragment extends Fragment implements
                     }
                 });
 
+                if (m_editPlayActivity.isPublished()) {
+                    MenuItem share = menu.findItem(R.id.menu_editplayactivity_share);
+                    share.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            m_editPlayActivity.shareSlides();
+                            return true;
+                        }
+                    });
+                }
+                else {
+                    menu.removeItem(R.id.menu_editplayactivity_share);
+                }
+
                 MenuItem createNew = menu.findItem(R.id.menu_editplayactivity_createnew);
                 createNew.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
