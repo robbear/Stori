@@ -306,7 +306,7 @@ public class DownloadActivity extends FragmentActivity {
             if (m_urlsToDownload.size() <= 0) {
                 if(D)Log.d(TAG, "DownloadActivity.DownloadTask.onPostExecute - all downloads complete");
 
-                String oldSlideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(DownloadActivity.this), SSPreferences.DEFAULT_PLAYSLIDESNAME);
+                String oldSlideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(DownloadActivity.this), SSPreferences.DEFAULT_PLAYSLIDESNAME(DownloadActivity.this));
                 if (oldSlideShareName != null && !oldSlideShareName.equals(m_slideShareName)) {
                     if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.onPostExecute: deleting old slideshare playslide directory for %s", oldSlideShareName));
                     Utilities.deleteSlideShareDirectory(DownloadActivity.this, oldSlideShareName);

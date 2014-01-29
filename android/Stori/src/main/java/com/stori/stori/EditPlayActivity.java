@@ -108,7 +108,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         if (isFromUrl) {
             m_editPlayMode = EditPlayMode.Play;
-            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), SSPreferences.DEFAULT_PLAYSLIDESNAME);
+            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), SSPreferences.DEFAULT_PLAYSLIDESNAME(this));
             if(D)Log.d(TAG, String.format("EditPlayActivity.onCreate - playing from a downloaded URL reference: %s", m_slideShareName));
 
             if (m_slideShareName == null) {
@@ -138,7 +138,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 startActivityForResult(intent, REQUEST_GOOGLE_LOGIN);
             }
 
-            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(this), SSPreferences.DEFAULT_EDITPROJECTNAME);
+            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(this), SSPreferences.DEFAULT_EDITPROJECTNAME(this));
             if(D)Log.d(TAG, String.format("EditPlayActivity.onCreate - in edit mode: %s", m_slideShareName));
 
             if (m_slideShareName == null) {
@@ -434,7 +434,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 if(D)Log.d(TAG, "EditPlayActivity.switchAccount - switching account");
                 dialog.dismiss();
 
-                String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(EditPlayActivity.this), SSPreferences.DEFAULT_EDITPROJECTNAME);
+                String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(EditPlayActivity.this), SSPreferences.DEFAULT_EDITPROJECTNAME(EditPlayActivity.this));
 
                 Utilities.deleteSlideShareDirectory(EditPlayActivity.this, slideShareName);
 

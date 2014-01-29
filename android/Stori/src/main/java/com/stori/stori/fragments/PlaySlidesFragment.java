@@ -417,7 +417,7 @@ public class PlaySlidesFragment extends Fragment implements
         if(D)Log.d(TAG, String.format("PlaySlidesFragment.onAsyncTaskTimerComplete: selectedTabPosition=%d, tabPosition=%d", selectedTabPosition, tabPosition));
 
         if (selectedTabPosition == tabPosition) {
-            boolean fAutoPlay = m_prefs.getBoolean(SSPreferences.PREFS_PLAYSLIDESAUTOAUDIO(m_playSlidesActivity), SSPreferences.DEFAULT_PLAYSLIDESAUTOAUDIO);
+            boolean fAutoPlay = m_prefs.getBoolean(SSPreferences.PREFS_PLAYSLIDESAUTOAUDIO(m_playSlidesActivity), SSPreferences.DEFAULT_PLAYSLIDESAUTOAUDIO(m_playSlidesActivity));
             if (fAutoPlay) {
                 startPlaying();
             }

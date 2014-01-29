@@ -59,4 +59,8 @@
     <string name="PREFS_PLAYSLIDESNAME">prefs_playslidesname</string>
     <string name="PREFS_PLAYSLIDESAUTOAUDIO">prefs_playslidesautoaudio</string>
 
+    <string name="DEFAULT_EDITPROJECTNAME"></string>
+    <string name="DEFAULT_PLAYSLIDESNAME"></string>
+    <string name="DEFAULT_PLAYSLIDESAUTOAUDIO">false</string>
+
 </resources>
