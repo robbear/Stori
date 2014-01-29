@@ -502,6 +502,11 @@ public class EditPlayFragment extends Fragment implements
             public void onClick(View v) {
                 if(D)Log.d(TAG, "EditPlayFragment.onImageClicked");
 
+                if (m_storiService != null && m_storiService.isRecording(m_audioFileName)) {
+                    if(D)Log.d(TAG, "EditPlayFragment.onImageSwitcherClicked - we're recording, so do not allow toggle of overlay. Bailing.");
+                    return;
+                }
+
                 switch (m_editPlayMode) {
                     case Edit:
                         m_editPlayMode = EditPlayActivity.EditPlayMode.PlayEdit;
