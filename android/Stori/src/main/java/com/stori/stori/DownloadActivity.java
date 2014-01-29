@@ -92,6 +92,25 @@ public class DownloadActivity extends FragmentActivity {
             m_slideShareName = uri.getLastPathSegment();
             if(D)Log.d(TAG, String.format("DownloadActivity.onCreate: m_userUuid=%s, m_slideShareName=%s", m_userUuid, m_slideShareName));
 
+            if (m_userUuid == null || m_slideShareName == null) {
+                if(D)Log.d(TAG, "DownloadActivity.onCreate - m_userUuid or m_slideShareNmae is null, so bailing");
+                finish();
+                return;
+            }
+
+            // Check to see if we already have this m_slideShareName downloaded.
+            String slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), null);
+            if (m_slideShareName.equalsIgnoreCase(slideShareName)) {
+                if(D)Log.d(TAG, "DownloadActivity.onCreate - we already have this Stori downloaded. Use it rather than refetching");
+
+                Intent intentPlay = new Intent(this, PlaySlidesActivity.class);
+                intentPlay.putExtra(PlaySlidesActivity.EXTRA_FROMURL, true);
+                startActivity(intentPlay);
+
+                finish();
+                return;
+            }
+
             String jsonUrl = Config.baseAWSStorageUrl + m_userUuid + "/" + m_slideShareName + "/" + Config.slideShareJSONFilename;
 
             m_downloadTask = new DownloadTask(this);
