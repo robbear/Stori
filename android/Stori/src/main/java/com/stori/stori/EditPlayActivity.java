@@ -435,7 +435,20 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     public void shareSlides() {
         if(D)Log.d(TAG, "EditPlayActivity.shareSlides");
 
-        Utilities.shareShow(this, m_userUuid, m_slideShareName);
+        String title = getString(R.string.default_stori_title);
+        try {
+            title = m_ssj.getTitle();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditPlayActivity.shareSlides", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditPlayActivity.shareSlides", e);
+            e.printStackTrace();
+        }
+
+        Utilities.shareShow(this, m_userUuid, m_slideShareName, title);
     }
 
     public void launchSettingsActivity() {
@@ -840,7 +853,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
 
-                    Utilities.shareShow(EditPlayActivity.this, m_userUuid, m_slideShareName);
+                    shareSlides();
                 }
             });
             adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {

@@ -598,13 +598,13 @@ public class Utilities {
         return list.size() > 0;
     }
 
-    public static void shareShow(Context context, String userUuid, String slideShareName) {
+    public static void shareShow(Context context, String userUuid, String slideShareName, String title) {
         if(D)Log.d(TAG, "Utilities.shareShow");
 
         String appName = context.getString(R.string.app_name);
         String url = Utilities.buildShowWebPageUrlString(userUuid, slideShareName);
-        String message = String.format(context.getString(R.string.share_email_body_format), appName, url);
-        String subject = String.format(context.getString(R.string.share_email_subject_format), appName);
+        String message = String.format(context.getString(R.string.share_email_body_format), appName, title, url);
+        String subject = String.format(context.getString(R.string.share_email_subject_format), appName, title);
 
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
