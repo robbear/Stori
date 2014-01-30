@@ -59,14 +59,18 @@ public class AWSS3Provider implements ICloudProvider {
         String prefix = m_userUuid + "/" + directoryName;
         ObjectListing objects = m_s3Client.listObjects(BUCKET_NAME, prefix);
         for (S3ObjectSummary summary : objects.getObjectSummaries()) {
-            m_s3Client.deleteObject(BUCKET_NAME, summary.getKey());
+            String key = summary.getKey();
+            if(D)Log.d(TAG, String.format("AWSS3Provider.deleteVirtualDirectory: deleting %s", key));
+            m_s3Client.deleteObject(BUCKET_NAME, key);
         }
 
         // Delete the directory entry
-        prefix = m_userUuid + "/" + Config.directoryEntrySegmentString + "/" + directoryName;
+        prefix = m_userUuid + "/" + Config.directoryEntrySegmentString + directoryName;
         objects = m_s3Client.listObjects(BUCKET_NAME, prefix);
         for (S3ObjectSummary summary : objects.getObjectSummaries()) {
-            m_s3Client.deleteObject(BUCKET_NAME, summary.getKey());
+            String key = summary.getKey();
+            if(D)Log.d(TAG, String.format("AWSS3Provider.deleteVirtualDirectory: deleting %s", key));
+            m_s3Client.deleteObject(BUCKET_NAME, key);
         }
     }
 
@@ -149,11 +153,11 @@ public class AWSS3Provider implements ICloudProvider {
         }
     }
 
-    public void uploadDirectoryEntry(String folder, String title) throws Exception {
-        if(D)Log.d(TAG, String.format("AWSProvider.uploadDirectoryEntry: folder=%s, title=%s", folder, title));
+    public void uploadDirectoryEntry(String folder, String title, int count) throws Exception {
+        if(D)Log.d(TAG, String.format("AWSProvider.uploadDirectoryEntry: folder=%s, title=%s, count=%d", folder, title, count));
 
         String encodedTitle = URLEncoder.encode(title, "UTF-8");
-        String relPath = m_userUuid + "/" + Config.directoryEntrySegmentString + folder + "/" + encodedTitle;
+        String relPath = String.format("%s/%s%s/%s%s/%s%d", m_userUuid, Config.directoryEntrySegmentString, folder, Config.titleSegmentString, encodedTitle, Config.slideCountSegmentString, count);
         if(D)Log.d(TAG, String.format("AWSS3Provider.uploadDirectoryEntry: relPath=%s", relPath));
 
         ByteArrayInputStream stream = null;

@@ -67,6 +67,8 @@ public class Config
     //
     public static final String baseAWSStorageUrl = "https://s3-us-west-2.amazonaws.com/" + AWS_BUCKET_NAME + "/";
     public static final String directoryEntrySegmentString = "manifests/";
+    public static final String titleSegmentString = "title/";
+    public static final String slideCountSegmentString = "count/";
     public enum CloudStorageProviders {
         Azure,
         AWS
