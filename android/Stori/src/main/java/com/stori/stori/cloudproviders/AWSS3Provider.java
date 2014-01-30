@@ -14,8 +14,10 @@ import com.stori.stori.Config;
 import com.stori.stori.EditPlayActivity;
 import com.stori.stori.Utilities;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.URLEncoder;
 
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
@@ -52,8 +54,17 @@ public class AWSS3Provider implements ICloudProvider {
     public void deleteVirtualDirectory(String directoryName) throws Exception {
         if(D)Log.d(TAG, String.format("AWSS3Provider.deleteVirtualDirectory: directoryName=%s", directoryName));
 
+        // BUGBUG - TODO: look into using multi-object delete
+
         String prefix = m_userUuid + "/" + directoryName;
         ObjectListing objects = m_s3Client.listObjects(BUCKET_NAME, prefix);
+        for (S3ObjectSummary summary : objects.getObjectSummaries()) {
+            m_s3Client.deleteObject(BUCKET_NAME, summary.getKey());
+        }
+
+        // Delete the directory entry
+        prefix = m_userUuid + "/" + Config.directoryEntrySegmentString + "/" + directoryName;
+        objects = m_s3Client.listObjects(BUCKET_NAME, prefix);
         for (S3ObjectSummary summary : objects.getObjectSummaries()) {
             m_s3Client.deleteObject(BUCKET_NAME, summary.getKey());
         }
@@ -121,6 +132,50 @@ public class AWSS3Provider implements ICloudProvider {
         }
         catch (Exception e) {
             if(E)Log.e(TAG, "AWSS3Provider.uploadFile", e);
+            e.printStackTrace();
+
+            throw e;
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "AWSS3Provider.uploadFile", e);
+            e.printStackTrace();
+
+            throw e;
+        }
+        finally {
+            if (stream != null) {
+                stream.close();
+            }
+        }
+    }
+
+    public void uploadDirectoryEntry(String folder, String title) throws Exception {
+        if(D)Log.d(TAG, String.format("AWSProvider.uploadDirectoryEntry: folder=%s, title=%s", folder, title));
+
+        String encodedTitle = URLEncoder.encode(title, "UTF-8");
+        String relPath = m_userUuid + "/" + Config.directoryEntrySegmentString + folder + "/" + encodedTitle;
+        if(D)Log.d(TAG, String.format("AWSS3Provider.uploadDirectoryEntry: relPath=%s", relPath));
+
+        ByteArrayInputStream stream = null;
+        try {
+            byte[] buffer = new byte[] {0};
+            stream = new ByteArrayInputStream(buffer);
+
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType("application/octet-stream");
+            metadata.setHeader("Access-Control-Allow-Origin", "*");
+            metadata.setCacheControl("If-None_Match");
+            metadata.setContentLength(buffer.length);
+            m_s3Client.putObject(BUCKET_NAME, relPath, stream, metadata);
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "AWSS3Provider.uploadDirectoryEntry", e);
+            e.printStackTrace();
+
+            throw e;
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "AWSS3Provider.uploadDirectoryEntry", e);
             e.printStackTrace();
 
             throw e;

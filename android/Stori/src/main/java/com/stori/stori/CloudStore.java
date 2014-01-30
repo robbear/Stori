@@ -49,6 +49,7 @@ public class CloudStore {
             try {
                 String[] imageFileNames = m_ssj.getImageFileNames();
                 String[] audioFileNames = m_ssj.getAudioFileNames();
+                String title = m_ssj.getTitle();
 
                 ICloudProvider icp;
 
@@ -71,6 +72,7 @@ public class CloudStore {
                 }
 
                 icp.uploadFile(m_slideShareName, Config.slideShareJSONFilename, "application/json");
+                icp.uploadDirectoryEntry(m_slideShareName, title);
             }
             catch (Exception e) {
                 if(E)Log.e(TAG, "CloudStore.SaveTask.doInBackground", e);

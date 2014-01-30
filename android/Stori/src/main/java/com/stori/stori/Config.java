@@ -66,6 +66,7 @@ public class Config
     // Base cloud urls - support for CLOUD_STORAGE_PROVIDER setting
     //
     public static final String baseAWSStorageUrl = "https://s3-us-west-2.amazonaws.com/" + AWS_BUCKET_NAME + "/";
+    public static final String directoryEntrySegmentString = "manifests/";
     public enum CloudStorageProviders {
         Azure,
         AWS
