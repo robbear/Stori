@@ -17,17 +17,15 @@ import java.util.ArrayList;
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
 
-public class StoriListActivity extends ListActivity {
+public class StoriListActivity extends ListActivity implements StoriService.ReadStoriItemsStateListener {
     public final static String TAG = "StoriListActivity";
 
     public final static String INSTANCE_STATE_ORIENTATION_CHANGED = "instance_state_orientation_changed";
-    public final static String INSTANCE_STATE_STORILISTITEMS = "instance_state_storilistitems";
 
     private String m_userUuid = null;
     private SharedPreferences m_prefs;
     private int m_orientation;
     private boolean m_fOrientationChanged = false;
-    private ArrayList<StoriListItem> m_storiListItems = new ArrayList<StoriListItem>();
     private StoriService m_storiService = null;
 
     @Override
@@ -41,7 +39,6 @@ public class StoriListActivity extends ListActivity {
 
         if (savedInstanceState != null) {
             m_fOrientationChanged = savedInstanceState.getBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, false);
-            m_storiListItems = savedInstanceState.getParcelableArrayList(INSTANCE_STATE_STORILISTITEMS);
         }
     }
 
@@ -55,7 +52,6 @@ public class StoriListActivity extends ListActivity {
         m_fOrientationChanged = m_orientation != orientation;
 
         savedInstanceState.putBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, m_fOrientationChanged);
-        savedInstanceState.putParcelableArrayList(INSTANCE_STATE_STORILISTITEMS, m_storiListItems);
     }
 
     @Override
@@ -100,34 +96,8 @@ public class StoriListActivity extends ListActivity {
         super.onPause();
     }
 
-    private class ReadStoriItemsTask extends AsyncTask<Object, Void, StoriListItem[]> {
-        @Override
-        public StoriListItem[] doInBackground(Object... params) {
-            if(D)Log.d(TAG, "StoriListActivity.ReadStoriItemsTask.doInBackground");
-
-            return null;
-        }
-
-        @Override
-        public void onPostExecute(StoriListItem[] items) {
-            if(D)Log.d(TAG, "StoriListActivity.ReadStoriItemsTask.onPostExecute");
-        }
-    }
-
-    private void readStoriItemsAsync() {
-        if(D)Log.d(TAG, "StoriListActivity.readStoriItemsAsync");
-
-        try {
-            new ReadStoriItemsTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-        catch (Exception e) {
-            if(E)Log.e(TAG, "StoriListActivity.readStoriItemsAsync", e);
-            e.printStackTrace();
-        }
-        catch (OutOfMemoryError e) {
-            if(E)Log.e(TAG, "StoriListActivity.readStoriItemsAsync", e);
-            e.printStackTrace();
-        }
+    public void onReadStoriItemsComplete(ArrayList<StoriListItem> storiListItems) {
+        if(D)Log.d(TAG, "StoriListActivity.onReadStoriItemsComplete");
     }
 
     protected void initializeStoriService()
@@ -159,6 +129,10 @@ public class StoriListActivity extends ListActivity {
             unbindService(m_connection);
         }
 
+        if (m_storiService != null) {
+            m_storiService.unregisterReadStoriItemsStateListener(this);
+        }
+
         // Call stopService if we're not dealing with an orientation change
         if (!m_fOrientationChanged)
         {
@@ -176,6 +150,7 @@ public class StoriListActivity extends ListActivity {
             if(D)Log.d(TAG, "StoriListActivity.onServiceConnected");
 
             m_storiService = ((StoriService.StoriServiceBinder)service).getService();
+            m_storiService.registerReadStoriItemsStateListener(StoriListActivity.this);
         }
 
         public void onServiceDisconnected(ComponentName className)

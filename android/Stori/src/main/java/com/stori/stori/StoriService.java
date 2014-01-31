@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -23,7 +24,9 @@ public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTi
     private PlaybackState m_playbackState = PlaybackState.Stopped;
     private String m_audioFileName = null;
     private FileInputStream m_audioFileInputStream;
+    private ArrayList<StoriListItem> m_storiListItems = new ArrayList<StoriListItem>();
     private ArrayList<PlaybackStateListener> m_playbackStateListeners = new ArrayList<PlaybackStateListener>();
+    private ArrayList<ReadStoriItemsStateListener> m_readStoriItemsStateListeners = new ArrayList<ReadStoriItemsStateListener>();
 
     @Override
     public void onCreate() {
@@ -388,6 +391,73 @@ public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTi
         if(D)Log.d(TAG, String.format("StoriService.isRecording: %s", audioFileName));
 
         return (m_recorderAudioFileName != null && m_recorderAudioFileName.equals(audioFileName) && m_isRecording);
+    }
+
+    //********************************************************************************
+    //
+    // ReadStoriItems methods
+    //
+    //********************************************************************************
+
+    public interface ReadStoriItemsStateListener {
+        public void onReadStoriItemsComplete(ArrayList<StoriListItem> storiListItems);
+    }
+
+    public ArrayList<StoriListItem> getStoriListItems() {
+        if(D)Log.d(TAG, "StoriService.getStoriListItems");
+
+        return m_storiListItems;
+    }
+
+    public void registerReadStoriItemsStateListener(ReadStoriItemsStateListener listener) {
+        if(D)Log.d(TAG, "StoriService.registerReadStoriItemsStateListener");
+
+        if (!m_readStoriItemsStateListeners.contains(listener)) {
+            m_readStoriItemsStateListeners.add(listener);
+        }
+        if(D)Log.d(TAG, String.format("StoriService.registerReadStoriItemsStateListener: now have %d listeners", m_readStoriItemsStateListeners.size()));
+
+        // Send the current list immediately to the newly enlisted listener
+        listener.onReadStoriItemsComplete(m_storiListItems);
+    }
+
+    public void unregisterReadStoriItemsStateListener(ReadStoriItemsStateListener listener) {
+        if(D)Log.d(TAG, "StoriService.unregisterReadStoriItemsStateListener");
+
+        if (m_readStoriItemsStateListeners.contains(listener)) {
+            m_readStoriItemsStateListeners.remove(listener);
+        }
+        if(D)Log.d(TAG, String.format("StoriService.unregisterReadStoriItemsStateListener: now have %d listeners", m_readStoriItemsStateListeners.size()));
+    }
+
+    private class ReadStoriItemsTask extends AsyncTask<Object, Void, StoriListItem[]> {
+        @Override
+        public StoriListItem[] doInBackground(Object... params) {
+            if(D)Log.d(TAG, "StoriService.ReadStoriItemsTask.doInBackground");
+
+            return null;
+        }
+
+        @Override
+        public void onPostExecute(StoriListItem[] items) {
+            if(D)Log.d(TAG, "StoriService.ReadStoriItemsTask.onPostExecute");
+        }
+    }
+
+    public void readStoriItemsAsync() {
+        if(D)Log.d(TAG, "StoriService.readStoriItemsAsync");
+
+        try {
+            new ReadStoriItemsTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "StoriService.readStoriItemsAsync", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "StoriService.readStoriItemsAsync", e);
+            e.printStackTrace();
+        }
     }
 
     //********************************************************************************
