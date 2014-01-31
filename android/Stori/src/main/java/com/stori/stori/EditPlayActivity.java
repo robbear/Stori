@@ -451,6 +451,13 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         Utilities.shareShow(this, m_userUuid, m_slideShareName, title);
     }
 
+    public void launchStoriListActivity() {
+        if(D)Log.d(TAG, "EditPlayActivity.launchStoriListActivity");
+
+        Intent intent = new Intent(this, StoriListActivity.class);
+        startActivity(intent);
+    }
+
     public void launchSettingsActivity() {
         if(D)Log.d(TAG, "EditPlayActivity.launchSettingsActivity");
 

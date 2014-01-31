@@ -11,6 +11,9 @@
         android:id="@+id/menu_editplayactivity_share"
         android:title="@string/menu_editplayactivity_share" />
     <item
+        android:id="@+id/menu_editplayactivity_viewpublished"
+        android:title="@string/menu_editplayactivity_viewpublished" />
+    <item
         android:id="@+id/menu_editplayactivity_createnew"
         android:title="@string/menu_editplayactivity_createnew" />
     <item

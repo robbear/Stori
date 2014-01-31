@@ -312,6 +312,15 @@ public class EditPlayFragment extends Fragment implements
                     menu.removeItem(R.id.menu_editplayactivity_share);
                 }
 
+                MenuItem viewPublished = menu.findItem(R.id.menu_editplayactivity_viewpublished);
+                viewPublished.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        m_editPlayActivity.launchStoriListActivity();
+                        return true;
+                    }
+                });
+
                 MenuItem createNew = menu.findItem(R.id.menu_editplayactivity_createnew);
                 createNew.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
