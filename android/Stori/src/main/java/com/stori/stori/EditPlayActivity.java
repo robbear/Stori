@@ -837,8 +837,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         m_viewPager.setCurrentItem(m_currentTabPosition);
     }
 
-    public void onSaveComplete(CloudStore.SaveErrors se, SlideShareJSON ssj) {
-        if(D)Log.d(TAG, String.format("EditPlayActivity.onSaveComplete: se=%s", se));
+    public void onCloudStoreSaveComplete(CloudStore.SaveErrors se, SlideShareJSON ssj) {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.onCloudStoreSaveComplete: se=%s", se));
 
         if (ssj != null) {
             m_ssj = ssj;

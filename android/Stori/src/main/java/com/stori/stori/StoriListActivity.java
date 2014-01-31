@@ -6,11 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.stori.stori.cloudproviders.AmazonSharedPreferencesWrapper;
 
 import java.util.ArrayList;
 
@@ -36,6 +37,7 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
 
         PreferenceManager.setDefaultValues(this, SSPreferences.PREFS(this), Context.MODE_PRIVATE, R.xml.settings_screen, false);
         m_prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        m_userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
 
         if (savedInstanceState != null) {
             m_fOrientationChanged = savedInstanceState.getBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, false);
@@ -151,6 +153,8 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
 
             m_storiService = ((StoriService.StoriServiceBinder)service).getService();
             m_storiService.registerReadStoriItemsStateListener(StoriListActivity.this);
+
+            m_storiService.readStoriItemsAsync(StoriListActivity.this, m_userUuid);
         }
 
         public void onServiceDisconnected(ComponentName className)

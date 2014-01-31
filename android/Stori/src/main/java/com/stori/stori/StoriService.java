@@ -1,6 +1,7 @@
 package com.stori.stori;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -409,6 +410,18 @@ public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTi
         return m_storiListItems;
     }
 
+    private void reportReadStoriItemsComplete() {
+        if(D)Log.d(TAG, "StoriService.reportReadStoriItemsComplete");
+
+        // Clone the arraylist so that mods on the array list due to actions in the callback do
+        // not result in a ConcurrentModificationException.
+        ArrayList<ReadStoriItemsStateListener> readStoriItemsStateListeners = new ArrayList<ReadStoriItemsStateListener>(m_readStoriItemsStateListeners);
+
+        for (ReadStoriItemsStateListener rsl : readStoriItemsStateListeners) {
+            rsl.onReadStoriItemsComplete(m_storiListItems);
+        }
+    }
+
     public void registerReadStoriItemsStateListener(ReadStoriItemsStateListener listener) {
         if(D)Log.d(TAG, "StoriService.registerReadStoriItemsStateListener");
 
@@ -430,25 +443,44 @@ public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTi
         if(D)Log.d(TAG, String.format("StoriService.unregisterReadStoriItemsStateListener: now have %d listeners", m_readStoriItemsStateListeners.size()));
     }
 
-    private class ReadStoriItemsTask extends AsyncTask<Object, Void, StoriListItem[]> {
-        @Override
-        public StoriListItem[] doInBackground(Object... params) {
-            if(D)Log.d(TAG, "StoriService.ReadStoriItemsTask.doInBackground");
+    private class ReadStoriItemsTaskParams {
+        public Context m_context;
+        public String m_userUuid;
 
-            return null;
-        }
-
-        @Override
-        public void onPostExecute(StoriListItem[] items) {
-            if(D)Log.d(TAG, "StoriService.ReadStoriItemsTask.onPostExecute");
+        public ReadStoriItemsTaskParams(Context context, String userUuid) {
+            m_context = context;
+            m_userUuid = userUuid;
         }
     }
 
-    public void readStoriItemsAsync() {
+    private class ReadStoriItemsTask extends AsyncTask<Object, Void, ArrayList<StoriListItem>> {
+        @Override
+        public ArrayList<StoriListItem> doInBackground(Object... params) {
+            if(D)Log.d(TAG, "StoriService.ReadStoriItemsTask.doInBackground");
+
+            ReadStoriItemsTaskParams rsitp = (ReadStoriItemsTaskParams)params[0];
+
+            CloudStore cloudStore = new CloudStore(rsitp.m_context, rsitp.m_userUuid, null, Config.CLOUD_STORAGE_PROVIDER, null);
+
+            return cloudStore.readStoriItems();
+        }
+
+        @Override
+        public void onPostExecute(ArrayList<StoriListItem> items) {
+            if(D)Log.d(TAG, "StoriService.ReadStoriItemsTask.onPostExecute");
+
+            m_storiListItems = items;
+            reportReadStoriItemsComplete();
+        }
+    }
+
+    public void readStoriItemsAsync(Context context, String userUuid) {
         if(D)Log.d(TAG, "StoriService.readStoriItemsAsync");
 
+        ReadStoriItemsTaskParams rsitp = new ReadStoriItemsTaskParams(context, userUuid);
+
         try {
-            new ReadStoriItemsTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new ReadStoriItemsTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, rsitp);
         }
         catch (Exception e) {
             if(E)Log.e(TAG, "StoriService.readStoriItemsAsync", e);

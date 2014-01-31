@@ -12,12 +12,14 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.stori.stori.Config;
 import com.stori.stori.EditPlayActivity;
+import com.stori.stori.StoriListItem;
 import com.stori.stori.Utilities;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
@@ -49,6 +51,19 @@ public class AWSS3Provider implements ICloudProvider {
 
         m_s3Client = EditPlayActivity.s_amazonClientManager.s3();
         m_s3Client.setRegion(Region.getRegion(Regions.US_WEST_2));
+    }
+
+    public ArrayList<StoriListItem> getStoriItems() throws Exception {
+        if(D)Log.d(TAG, "AWSS3Provider.getStoriItems");
+
+        String prefix = m_userUuid + "/" + Config.directoryEntrySegmentString;
+        ObjectListing objects = m_s3Client.listObjects(BUCKET_NAME, prefix);
+
+        for (S3ObjectSummary summary : objects.getObjectSummaries()) {
+            if(D)Log.d(TAG, String.format("AWSS3Provider.getStoriItems: key=%s, date=%s", summary.getKey(), summary.getLastModified()));
+        }
+
+        return null;
     }
 
     public void deleteVirtualDirectory(String directoryName) throws Exception {

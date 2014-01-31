@@ -9,6 +9,7 @@ import com.stori.stori.cloudproviders.AWSS3Provider;
 import com.stori.stori.cloudproviders.AmazonClientManager;
 import com.stori.stori.cloudproviders.ICloudProvider;
 
+import java.util.ArrayList;
 import java.util.concurrent.RejectedExecutionException;
 
 import static com.stori.stori.Config.D;
@@ -23,10 +24,9 @@ public class CloudStore {
     String m_userUuid;
     ICloudStoreCallback m_callback;
     SlideShareJSON m_ssj;
-    boolean m_saveInProgress = false;
 
     public interface ICloudStoreCallback {
-        public void onSaveComplete(SaveErrors err, SlideShareJSON ssj);
+        public void onCloudStoreSaveComplete(SaveErrors err, SlideShareJSON ssj);
     }
 
     public enum SaveErrors {
@@ -112,7 +112,9 @@ public class CloudStore {
                 e.printStackTrace();
             }
 
-            m_callback.onSaveComplete(saveErrors, m_ssj);
+            if (m_callback != null) {
+                m_callback.onCloudStoreSaveComplete(saveErrors, m_ssj);
+            }
         }
     }
 
@@ -131,7 +133,7 @@ public class CloudStore {
 
         m_ssj = SlideShareJSON.load(m_context, m_slideShareName, Config.slideShareJSONFilename);
         if (m_ssj == null) {
-            m_callback.onSaveComplete(SaveErrors.Error_LoadJSON, null);
+            m_callback.onCloudStoreSaveComplete(SaveErrors.Error_LoadJSON, null);
             return;
         }
 
@@ -150,5 +152,37 @@ public class CloudStore {
             if(E)Log.e(TAG, "CloudStore.saveAsync", e);
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<StoriListItem> readStoriItems() {
+        if(D)Log.d(TAG, "CloudStore.readStoriItems");
+
+        ICloudProvider icp;
+
+        switch (Config.CLOUD_STORAGE_PROVIDER) {
+            default:
+            case AWS:
+                icp = new AWSS3Provider(m_context);
+                break;
+        }
+
+        ArrayList<StoriListItem> items = null;
+
+        try {
+            PreferenceManager.setDefaultValues(m_context, SSPreferences.PREFS(m_context), Context.MODE_PRIVATE, R.xml.settings_screen, false);
+            icp.initializeProvider(m_userUuid, PreferenceManager.getDefaultSharedPreferences(m_context));
+
+            items = icp.getStoriItems();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "CloudStore.readStoriItems");
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "CloudStore.readStoriItems");
+            e.printStackTrace();
+        }
+
+        return items;
     }
 }
