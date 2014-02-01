@@ -18,8 +18,10 @@ import com.stori.stori.Utilities;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
@@ -59,11 +61,47 @@ public class AWSS3Provider implements ICloudProvider {
         String prefix = m_userUuid + "/" + Config.directoryEntrySegmentString;
         ObjectListing objects = m_s3Client.listObjects(BUCKET_NAME, prefix);
 
+        ArrayList<StoriListItem> list = new ArrayList<StoriListItem>();
+
         for (S3ObjectSummary summary : objects.getObjectSummaries()) {
             if(D)Log.d(TAG, String.format("AWSS3Provider.getStoriItems: key=%s, date=%s", summary.getKey(), summary.getLastModified()));
+
+            int slideCount = 0;
+            String key = summary.getKey();
+
+            String slideShareName = getStringSegmentFromManifestsUrlString(key, Config.directoryEntrySegmentString);
+            String title = getStringSegmentFromManifestsUrlString(key, Config.titleSegmentString);
+            if (title != null) {
+                title = URLDecoder.decode(title, "UTF-8");
+            }
+            String countString = getStringSegmentFromManifestsUrlString(key, Config.slideCountSegmentString);
+            String dateString = summary.getLastModified().toString();
+            if (countString != null) {
+                slideCount = Integer.parseInt(countString);
+            }
+
+            StoriListItem item = new StoriListItem(slideShareName, title, dateString, slideCount);
+            list.add(item);
         }
 
-        return null;
+        return list;
+    }
+
+    private String getStringSegmentFromManifestsUrlString(String url, String segment) {
+        int index = url.indexOf(segment);
+        if (index <= 0) {
+            return null;
+        }
+
+        index += segment.length();
+        String partial = url.substring(index);
+
+        index = partial.indexOf("/");
+        if (index <= 0) {
+            index = partial.length();
+        }
+
+        return partial.substring(0, index);
     }
 
     public void deleteVirtualDirectory(String directoryName) throws Exception {

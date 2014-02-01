@@ -59,6 +59,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private int m_orientation;
     private boolean m_fOrientationChanged = false;
     private boolean m_fStartingPlaySlidesActivity = false;
+    private boolean m_fStartingStoriListActivity = false;
     private EditPlayMode m_editPlayMode = EditPlayMode.Edit;
     private ProgressDialog m_progressDialog = null;
     private StoriService m_storiService = null;
@@ -327,6 +328,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         super.onStart();
 
         m_fStartingPlaySlidesActivity = false;
+        m_fStartingStoriListActivity = false;
         initializeStoriService();
     }
 
@@ -454,6 +456,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     public void launchStoriListActivity() {
         if(D)Log.d(TAG, "EditPlayActivity.launchStoriListActivity");
 
+        m_fStartingStoriListActivity = true;
         Intent intent = new Intent(this, StoriListActivity.class);
         startActivity(intent);
     }
@@ -659,6 +662,10 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     //
     public void initializeForChangeInAccount() {
         if(D)Log.d(TAG, "EditPlayActivity.initializeForChangeInAccount");
+
+        if (m_storiService != null) {
+            m_storiService.resetStoriItems();
+        }
 
         initializeNewSlideShow();
     }
@@ -997,8 +1004,9 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         // Note: We might consider allowing StoriService to shut down and restart between
         // transitions between the two activities. This would be possible if there are no
         // Stori service semantics that need to run during the transition. If that's the
-        // case, we can remove the check for !m_fStartingPlaySlidesActivity in the conditional.
-        if (!m_fOrientationChanged && !m_fStartingPlaySlidesActivity)
+        // case, we can remove the check for
+        // !(m_fStartingPlaySlidesActivity || m_fStartinStoriListActivity) in the conditional.
+        if (!m_fOrientationChanged && !(m_fStartingPlaySlidesActivity || m_fStartingStoriListActivity))
         {
             if(D)Log.d(TAG, "EditPlayActivity.uninitializeStoriService - calling stopService");
             Intent service = new Intent(this, StoriService.class);

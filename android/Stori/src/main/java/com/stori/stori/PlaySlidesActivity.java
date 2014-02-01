@@ -422,7 +422,7 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         // Always call unbindService
         if (m_storiService != null && m_connection != null)
         {
-            if(D)Log.d(TAG, "EditPlayActivity.uninitializeStoriService - calling unbindService");
+            if(D)Log.d(TAG, "PlaySlidesActivity.uninitializeStoriService - calling unbindService");
             unbindService(m_connection);
         }
 

@@ -100,6 +100,19 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
 
     public void onReadStoriItemsComplete(ArrayList<StoriListItem> storiListItems) {
         if(D)Log.d(TAG, "StoriListActivity.onReadStoriItemsComplete");
+
+        if (storiListItems == null) {
+            if(D)Log.d(TAG, "StoriListActivity.onReadStoriItemsComplete: storiListItems is null, so bailing");
+            return;
+        }
+        else {
+            if(D)Log.d(TAG, String.format("StoriListActivity.onReadStoriItemsComplete: found %d items", storiListItems.size()));
+        }
+
+        for (int i = 0; i < storiListItems.size(); i++) {
+            StoriListItem sli = storiListItems.get(i);
+            if(D)Log.d(TAG, String.format("****** slideShareName=%s, title=%s, slideCount=%d, date=%s", sli.getSlideShareName(), sli.getTitle(), sli.getSlideCount(), sli.getModifiedDate()));
+        }
     }
 
     protected void initializeStoriService()
@@ -110,7 +123,7 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
 
         // Call startService always, unless we are dealing with an orientation change.
         if (!m_fOrientationChanged) {
-            if(D)Log.d(TAG, "StoriListActivity.initializeStoriService - calling startService in order to stay connected due to orientation change");
+            if(D)Log.d(TAG, "StoriListActivity.initialzeStoriService - calling startService in order to stay connected due to orientation change");
             startService(service);
         }
 
@@ -124,23 +137,15 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
     {
         if(D)Log.d(TAG, String.format("StoriListActivity.uninitializeStoriService: m_fOrientationChanged=%b", m_fOrientationChanged));
 
+        if (m_storiService != null) {
+            m_storiService.unregisterReadStoriItemsStateListener(this);
+        }
+
         // Always call unbindService
         if (m_storiService != null && m_connection != null)
         {
             if(D)Log.d(TAG, "StoriListActivity.uninitializeStoriService - calling unbindService");
             unbindService(m_connection);
-        }
-
-        if (m_storiService != null) {
-            m_storiService.unregisterReadStoriItemsStateListener(this);
-        }
-
-        // Call stopService if we're not dealing with an orientation change
-        if (!m_fOrientationChanged)
-        {
-            if(D)Log.d(TAG, "StoriListActivity.uninitializeStoriService - calling stopService");
-            Intent service = new Intent(this, StoriService.class);
-            stopService(service);
         }
 
         m_storiService = null;
@@ -154,7 +159,15 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
             m_storiService = ((StoriService.StoriServiceBinder)service).getService();
             m_storiService.registerReadStoriItemsStateListener(StoriListActivity.this);
 
-            m_storiService.readStoriItemsAsync(StoriListActivity.this, m_userUuid);
+            ArrayList<StoriListItem> sli = m_storiService.getStoriListItems();
+            if (sli == null || sli.size() <= 0) {
+                if(D)Log.d(TAG, "StoriListActivity.onServiceConnected - no StoriListItems, so asking StoriService to update");
+                m_storiService.readStoriItemsAsync(StoriListActivity.this, m_userUuid);
+            }
+            else {
+                if(D)Log.d(TAG, "StoriListActivity.onServiceConnected - using StoriService StoriListItems cache");
+                onReadStoriItemsComplete(sli);
+            }
         }
 
         public void onServiceDisconnected(ComponentName className)

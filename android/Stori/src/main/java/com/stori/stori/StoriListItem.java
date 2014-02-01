@@ -11,22 +11,41 @@ public class StoriListItem implements Parcelable {
 
     private String m_slideShareName;
     private String m_title;
+    private String m_modifiedDate;
     private int m_countSlides;
+
+    public String getSlideShareName() {
+        return m_slideShareName;
+    }
+
+    public String getTitle() {
+        return m_title;
+    }
+
+    public String getModifiedDate() {
+        return m_modifiedDate;
+    }
+
+    public int getSlideCount() {
+        return m_countSlides;
+    }
 
     public StoriListItem(Parcel in) {
         // Remember: order matters for Parcelable
         m_slideShareName = in.readString();
         m_title = in.readString();
+        m_modifiedDate = in.readString();
         m_countSlides = in.readInt();
 
-        if(D)Log.d(TAG, String.format("StoriListItem constructor with parcel: slideShareName=%s, title=%s, countSlides=%d", m_slideShareName, m_title, m_countSlides));
+        if(D)Log.d(TAG, String.format("StoriListItem constructor with parcel: slideShareName=%s, title=%s, date=%s, countSlides=%d", m_slideShareName, m_title, m_modifiedDate, m_countSlides));
     }
 
-    public StoriListItem(String slideShareName, String title, int countSlides) {
-        if(D)Log.d(TAG, String.format("StoriListItem constructor: slideShareName=%s, title=%s, countSlides=%d", slideShareName, title, countSlides));
+    public StoriListItem(String slideShareName, String title, String modifiedDate, int countSlides) {
+        if(D)Log.d(TAG, String.format("StoriListItem constructor: slideShareName=%s, title=%s, modifiedDate=%s, countSlides=%d", slideShareName, title, modifiedDate, countSlides));
 
         m_slideShareName = slideShareName;
         m_title = title;
+        m_modifiedDate = modifiedDate;
         m_countSlides = countSlides;
     }
 
@@ -37,6 +56,7 @@ public class StoriListItem implements Parcelable {
         // Remember: order matters for Parcelable
         dest.writeString(m_slideShareName);
         dest.writeString(m_title);
+        dest.writeString(m_modifiedDate);
         dest.writeInt(m_countSlides);
     }
 

@@ -429,9 +429,6 @@ public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTi
             m_readStoriItemsStateListeners.add(listener);
         }
         if(D)Log.d(TAG, String.format("StoriService.registerReadStoriItemsStateListener: now have %d listeners", m_readStoriItemsStateListeners.size()));
-
-        // Send the current list immediately to the newly enlisted listener
-        listener.onReadStoriItemsComplete(m_storiListItems);
     }
 
     public void unregisterReadStoriItemsStateListener(ReadStoriItemsStateListener listener) {
@@ -457,6 +454,12 @@ public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTi
         @Override
         public ArrayList<StoriListItem> doInBackground(Object... params) {
             if(D)Log.d(TAG, "StoriService.ReadStoriItemsTask.doInBackground");
+
+            if (m_storiListItems != null && m_storiListItems.size() > 1) {
+                if(D)Log.d(TAG, "StoriService.REadStoriItemsTask.doInBackground - reusing from cache");
+
+                return m_storiListItems;
+            }
 
             ReadStoriItemsTaskParams rsitp = (ReadStoriItemsTaskParams)params[0];
 
@@ -490,6 +493,12 @@ public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTi
             if(E)Log.e(TAG, "StoriService.readStoriItemsAsync", e);
             e.printStackTrace();
         }
+    }
+
+    public void resetStoriItems() {
+        if(D)Log.d(TAG, "StoriService.resetStoriItems");
+
+        m_storiListItems = new ArrayList<StoriListItem>();
     }
 
     //********************************************************************************
