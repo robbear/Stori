@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_storilistitem_play"
+        android:title="@string/menu_storilistitem_play_format" />
+    <item
+        android:id="@+id/menu_storilistitem_edit"
+        android:title="@string/menu_storilistitem_edit_format" />
+    <item
+        android:id="@+id/menu_storilistitem_share"
+        android:title="@string/menu_storilistitem_share_format" />
+    <item
+        android:id="@+id/menu_storilistitem_delete"
+        android:title="@string/menu_storilistitem_delete_format" />
+</menu>

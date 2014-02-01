@@ -40,6 +40,10 @@
     <string name="menu_playslidesactivity_savephoto">Save this photo</string>
     <string name="menu_playslidesactivity_saveallphotos">Save all photos</string>
     <string name="menu_playslidesactivity_settings">Settings</string>
+    <string name="menu_storilistitem_play_format">View \"%1$s\"</string>
+    <string name="menu_storilistitem_edit_format">Edit \"%1$s\"</string>
+    <string name="menu_storilistitem_share_format">Share \"%1$s\"</string>
+    <string name="menu_storilistitem_delete_format">Delete \"%1$s\"</string>
     <string name="publish_dialog_title">Publish</string>
     <string name="publish_dialog_message">Ok to publish?</string>
     <string name="settings_autoaudio_title">Play audio automatically</string>

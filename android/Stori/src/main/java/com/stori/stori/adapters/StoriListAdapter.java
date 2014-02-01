@@ -3,9 +3,12 @@ package com.stori.stori.adapters;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.stori.stori.R;
@@ -69,7 +72,7 @@ public class StoriListAdapter extends BaseAdapter {
             convertView = m_inflater.inflate(R.layout.item_storiitem, parent, false);
         }
 
-        StoriListItem sli = (StoriListItem)getItem(position);
+        final StoriListItem sli = (StoriListItem)getItem(position);
         if (sli == null) {
             if(D)Log.d(TAG, "StoriListAdapter.getView - got null for child item, so bailing");
             return null;
@@ -86,6 +89,58 @@ public class StoriListAdapter extends BaseAdapter {
         countView.setText(count == 1 ?
                 m_context.getString(R.string.storilistadapter_count_text_single) :
                 String.format(m_context.getString(R.string.storilistadapter_count_text_format, count)));
+
+        convertView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(D)Log.d(TAG, "StoriListAdapter.onLongClick");
+
+                PopupMenu pm = new PopupMenu(m_context, view);
+                pm.inflate(R.menu.menu_storilistitem);
+                Menu menu = pm.getMenu();
+
+                MenuItem play = menu.findItem(R.id.menu_storilistitem_play);
+                play.setTitle(String.format(m_context.getString(R.string.menu_storilistitem_play_format), sli.getTitle()));
+                play.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+
+                        return true;
+                    }
+                });
+
+                MenuItem edit = menu.findItem(R.id.menu_storilistitem_edit);
+                edit.setTitle(String.format(m_context.getString(R.string.menu_storilistitem_edit_format), sli.getTitle()));
+                edit.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        return true;
+                    }
+                });
+
+                MenuItem share = menu.findItem(R.id.menu_storilistitem_share);
+                share.setTitle(String.format(m_context.getString(R.string.menu_storilistitem_share_format), sli.getTitle()));
+                share.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        return true;
+                    }
+                });
+
+                MenuItem delete = menu.findItem(R.id.menu_storilistitem_delete);
+                delete.setTitle(String.format(m_context.getString(R.string.menu_storilistitem_delete_format), sli.getTitle()));
+                delete.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        return true;
+                    }
+                });
+
+                pm.show();
+
+                return true;
+            }
+        });
 
         return convertView;
     }
