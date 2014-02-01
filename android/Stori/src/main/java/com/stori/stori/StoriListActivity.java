@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.stori.stori.adapters.StoriListAdapter;
 import com.stori.stori.cloudproviders.AmazonSharedPreferencesWrapper;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
     public final static String INSTANCE_STATE_ORIENTATION_CHANGED = "instance_state_orientation_changed";
 
     private String m_userUuid = null;
+    private StoriListAdapter m_adapter;
     private SharedPreferences m_prefs;
     private int m_orientation;
     private boolean m_fOrientationChanged = false;
@@ -42,6 +44,9 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
         if (savedInstanceState != null) {
             m_fOrientationChanged = savedInstanceState.getBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, false);
         }
+
+        m_adapter = new StoriListAdapter(this);
+        setListAdapter(m_adapter);
     }
 
     @Override
@@ -102,17 +107,22 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
         if(D)Log.d(TAG, "StoriListActivity.onReadStoriItemsComplete");
 
         if (storiListItems == null) {
-            if(D)Log.d(TAG, "StoriListActivity.onReadStoriItemsComplete: storiListItems is null, so bailing");
-            return;
+            if(D)Log.d(TAG, "StoriListActivity.onReadStoriItemsComplete: storiListItems is null");
         }
         else {
             if(D)Log.d(TAG, String.format("StoriListActivity.onReadStoriItemsComplete: found %d items", storiListItems.size()));
         }
 
-        for (int i = 0; i < storiListItems.size(); i++) {
-            StoriListItem sli = storiListItems.get(i);
-            if(D)Log.d(TAG, String.format("****** slideShareName=%s, title=%s, slideCount=%d, date=%s", sli.getSlideShareName(), sli.getTitle(), sli.getSlideCount(), sli.getModifiedDate()));
+        if (storiListItems != null) {
+            for (int i = 0; i < storiListItems.size(); i++) {
+                StoriListItem sli = storiListItems.get(i);
+                if(D)Log.d(TAG, String.format("****** slideShareName=%s, title=%s, slideCount=%d, date=%s", sli.getSlideShareName(), sli.getTitle(), sli.getSlideCount(), sli.getModifiedDate()));
+            }
         }
+
+        m_adapter.setStoriListItems(storiListItems);
+        m_adapter.notifyDataSetChanged();
+        getListView().requestFocus();
     }
 
     protected void initializeStoriService()
