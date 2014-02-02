@@ -32,11 +32,13 @@ import static com.stori.stori.Config.E;
 public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher.ViewFactory {
     public final static String TAG = "PlaySlidesActivity";
     public final static String EXTRA_FROMURL = "extra_from_url";
+    public final static String EXTRA_INTENTFROMSTORIAPP = "extra_intentfromstoriapp";
 
     private final static String INSTANCE_STATE_CURRENT_TAB = "instance_state_current_tab";
     private final static String INSTANCE_STATE_ORIENTATION_CHANGED = "instance_state_orientation_changed";
     private final static String INSTANCE_STATE_IS_FROM_URL = "instance_state_is_from_url";
     private final static String INSTANCE_STATE_IS_OVERLAY_VISIBLE = "instance_state_is_overlay_visible";
+    private final static String INSTANCE_STATE_INTENT_FROM_STORIAPP = "instance_state_intent_from_storiapp";
 
     private SharedPreferences m_prefs;
     private SlideShareJSON m_ssj;
@@ -50,6 +52,7 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
     private int m_orientation;
     private boolean m_fOrientationChanged = false;
     private boolean m_isFromUrl = false;
+    private boolean m_intentFromStoriApp = false;
     private StoriService m_storiService = null;
     private ArrayList<StoriService.StoriServiceConnectionListener> m_storiServiceConnectionListeners = new ArrayList<StoriService.StoriServiceConnectionListener>();
 
@@ -75,6 +78,7 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         setContentView(R.layout.activity_playslides);
 
         m_isFromUrl = getIntent().getBooleanExtra(EXTRA_FROMURL, false);
+        m_intentFromStoriApp = getIntent().getBooleanExtra(EXTRA_INTENTFROMSTORIAPP, false);
 
         if (m_isFromUrl) {
             m_slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), SSPreferences.DEFAULT_PLAYSLIDESNAME(this));
@@ -104,6 +108,7 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
             m_fOrientationChanged = savedInstanceState.getBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, false);
             m_isFromUrl = savedInstanceState.getBoolean(INSTANCE_STATE_IS_FROM_URL, false);
             m_fOverlayVisible = savedInstanceState.getBoolean(INSTANCE_STATE_IS_OVERLAY_VISIBLE, true);
+            m_intentFromStoriApp = savedInstanceState.getBoolean(INSTANCE_STATE_INTENT_FROM_STORIAPP, false);
             if(D)Log.d(TAG, String.format("PlaySlidesActivity.onCreate - loading from savedInstanceState. m_isFromUrl=%b", m_isFromUrl));
         }
 
@@ -160,6 +165,8 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         if (savedInstanceState != null) {
             m_viewPager.setCurrentItem(m_currentTabPosition);
         }
+
+        initializeStoriService();
     }
 
     @Override
@@ -167,6 +174,8 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         if(D)Log.d(TAG, "PlaySlidesActivity.onDestroy");
 
         super.onDestroy();
+
+        uninitializeStoriService();
     }
 
     @Override
@@ -175,7 +184,7 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
 
         super.onStart();
 
-        initializeStoriService();
+        m_fOrientationChanged = false;
     }
 
     @Override
@@ -183,8 +192,6 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         if(D)Log.d(TAG, "PlaySlidesActivity.onStop");
 
         super.onStop();
-
-        uninitializeStoriService();
     }
 
     @Override
@@ -219,6 +226,7 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         savedInstanceState.putBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, m_fOrientationChanged);
         savedInstanceState.putBoolean(INSTANCE_STATE_IS_FROM_URL, m_isFromUrl);
         savedInstanceState.putBoolean(INSTANCE_STATE_IS_OVERLAY_VISIBLE, m_fOverlayVisible);
+        savedInstanceState.putBoolean(INSTANCE_STATE_INTENT_FROM_STORIAPP, m_intentFromStoriApp);
     }
 
     @Override
@@ -401,17 +409,8 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
 
         Intent service = new Intent(this, StoriService.class);
 
-        // Call startService always, unless we are dealing with an orientation change. We call
-        // startService in both the case of being launched from a URL, as well as being launched
-        // from EditPlayActivity.
-        if (!m_fOrientationChanged) {
-            if(D)Log.d(TAG, "PlaySlidesActivity.initializeStoriService - calling startService in order to stay connected due to orientation change");
-            startService(service);
-        }
-
-        m_fOrientationChanged = false;
-
-        if(D)Log.d(TAG, "PlaySlidesActivity.initializeStoriService - calling bindService");
+        if(D)Log.d(TAG, "PlaySlidesActivity.initializeStoriService - calling startService and bindService");
+        startService(service);
         bindService(service, m_connection, Context.BIND_AUTO_CREATE);
     }
 
@@ -426,12 +425,9 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
             unbindService(m_connection);
         }
 
-        // Call stopService if we're not dealing with an orientation change AND PlaySlidesActivity
-        // was launched from a play url. We do not want to call stopService if PlaySlidesActivity
-        // was invoked from EditPlayActivity.
-        if (!m_fOrientationChanged && m_isFromUrl)
-        {
-            if(D)Log.d(TAG, "PlaySlidesActivity.uninitializeStoriService - calling stopService");
+        // Call stopService only when finishing AND when we're started by external URL
+        if (isFinishing() && m_isFromUrl && !m_intentFromStoriApp) {
+            if(D)Log.d(TAG, "EditPlayActivity.uninitializeStoriService - calling stopService");
             Intent service = new Intent(this, StoriService.class);
             stopService(service);
         }

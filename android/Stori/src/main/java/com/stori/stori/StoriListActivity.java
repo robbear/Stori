@@ -22,13 +22,9 @@ import static com.stori.stori.Config.E;
 public class StoriListActivity extends ListActivity implements StoriService.ReadStoriItemsStateListener {
     public final static String TAG = "StoriListActivity";
 
-    public final static String INSTANCE_STATE_ORIENTATION_CHANGED = "instance_state_orientation_changed";
-
     private String m_userUuid = null;
     private StoriListAdapter m_adapter;
     private SharedPreferences m_prefs;
-    private int m_orientation;
-    private boolean m_fOrientationChanged = false;
     private StoriService m_storiService = null;
 
     @Override
@@ -41,12 +37,10 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
         m_prefs = PreferenceManager.getDefaultSharedPreferences(this);
         m_userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
 
-        if (savedInstanceState != null) {
-            m_fOrientationChanged = savedInstanceState.getBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, false);
-        }
-
         m_adapter = new StoriListAdapter(this, m_userUuid);
         setListAdapter(m_adapter);
+
+        initializeStoriService();
     }
 
     @Override
@@ -56,9 +50,6 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
         super.onSaveInstanceState(savedInstanceState);
 
         int orientation = getResources().getConfiguration().orientation;
-        m_fOrientationChanged = m_orientation != orientation;
-
-        savedInstanceState.putBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, m_fOrientationChanged);
     }
 
     @Override
@@ -66,6 +57,8 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
         if(D)Log.d(TAG, "StoriListActivity.onDestroy");
 
         super.onDestroy();
+
+        uninitializeStoriService();
     }
 
     @Override
@@ -82,8 +75,6 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
         if(D)Log.d(TAG, "StoriListActivity.onStop");
 
         super.onStop();
-
-        uninitializeStoriService();
     }
 
     @Override
@@ -91,9 +82,6 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
         if(D)Log.d(TAG, "StoriListActivity.onResume");
 
         super.onResume();
-
-        m_orientation = getResources().getConfiguration().orientation;
-        if(D)Log.d(TAG, String.format("StoriListActivity.onResume: orientation = %d", m_orientation));
     }
 
     @Override
@@ -131,21 +119,14 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
 
         Intent service = new Intent(this, StoriService.class);
 
-        // Call startService always, unless we are dealing with an orientation change.
-        if (!m_fOrientationChanged) {
-            if(D)Log.d(TAG, "StoriListActivity.initialzeStoriService - calling startService in order to stay connected due to orientation change");
-            startService(service);
-        }
-
-        m_fOrientationChanged = false;
-
-        if(D)Log.d(TAG, "StoriListActivity.initializeStoriService - calling bindService");
+        if(D)Log.d(TAG, "StoriListActivity.initializeStoriService - calling startService and bindService");
+        startService(service);
         bindService(service, m_connection, Context.BIND_AUTO_CREATE);
     }
 
     protected void uninitializeStoriService()
     {
-        if(D)Log.d(TAG, String.format("StoriListActivity.uninitializeStoriService: m_fOrientationChanged=%b", m_fOrientationChanged));
+        if(D)Log.d(TAG, "StoriListActivity.uninitializeStoriService");
 
         if (m_storiService != null) {
             m_storiService.unregisterReadStoriItemsStateListener(this);

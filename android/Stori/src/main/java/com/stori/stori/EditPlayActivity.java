@@ -58,8 +58,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private int m_currentTabPosition = 0;
     private int m_orientation;
     private boolean m_fOrientationChanged = false;
-    private boolean m_fStartingPlaySlidesActivity = false;
-    private boolean m_fStartingStoriListActivity = false;
     private EditPlayMode m_editPlayMode = EditPlayMode.Edit;
     private ProgressDialog m_progressDialog = null;
     private StoriService m_storiService = null;
@@ -224,6 +222,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             if(E)Log.e(TAG, "EditPlayActivity.onCreate", e);
             e.printStackTrace();
         }
+
+        initializeStoriService();
     }
 
     public String getSlidesTitle() {
@@ -319,6 +319,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         if(D)Log.d(TAG, "EditPlayActivity.onDestroy");
 
         super.onDestroy();
+
+        uninitializeStoriService();
     }
 
     @Override
@@ -327,9 +329,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         super.onStart();
 
-        m_fStartingPlaySlidesActivity = false;
-        m_fStartingStoriListActivity = false;
-        initializeStoriService();
+        m_fOrientationChanged = false;
     }
 
     @Override
@@ -337,8 +337,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         if(D)Log.d(TAG, "EditPlayActivity.onStop");
 
         super.onStop();
-
-        uninitializeStoriService();
     }
 
     @Override
@@ -409,7 +407,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     public void previewSlides() {
         if(D)Log.d(TAG, "EditPlayActivity.previewSlides");
 
-        m_fStartingPlaySlidesActivity = true;
         Intent intent = new Intent(EditPlayActivity.this, PlaySlidesActivity.class);
         startActivity(intent);
     }
@@ -456,7 +453,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     public void launchStoriListActivity() {
         if(D)Log.d(TAG, "EditPlayActivity.launchStoriListActivity");
 
-        m_fStartingStoriListActivity = true;
         Intent intent = new Intent(this, StoriListActivity.class);
         startActivity(intent);
     }
@@ -974,16 +970,9 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         Intent service = new Intent(this, StoriService.class);
 
-        // We call startService always, unless this is due to a change in orientation.
-        if (!m_fOrientationChanged) {
-            if(D)Log.d(TAG, "EditPlayActivity.initializeStoriService - calling startService in order to stay connected due to orientation change");
-            startService(service);
-        }
-
-        m_fOrientationChanged = false;
-
-        // We always call bindService.
-        if(D)Log.d(TAG, "EditPlayActivity.initializeStoriService - calling bindService");
+        // We always call startService and bindService.
+        if(D)Log.d(TAG, "EditPlayActivity.initializeStoriService - calling startService and bindService");
+        startService(service);
         bindService(service, m_connection, Context.BIND_AUTO_CREATE);
     }
 
@@ -997,17 +986,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             unbindService(m_connection);
         }
 
-        // We call stopService UNLESS we're dealing with an orientation change, OR we're
-        // launching PlaySlidesActivity. This will keep the instance of StoriService running
-        // in transitions between EditPlayActivity and PlaySlidesActivity.
-        //
-        // Note: We might consider allowing StoriService to shut down and restart between
-        // transitions between the two activities. This would be possible if there are no
-        // Stori service semantics that need to run during the transition. If that's the
-        // case, we can remove the check for
-        // !(m_fStartingPlaySlidesActivity || m_fStartinStoriListActivity) in the conditional.
-        if (!m_fOrientationChanged && !(m_fStartingPlaySlidesActivity || m_fStartingStoriListActivity))
-        {
+        // Call stopService only when finishing
+        if (isFinishing()) {
             if(D)Log.d(TAG, "EditPlayActivity.uninitializeStoriService - calling stopService");
             Intent service = new Intent(this, StoriService.class);
             stopService(service);

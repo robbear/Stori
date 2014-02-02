@@ -36,7 +36,9 @@ public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTi
 
     @Override
     public void onDestroy() {
+        if(D)Log.d(TAG, "**************************************************");
         if(D)Log.d(TAG, "StoriService.onDestroy");
+        if(D)Log.d(TAG, "**************************************************");
     }
 
     public interface StoriServiceConnectionListener {

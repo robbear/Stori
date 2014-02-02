@@ -40,6 +40,7 @@ public class DownloadActivity extends FragmentActivity {
     private ArrayList<String> m_urlsToDownload;
     private int m_numberOfResources = 0;
     private int m_currentResourceDownloadIndex = 0;
+    private boolean m_intentFromStoriApp = false;
     private SharedPreferences m_prefs;
 
     @Override
@@ -69,6 +70,9 @@ public class DownloadActivity extends FragmentActivity {
 
         final String action = intent.getAction();
         if(D)Log.d(TAG, String.format("DownloadActivity.onCreate: action=%s", action));
+
+        m_intentFromStoriApp = intent.getBooleanExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, false);
+        if(D)Log.d(TAG, String.format("DownloadActivity.onCreate: m_intentFromStoriApp=%b", m_intentFromStoriApp));
 
         if (Intent.ACTION_VIEW.equals(action)) {
             if(D)Log.d(TAG, String.format("DownloadActivity.onCreate: data=%s", intent.getData().toString()));
@@ -105,6 +109,7 @@ public class DownloadActivity extends FragmentActivity {
 
                 Intent intentPlay = new Intent(this, PlaySlidesActivity.class);
                 intentPlay.putExtra(PlaySlidesActivity.EXTRA_FROMURL, true);
+                intentPlay.putExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, m_intentFromStoriApp);
                 startActivity(intentPlay);
 
                 finish();
@@ -339,6 +344,7 @@ public class DownloadActivity extends FragmentActivity {
 
                 Intent intent = new Intent(DownloadActivity.this, PlaySlidesActivity.class);
                 intent.putExtra(PlaySlidesActivity.EXTRA_FROMURL, true);
+                intent.putExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, m_intentFromStoriApp);
                 DownloadActivity.this.startActivity(intent);
 
                 finish();

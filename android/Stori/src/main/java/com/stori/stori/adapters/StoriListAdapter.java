@@ -14,6 +14,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.stori.stori.DownloadActivity;
+import com.stori.stori.PlaySlidesActivity;
 import com.stori.stori.R;
 import com.stori.stori.StoriListItem;
 import com.stori.stori.Utilities;
@@ -110,6 +111,7 @@ public class StoriListAdapter extends BaseAdapter {
                     public boolean onMenuItemClick(MenuItem item) {
                         Intent intent = new Intent(m_context, DownloadActivity.class);
                         intent.setAction(Intent.ACTION_VIEW);
+                        intent.putExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, true);
                         String urlString = Utilities.buildShowWebPageUrlString(m_userUuid, sli.getSlideShareName());
                         if(D)Log.d(TAG, String.format("StoriListAdapter.onPlayMenuClicked: urlString=%s", urlString));
                         Uri uri = Uri.parse(urlString);
