@@ -45,7 +45,7 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
             m_fOrientationChanged = savedInstanceState.getBoolean(INSTANCE_STATE_ORIENTATION_CHANGED, false);
         }
 
-        m_adapter = new StoriListAdapter(this);
+        m_adapter = new StoriListAdapter(this, m_userUuid);
         setListAdapter(m_adapter);
     }
 

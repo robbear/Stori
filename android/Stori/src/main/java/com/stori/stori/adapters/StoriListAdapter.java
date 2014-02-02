@@ -1,6 +1,8 @@
 package com.stori.stori.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,10 +13,10 @@ import android.widget.BaseAdapter;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.stori.stori.DownloadActivity;
 import com.stori.stori.R;
 import com.stori.stori.StoriListItem;
-
-import org.w3c.dom.Text;
+import com.stori.stori.Utilities;
 
 import java.util.ArrayList;
 
@@ -27,11 +29,13 @@ public class StoriListAdapter extends BaseAdapter {
     private Context m_context;
     private LayoutInflater m_inflater;
     private ArrayList<StoriListItem> m_storiListItems;
+    private String m_userUuid;
 
-    public StoriListAdapter(Context context) {
+    public StoriListAdapter(Context context, String userUuid) {
         if(D)Log.d(TAG, "StoriListAdapter constructor");
 
         m_context = context;
+        m_userUuid = userUuid;
         m_inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -104,7 +108,13 @@ public class StoriListAdapter extends BaseAdapter {
                 play.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-
+                        Intent intent = new Intent(m_context, DownloadActivity.class);
+                        intent.setAction(Intent.ACTION_VIEW);
+                        String urlString = Utilities.buildShowWebPageUrlString(m_userUuid, sli.getSlideShareName());
+                        if(D)Log.d(TAG, String.format("StoriListAdapter.onPlayMenuClicked: urlString=%s", urlString));
+                        Uri uri = Uri.parse(urlString);
+                        intent.setData(uri);
+                        m_context.startActivity(intent);
                         return true;
                     }
                 });
@@ -123,6 +133,7 @@ public class StoriListAdapter extends BaseAdapter {
                 share.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
+                        Utilities.shareShow(m_context, m_userUuid, sli.getSlideShareName(), sli.getTitle());
                         return true;
                     }
                 });

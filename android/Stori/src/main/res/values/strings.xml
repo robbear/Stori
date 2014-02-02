@@ -33,7 +33,7 @@
     <string name="menu_editplayactivity_settings">Settings</string>
     <string name="menu_editplayactivity_share">Share</string>
     <string name="menu_editplayactivity_switchaccount">Switch account</string>
-    <string name="menu_editplayactivity_viewpublished">View published</string>
+    <string name="menu_editplayactivity_viewpublished">List my Storis</string>
     <string name="menu_editplay_trash_deleteslide">Remove slide</string>
     <string name="menu_editplay_trash_deleteimage">Remove image</string>
     <string name="menu_editplay_trash_deleteaudio">Remove audio</string>
