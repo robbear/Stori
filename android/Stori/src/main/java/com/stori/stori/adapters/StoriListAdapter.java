@@ -14,8 +14,10 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.stori.stori.DownloadActivity;
+import com.stori.stori.EditPlayActivity;
 import com.stori.stori.PlaySlidesActivity;
 import com.stori.stori.R;
+import com.stori.stori.StoriListActivity;
 import com.stori.stori.StoriListItem;
 import com.stori.stori.Utilities;
 
@@ -27,17 +29,17 @@ import static com.stori.stori.Config.E;
 public class StoriListAdapter extends BaseAdapter {
     public final static String TAG = "StoriListAdapter";
 
-    private Context m_context;
+    private StoriListActivity m_storiListActivity;
     private LayoutInflater m_inflater;
     private ArrayList<StoriListItem> m_storiListItems;
     private String m_userUuid;
 
-    public StoriListAdapter(Context context, String userUuid) {
+    public StoriListAdapter(StoriListActivity storiListActivity, String userUuid) {
         if(D)Log.d(TAG, "StoriListAdapter constructor");
 
-        m_context = context;
+        m_storiListActivity = storiListActivity;
         m_userUuid = userUuid;
-        m_inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        m_inflater = (LayoutInflater)storiListActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public void setStoriListItems(ArrayList<StoriListItem> items) {
@@ -92,56 +94,50 @@ public class StoriListAdapter extends BaseAdapter {
         int count = sli.getSlideCount();
         TextView countView = (TextView)convertView.findViewById(R.id.text_count);
         countView.setText(count == 1 ?
-                m_context.getString(R.string.storilistadapter_count_text_single) :
-                String.format(m_context.getString(R.string.storilistadapter_count_text_format, count)));
+                m_storiListActivity.getString(R.string.storilistadapter_count_text_single) :
+                String.format(m_storiListActivity.getString(R.string.storilistadapter_count_text_format, count)));
 
         convertView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 if(D)Log.d(TAG, "StoriListAdapter.onLongClick");
 
-                PopupMenu pm = new PopupMenu(m_context, view);
+                PopupMenu pm = new PopupMenu(m_storiListActivity, view);
                 pm.inflate(R.menu.menu_storilistitem);
                 Menu menu = pm.getMenu();
 
                 MenuItem play = menu.findItem(R.id.menu_storilistitem_play);
-                play.setTitle(String.format(m_context.getString(R.string.menu_storilistitem_play_format), sli.getTitle()));
+                play.setTitle(String.format(m_storiListActivity.getString(R.string.menu_storilistitem_play_format), sli.getTitle()));
                 play.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        Intent intent = new Intent(m_context, DownloadActivity.class);
-                        intent.setAction(Intent.ACTION_VIEW);
-                        intent.putExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, true);
-                        String urlString = Utilities.buildShowWebPageUrlString(m_userUuid, sli.getSlideShareName());
-                        if(D)Log.d(TAG, String.format("StoriListAdapter.onPlayMenuClicked: urlString=%s", urlString));
-                        Uri uri = Uri.parse(urlString);
-                        intent.setData(uri);
-                        m_context.startActivity(intent);
+                        m_storiListActivity.downloadForPlay(sli);
                         return true;
                     }
                 });
 
                 MenuItem edit = menu.findItem(R.id.menu_storilistitem_edit);
-                edit.setTitle(String.format(m_context.getString(R.string.menu_storilistitem_edit_format), sli.getTitle()));
+                edit.setTitle(String.format(m_storiListActivity.getString(R.string.menu_storilistitem_edit_format), sli.getTitle()));
                 edit.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
+                        m_storiListActivity.downloadForEdit(sli);
                         return true;
                     }
                 });
 
                 MenuItem share = menu.findItem(R.id.menu_storilistitem_share);
-                share.setTitle(String.format(m_context.getString(R.string.menu_storilistitem_share_format), sli.getTitle()));
+                share.setTitle(String.format(m_storiListActivity.getString(R.string.menu_storilistitem_share_format), sli.getTitle()));
                 share.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        Utilities.shareShow(m_context, m_userUuid, sli.getSlideShareName(), sli.getTitle());
+                        Utilities.shareShow(m_storiListActivity, m_userUuid, sli.getSlideShareName(), sli.getTitle());
                         return true;
                     }
                 });
 
                 MenuItem delete = menu.findItem(R.id.menu_storilistitem_delete);
-                delete.setTitle(String.format(m_context.getString(R.string.menu_storilistitem_delete_format), sli.getTitle()));
+                delete.setTitle(String.format(m_storiListActivity.getString(R.string.menu_storilistitem_delete_format), sli.getTitle()));
                 delete.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {

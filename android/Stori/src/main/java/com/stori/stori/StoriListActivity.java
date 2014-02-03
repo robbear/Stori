@@ -1,11 +1,14 @@
 package com.stori.stori;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -21,6 +24,8 @@ import static com.stori.stori.Config.E;
 
 public class StoriListActivity extends ListActivity implements StoriService.ReadStoriItemsStateListener {
     public final static String TAG = "StoriListActivity";
+
+    public final static String EXTRA_DOWNLOAD_FOR_EDIT = "extra_download_for_edit";
 
     private String m_userUuid = null;
     private StoriListAdapter m_adapter;
@@ -48,8 +53,6 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
         if(D)Log.d(TAG, "StoriListActivity.onSaveInstanceState");
 
         super.onSaveInstanceState(savedInstanceState);
-
-        int orientation = getResources().getConfiguration().orientation;
     }
 
     @Override
@@ -91,6 +94,23 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
         super.onPause();
     }
 
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if(D)Log.d(TAG, String.format("StoriListActivity.onActivityResult: requestCode=%d, resultCode=%d", requestCode, resultCode));
+
+        if (requestCode == EditPlayActivity.REQUEST_DOWNLOAD_FOR_EDIT) {
+            if(D)Log.d(TAG, "StoriListActivity.onActivityResult - returned from DownloadActivity for REQUEST_DOWNLOAD_FOR_EDIT.");
+            if (resultCode == RESULT_OK) {
+                setResult(RESULT_OK);
+                finish();
+            }
+        }
+        else {
+            if(D)Log.d(TAG, "StoriListActivity.onActivityResult - passing on to super.onActivityResult");
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     public void onReadStoriItemsComplete(ArrayList<StoriListItem> storiListItems) {
         if(D)Log.d(TAG, "StoriListActivity.onReadStoriItemsComplete");
 
@@ -111,6 +131,54 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
         m_adapter.setStoriListItems(storiListItems);
         m_adapter.notifyDataSetChanged();
         getListView().requestFocus();
+    }
+
+    public void downloadForPlay(StoriListItem sli) {
+        if(D)Log.d(TAG, "StoriListActivity.downloadForPlay");
+
+        Intent intent = new Intent(this, DownloadActivity.class);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.putExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, true);
+        String urlString = Utilities.buildShowWebPageUrlString(m_userUuid, sli.getSlideShareName());
+        if(D)Log.d(TAG, String.format("StorListActivity.downloadForPlay: urlString=%s", urlString));
+        Uri uri = Uri.parse(urlString);
+        intent.setData(uri);
+        startActivity(intent);
+    }
+
+    public void downloadForEdit(StoriListItem sli) {
+        if(D)Log.d(TAG, "StoriListActivity.downloadForEdit");
+
+        final StoriListItem sliFinal = sli;
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle(getString(R.string.storilistactivity_downloadedit_title));
+        adb.setCancelable(true);
+        adb.setMessage(getString(R.string.storilistactivity_downloadedit_message));
+        adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                Intent intent = new Intent(StoriListActivity.this, DownloadActivity.class);
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.putExtra(StoriListActivity.EXTRA_DOWNLOAD_FOR_EDIT, true);
+                String urlString = Utilities.buildShowWebPageUrlString(m_userUuid, sliFinal.getSlideShareName());
+                if(D)Log.d(TAG, String.format("StoriListActivity.downloadForEdit: urlString=%s", urlString));
+                Uri uri = Uri.parse(urlString);
+                intent.setData(uri);
+                StoriListActivity.this.startActivityForResult(intent, EditPlayActivity.REQUEST_DOWNLOAD_FOR_EDIT);
+            }
+        });
+        adb.setNegativeButton(getString(R.string.cancel_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
     }
 
     protected void initializeStoriService()

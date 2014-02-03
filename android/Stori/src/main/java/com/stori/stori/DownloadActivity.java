@@ -1,5 +1,6 @@
 package com.stori.stori;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -41,6 +42,7 @@ public class DownloadActivity extends FragmentActivity {
     private int m_numberOfResources = 0;
     private int m_currentResourceDownloadIndex = 0;
     private boolean m_intentFromStoriApp = false;
+    private boolean m_downloadForEdit = false;
     private SharedPreferences m_prefs;
 
     @Override
@@ -74,6 +76,9 @@ public class DownloadActivity extends FragmentActivity {
         m_intentFromStoriApp = intent.getBooleanExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, false);
         if(D)Log.d(TAG, String.format("DownloadActivity.onCreate: m_intentFromStoriApp=%b", m_intentFromStoriApp));
 
+        m_downloadForEdit = intent.getBooleanExtra(StoriListActivity.EXTRA_DOWNLOAD_FOR_EDIT, false);
+        if(D)Log.d(TAG, String.format("DownloadActivity.onCreate: m_downloadForEdit=%b", m_downloadForEdit));
+
         if (Intent.ACTION_VIEW.equals(action)) {
             if(D)Log.d(TAG, String.format("DownloadActivity.onCreate: data=%s", intent.getData().toString()));
 
@@ -98,22 +103,30 @@ public class DownloadActivity extends FragmentActivity {
 
             if (m_userUuid == null || m_slideShareName == null) {
                 if(D)Log.d(TAG, "DownloadActivity.onCreate - m_userUuid or m_slideShareNmae is null, so bailing");
-                finish();
+                if (m_downloadForEdit) {
+                    setResult(RESULT_CANCELED);
+                    finish();
+                }
+                else {
+                    finish();
+                }
                 return;
             }
 
-            // Check to see if we already have this m_slideShareName downloaded.
-            String slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), null);
-            if (m_slideShareName.equalsIgnoreCase(slideShareName)) {
-                if(D)Log.d(TAG, "DownloadActivity.onCreate - we already have this Stori downloaded. Use it rather than refetching");
+            if (!m_downloadForEdit) {
+                // Check to see if we already have this m_slideShareName downloaded.
+                String slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), null);
+                if (m_slideShareName.equalsIgnoreCase(slideShareName)) {
+                    if(D)Log.d(TAG, "DownloadActivity.onCreate - we already have this Stori downloaded. Use it rather than refetching");
 
-                Intent intentPlay = new Intent(this, PlaySlidesActivity.class);
-                intentPlay.putExtra(PlaySlidesActivity.EXTRA_FROMURL, true);
-                intentPlay.putExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, m_intentFromStoriApp);
-                startActivity(intentPlay);
+                    Intent intentPlay = new Intent(this, PlaySlidesActivity.class);
+                    intentPlay.putExtra(PlaySlidesActivity.EXTRA_FROMURL, true);
+                    intentPlay.putExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, m_intentFromStoriApp);
+                    startActivity(intentPlay);
 
-                finish();
-                return;
+                    finish();
+                    return;
+                }
             }
 
             String jsonUrl = Config.baseAWSStorageUrl + m_userUuid + "/" + m_slideShareName + "/" + Config.slideShareJSONFilename;
@@ -332,23 +345,40 @@ public class DownloadActivity extends FragmentActivity {
             if (m_urlsToDownload.size() <= 0) {
                 if(D)Log.d(TAG, "DownloadActivity.DownloadTask.onPostExecute - all downloads complete");
 
-                String oldSlideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(DownloadActivity.this), SSPreferences.DEFAULT_PLAYSLIDESNAME(DownloadActivity.this));
-                if (oldSlideShareName != null && !oldSlideShareName.equals(m_slideShareName)) {
-                    if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.onPostExecute: deleting old slideshare playslide directory for %s", oldSlideShareName));
-                    Utilities.deleteSlideShareDirectory(DownloadActivity.this, oldSlideShareName);
+                if (m_downloadForEdit) {
+                    String oldSlideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(DownloadActivity.this), SSPreferences.DEFAULT_EDITPROJECTNAME(DownloadActivity.this));
+                    if (oldSlideShareName != null && !oldSlideShareName.equals(m_slideShareName)) {
+                        if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.onPostExecute: deleting old slideshare editplay directory for %s", oldSlideShareName));
+                        Utilities.deleteSlideShareDirectory(DownloadActivity.this, oldSlideShareName);
+                    }
+
+                    SharedPreferences.Editor edit = m_prefs.edit();
+                    edit.putString(SSPreferences.PREFS_EDITPROJECTNAME(DownloadActivity.this), m_slideShareName);
+                    edit.commit();
+
+                    setResult(RESULT_OK);
+                    finish();
+                    return;
                 }
+                else {
+                    String oldSlideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(DownloadActivity.this), SSPreferences.DEFAULT_PLAYSLIDESNAME(DownloadActivity.this));
+                    if (oldSlideShareName != null && !oldSlideShareName.equals(m_slideShareName)) {
+                        if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.onPostExecute: deleting old slideshare playslide directory for %s", oldSlideShareName));
+                        Utilities.deleteSlideShareDirectory(DownloadActivity.this, oldSlideShareName);
+                    }
 
-                SharedPreferences.Editor edit = m_prefs.edit();
-                edit.putString(SSPreferences.PREFS_PLAYSLIDESNAME(DownloadActivity.this), m_slideShareName);
-                edit.commit();
+                    SharedPreferences.Editor edit = m_prefs.edit();
+                    edit.putString(SSPreferences.PREFS_PLAYSLIDESNAME(DownloadActivity.this), m_slideShareName);
+                    edit.commit();
 
-                Intent intent = new Intent(DownloadActivity.this, PlaySlidesActivity.class);
-                intent.putExtra(PlaySlidesActivity.EXTRA_FROMURL, true);
-                intent.putExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, m_intentFromStoriApp);
-                DownloadActivity.this.startActivity(intent);
+                    Intent intent = new Intent(DownloadActivity.this, PlaySlidesActivity.class);
+                    intent.putExtra(PlaySlidesActivity.EXTRA_FROMURL, true);
+                    intent.putExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, m_intentFromStoriApp);
+                    DownloadActivity.this.startActivity(intent);
 
-                finish();
-                return;
+                    finish();
+                    return;
+                }
             }
 
             String nextUrl = m_urlsToDownload.get(0);

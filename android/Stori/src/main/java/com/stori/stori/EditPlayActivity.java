@@ -59,6 +59,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private int m_orientation;
     private boolean m_fOrientationChanged = false;
     private EditPlayMode m_editPlayMode = EditPlayMode.Edit;
+    private boolean m_restartingEditPlayActivity = false;
     private ProgressDialog m_progressDialog = null;
     private StoriService m_storiService = null;
     private ArrayList<StoriService.StoriServiceConnectionListener> m_storiServiceConnectionListeners = new ArrayList<StoriService.StoriServiceConnectionListener>();
@@ -68,6 +69,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     public final static int REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT = 3;
     public final static int REQUEST_IMAGE = 4;
     public final static int REQUEST_CAMERA = 5;
+    public final static int REQUEST_DOWNLOAD_FOR_EDIT = 6;
 
     public static AmazonClientManager s_amazonClientManager = null;
 
@@ -388,6 +390,10 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 finish();
             }
         }
+        else if (requestCode == REQUEST_DOWNLOAD_FOR_EDIT) {
+            if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - handling REQUEST_DOWNLOAD_FOR_EDIT. Launching new EditPlayActivity and killing this one.");
+            launchNewEditPlayActivity();
+        }
         else {
             if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - passing on to super.onActivityResult");
             super.onActivityResult(requestCode, resultCode, data);
@@ -450,11 +456,21 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         Utilities.shareShow(this, m_userUuid, m_slideShareName, title);
     }
 
+    public void launchNewEditPlayActivity() {
+        if(D)Log.d(TAG, "EditPlayActivity.launchNewEditPlayActivity");
+
+        Intent intent = new Intent(this, EditPlayActivity.class);
+        startActivity(intent);
+
+        m_restartingEditPlayActivity = true;
+        finish();
+    }
+
     public void launchStoriListActivity() {
         if(D)Log.d(TAG, "EditPlayActivity.launchStoriListActivity");
 
         Intent intent = new Intent(this, StoriListActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_DOWNLOAD_FOR_EDIT);
     }
 
     public void launchSettingsActivity() {
@@ -987,7 +1003,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         }
 
         // Call stopService only when finishing
-        if (isFinishing()) {
+        if (isFinishing() && !m_restartingEditPlayActivity) {
             if(D)Log.d(TAG, "EditPlayActivity.uninitializeStoriService - calling stopService");
             Intent service = new Intent(this, StoriService.class);
             stopService(service);
