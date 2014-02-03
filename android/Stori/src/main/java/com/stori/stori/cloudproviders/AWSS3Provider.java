@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
 
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
@@ -104,7 +103,7 @@ public class AWSS3Provider implements ICloudProvider {
         return partial.substring(0, index);
     }
 
-    public void deleteVirtualDirectory(String directoryName) throws Exception {
+    public boolean deleteVirtualDirectory(String directoryName) throws Exception {
         if(D)Log.d(TAG, String.format("AWSS3Provider.deleteVirtualDirectory: directoryName=%s", directoryName));
 
         // BUGBUG - TODO: look into using multi-object delete
@@ -125,6 +124,8 @@ public class AWSS3Provider implements ICloudProvider {
             if(D)Log.d(TAG, String.format("AWSS3Provider.deleteVirtualDirectory: deleting %s", key));
             m_s3Client.deleteObject(BUCKET_NAME, key);
         }
+
+        return true;
     }
 
     /* NEVER

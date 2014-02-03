@@ -497,10 +497,17 @@ public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTi
         }
     }
 
-    public void resetStoriItems() {
+    public void resetStoriItems(ArrayList<StoriListItem> items) {
         if(D)Log.d(TAG, "StoriService.resetStoriItems");
 
-        m_storiListItems = new ArrayList<StoriListItem>();
+        if (items == null) {
+            if(D)Log.d(TAG, "StoriService.resetStoriItems: passing in null, so clearing m_storiList");
+            m_storiListItems = new ArrayList<StoriListItem>();
+        }
+        else {
+            if(D)Log.d(TAG, "StoriService.resetStoriItems: setting m_storiListItems to passed in item list");
+            m_storiListItems = items;
+        }
     }
 
     //********************************************************************************

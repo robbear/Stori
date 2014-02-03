@@ -676,7 +676,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         if(D)Log.d(TAG, "EditPlayActivity.initializeForChangeInAccount");
 
         if (m_storiService != null) {
-            m_storiService.resetStoriItems();
+            m_storiService.resetStoriItems(null);
         }
 
         initializeNewSlideShow();
@@ -872,6 +872,11 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         adb.setCancelable(false);
 
         if (se == CloudStore.SaveErrors.Success) {
+            // Force a refresh of StoriListActivity next time in
+            if (m_storiService != null) {
+                m_storiService.resetStoriItems(null);
+            }
+
             adb.setTitle(getString(R.string.upload_dialog_complete_title));
             adb.setMessage(getString(R.string.upload_dialog_complete_message_format));
             adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {

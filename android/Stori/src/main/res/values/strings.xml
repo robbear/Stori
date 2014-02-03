@@ -9,6 +9,7 @@
     <string name="copyright">Version %1$s (%2$d)\n\nBuild %3$s\n\nTips and help at http://stori-app.com\n\nCopyright \u00a9 2013-2014 Hyperfine Software Corp. http://hyperfine.com</string>
     <string name="default_stori_title">My Stori</string>
     <string name="default_stori_description">My Stori slides</string>
+    <string name="delete_dialog_title">Deleting...</string>
     <string name="download_dialog_message">Downloading...</string>
     <string name="download_dialog_message_format">Downloading %1$d of %2$d...</string>
     <string name="download_errordialog_title">Download failed</string>
@@ -52,10 +53,13 @@
     <string name="share_email_body_format">I want to share a %1$s with you! To view \"%2$s\", click on %3$s or paste the address into your browser.\n\n\"Every Stori tells a picture!\"</string>
     <string name="share_email_subject_format">You have a new %1$s to view: \"%2$s\"</string>
     <string name="slide_position_format">%1$d of %2$d</string>
-    <string name="storilistadapter_count_text_format">%1$s slides</string>
-    <string name="storilistadapter_count_text_single">1 slide</string>
+    <string name="storilistactivity_delete_title">Delete this Stori?</string>
+    <string name="storilistactivity_delete_message">This will permanently delete this Stori. Deleting cannot be undone.</string>
+    <string name="storilistactivity_delete_button">Delete this Stori</string>
     <string name="storilistactivity_downloadedit_title">Download for edit</string>
     <string name="storilistactivity_downloadedit_message">If you have not yet published your previous work, it will be lost.</string>
+    <string name="storilistadapter_count_text_format">%1$s slides</string>
+    <string name="storilistadapter_count_text_single">1 slide</string>
     <string name="switch_account_dialog_title">Switch account?</string>
     <string name="switch_account_dialog_message">If you switch your account, you will lose any unpublished changes to your current work. Continue?</string>
     <string name="upload_dialog_title">Uploading...</string>

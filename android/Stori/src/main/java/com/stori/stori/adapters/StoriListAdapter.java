@@ -1,8 +1,6 @@
 package com.stori.stori.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,9 +11,6 @@ import android.widget.BaseAdapter;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.stori.stori.DownloadActivity;
-import com.stori.stori.EditPlayActivity;
-import com.stori.stori.PlaySlidesActivity;
 import com.stori.stori.R;
 import com.stori.stori.StoriListActivity;
 import com.stori.stori.StoriListItem;
@@ -141,6 +136,9 @@ public class StoriListAdapter extends BaseAdapter {
                 delete.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
+                        ArrayList<StoriListItem> items = new ArrayList<StoriListItem>();
+                        items.add(sli);
+                        m_storiListActivity.deleteStoris(items);
                         return true;
                     }
                 });

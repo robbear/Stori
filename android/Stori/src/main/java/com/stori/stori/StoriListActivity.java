@@ -2,6 +2,7 @@ package com.stori.stori;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,6 +10,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -31,6 +33,7 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
     private StoriListAdapter m_adapter;
     private SharedPreferences m_prefs;
     private StoriService m_storiService = null;
+    private ProgressDialog m_progressDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,6 +182,98 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
 
         AlertDialog ad = adb.create();
         ad.show();
+    }
+
+    public void deleteStoris(ArrayList<StoriListItem> storiListItems) {
+        if(D)Log.d(TAG, "StoriListActivity.deleteStori");
+
+        final ArrayList<StoriListItem> itemsFinal = storiListItems;
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle(getString(R.string.storilistactivity_delete_title));
+        adb.setCancelable(true);
+        adb.setMessage(getString(R.string.storilistactivity_delete_message));
+        adb.setPositiveButton(getString(R.string.storilistactivity_delete_button), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                deleteStorisAsync(itemsFinal);
+            }
+        });
+        adb.setNegativeButton(getString(R.string.cancel_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
+    }
+
+    private class DeleteStoriItemsTask extends AsyncTask<Object, Void, ArrayList<StoriListItem>> {
+        @Override
+        public ArrayList<StoriListItem> doInBackground(Object... params) {
+            if(D)Log.d(TAG, "StoriListActivity.DeleteStoriItemsTask.doInBackground");
+
+            ArrayList<StoriListItem> items = (ArrayList<StoriListItem>)params[0];
+
+            CloudStore cloudStore = new CloudStore(StoriListActivity.this, m_userUuid, null, Config.CLOUD_STORAGE_PROVIDER, null);
+
+            return cloudStore.deleteStoriItemsAndReturnItems(items);
+        }
+
+        @Override
+        public void onPostExecute(ArrayList<StoriListItem> returnedItems) {
+            if(D)Log.d(TAG, "StoriListActivity.DeleteStoriItemsTask.onPostExecute");
+
+            // Hide progress dialog.
+            if (m_progressDialog != null) {
+                m_progressDialog.dismiss();
+                m_progressDialog = null;
+            }
+
+            if (returnedItems != null) {
+                if (m_storiService != null) {
+                    m_storiService.resetStoriItems(returnedItems);
+                }
+
+                m_adapter.setStoriListItems(returnedItems);
+                m_adapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    private void deleteStorisAsync(ArrayList<StoriListItem> items) {
+        if(D)Log.d(TAG, "StoriListActivity.deleteStorisAsync");
+
+        // Launch progress dialog...
+        m_progressDialog = new ProgressDialog(this);
+        m_progressDialog.setTitle(getString(R.string.delete_dialog_title));
+        m_progressDialog.setCancelable(false);
+        m_progressDialog.setIndeterminate(true);
+        m_progressDialog.show();
+
+        boolean success = false;
+
+        try {
+            new DeleteStoriItemsTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, items);
+            success = true;
+        }
+        catch (Exception e) {
+            if(D)Log.e(TAG, "StoriListActivity.deleteStorisAsync", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(D)Log.e(TAG, "StoriListActivity.deleteStorisAsync", e);
+            e.printStackTrace();
+        }
+
+        if (!success) {
+            m_progressDialog.dismiss();
+            m_progressDialog = null;
+        }
     }
 
     protected void initializeStoriService()

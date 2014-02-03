@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.stori.stori.cloudproviders.AWSS3Provider;
-import com.stori.stori.cloudproviders.AmazonClientManager;
 import com.stori.stori.cloudproviders.ICloudProvider;
 
 import java.util.ArrayList;
@@ -152,6 +151,52 @@ public class CloudStore {
             if(E)Log.e(TAG, "CloudStore.saveAsync", e);
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<StoriListItem> deleteStoriItemsAndReturnItems(ArrayList<StoriListItem> items) {
+        if(D)Log.d(TAG, "CloudStore.deleteStoriItemsAndReturnItems");
+
+        ArrayList<StoriListItem> returnItems = null;
+
+        ICloudProvider icp;
+
+        switch (Config.CLOUD_STORAGE_PROVIDER) {
+            default:
+            case AWS:
+                icp = new AWSS3Provider(m_context);
+                break;
+        }
+
+        try {
+            PreferenceManager.setDefaultValues(m_context, SSPreferences.PREFS(m_context), Context.MODE_PRIVATE, R.xml.settings_screen, false);
+            icp.initializeProvider(m_userUuid, PreferenceManager.getDefaultSharedPreferences(m_context));
+
+            for (int i = 0; i < items.size(); i++) {
+                icp.deleteVirtualDirectory(items.get(i).getSlideShareName());
+            }
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "CloudStore.deleteStoriItems", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "CloudStore.deleteStoriItems", e);
+            e.printStackTrace();
+        }
+
+        try {
+            returnItems = icp.getStoriItems();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "CloudStore.deleteStoriItems", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "CloudStore.deleteStoriItems", e);
+            e.printStackTrace();
+        }
+
+        return returnItems;
     }
 
     public ArrayList<StoriListItem> readStoriItems() {
