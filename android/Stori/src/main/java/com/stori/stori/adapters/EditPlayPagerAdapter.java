@@ -71,7 +71,9 @@ public class EditPlayPagerAdapter extends FragmentStatePagerAdapter {
         int count = 0;
 
         try {
-            count = m_ssj.getSlideCount();
+            if (m_ssj != null) {
+                count = m_ssj.getSlideCount();
+            }
         }
         catch (Exception e) {
             if(E)Log.e(TAG, "EditPlayPagerAdapter.getCount", e);

@@ -20,7 +20,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
@@ -55,7 +54,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private EditPlayPagerAdapter m_editPlayPagerAdapter;
     private ViewPager.OnPageChangeListener m_pageChangeListener;
     private ViewPager m_viewPager;
-    private File m_slideShareDirectory;
     private String m_slideShareName;
     private int m_currentTabPosition = 0;
     private int m_orientation;
@@ -146,9 +144,9 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             edit.commit();
         }
 
-        m_slideShareDirectory = Utilities.createOrGetSlideShareDirectory(this, m_slideShareName);
-        if (m_slideShareDirectory == null) {
-            if(D)Log.d(TAG, "EditPlayActivity.onCreate - m_slideShareDirectory is null. Bad!!!");
+        File slideShareDirectory = Utilities.createOrGetSlideShareDirectory(this, m_slideShareName);
+        if (slideShareDirectory == null) {
+            if(D)Log.d(TAG, "EditPlayActivity.onCreate - slideShareDirectory is null. Bad!!!");
             finish();
             return;
         }
@@ -490,17 +488,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 if(D)Log.d(TAG, "EditPlayActivity.switchAccount - switching account");
                 dialog.dismiss();
 
-                String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(EditPlayActivity.this), SSPreferences.DEFAULT_EDITPROJECTNAME(EditPlayActivity.this));
-
-                Utilities.deleteSlideShareDirectory(EditPlayActivity.this, slideShareName);
-
-                if(D)Log.d(TAG, "EditPlayActivity.switchAccount - switching account: nulling out PREFS_EDITPROJECTNAME");
-                SharedPreferences.Editor edit = m_prefs.edit();
-                edit.putString(SSPreferences.PREFS_EDITPROJECTNAME(EditPlayActivity.this), null);
-                edit.commit();
-
-                s_amazonClientManager.clearCredentials();
-                s_amazonClientManager.wipe();
+                clearAllData();
 
                 Intent intent = new Intent(EditPlayActivity.this, GoogleLogin.class);
                 startActivityForResult(intent, REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT);
@@ -752,6 +740,41 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         return count;
     }
 
+    public void clearAllData() {
+        if(D)Log.d(TAG, "EditPlayActivity.clearAllData");
+
+        s_amazonClientManager.clearCredentials();
+        s_amazonClientManager.wipe();
+
+        if (m_storiService != null) {
+            if(D)Log.d(TAG, "EditPlayActivity.clearAllData - clearing StoriService's StoriListItem cache");
+            m_storiService.resetStoriItems(null);
+        }
+
+        // Delete everything
+        String slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), null);
+        if (slideShareName != null) {
+            if(D)Log.d(TAG, String.format("EditPlayActivity.clearAllData - deleting PlaySlides directory: %s", slideShareName));
+            Utilities.deleteSlideShareDirectory(this, slideShareName);
+        }
+
+        slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(this), null);
+        if (slideShareName != null) {
+            if(D)Log.d(TAG, String.format("EditPlayActivity.clearAllData - deleting EditSlides directory: %s", slideShareName));
+            Utilities.deleteSlideShareDirectory(this, slideShareName);
+        }
+
+        if(D)Log.d(TAG, "EditPlayActivity.clearAllData - clearing PREFS_PLAYSLIDESNAME and PREFS_EDITPROJECTNAME");
+        SharedPreferences.Editor editor = m_prefs.edit();
+        editor.putString(SSPreferences.PREFS_PLAYSLIDESNAME(this), null);
+        editor.putString(SSPreferences.PREFS_EDITPROJECTNAME(this), null);
+        editor.commit();
+
+        // Blank the screen
+        m_editPlayPagerAdapter = new EditPlayPagerAdapter(getSupportFragmentManager());
+        m_viewPager.setAdapter(m_editPlayPagerAdapter);
+    }
+
     //
     // initializeForChangeInAccount
     // Called in response to the user selecting a new account.
@@ -759,9 +782,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     public void initializeForChangeInAccount() {
         if(D)Log.d(TAG, "EditPlayActivity.initializeForChangeInAccount");
 
-        if (m_storiService != null) {
-            m_storiService.resetStoriItems(null);
-        }
 
         initializeNewSlideShow();
     }
@@ -781,6 +801,10 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+
+                // Blank the screen
+                m_editPlayPagerAdapter = new EditPlayPagerAdapter(getSupportFragmentManager());
+                m_viewPager.setAdapter(m_editPlayPagerAdapter);
 
                 initializeNewSlideShow();
             }
