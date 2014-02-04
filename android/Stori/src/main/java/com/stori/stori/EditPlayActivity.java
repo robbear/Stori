@@ -41,7 +41,6 @@ import static com.stori.stori.Config.E;
 
 public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.ViewFactory, CloudStore.ICloudStoreCallback {
     public final static String TAG = "EditPlayActivity";
-    public final static String EXTRA_FROMURL = "extra_from_url";
 
     private final static String INSTANCE_STATE_CURRENT_TAB = "instance_state_current_tab";
     private final static String INSTANCE_STATE_EDITPLAYMODE = "instance_state_editplaymode";
@@ -109,51 +108,39 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         setContentView(R.layout.activity_editplay);
 
-        boolean isFromUrl = getIntent().getBooleanExtra(EXTRA_FROMURL, false);
+        if(D)Log.d(TAG, "EditPlayActivity.onCreate - in edit mode");
 
-        if (isFromUrl) {
-            m_editPlayMode = EditPlayMode.Play;
-            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), SSPreferences.DEFAULT_PLAYSLIDESNAME(this));
-            if(D)Log.d(TAG, String.format("EditPlayActivity.onCreate - playing from a downloaded URL reference: %s", m_slideShareName));
-
-            if (m_slideShareName == null) {
-                if(D)Log.d(TAG, "EditPlayActivity.onCreate - m_slideShareName is null, meaning we'll have no SSJ. Bailing.");
-                finish();
-                return;
-            }
+        int retVal = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (retVal != ConnectionResult.SUCCESS) {
+            if(D)Log.d(TAG, String.format("EditPlayActivity.onCreate - isGooglePlayServicesAvailable failed with %d", retVal));
+            GooglePlayServicesUtil.getErrorDialog(retVal, this, REQUEST_GOOGLE_PLAY_SERVICES_ERROR);
+            if(D)Log.d(TAG, "EditPlayActivity.onCreate - called GooglePlayServicesUtil.getErrorDialog, and now exiting");
         }
-        else {
-            if(D)Log.d(TAG, "EditPlayActivity.onCreate - in edit mode");
 
-            int retVal = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-            if (retVal != ConnectionResult.SUCCESS) {
-                if(D)Log.d(TAG, String.format("EditPlayActivity.onCreate - isGooglePlayServicesAvailable failed with %d", retVal));
-                GooglePlayServicesUtil.getErrorDialog(retVal, this, REQUEST_GOOGLE_PLAY_SERVICES_ERROR);
-                if(D)Log.d(TAG, "EditPlayActivity.onCreate - called GooglePlayServicesUtil.getErrorDialog, and now exiting");
-            }
+        String userUuidString = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
+        String userEmail = AmazonSharedPreferencesWrapper.getUserEmail(m_prefs);
 
-            String userUuidString = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
-            String userEmail = AmazonSharedPreferencesWrapper.getUserEmail(m_prefs);
-
+        if (s_amazonClientManager == null) {
+            if(D)Log.d(TAG, "EditPlayActivity.onCreate - setting static EditPlayActivity.s_amazonClientManager");
             s_amazonClientManager = new AmazonClientManager(m_prefs);
+        }
 
-            if (userUuidString == null || userEmail == null) {
-                if(D)Log.d(TAG, String.format("EditPlayActivity.onCreate: userUuidString=%s, userEmail=%s, so calling GoogleLogin", userUuidString, userEmail));
-                Intent intent = new Intent(this, GoogleLogin.class);
-                startActivityForResult(intent, REQUEST_GOOGLE_LOGIN);
-            }
+        if (userUuidString == null || userEmail == null) {
+            if(D)Log.d(TAG, String.format("EditPlayActivity.onCreate: userUuidString=%s, userEmail=%s, so calling GoogleLogin", userUuidString, userEmail));
+            Intent intent = new Intent(this, GoogleLogin.class);
+            startActivityForResult(intent, REQUEST_GOOGLE_LOGIN);
+        }
 
-            m_slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(this), SSPreferences.DEFAULT_EDITPROJECTNAME(this));
-            if(D)Log.d(TAG, String.format("EditPlayActivity.onCreate - in edit mode: %s", m_slideShareName));
+        m_slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(this), SSPreferences.DEFAULT_EDITPROJECTNAME(this));
+        if(D)Log.d(TAG, String.format("EditPlayActivity.onCreate - in edit mode: %s", m_slideShareName));
 
-            if (m_slideShareName == null) {
-                if(D)Log.d(TAG, "EditPlayActivity.onCreate - null slideShareName. Creating one and saving it to prefs.");
-                m_slideShareName = UUID.randomUUID().toString();
+        if (m_slideShareName == null) {
+            if(D)Log.d(TAG, "EditPlayActivity.onCreate - null slideShareName. Creating one and saving it to prefs.");
+            m_slideShareName = UUID.randomUUID().toString();
 
-                SharedPreferences.Editor edit = m_prefs.edit();
-                edit.putString(SSPreferences.PREFS_EDITPROJECTNAME(this), m_slideShareName);
-                edit.commit();
-            }
+            SharedPreferences.Editor edit = m_prefs.edit();
+            edit.putString(SSPreferences.PREFS_EDITPROJECTNAME(this), m_slideShareName);
+            edit.commit();
         }
 
         m_slideShareDirectory = Utilities.createOrGetSlideShareDirectory(this, m_slideShareName);
