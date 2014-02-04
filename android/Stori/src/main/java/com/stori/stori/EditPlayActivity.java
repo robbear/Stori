@@ -15,9 +15,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
@@ -607,11 +610,13 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         final EditText titleText = new EditText(this);
         titleText.setHint(getString(R.string.main_new_title_hint));
+        titleText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_CLASS_TEXT);
         titleText.setSingleLine();
+        titleText.selectAll();
 
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         adb.setTitle(getString(R.string.main_new_title_title)); // BUGBUG - TODO - rename from main
-        adb.setCancelable(false);
+        adb.setCancelable(true);
         adb.setView(titleText);
         adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
             @Override
@@ -629,10 +634,102 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 initializeNewSlide(m_currentTabPosition);
             }
         });
+        adb.setNegativeButton(getString(R.string.default_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String title = getString(R.string.default_stori_title);
+
+                dialog.dismiss();
+                Utilities.unfreezeOrientation(EditPlayActivity.this);
+
+                initializeSlideShareJSON();
+                setSlideShareTitle(title);
+
+                m_currentTabPosition = 0;
+                initializeViewPager();
+                initializeNewSlide(m_currentTabPosition);
+            }
+        });
 
         // TODO: Fix #14 and #15. This is a temporary workaround.
         Utilities.freezeActivityOrientation(this);
-        AlertDialog ad = adb.create();
+
+        final AlertDialog ad = adb.create();
+
+        if (!Utilities.deviceHasHardwareKeyboard(this)) {
+            titleText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean hasFocus) {
+                    if (hasFocus) {
+                        if(D)Log.d(TAG, "EditPlayActivity.enterSlideShareTitleAndRecreate.titleText.onFocusChangeListener");
+                        ad.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                    }
+                }
+            });
+        }
+
+        ad.show();
+    }
+
+    public void renameStori() {
+        if(D)Log.d(TAG, "EditPlayActivity.renameStori");
+
+        final EditText titleText = new EditText(this);
+        titleText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_CLASS_TEXT);
+        titleText.setText(getSlidesTitle());
+        titleText.setSingleLine();
+        titleText.selectAll();
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle(getString(R.string.main_new_title_title)); // BUGBUG - TODO - rename from main
+        adb.setCancelable(true);
+        adb.setView(titleText);
+        adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String title = titleText.getText().toString();
+
+                dialog.dismiss();
+                Utilities.unfreezeOrientation(EditPlayActivity.this);
+
+                setSlideShareTitle(title);
+
+                // Notify the fragments to update their title display
+                FragmentManager fm = getSupportFragmentManager();
+                List<Fragment> fragments = fm.getFragments();
+                for (Fragment f : fragments) {
+                    EditPlayFragment epf = (EditPlayFragment)f;
+                    if (epf != null) {
+                        epf.onTitleUpdated();
+                    }
+                }
+            }
+        });
+        adb.setNegativeButton(getString(R.string.cancel_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Utilities.unfreezeOrientation(EditPlayActivity.this);
+            }
+        });
+
+        // TODO: Fix #14 and #15. This is a temporary workaround.
+        Utilities.freezeActivityOrientation(this);
+
+        final AlertDialog ad = adb.create();
+
+        if (!Utilities.deviceHasHardwareKeyboard(this)) {
+            titleText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean hasFocus) {
+                    if (hasFocus) {
+                        if(D)Log.d(TAG, "EditPlayActivity.renameStori.titleText.onFocusChangeListener");
+                        ad.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                    }
+                }
+            });
+        }
+
         ad.show();
     }
 

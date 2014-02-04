@@ -5,24 +5,27 @@
         android:id="@+id/menu_editplayactivity_preview"
         android:title="@string/menu_editplayactivity_preview" />
     <item
+        android:id="@+id/menu_editplayactivity_rename"
+        android:title="@string/menu_editplayactivity_rename" />
+    <item
         android:id="@+id/menu_editplayactivity_publish"
         android:title="@string/menu_editplayactivity_publish" />
     <item
         android:id="@+id/menu_editplayactivity_share"
         android:title="@string/menu_editplayactivity_share" />
     <item
-        android:id="@+id/menu_editplayactivity_viewpublished"
-        android:title="@string/menu_editplayactivity_viewpublished" />
-    <item
         android:id="@+id/menu_editplayactivity_createnew"
         android:title="@string/menu_editplayactivity_createnew" />
     <item
-        android:id="@+id/menu_editplayactivity_switchaccount"
-        android:title="@string/menu_editplayactivity_switchaccount" />
+        android:id="@+id/menu_editplayactivity_viewpublished"
+        android:title="@string/menu_editplayactivity_viewpublished" />
     <item
         android:id="@+id/menu_editplayactivity_settings"
         android:title="@string/menu_editplayactivity_settings" />
     <item
         android:id="@+id/menu_editplayactivity_about"
         android:title="@string/menu_editplayactivity_about" />
+    <item
+        android:id="@+id/menu_editplayactivity_switchaccount"
+        android:title="@string/menu_editplayactivity_switchaccount" />
 </menu>

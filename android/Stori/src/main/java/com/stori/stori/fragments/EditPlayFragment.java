@@ -298,6 +298,15 @@ public class EditPlayFragment extends Fragment implements
                     }
                 });
 
+                MenuItem rename = menu.findItem(R.id.menu_editplayactivity_rename);
+                rename.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        m_editPlayActivity.renameStori();
+                        return true;
+                    }
+                });
+
                 if (m_editPlayActivity.isPublished()) {
                     MenuItem share = menu.findItem(R.id.menu_editplayactivity_share);
                     share.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -630,6 +639,12 @@ public class EditPlayFragment extends Fragment implements
     private void setActivityEditPlayMode(EditPlayActivity.EditPlayMode editPlayMode) {
         if(D)Log.d(TAG, String.format("EditPlayFragment.setActivityEditPlayMode: %s", editPlayMode.toString()));
         m_editPlayActivity.setEditPlayMode(editPlayMode);
+    }
+
+    public void onTitleUpdated() {
+        if(D)Log.d(TAG, "EditPlayFragment.onTitleUpdated");
+
+        displaySlideTitleAndPosition();
     }
 
     public void onTabPageSelected(int position) {

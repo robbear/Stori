@@ -102,7 +102,7 @@ public class StoriListAdapter extends BaseAdapter {
                 Menu menu = pm.getMenu();
 
                 MenuItem play = menu.findItem(R.id.menu_storilistitem_play);
-                play.setTitle(String.format(m_storiListActivity.getString(R.string.menu_storilistitem_play_format), sli.getTitle()));
+                play.setTitle(m_storiListActivity.getString(R.string.menu_storilistitem_play));
                 play.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
@@ -112,7 +112,7 @@ public class StoriListAdapter extends BaseAdapter {
                 });
 
                 MenuItem edit = menu.findItem(R.id.menu_storilistitem_edit);
-                edit.setTitle(String.format(m_storiListActivity.getString(R.string.menu_storilistitem_edit_format), sli.getTitle()));
+                edit.setTitle(m_storiListActivity.getString(R.string.menu_storilistitem_edit));
                 edit.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
@@ -122,7 +122,7 @@ public class StoriListAdapter extends BaseAdapter {
                 });
 
                 MenuItem share = menu.findItem(R.id.menu_storilistitem_share);
-                share.setTitle(String.format(m_storiListActivity.getString(R.string.menu_storilistitem_share_format), sli.getTitle()));
+                share.setTitle(m_storiListActivity.getString(R.string.menu_storilistitem_share));
                 share.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
@@ -132,7 +132,7 @@ public class StoriListAdapter extends BaseAdapter {
                 });
 
                 MenuItem delete = menu.findItem(R.id.menu_storilistitem_delete);
-                delete.setTitle(String.format(m_storiListActivity.getString(R.string.menu_storilistitem_delete_format), sli.getTitle()));
+                delete.setTitle(m_storiListActivity.getString(R.string.menu_storilistitem_delete));
                 delete.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {

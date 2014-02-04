@@ -3,14 +3,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_storilistitem_play"
-        android:title="@string/menu_storilistitem_play_format" />
+        android:title="@string/menu_storilistitem_play" />
     <item
         android:id="@+id/menu_storilistitem_edit"
-        android:title="@string/menu_storilistitem_edit_format" />
+        android:title="@string/menu_storilistitem_edit" />
     <item
         android:id="@+id/menu_storilistitem_share"
-        android:title="@string/menu_storilistitem_share_format" />
+        android:title="@string/menu_storilistitem_share" />
     <item
         android:id="@+id/menu_storilistitem_delete"
-        android:title="@string/menu_storilistitem_delete_format" />
+        android:title="@string/menu_storilistitem_delete" />
 </menu>

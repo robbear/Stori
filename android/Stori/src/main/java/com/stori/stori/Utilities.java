@@ -614,6 +614,17 @@ public class Utilities {
         context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_dialog_title)));
     }
 
+    public static boolean deviceHasHardwareKeyboard(Context context) {
+        boolean hasKeyboard = false;
+
+        Configuration config = context.getResources().getConfiguration();
+        hasKeyboard = config.keyboard != Configuration.KEYBOARD_NOKEYS;
+
+        if(D)Log.d(TAG, String.format("Utilities.devieHasHardwareKeyboard: returning %b", hasKeyboard));
+
+        return hasKeyboard;
+    }
+
     public static void freezeActivityOrientation(Activity activity) {
         if(D)Log.d(TAG, "Utilities.freezeOrientation");
 
