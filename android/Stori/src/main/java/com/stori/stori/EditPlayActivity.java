@@ -461,6 +461,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         if(D)Log.d(TAG, "EditPlayActivity.launchSettingsActivity");
 
         Intent intent = new Intent(this, SettingsActivity.class);
+        intent.putExtra(SettingsActivity.EXTRA_LAUNCHFROMEDIT, true);
         startActivity(intent);
     }
 

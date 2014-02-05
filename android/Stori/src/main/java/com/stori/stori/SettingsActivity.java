@@ -23,6 +23,8 @@ import static com.stori.stori.Config.E;
 public class SettingsActivity extends Activity {
     public final static String TAG = "SettingsActivity";
 
+    public final static String EXTRA_LAUNCHFROMEDIT = "extra_launchfromedit";
+
     private SharedPreferences m_prefs;
     private LinearLayout m_autoPlayPanel;
     private CheckBox m_autoPlayCB;
@@ -30,6 +32,7 @@ public class SettingsActivity extends Activity {
     private TextView m_buildStringText;
     private RelativeLayout m_switchAccountPanel;
     private TextView m_currentAccountText;
+    private boolean m_isLaunchedFromEdit = false;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -53,6 +56,8 @@ public class SettingsActivity extends Activity {
         setContentView(R.layout.activity_settings);
 
         m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
+
+        m_isLaunchedFromEdit = getIntent().getBooleanExtra(EXTRA_LAUNCHFROMEDIT, false);
 
         ActionBar actionBar = getActionBar();
         actionBar.setTitle(getString(R.string.settings_actionbar));
@@ -101,6 +106,12 @@ public class SettingsActivity extends Activity {
                 // TODO
             }
         });
+
+        if (!m_isLaunchedFromEdit) {
+            m_switchAccountPanel.setVisibility(View.GONE);
+            RelativeLayout sep = (RelativeLayout)findViewById(R.id.settings_account_panel_separator);
+            sep.setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -45,11 +45,12 @@
 
     <!--Separator -->
     <RelativeLayout
+        android:id="@+id/settings_account_panel_separator"
         android:layout_height="1px"
         android:layout_width="match_parent"
         android:background="#505050" />
 
-    <!-- About panel -->
+    <!-- Switch account panel -->
     <RelativeLayout
         android:id="@+id/settings_account_panel"
         android:layout_height="wrap_content"
