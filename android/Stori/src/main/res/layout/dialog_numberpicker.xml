@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/control_numberpicker_text"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Change the order of slide 1 to:"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"/>
+    <NumberPicker
+        android:id="@+id/control_numberpicker"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+        <Button
+            android:id="@+id/control_numberpicker_cancel"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:text="@string/cancel_text" />
+        <Button
+            android:id="@+id/control_numberpicker_ok"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:text="@string/set_text" />
+    </LinearLayout>
+
+</LinearLayout>

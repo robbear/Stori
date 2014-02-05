@@ -46,6 +46,8 @@
     <string name="menu_storilistitem_delete">Delete</string>
     <string name="publish_dialog_title">Publish</string>
     <string name="publish_dialog_message">Ok to publish?</string>
+    <string name="reorder_dialog_title">Reorder slide</string>
+    <string name="reorder_dialog_text_format">Set the position of slide %1$d to:</string>
     <string name="settings_actionbar">Settings</string>
     <string name="settings_autoaudio_title">Play audio automatically</string>
     <string name="settings_autoaudio_summary">Play audio when a picture is brought into view during preview or play back</string>
@@ -70,10 +72,12 @@
     <string name="upload_dialog_complete_message_format">Do you want to share this show?</string>
     <string name="upload_dialog_failure_title">Upload unsuccessful</string>
     <string name="upload_dialog_failure_message_format">Upload failed: %s</string>
+
     <string name="ok_text">Ok</string>
     <string name="yes_text">Yes</string>
     <string name="no_text">No</string>
     <string name="default_text">Use default</string>
+    <string name="set_text">Set</string>
 
     <!-- Everything below here should NOT be translated -->
     <string name="PREFS">stori</string>

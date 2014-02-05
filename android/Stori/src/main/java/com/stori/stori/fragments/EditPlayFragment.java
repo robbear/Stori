@@ -442,6 +442,7 @@ public class EditPlayFragment extends Fragment implements
             @Override
             public void onClick(View v) {
                 if(D)Log.d(TAG, "EditPlayFragment.onReorderControlClicked");
+                m_editPlayActivity.reorder();
             }
         });
 

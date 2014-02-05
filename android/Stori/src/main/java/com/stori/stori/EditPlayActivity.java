@@ -1,6 +1,7 @@
 package com.stori.stori;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -19,9 +20,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -47,6 +51,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private final static String INSTANCE_STATE_EDITPLAYMODE = "instance_state_editplaymode";
     private final static String INSTANCE_STATE_ORIENTATION_CHANGED = "instance_state_orientation_changed";
 
+    private int m_newSlideOrderValueForDialog = 0;
     private SharedPreferences m_prefs;
     private String m_userUuid = null;
     private SlideShareJSON m_ssj;
@@ -430,6 +435,54 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         }
 
         return isPublished;
+    }
+
+    public void reorder() {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.reorder: m_currentTabPosition = %d", m_currentTabPosition));
+
+        int count = getSlideCount();
+
+        final Dialog dialog = new Dialog(this);
+        dialog.setTitle(getString(R.string.reorder_dialog_title));
+        dialog.setContentView(R.layout.dialog_numberpicker);
+
+        Button okButton = (Button)dialog.findViewById(R.id.control_numberpicker_ok);
+        Button cancelButton = (Button)dialog.findViewById(R.id.control_numberpicker_cancel);
+        NumberPicker numberPicker = (NumberPicker)dialog.findViewById(R.id.control_numberpicker);
+        TextView textView = (TextView)dialog.findViewById(R.id.control_numberpicker_text);
+
+        textView.setText(String.format(getString(R.string.reorder_dialog_text_format), m_currentTabPosition + 1));
+
+        numberPicker.setMaxValue(count);
+        numberPicker.setMinValue(1);
+        numberPicker.setValue(m_currentTabPosition + 1);
+        numberPicker.setWrapSelectorWheel(false);
+
+        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                if(D)Log.d(TAG, String.format("EditPlayActivity.reorder.onValueChange: oldVal=%d, newVal=%d", oldVal, newVal));
+                m_newSlideOrderValueForDialog = newVal;
+            }
+        });
+
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                if(D)Log.d(TAG, String.format("****** Reorder slide %d to %d", m_currentTabPosition + 1, m_newSlideOrderValueForDialog));
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        m_newSlideOrderValueForDialog = m_currentTabPosition + 1;
+        dialog.show();
     }
 
     public void shareSlides() {
