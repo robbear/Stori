@@ -1,8 +1,8 @@
 package com.stori.stori;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.stori.stori.cloudproviders.AWSS3Provider;
@@ -60,8 +60,8 @@ public class CloudStore {
                         break;
                 }
 
-                PreferenceManager.setDefaultValues(m_context, SSPreferences.PREFS(m_context), Context.MODE_PRIVATE, R.xml.settings_screen, false);
-                icp.initializeProvider(m_userUuid, PreferenceManager.getDefaultSharedPreferences(m_context));
+                SharedPreferences prefs = m_context.getSharedPreferences(SSPreferences.PREFS(m_context), Context.MODE_PRIVATE);
+                icp.initializeProvider(m_userUuid, prefs);
                 icp.deleteVirtualDirectory(m_slideShareName);
 
                 for (String fileName : imageFileNames) {
@@ -168,8 +168,8 @@ public class CloudStore {
         }
 
         try {
-            PreferenceManager.setDefaultValues(m_context, SSPreferences.PREFS(m_context), Context.MODE_PRIVATE, R.xml.settings_screen, false);
-            icp.initializeProvider(m_userUuid, PreferenceManager.getDefaultSharedPreferences(m_context));
+            SharedPreferences prefs = m_context.getSharedPreferences(SSPreferences.PREFS(m_context), Context.MODE_PRIVATE);
+            icp.initializeProvider(m_userUuid, prefs);
 
             for (int i = 0; i < items.size(); i++) {
                 icp.deleteVirtualDirectory(items.get(i).getSlideShareName());
@@ -214,8 +214,8 @@ public class CloudStore {
         ArrayList<StoriListItem> items = null;
 
         try {
-            PreferenceManager.setDefaultValues(m_context, SSPreferences.PREFS(m_context), Context.MODE_PRIVATE, R.xml.settings_screen, false);
-            icp.initializeProvider(m_userUuid, PreferenceManager.getDefaultSharedPreferences(m_context));
+            SharedPreferences prefs = m_context.getSharedPreferences(SSPreferences.PREFS(m_context), Context.MODE_PRIVATE);
+            icp.initializeProvider(m_userUuid, prefs);
 
             items = icp.getStoriItems();
         }

@@ -3,7 +3,7 @@
 
     <string name="about_actionbar">About Stori</string>
     <string name="about_title1">Stori</string>
-    <string name="about_title2">Share your voice-annotated pictures</string>
+    <string name="about_title2">Every Stori tells a picture!</string>
     <string name="app_name">Stori</string>
     <string name="cancel_text">Cancel</string>
     <string name="copyright">Version %1$s (%2$d)\n\nBuild %3$s\n\nTips and help at http://stori-app.com\n\nCopyright \u00a9 2013-2014 Hyperfine Software Corp. http://hyperfine.com</string>
@@ -48,8 +48,12 @@
     <string name="menu_storilistitem_delete">Delete</string>
     <string name="publish_dialog_title">Publish</string>
     <string name="publish_dialog_message">Ok to publish?</string>
+    <string name="settings_actionbar">Settings</string>
     <string name="settings_autoaudio_title">Play audio automatically</string>
     <string name="settings_autoaudio_summary">Play audio when a picture is brought into view during preview or play back</string>
+    <string name="settings_buildstring_format">Build: %1$s</string>
+    <string name="settings_switchaccount">Switch account</string>
+    <string name="settings_currentaccount_format">Current: %1$s</string>
     <string name="share_dialog_title">Share this show</string>
     <string name="share_email_body_format">I want to share a %1$s with you! To view \"%2$s\", click on %3$s or paste the address into your browser.\n\n\"Every Stori tells a picture!\"</string>
     <string name="share_email_subject_format">You have a new %1$s to view: \"%2$s\"</string>

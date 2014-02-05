@@ -11,7 +11,6 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -38,8 +37,7 @@ public class Utilities {
     public static String getUserUuidString(Context context) {
         if(D)Log.d(TAG, "Utilities.getUserUuidString");
 
-        PreferenceManager.setDefaultValues(context, SSPreferences.PREFS(context), Context.MODE_PRIVATE, R.xml.settings_screen, false);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = context.getSharedPreferences(SSPreferences.PREFS(context), Context.MODE_PRIVATE);
         String uuid = AmazonSharedPreferencesWrapper.getUsername(prefs);
 
         if(D)Log.d(TAG, String.format("Utilities.getUserUuidString returning %s", uuid));

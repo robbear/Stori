@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.stori.stori.adapters.StoriListAdapter;
@@ -41,8 +40,7 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
 
         super.onCreate(savedInstanceState);
 
-        PreferenceManager.setDefaultValues(this, SSPreferences.PREFS(this), Context.MODE_PRIVATE, R.xml.settings_screen, false);
-        m_prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
         m_userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
 
         m_adapter = new StoriListAdapter(this, m_userUuid);

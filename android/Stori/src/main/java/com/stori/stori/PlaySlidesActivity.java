@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.content.Context;
@@ -70,10 +69,7 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
 
         super.onCreate(savedInstanceState);
 
-        // User may enter the app for the first time through PlaySlidesActivity, so setDefaultValues
-        PreferenceManager.setDefaultValues(this, SSPreferences.PREFS(this), Context.MODE_PRIVATE, R.xml.settings_screen, false);
-
-        m_prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
 
         setContentView(R.layout.activity_playslides);
 

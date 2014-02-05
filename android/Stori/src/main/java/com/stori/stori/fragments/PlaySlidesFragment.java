@@ -7,7 +7,6 @@ import android.graphics.Point;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -195,8 +194,7 @@ public class PlaySlidesFragment extends Fragment implements
 
         m_playSlidesActivity = (PlaySlidesActivity)activity;
 
-        PreferenceManager.setDefaultValues(activity, SSPreferences.PREFS(activity), Context.MODE_PRIVATE, R.xml.settings_screen, false);
-        m_prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        m_prefs = activity.getSharedPreferences(SSPreferences.PREFS(activity), Context.MODE_PRIVATE);
 
         Display display = activity.getWindowManager().getDefaultDisplay();
         Point size = new Point();
