@@ -471,6 +471,24 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             public void onClick(View v) {
                 dialog.dismiss();
                 if(D)Log.d(TAG, String.format("****** Reorder slide %d to %d", m_currentTabPosition + 1, m_newSlideOrderValueForDialog));
+
+                try {
+                    m_ssj.reorder(m_currentTabPosition, m_newSlideOrderValueForDialog - 1);
+                    m_ssj.save(EditPlayActivity.this, m_slideShareName, Config.slideShareJSONFilename);
+
+                    initializeViewPager();
+                    setCurrentTabPosition(m_newSlideOrderValueForDialog - 1);
+                }
+                catch (Exception e) {
+                    if(E)Log.e(TAG, "EditPlayActivity.reorder", e);
+                    e.printStackTrace();
+                }
+                catch (OutOfMemoryError e) {
+                    if(E)Log.e(TAG, "EditPlayActivity.reorder", e);
+                    e.printStackTrace();
+                }
+
+                m_newSlideOrderValueForDialog = 0;
             }
         });
 
@@ -478,6 +496,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                m_newSlideOrderValueForDialog = 0;
             }
         });
 

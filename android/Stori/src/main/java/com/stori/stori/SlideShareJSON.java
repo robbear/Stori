@@ -1,9 +1,6 @@
 package com.stori.stori;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -143,6 +140,36 @@ public class SlideShareJSON extends JSONObject {
         String audioUrl = slide.getAudioUrlString();
 
         upsertSlide(uuidString, index, imageUrl, audioUrl, false);
+    }
+
+    public void reorder(int currentPosition, int newPosition) throws JSONException {
+        if(D)Log.d(TAG, String.format("SlideShareJSON.reorder: currentPosition=%d, newPosition=%d", currentPosition, newPosition));
+
+        JSONArray orderArray = getOrder();
+        int count = orderArray.length();
+
+        if ((currentPosition >= count) || (currentPosition < 0) || (newPosition >= count) || (newPosition < 0)) {
+            if(D)Log.d(TAG, String.format("SlideShareJSON.reorder: invalid arguments. count=%d", count));
+            throw new IllegalArgumentException("Invalid arguments results in out of range");
+        }
+
+        String uuid = (String)orderArray.get(currentPosition);
+
+        // First, remove the item by building a new ArrayList
+        ArrayList<String> arrayList = new ArrayList<String>();
+        for (int i = 0; i < count; i++) {
+            String item = orderArray.getString(i);
+            if (!uuid.equalsIgnoreCase(item)) {
+                arrayList.add(item);
+            }
+        }
+
+        // Next, insert the saved item in the right position
+        arrayList.add(newPosition, uuid);
+
+        // Finally, convert to a JSONArray
+        JSONArray newOrderArray = new JSONArray(arrayList);
+        setOrder(newOrderArray);
     }
 
     public void upsertSlide(String uuidString, int index, String imageUrl, String audioUrl, boolean forceNulls) throws JSONException {
