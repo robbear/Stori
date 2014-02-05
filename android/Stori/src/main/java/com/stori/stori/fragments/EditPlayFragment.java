@@ -339,29 +339,11 @@ public class EditPlayFragment extends Fragment implements
                     }
                 });
 
-                MenuItem switchAccount = menu.findItem(R.id.menu_editplayactivity_switchaccount);
-                switchAccount.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        m_editPlayActivity.switchAccount();
-                        return true;
-                    }
-                });
-
                 MenuItem settings = menu.findItem(R.id.menu_editplayactivity_settings);
                 settings.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         m_editPlayActivity.launchSettingsActivity();
-                        return true;
-                    }
-                });
-
-                MenuItem about = menu.findItem(R.id.menu_editplayactivity_about);
-                about.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        m_editPlayActivity.launchAboutActivity();
                         return true;
                     }
                 });

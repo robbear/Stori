@@ -261,13 +261,6 @@ public class PlaySlidesActivity extends FragmentActivity implements ViewSwitcher
         startActivity(intent);
     }
 
-    public void launchAboutActivity() {
-        if(D)Log.d(TAG, "PlaySlidesActivity.launchAboutActivity");
-
-        Intent intent = new Intent(this, AboutActivity.class);
-        startActivity(intent);
-    }
-
     public String getSlidesTitle() {
         if(D)Log.d(TAG, "PlaySlidesActivity.getSlidesTitle");
 

@@ -10,7 +10,4 @@
     <item
         android:id="@+id/menu_playslidesactivity_settings"
         android:title="@string/menu_playslidesactivity_settings" />
-    <item
-        android:id="@+id/menu_playslidesactivity_about"
-        android:title="@string/menu_editplayactivity_about" />
 </menu>

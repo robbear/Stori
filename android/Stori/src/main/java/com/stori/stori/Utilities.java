@@ -45,6 +45,31 @@ public class Utilities {
         return uuid;
     }
 
+    public static void clearAllData(Context context, SharedPreferences prefs) {
+        if(D)Log.d(TAG, "Utilities.clearAllData");
+
+        EditPlayActivity.s_amazonClientManager.clearCredentials();
+        EditPlayActivity.s_amazonClientManager.wipe();
+
+        String slideShareName = prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(context), null);
+        if (slideShareName != null) {
+            if(D)Log.d(TAG, String.format("Utilities.clearAllData - deleting PlaySlides directory: %s", slideShareName));
+            Utilities.deleteSlideShareDirectory(context, slideShareName);
+        }
+
+        slideShareName = prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(context), null);
+        if (slideShareName != null) {
+            if(D)Log.d(TAG, String.format("Utilities.clearAllData - deleting EditSlides directory: %s", slideShareName));
+            Utilities.deleteSlideShareDirectory(context, slideShareName);
+        }
+
+        if(D)Log.d(TAG, "Utilities.clearAllData - clearing PREFS_PLAYSLIDESNAME and PREFS_EDITPROJECTNAME");
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(SSPreferences.PREFS_PLAYSLIDESNAME(context), null);
+        editor.putString(SSPreferences.PREFS_EDITPROJECTNAME(context), null);
+        editor.commit();
+    }
+
     //
     // Creates or gets the SlideShare directory for SlideShare name, slideShareName.
     //

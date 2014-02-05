@@ -22,10 +22,4 @@
     <item
         android:id="@+id/menu_editplayactivity_settings"
         android:title="@string/menu_editplayactivity_settings" />
-    <item
-        android:id="@+id/menu_editplayactivity_about"
-        android:title="@string/menu_editplayactivity_about" />
-    <item
-        android:id="@+id/menu_editplayactivity_switchaccount"
-        android:title="@string/menu_editplayactivity_switchaccount" />
 </menu>

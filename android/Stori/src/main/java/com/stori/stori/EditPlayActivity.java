@@ -70,6 +70,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     public final static int REQUEST_CAMERA = 5;
     public final static int REQUEST_DOWNLOAD_FOR_EDIT = 6;
 
+    public final static int RESULT_EDITDOWNLOAD_OK = RESULT_FIRST_USER + 1;
+
     public static AmazonClientManager s_amazonClientManager = null;
 
     public enum EditPlayMode {
@@ -138,6 +140,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             SharedPreferences.Editor edit = m_prefs.edit();
             edit.putString(SSPreferences.PREFS_EDITPROJECTNAME(this), m_slideShareName);
             edit.commit();
+
+            if(D)Log.d(TAG, String.format("EditPlayActivity.onCreate - after saving slideShareName: %s", m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(this), null)));
         }
 
         File slideShareDirectory = Utilities.createOrGetSlideShareDirectory(this, m_slideShareName);
@@ -353,30 +357,37 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - returned from Google Play Services error dialog. Finishing.");
             finish();
         }
-        else if (requestCode == REQUEST_GOOGLE_LOGIN) {
+        else if (requestCode == REQUEST_GOOGLE_LOGIN || requestCode == REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT) {
             if (resultCode == RESULT_OK) {
-                if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - return from successful Google login.");
-            }
-            else {
-                // BUGBUG - handle login failure
-                if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - failed to login to Google. Finishing. TODO: handle with grace.");
-                finish();
-            }
-        }
-        else if (requestCode == REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT) {
-            if (resultCode == RESULT_OK) {
-                if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - handling REQUEST_GOOGLE_LOGIN_FROM_FRAGMENT");
+                if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - handling REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT");
+
+                if (m_storiService != null) {
+                    if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - clearing StoriService's StoriListItem cache");
+                    m_storiService.resetStoriItems(null);
+                }
+
+                // Blank the screen
+                m_editPlayPagerAdapter = new EditPlayPagerAdapter(getSupportFragmentManager());
+                m_viewPager.setAdapter(m_editPlayPagerAdapter);
+
                 initializeForChangeInAccount();
             }
-            else {
+            else if (requestCode == REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT && resultCode == SettingsActivity.RESULT_CODE_SWITCHACCOUNT_FAILED) {
                 // BUGBUG - handle login failure
+                if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - failed to login to Google during SWITCH_ACCOUNT, or user hit cancel.");
+                //finish();
+            }
+            else if (requestCode == REQUEST_GOOGLE_LOGIN) {
+                // Failure case for initial login
                 if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - failed to login to Google. Finishing. TODO: handle with grace.");
                 finish();
             }
         }
         else if (requestCode == REQUEST_DOWNLOAD_FOR_EDIT) {
-            if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - handling REQUEST_DOWNLOAD_FOR_EDIT. Launching new EditPlayActivity and killing this one.");
-            launchNewEditPlayActivity();
+            if (resultCode == RESULT_EDITDOWNLOAD_OK) {
+                if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - handling REQUEST_DOWNLOAD_FOR_EDIT. Launching new EditPlayActivity and killing this one.");
+                launchNewEditPlayActivity();
+            }
         }
         else {
             if(D)Log.d(TAG, "EditPlayActivity.onActivityResult - passing on to super.onActivityResult");
@@ -462,44 +473,10 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         Intent intent = new Intent(this, SettingsActivity.class);
         intent.putExtra(SettingsActivity.EXTRA_LAUNCHFROMEDIT, true);
-        startActivity(intent);
-    }
 
-    public void launchAboutActivity() {
-        if(D)Log.d(TAG, "EditPlayActivity.launchAboutActivity");
-
-        Intent intent = new Intent(this, AboutActivity.class);
-        startActivity(intent);
-    }
-
-    public void switchAccount() {
-        if(D)Log.d(TAG, "EditPlayActivity.switchAccount");
-
-        AlertDialog.Builder adb = new AlertDialog.Builder(EditPlayActivity.this);
-        adb.setTitle(getString(R.string.switch_account_dialog_title));
-        adb.setCancelable(true);
-        adb.setMessage(getString(R.string.switch_account_dialog_message));
-        adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(D)Log.d(TAG, "EditPlayActivity.switchAccount - switching account");
-                dialog.dismiss();
-
-                clearAllData();
-
-                Intent intent = new Intent(EditPlayActivity.this, GoogleLogin.class);
-                startActivityForResult(intent, REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT);
-            }
-        });
-        adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        AlertDialog ad = adb.create();
-        ad.show();
+        // We'll ignore everything in onActivityRequest except for a switch account
+        // notification from SettingsActivity.
+        startActivityForResult(intent, REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT);
     }
 
     //
@@ -735,41 +712,6 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         }
 
         return count;
-    }
-
-    public void clearAllData() {
-        if(D)Log.d(TAG, "EditPlayActivity.clearAllData");
-
-        s_amazonClientManager.clearCredentials();
-        s_amazonClientManager.wipe();
-
-        if (m_storiService != null) {
-            if(D)Log.d(TAG, "EditPlayActivity.clearAllData - clearing StoriService's StoriListItem cache");
-            m_storiService.resetStoriItems(null);
-        }
-
-        // Delete everything
-        String slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), null);
-        if (slideShareName != null) {
-            if(D)Log.d(TAG, String.format("EditPlayActivity.clearAllData - deleting PlaySlides directory: %s", slideShareName));
-            Utilities.deleteSlideShareDirectory(this, slideShareName);
-        }
-
-        slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(this), null);
-        if (slideShareName != null) {
-            if(D)Log.d(TAG, String.format("EditPlayActivity.clearAllData - deleting EditSlides directory: %s", slideShareName));
-            Utilities.deleteSlideShareDirectory(this, slideShareName);
-        }
-
-        if(D)Log.d(TAG, "EditPlayActivity.clearAllData - clearing PREFS_PLAYSLIDESNAME and PREFS_EDITPROJECTNAME");
-        SharedPreferences.Editor editor = m_prefs.edit();
-        editor.putString(SSPreferences.PREFS_PLAYSLIDESNAME(this), null);
-        editor.putString(SSPreferences.PREFS_EDITPROJECTNAME(this), null);
-        editor.commit();
-
-        // Blank the screen
-        m_editPlayPagerAdapter = new EditPlayPagerAdapter(getSupportFragmentManager());
-        m_viewPager.setAdapter(m_editPlayPagerAdapter);
     }
 
     //

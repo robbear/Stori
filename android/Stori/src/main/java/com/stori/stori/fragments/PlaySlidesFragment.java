@@ -307,15 +307,6 @@ public class PlaySlidesFragment extends Fragment implements
                     }
                 });
 
-                MenuItem about = menu.findItem(R.id.menu_playslidesactivity_about);
-                about.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        m_playSlidesActivity.launchAboutActivity();
-                        return true;
-                    }
-                });
-
                 pm.show();
             }
         });

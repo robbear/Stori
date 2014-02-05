@@ -17,6 +17,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.stori.stori.EditPlayActivity;
 import com.stori.stori.R;
 import com.stori.stori.SSPreferences;
+import com.stori.stori.Utilities;
 
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
@@ -26,11 +27,14 @@ public class GoogleLogin extends AlertActivity {
     public static int ACCOUNT_PICKER_RESULT = 1;
     public static int USER_AUTHORIZATION_RESULT = 2;
 
+    public final static String EXTRA_FORCE_ACCOUNT_PICKER = "extra_force_account_picker";
+
     private final static String INSTANCE_STATE_ACCOUNT_PICKER = "instance_state_account_picker";
+    private final static String INSTANCE_STATE_FORCE_ACCOUNT_PICKER = "instance_state_force_account_picker";
 
     private SharedPreferences m_prefs;
-    private String m_userAccountEmail;
     private boolean m_fAccountPickerUp = false;
+    private boolean m_fForceAccountPicker = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,27 +43,30 @@ public class GoogleLogin extends AlertActivity {
 
         setContentView(R.layout.activity_googlelogin);
 
+        m_fForceAccountPicker = getIntent().getBooleanExtra(EXTRA_FORCE_ACCOUNT_PICKER, false);
+
         if (savedInstanceState != null) {
             m_fAccountPickerUp = savedInstanceState.getBoolean(INSTANCE_STATE_ACCOUNT_PICKER);
+            m_fForceAccountPicker = savedInstanceState.getBoolean(INSTANCE_STATE_FORCE_ACCOUNT_PICKER);
         }
 
         m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
-        m_userAccountEmail = AmazonSharedPreferencesWrapper.getUserEmail(m_prefs);
-        if(D)Log.d(TAG, String.format("GoogleLogin.onCreate - m_userAccountEmail=%s", m_userAccountEmail));
+        String userAccountEmail = AmazonSharedPreferencesWrapper.getUserEmail(m_prefs);
+        if(D)Log.d(TAG, String.format("GoogleLogin.onCreate - m_userAccountEmail=%s, m_fForceAccountPicker=%b", userAccountEmail, m_fForceAccountPicker));
 
         if (m_fAccountPickerUp) {
             if(D)Log.d(TAG, "GoogleLogin.onCreate - account picker is already up, so bailing");
         }
         else {
-            if (m_userAccountEmail == null) {
-                if(D)Log.d(TAG, "GoogleLogin.onCreate - m_userAccountEmail is null so calling AccountPicker");
+            if (userAccountEmail == null || m_fForceAccountPicker) {
+                if(D)Log.d(TAG, "GoogleLogin.onCreate - m_userAccountEmail is null or m_fForceAccountPicker is true, so calling AccountPicker");
                 m_fAccountPickerUp = true;
                 Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[] {GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
                 startActivityForResult(intent, ACCOUNT_PICKER_RESULT);
                 return;
             }
 
-            getAndUseAuthTokenInAsyncTask();
+            getAndUseAuthTokenInAsyncTask(userAccountEmail);
         }
     }
 
@@ -68,23 +75,28 @@ public class GoogleLogin extends AlertActivity {
         if(D)Log.d(TAG, "GoogleLogin.onSaveInstanceState");
 
         savedInstanceState.putBoolean(INSTANCE_STATE_ACCOUNT_PICKER, m_fAccountPickerUp);
+        savedInstanceState.putBoolean(INSTANCE_STATE_FORCE_ACCOUNT_PICKER, m_fForceAccountPicker);
     }
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if(D)Log.d(TAG, String.format("GoogleLogin.onActivityResult: requestCode=%d, resultCode=%d", requestCode, resultCode));
 
-        if (requestCode == ACCOUNT_PICKER_RESULT && resultCode == RESULT_OK) {
-            m_userAccountEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            if(D)Log.d(TAG, String.format("GoogleLogin.onActivityResult: m_userAccountEmail=%s", m_userAccountEmail));
-            AmazonSharedPreferencesWrapper.storeUserEmail(m_prefs, m_userAccountEmail);
+        String userAccountEmail = data == null ? null : data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
 
-            getAndUseAuthTokenInAsyncTask();
+        if (requestCode == ACCOUNT_PICKER_RESULT && resultCode == RESULT_OK) {
+            if(D)Log.d(TAG, "GoogleLogin.onActivityResult - handling RESULT_OK on ACCOUNT_PICKER_RESULT. Clearing data and prepping for EditActivity reset.");
+            Utilities.clearAllData(this, m_prefs);
+
+            if(D)Log.d(TAG, String.format("GoogleLogin.onActivityResult: userAccountEmail=%s", userAccountEmail));
+            AmazonSharedPreferencesWrapper.storeUserEmail(m_prefs, userAccountEmail);
+
+            getAndUseAuthTokenInAsyncTask(userAccountEmail);
         }
         else if (requestCode == USER_AUTHORIZATION_RESULT && resultCode == RESULT_OK) {
             if(D)Log.d(TAG, "GoogleLogin.onActivityResult - user authorized the application");
 
-            getAndUseAuthTokenInAsyncTask();
+            getAndUseAuthTokenInAsyncTask(userAccountEmail);
         }
         else {
             if(D)Log.d(TAG, "GoogleLogin.onActivityResult - nothing selected, so finishing activity");
@@ -92,7 +104,7 @@ public class GoogleLogin extends AlertActivity {
         }
     }
 
-    void getAndUseAuthTokenBlocking() {
+    void getAndUseAuthTokenBlocking(String userAccountEmail) {
         if(D)Log.d(TAG, "GoogleLogin.getAndUseAuthTokenBlocking");
 
         try {
@@ -106,7 +118,7 @@ public class GoogleLogin extends AlertActivity {
             String scope = "audience:server:client_id:" + EditPlayActivity.s_amazonClientManager.getGoogleClientID();
             if(D)Log.d(TAG, String.format("GoogleLogin.getAndUseAuthTokenBlocking - scope=%s", scope));
 
-            String token = GoogleAuthUtil.getToken(getApplicationContext(), m_userAccountEmail, scope);
+            String token = GoogleAuthUtil.getToken(getApplicationContext(), userAccountEmail, scope);
             if(D)Log.d(TAG, String.format("GoogleLogin.getAndUseAuthTokenBlocking - using token for login: %s", token));
 
             EditPlayActivity.s_amazonClientManager.login(new GoogleIDP(getApplicationContext(), token), this);
@@ -122,13 +134,13 @@ public class GoogleLogin extends AlertActivity {
         }
     }
 
-    void getAndUseAuthTokenInAsyncTask() {
-        if(D)Log.d(TAG, "GoogleLogin.getAndUseAuthTokenInAsyncTask");
+    void getAndUseAuthTokenInAsyncTask(final String userAccountEmail) {
+        if(D)Log.d(TAG, String.format("GoogleLogin.getAndUseAuthTokenInAsyncTask: userAccountEmail=%s", userAccountEmail));
 
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                getAndUseAuthTokenBlocking();
+                getAndUseAuthTokenBlocking(userAccountEmail);
                 return null;
             }
         };

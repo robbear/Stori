@@ -102,7 +102,7 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
         if (requestCode == EditPlayActivity.REQUEST_DOWNLOAD_FOR_EDIT) {
             if(D)Log.d(TAG, "StoriListActivity.onActivityResult - returned from DownloadActivity for REQUEST_DOWNLOAD_FOR_EDIT.");
             if (resultCode == RESULT_OK) {
-                setResult(RESULT_OK);
+                setResult(EditPlayActivity.RESULT_EDITDOWNLOAD_OK);
                 finish();
             }
         }

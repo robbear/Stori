@@ -2,7 +2,9 @@ package com.stori.stori;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.stori.stori.cloudproviders.AmazonSharedPreferencesWrapper;
+import com.stori.stori.cloudproviders.GoogleLogin;
 
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
@@ -24,6 +27,9 @@ public class SettingsActivity extends Activity {
     public final static String TAG = "SettingsActivity";
 
     public final static String EXTRA_LAUNCHFROMEDIT = "extra_launchfromedit";
+
+    public final static int REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT_SETTINGS = 1;
+    public final static int RESULT_CODE_SWITCHACCOUNT_FAILED = RESULT_FIRST_USER + 1;
 
     private SharedPreferences m_prefs;
     private LinearLayout m_autoPlayPanel;
@@ -103,7 +109,7 @@ public class SettingsActivity extends Activity {
         m_switchAccountPanel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO
+                switchAccount();
             }
         });
 
@@ -147,5 +153,54 @@ public class SettingsActivity extends Activity {
         if(D)Log.d(TAG, "SettingsActivity.onPause");
 
         super.onPause();
+    }
+
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if(D)Log.d(TAG, String.format("SettingsActivity.onActivityResult: requestCode=%d, resultCode=%d", requestCode, resultCode));
+
+        if (requestCode == REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT_SETTINGS) {
+            if (resultCode == RESULT_OK) {
+                if(D)Log.d(TAG, "SettingsActivity.onActivityResult - handling REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT_SETTINGS");
+                setResult(RESULT_OK);
+                finish();
+                return;
+            }
+        }
+        else {
+            if(D)Log.d(TAG, "SettingsActivity.onActivityResult - something bad happened in Switch Account. Returning RESULT_CANCEL");
+            setResult(RESULT_CODE_SWITCHACCOUNT_FAILED);
+            finish();
+            return;
+        }
+    }
+
+    private void switchAccount() {
+        if(D)Log.d(TAG, "SettingsActivity.switchAccount");
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle(getString(R.string.switch_account_dialog_title));
+        adb.setCancelable(true);
+        adb.setMessage(getString(R.string.switch_account_dialog_message));
+        adb.setPositiveButton(getString(R.string.yes_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(D)Log.d(TAG, "EditPlayActivity.switchAccount - switching account");
+                dialog.dismiss();
+
+                Intent intent = new Intent(SettingsActivity.this, GoogleLogin.class);
+                intent.putExtra(GoogleLogin.EXTRA_FORCE_ACCOUNT_PICKER, true);
+                startActivityForResult(intent, REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT_SETTINGS);
+            }
+        });
+        adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog ad = adb.create();
+        ad.show();
     }
 }
