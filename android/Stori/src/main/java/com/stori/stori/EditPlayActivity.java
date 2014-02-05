@@ -472,6 +472,12 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 dialog.dismiss();
                 if(D)Log.d(TAG, String.format("****** Reorder slide %d to %d", m_currentTabPosition + 1, m_newSlideOrderValueForDialog));
 
+                if (m_currentTabPosition == m_newSlideOrderValueForDialog - 1) {
+                    // No change
+                    m_newSlideOrderValueForDialog = 0;
+                    return;
+                }
+
                 try {
                     m_ssj.reorder(m_currentTabPosition, m_newSlideOrderValueForDialog - 1);
                     m_ssj.save(EditPlayActivity.this, m_slideShareName, Config.slideShareJSONFilename);
