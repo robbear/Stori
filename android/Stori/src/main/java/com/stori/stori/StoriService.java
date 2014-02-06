@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
@@ -458,7 +459,7 @@ public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTi
             if(D)Log.d(TAG, "StoriService.ReadStoriItemsTask.doInBackground");
 
             if (m_storiListItems != null && m_storiListItems.size() > 1) {
-                if(D)Log.d(TAG, "StoriService.REadStoriItemsTask.doInBackground - reusing from cache");
+                if(D)Log.d(TAG, "StoriService.ReadStoriItemsTask.doInBackground - reusing from cache");
 
                 return m_storiListItems;
             }
@@ -467,7 +468,15 @@ public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTi
 
             CloudStore cloudStore = new CloudStore(rsitp.m_context, rsitp.m_userUuid, null, Config.CLOUD_STORAGE_PROVIDER, null);
 
-            return cloudStore.readStoriItems();
+            ArrayList<StoriListItem> items = cloudStore.readStoriItems();
+
+            // Now sort the items by date descending, taking advantage of the fact that the
+            // modifiedDate is a comparator-capable string, formatted in YYYY-MM-DDTHH:MM:SS.sssz
+            // UTC time format.
+
+            Collections.sort(items, new StoriListItemComparator());
+
+            return items;
         }
 
         @Override

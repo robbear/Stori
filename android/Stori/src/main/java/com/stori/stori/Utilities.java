@@ -23,7 +23,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import static com.stori.stori.Config.D;
@@ -646,6 +651,22 @@ public class Utilities {
         if(D)Log.d(TAG, String.format("Utilities.devieHasHardwareKeyboard: returning %b", hasKeyboard));
 
         return hasKeyboard;
+    }
+
+    // See: https://groups.google.com/a/openmrs.org/forum/#!topic/dev/XlzO0KP-rUo
+    // Convert format YYYY-MM-DDThh:mm:ss.sssZ to YYYY-MM-DDThh:mm:ss+00:00
+    public static Calendar toCalendarFromISO8601String(String iso8601String) throws ParseException {
+        if(D)Log.d(TAG, String.format("Utilities.toCalendarFromISO8601String: %s", iso8601String));
+
+        Calendar calendar = GregorianCalendar.getInstance();
+
+        String s = iso8601String.substring(0, 19) + "+00:00";
+        if(D)Log.d(TAG, String.format("Utilities.toCalendarFromISO8601String: s=%s", s));
+
+        Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").parse(s);
+        calendar.setTime(date);
+
+        return calendar;
     }
 
     public static void freezeActivityOrientation(Activity activity) {

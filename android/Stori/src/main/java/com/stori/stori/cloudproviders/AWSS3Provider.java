@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.util.StringUtils;
 import com.stori.stori.Config;
 import com.stori.stori.EditPlayActivity;
 import com.stori.stori.StoriListItem;
@@ -74,10 +75,10 @@ public class AWSS3Provider implements ICloudProvider {
                 title = URLDecoder.decode(title, "UTF-8");
             }
             String countString = getStringSegmentFromManifestsUrlString(key, Config.slideCountSegmentString);
-            String dateString = summary.getLastModified().toString();
             if (countString != null) {
                 slideCount = Integer.parseInt(countString);
             }
+            String dateString = StringUtils.fromDate(summary.getLastModified());
 
             StoriListItem item = new StoriListItem(slideShareName, title, dateString, slideCount);
             list.add(item);

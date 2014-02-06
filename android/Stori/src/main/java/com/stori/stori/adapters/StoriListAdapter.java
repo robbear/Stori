@@ -16,7 +16,10 @@ import com.stori.stori.StoriListActivity;
 import com.stori.stori.StoriListItem;
 import com.stori.stori.Utilities;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
@@ -84,7 +87,27 @@ public class StoriListAdapter extends BaseAdapter {
         titleView.setText(sli.getTitle());
 
         TextView dateView = (TextView)convertView.findViewById(R.id.text_date);
-        dateView.setText(sli.getModifiedDate());
+
+        //
+        // Convert date string to local date
+        //
+        String dateString = null;
+        try {
+            Calendar calendar = Utilities.toCalendarFromISO8601String(sli.getModifiedDate());
+            DateFormat sdf = SimpleDateFormat.getDateTimeInstance();
+            dateString = sdf.format(calendar.getTime());
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "StoriListAdapter.getView", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "StoriListAdapter.getView", e);
+            e.printStackTrace();
+        }
+
+        // Set the dateView text
+        dateView.setText(dateString);
 
         int count = sli.getSlideCount();
         TextView countView = (TextView)convertView.findViewById(R.id.text_count);
