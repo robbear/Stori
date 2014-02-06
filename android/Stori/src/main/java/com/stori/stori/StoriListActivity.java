@@ -1,5 +1,6 @@
 package com.stori.stori;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -14,6 +15,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 
 import com.stori.stori.adapters.StoriListAdapter;
 import com.stori.stori.cloudproviders.AmazonSharedPreferencesWrapper;
@@ -35,10 +38,29 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
     private ProgressDialog m_progressDialog = null;
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(D) Log.d(TAG, "StoriListActivity.onOptionsItemSelected");
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if(D)Log.d(TAG, "StoriListActivity.onOptionsItemSelected: up button clicked. Finishing activity.");
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         if(D)Log.d(TAG, "StoriListActivity.onCreate");
 
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_storilist);
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setTitle(getString(R.string.storilistactivity_actionbar));
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
         m_userUuid = AmazonSharedPreferencesWrapper.getUsername(m_prefs);
@@ -122,7 +144,18 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
             if(D)Log.d(TAG, String.format("StoriListActivity.onReadStoriItemsComplete: found %d items", storiListItems.size()));
         }
 
-        if (storiListItems != null) {
+        if (storiListItems == null || storiListItems.size() == 0) {
+            View viewLoading = findViewById(R.id.list_loading);
+            View viewNoItems = findViewById(R.id.list_no_items);
+
+            if (viewLoading != null) {
+                viewLoading.setVisibility(View.GONE);
+            }
+            if (viewNoItems != null) {
+                viewNoItems.setVisibility(View.VISIBLE);
+            }
+        }
+        else {
             for (int i = 0; i < storiListItems.size(); i++) {
                 StoriListItem sli = storiListItems.get(i);
                 if(D)Log.d(TAG, String.format("****** slideShareName=%s, title=%s, slideCount=%d, date=%s", sli.getSlideShareName(), sli.getTitle(), sli.getSlideCount(), sli.getModifiedDate()));
