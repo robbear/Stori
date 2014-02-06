@@ -92,11 +92,10 @@ public class StoriListAdapter extends BaseAdapter {
                 m_storiListActivity.getString(R.string.storilistadapter_count_text_single) :
                 String.format(m_storiListActivity.getString(R.string.storilistadapter_count_text_format, count)));
 
-        convertView.setOnLongClickListener(new View.OnLongClickListener() {
+        View menuTrigger = convertView.findViewById(R.id.menu_trigger);
+        menuTrigger.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View view) {
-                if(D)Log.d(TAG, "StoriListAdapter.onLongClick");
-
+            public void onClick(View view) {
                 PopupMenu pm = new PopupMenu(m_storiListActivity, view);
                 pm.inflate(R.menu.menu_storilistitem);
                 Menu menu = pm.getMenu();
@@ -144,8 +143,6 @@ public class StoriListAdapter extends BaseAdapter {
                 });
 
                 pm.show();
-
-                return true;
             }
         });
 

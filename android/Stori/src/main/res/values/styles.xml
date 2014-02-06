@@ -17,6 +17,31 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <style name="item_title">
+        <item name="android:textSize">17dp</item>
+        <item name="android:textColor">@color/list_text_title</item>
+    </style>
+
+    <style name="item_subtitle">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">@color/list_text_subtitle</item>
+    </style>
+
+    <style name="item_title.nowrap">
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="item_subtitle.nowrap">
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="item_title.dim">
+        <item name="android:textSize">18dp</item>
+        <item name="android:textColor">@color/list_text_subtitle</item>
+    </style>
+
     <style name="button_transport">
         <item name="android:layout_width">66dp</item>
         <item name="android:layout_height">match_parent</item>

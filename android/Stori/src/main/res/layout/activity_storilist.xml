@@ -22,7 +22,7 @@
             android:dividerHeight="1px"
             android:fadingEdge="vertical"
             android:requiresFadingEdge="vertical|horizontal"
-            android:fastScrollEnabled="true"/>
+            android:fastScrollEnabled="false"/>
 
         <!-- Here is the view to show if the list is empty -->
         <FrameLayout

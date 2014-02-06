@@ -1,24 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/text_title"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:text="Title"/>
-    <TextView
-        android:id="@+id/text_date"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:text="Date"/>
-    <TextView
-        android:id="@+id/text_count"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:text="Count"/>
+        android:layout_width="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight=".9"
+            android:paddingLeft="12dp"
+            android:paddingRight="8dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="6dp">
+            <TextView
+                android:id="@+id/text_title"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Title"
+                style="@style/item_title.nowrap"/>
+            <TextView
+                android:id="@+id/text_date"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Date"
+                style="@style/item_subtitle.nowrap"/>
+            <TextView
+                android:id="@+id/text_count"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Count"
+                style="@style/item_subtitle.nowrap"/>
+        </LinearLayout>
+        <RelativeLayout
+            android:id="@+id/menu_trigger"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight=".1"
+            android:background="@drawable/button_flash"
+            android:layout_gravity="center_vertical">
+            <ImageView
+                android:id="@+id/menu_trigger_icon"
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_three_dot_light"
+                android:background="@null"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+    </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>
