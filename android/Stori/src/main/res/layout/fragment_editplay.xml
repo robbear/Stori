@@ -36,7 +36,7 @@
                         android:layout_height="32dp"
                         android:layout_width="32dp"
                         android:layout_centerInParent="true"
-                        android:background="@null"
+                        android:background="@drawable/button_flash"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_selectimage" />
                 </RelativeLayout>
@@ -49,7 +49,7 @@
                         android:layout_height="32dp"
                         android:layout_width="32dp"
                         android:layout_centerInParent="true"
-                        android:background="@null"
+                        android:background="@drawable/button_flash"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_camera" />
                 </RelativeLayout>
@@ -62,7 +62,7 @@
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_centerInParent="true"
-                        android:background="@null"
+                        android:background="@drawable/button_flash"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_record" />
                 </RelativeLayout>
@@ -76,7 +76,7 @@
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_centerInParent="true"
-                        android:background="@null"
+                        android:background="@drawable/button_flash"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_reorder" />
                 </RelativeLayout>
@@ -89,7 +89,7 @@
                         android:layout_height="32dp"
                         android:layout_width="32dp"
                         android:layout_centerInParent="true"
-                        android:background="@null"
+                        android:background="@drawable/button_flash"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_trash" />
                 </RelativeLayout>
@@ -102,7 +102,7 @@
                         android:layout_height="32dp"
                         android:layout_width="32dp"
                         android:layout_centerInParent="true"
-                        android:background="@null"
+                        android:background="@drawable/button_flash"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_three_dot" />
                 </RelativeLayout>
@@ -115,19 +115,19 @@
                 android:layout_weight=".50">
                 <ImageButton
                     android:id="@+id/edit_prev_control"
-                    android:layout_height="48dp"
-                    android:layout_width="48dp"
+                    android:layout_height="32dp"
+                    android:layout_width="32dp"
                     android:layout_centerInParent="true"
-                    android:background="@null"
+                    android:background="@drawable/button_flash"
                     android:scaleType="fitCenter"
                     android:layout_alignParentLeft="true"
                     android:src="@drawable/ic_plus" />
                 <ImageButton
                     android:id="@+id/edit_next_control"
-                    android:layout_height="48dp"
-                    android:layout_width="48dp"
+                    android:layout_height="32dp"
+                    android:layout_width="32dp"
                     android:layout_centerInParent="true"
-                    android:background="@null"
+                    android:background="@drawable/button_flash"
                     android:scaleType="fitCenter"
                     android:layout_alignParentRight="true"
                     android:src="@drawable/ic_plus" />
@@ -151,7 +151,7 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:layout_centerInParent="true"
-                            android:background="@null"
+                            android:background="@drawable/button_flash"
                             android:scaleType="fitCenter"
                             android:visibility="invisible"
                             android:src="@drawable/ic_arrow_left" />
@@ -165,7 +165,7 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:layout_centerInParent="true"
-                            android:background="@null"
+                            android:background="@drawable/button_flash"
                             android:scaleType="fitCenter"
                             android:visibility="invisible"
                             android:src="@drawable/ic_play" />
@@ -179,7 +179,7 @@
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_centerInParent="true"
-                        android:background="@null"
+                        android:background="@drawable/button_flash"
                         android:scaleType="fitCenter"
                         android:visibility="invisible"
                         android:src="@drawable/ic_arrow_right" />
