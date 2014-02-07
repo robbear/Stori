@@ -564,19 +564,21 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
     private void setSlideShareTitle(String title) {
         if(D)Log.d(TAG, String.format("EditPlayActivity.setSlideShareTitle: %s", title));
 
-        if (title != null) {
-            try {
-                m_ssj.setTitle(title);
-                m_ssj.save(this, m_slideShareName, Config.slideShareJSONFilename);
-            }
-            catch (Exception e) {
-                if(E)Log.e(TAG, "EditPlayActivity.setSlideShareTitle", e);
-                e.printStackTrace();
-            }
-            catch (OutOfMemoryError e) {
-                if(E)Log.e(TAG, "EditPlayActivity.setSlideShareTitle", e);
-                e.printStackTrace();
-            }
+        if (title == null || title.isEmpty()) {
+            title = getString(R.string.default_stori_title);
+        }
+
+        try {
+            m_ssj.setTitle(title);
+            m_ssj.save(this, m_slideShareName, Config.slideShareJSONFilename);
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditPlayActivity.setSlideShareTitle", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditPlayActivity.setSlideShareTitle", e);
+            e.printStackTrace();
         }
     }
 
@@ -677,17 +679,13 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         adb.setNegativeButton(getString(R.string.default_text), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String title = getString(R.string.default_stori_title);
-
-                dialog.dismiss();
-                Utilities.unfreezeOrientation(EditPlayActivity.this);
-
-                initializeSlideShareJSON();
-                setSlideShareTitle(title);
-
-                m_currentTabPosition = 0;
-                initializeViewPager();
-                initializeNewSlide(m_currentTabPosition);
+                handleCancelOnNewTitleDialog(dialog);
+            }
+        });
+        adb.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                handleCancelOnNewTitleDialog(dialog);
             }
         });
 
@@ -709,6 +707,22 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         }
 
         ad.show();
+    }
+
+    private void handleCancelOnNewTitleDialog(DialogInterface dialog) {
+        if(D)Log.d(TAG, "EditPlayActivity.handleCancelOnNewTitleDialog");
+
+        String title = getString(R.string.default_stori_title);
+
+        dialog.dismiss();
+        Utilities.unfreezeOrientation(EditPlayActivity.this);
+
+        initializeSlideShareJSON();
+        setSlideShareTitle(title);
+
+        m_currentTabPosition = 0;
+        initializeViewPager();
+        initializeNewSlide(m_currentTabPosition);
     }
 
     public void renameStori() {
