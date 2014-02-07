@@ -44,7 +44,7 @@ import java.util.UUID;
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
 
-public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.ViewFactory, CloudStore.ICloudStoreCallback {
+public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.ViewFactory, CloudStore.ICloudStoreCallback, StoriService.ReadStoriItemsStateListener {
     public final static String TAG = "EditPlayActivity";
 
     private final static String INSTANCE_STATE_CURRENT_TAB = "instance_state_current_tab";
@@ -957,16 +957,16 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
 
-                CloudStore cloudStore = new CloudStore(EditPlayActivity.this, m_userUuid,
-                        m_slideShareName, Config.CLOUD_STORAGE_PROVIDER, EditPlayActivity.this);
+                if (m_storiService != null) {
+                    m_progressDialog = new ProgressDialog(EditPlayActivity.this);
+                    m_progressDialog.setTitle(getString(R.string.upload_dialog_title));
+                    m_progressDialog.setCancelable(false);
+                    m_progressDialog.setIndeterminate(true);
+                    m_progressDialog.show();
 
-                m_progressDialog = new ProgressDialog(EditPlayActivity.this);
-                m_progressDialog.setTitle(getString(R.string.upload_dialog_title));
-                m_progressDialog.setCancelable(false);
-                m_progressDialog.setIndeterminate(true);
-                m_progressDialog.show();
-
-                cloudStore.saveAsync();
+                    m_storiService.registerReadStoriItemsStateListener(EditPlayActivity.this);
+                    m_storiService.readStoriItemsAsync(EditPlayActivity.this, m_userUuid);
+                }
             }
         });
         adb.setNegativeButton(getString(R.string.no_text), new DialogInterface.OnClickListener() {
@@ -1123,6 +1123,61 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         m_currentTabPosition = position;
         m_viewPager.setCurrentItem(m_currentTabPosition);
+    }
+
+    public void onReadStoriItemsComplete(ArrayList<StoriListItem> storiListItems) {
+        if(D)Log.d(TAG, "EditPlayActivity.onReadStoriItemsComplete");
+
+        if (m_storiService != null) {
+            m_storiService.unregisterReadStoriItemsStateListener(this);
+        }
+
+        // Check if this item is already up on the server. If so, it means we
+        // can ignore the count and go ahead and republish.
+        boolean isEditOfPublished = false;
+        if (storiListItems != null) {
+            for (int i = 0; i < storiListItems.size(); i++) {
+                StoriListItem item = storiListItems.get(i);
+                if (item != null) {
+                    String slideShareName = item.getSlideShareName();
+                    if (slideShareName != null && slideShareName.equals(m_slideShareName)) {
+                        if(D)Log.d(TAG, "EditPlayActivity.onReadStoriItemsComplete - this Stori is a republish");
+                        isEditOfPublished = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!isEditOfPublished && storiListItems != null && storiListItems.size() >= Config.maxPublishedForFree) {
+            if(D)Log.d(TAG, "EditPlayActivity.onReadStoriItemsComplete - maxPublishedForFree is exceeded. Don't publish.");
+
+            if (m_progressDialog != null) {
+                m_progressDialog.dismiss();
+                m_progressDialog = null;
+            }
+
+            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+            adb.setTitle(getString(R.string.editplay_maxpublishedexceeded_title));
+            adb.setCancelable(true);
+            adb.setMessage(String.format(getString(R.string.editplay_maxpublishedexceeded_message_format), Config.maxPublishedForFree));
+            adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog ad = adb.create();
+            ad.show();
+            return;
+        }
+
+        if(D)Log.d(TAG, "EditPlayActivity.onReadStoriItemsComplete - publishing Stori");
+        CloudStore cloudStore = new CloudStore(EditPlayActivity.this, m_userUuid,
+                m_slideShareName, Config.CLOUD_STORAGE_PROVIDER, EditPlayActivity.this);
+
+        cloudStore.saveAsync();
     }
 
     protected void initializeStoriService() {

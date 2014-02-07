@@ -91,6 +91,12 @@ public class Config
     // Delay in milliseconds before slide audio starts playing
     public static final int audioDelayMillis = 1000;
 
+    // Maximum published Storis for free version
+    public static final int maxPublishedForFree = 20;
+
+    // Maximum number of slides per Stori for free version
+    public static final int maxSlidesPerStoriForFree = 20;
+
 	// Error logs - ship with this set to false
 	public static final boolean E = true;
 	
