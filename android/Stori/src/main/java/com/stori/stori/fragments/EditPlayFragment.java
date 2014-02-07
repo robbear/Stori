@@ -71,6 +71,7 @@ public class EditPlayFragment extends Fragment implements
     private ImageButton m_prevControl;
     private TextView m_slidePositionTextControl;
     private TextView m_titleControl;
+    private View m_nextPrevPanel;
     private String m_imageFileName;
     private String m_audioFileName;
     private String m_slideUuid;
@@ -233,6 +234,7 @@ public class EditPlayFragment extends Fragment implements
 
         m_slidePositionTextControl = (TextView)view.findViewById(R.id.control_slide_position);
         m_titleControl = (TextView)view.findViewById(R.id.control_title);
+        m_nextPrevPanel = view.findViewById(R.id.control_nextprev_panel);
 
         m_nextControl = (ImageButton)view.findViewById(R.id.control_next_slide);
         m_nextControl.setOnClickListener(new View.OnClickListener() {
@@ -883,6 +885,9 @@ public class EditPlayFragment extends Fragment implements
         int position = m_editPlayActivity.getSlidePosition(m_slideUuid);
 
         if(D)Log.d(TAG, String.format("EditPlayFragment.displayNextPrevControls: position=%d, count=%d", position, count));
+
+        int countSlides = m_editPlayActivity.getSlideCount();
+        m_nextPrevPanel.setVisibility(countSlides >= Config.maxSlidesPerStoriForFree ? View.INVISIBLE : View.VISIBLE);
 
         if (position == 0) {
             m_prevControl.setVisibility(View.INVISIBLE);

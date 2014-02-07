@@ -97,6 +97,9 @@ public class Config
     // Maximum number of slides per Stori for free version
     public static final int maxSlidesPerStoriForFree = 20;
 
+    // Image file size floor under which we don't compress
+    public static final int imageFileSizeFloorBytes = 1000000;
+
 	// Error logs - ship with this set to false
 	public static final boolean E = true;
 	
