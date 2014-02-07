@@ -459,7 +459,7 @@ public class PlaySlidesFragment extends Fragment implements
                 }
 
                 String filePath = Utilities.getAbsoluteFilePath(m_playSlidesActivity, m_slideShareName, m_imageFileName);
-                Bitmap bitmap = Utilities.getConstrainedBitmap(filePath, targetW, targetH);
+                Bitmap bitmap = Utilities.getConstrainedBitmap(filePath, targetW, targetH, false);
 
                 Drawable drawableImage = new BitmapDrawable(m_playSlidesActivity.getResources(), bitmap);
                 m_imageSwitcher.setImageDrawable(drawableImage);

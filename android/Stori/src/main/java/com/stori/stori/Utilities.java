@@ -323,14 +323,14 @@ public class Utilities {
         return inSampleSize;
     }
 
-    public static Bitmap getConstrainedBitmap(String filePath, int displayWidth, int displayHeight) {
-        if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: displayWidth=%d, displayHeight=%d, filePath=%s", displayWidth, displayHeight, filePath));
+    public static Bitmap getConstrainedBitmap(String filePath, int displayWidth, int displayHeight, boolean forFileCopy) {
+        if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: displayWidth=%d, displayHeight=%d, forFileCopy=%b, filePath=%s", displayWidth, displayHeight, forFileCopy, filePath));
 
-        if (D) {
-            File file = new File(filePath);
-            if (file.exists()) {
-                if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: length %d for file %s", file.length(), filePath));
-            }
+        long bitmapSize = 0;
+        File file = new File(filePath);
+        if (file.exists()) {
+            bitmapSize = file.length();
+            if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: length %d for file %s", bitmapSize, filePath));
         }
 
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -343,7 +343,10 @@ public class Utilities {
         if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: bitmapWidth=%d, bitmapHeight=%d", bitmapWidth, bitmapHeight));
 
         if (displayWidth == 0 && displayHeight == 0) {
-            scaleFactor = Config.imageScaleFactor;
+            // Don't compress the image if it's under Config.imageFileSizeFloorBytes in size during a file copy
+            if (forFileCopy && (bitmapSize > Config.imageFileSizeFloorBytes)) {
+                scaleFactor = Config.imageScaleFactor;
+            }
         }
         else {
             if (displayWidth == 0) {
@@ -354,7 +357,7 @@ public class Utilities {
             }
         }
 
-        if (scaleFactor == 1) {
+        if (scaleFactor == 1 && !forFileCopy) {
             scaleFactor = calculateInSampleSize(bitmapWidth, bitmapHeight, displayWidth, displayHeight);
         }
         if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: scaleFactor=%d", scaleFactor));
@@ -409,7 +412,7 @@ public class Utilities {
 
             // Now compress the file
             ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
-            Bitmap bitmap = getConstrainedBitmap(Utilities.getAbsoluteFilePath(context, slideShareName, fileName), 0, 0);
+            Bitmap bitmap = getConstrainedBitmap(Utilities.getAbsoluteFilePath(context, slideShareName, fileName), 0, 0, true);
             if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputBuffer)) {
                 file = createFile(context, slideShareName, fileName);
                 outStream = new FileOutputStream(file);
@@ -495,7 +498,7 @@ public class Utilities {
 
             // Now compress the file
             ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
-            Bitmap bitmap = getConstrainedBitmap(Utilities.getAbsoluteFilePath(context, slideShareName, fileName), 0, 0);
+            Bitmap bitmap = getConstrainedBitmap(Utilities.getAbsoluteFilePath(context, slideShareName, fileName), 0, 0, true);
             if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputBuffer)) {
                 file = createFile(context, slideShareName, fileName);
                 outStream = new FileOutputStream(file);

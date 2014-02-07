@@ -742,7 +742,7 @@ public class EditPlayFragment extends Fragment implements
                 }
 
                 String filePath = Utilities.getAbsoluteFilePath(m_editPlayActivity, m_slideShareName, m_imageFileName);
-                Bitmap bitmap = Utilities.getConstrainedBitmap(filePath, targetW, targetH);
+                Bitmap bitmap = Utilities.getConstrainedBitmap(filePath, targetW, targetH, false);
 
                 Drawable drawableImage = new BitmapDrawable(m_editPlayActivity.getResources(), bitmap);
                 m_imageSwitcher.setImageDrawable(drawableImage);
