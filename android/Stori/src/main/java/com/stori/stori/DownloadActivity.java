@@ -286,6 +286,14 @@ public class DownloadActivity extends FragmentActivity {
         }
 
         @Override
+        protected void onCancelled() {
+            if(D)Log.d(TAG, "DownloadActivity.DownloadTask.onCancelled");
+
+            m_progressDialog.dismiss();
+            handleDownloadError();
+        }
+
+        @Override
         protected void onPostExecute(Boolean result) {
             if(D)Log.d(TAG, "DownloadActivity.DownloadTask.onPostExecute");
 
