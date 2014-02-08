@@ -1,7 +1,9 @@
 package com.stori.stori.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.media.Ringtone;
@@ -462,7 +464,32 @@ public class EditPlayFragment extends Fragment implements
                     stopRecording();
                 }
                 else {
-                    startRecording();
+                    if (hasAudio()) {
+                        AlertDialog.Builder adb = new AlertDialog.Builder(m_editPlayActivity);
+                        adb.setTitle(getString(R.string.editplay_overwriteaudio_title));
+                        adb.setCancelable(true);
+                        adb.setMessage(getString(R.string.editplay_overwriteaudio_message));
+                        adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+
+                                startRecording();
+                            }
+                        });
+                        adb.setNegativeButton(getString(R.string.cancel_text), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        AlertDialog ad = adb.create();
+                        ad.show();
+                    }
+                    else {
+                        startRecording();
+                    }
                 }
             }
         });

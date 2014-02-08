@@ -18,6 +18,8 @@
     <string name="editplay_copydialog_title">Copying...</string>
     <string name="editplay_maxpublishedexceeded_title">Cannot publish</string>
     <string name="editplay_maxpublishedexceeded_message_format">You have exceeded your allotment of %1$s published Storis. Please delete one or more in order to publish this Stori.</string>
+    <string name="editplay_overwriteaudio_title">Replace audio?</string>
+    <string name="editplay_overwriteaudio_message">Do you want to replace the audio you have already recorded for this slide?</string>
     <string name="googlelogin_wait_message">Signing in...</string>
     <string name="hello_world">Hello world!</string>
     <string name="list_no_items">No Storis found</string>
