@@ -66,7 +66,7 @@ public class EditPlayFragment extends Fragment implements
     private ImageButton m_insertAfterControl;
     private ImageButton m_selectPhotoControl;
     private ImageButton m_cameraControl;
-    private ImageButton m_reorderControl;
+    private ImageButton m_editControl;
     private ImageButton m_recordControl;
     private ImageButton m_playstopControl;
     private ImageButton m_trashControl;
@@ -204,7 +204,6 @@ public class EditPlayFragment extends Fragment implements
 
         super.onResume();
 
-        displayReorderControl();
         displayNextPrevControls();
         displaySlideTitleAndPosition();
     }
@@ -446,12 +445,40 @@ public class EditPlayFragment extends Fragment implements
             }
         });
 
-        m_reorderControl = (ImageButton)view.findViewById(R.id.control_reorder);
-        m_reorderControl.setOnClickListener(new View.OnClickListener() {
+        m_editControl = (ImageButton)view.findViewById(R.id.control_edit);
+        m_editControl.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if(D)Log.d(TAG, "EditPlayFragment.onReorderControlClicked");
-                m_editPlayActivity.reorder();
+            public void onClick(View view) {
+                if(D)Log.d(TAG, "EditPlayFragment.onEditControlClicked");
+
+                PopupMenu pm = new PopupMenu(m_editPlayActivity, view);
+                pm.inflate(R.menu.menu_editplay_edit);
+                Menu menu = pm.getMenu();
+
+                MenuItem textMenu = menu.findItem(R.id.menu_editplay_edit_text);
+                textMenu.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        return true;
+                    }
+                });
+
+                int count = m_editPlayActivity.getSlideCount();
+                if (count > 1) {
+                    MenuItem reorderMenu = menu.findItem(R.id.menu_editplay_edit_reorder);
+                    reorderMenu.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            m_editPlayActivity.reorder();
+                            return true;
+                        }
+                    });
+                }
+                else {
+                    menu.removeItem(R.id.menu_editplay_edit_reorder);
+                }
+
+                pm.show();
             }
         });
 
@@ -680,7 +707,6 @@ public class EditPlayFragment extends Fragment implements
         m_editPlayMode = getActivityEditPlayMode();
         updateOverlay();
 
-        displayReorderControl();
         displayNextPrevControls();
         displaySlideTitleAndPosition();
 
@@ -903,14 +929,6 @@ public class EditPlayFragment extends Fragment implements
         if(D)Log.d(TAG, "EditPlayFragment.displayPlayStopControl");
 
         m_playstopControl.setVisibility(hasAudio() ? View.VISIBLE : View.INVISIBLE);
-    }
-
-    private void displayReorderControl() {
-        if(D)Log.d(TAG, "EditPlayFragment.displayReorderControl");
-
-        int count = m_editPlayActivity.getSlideCount();
-        View viewParent = (View)m_reorderControl.getParent();
-        viewParent.setVisibility(count > 1 ? View.VISIBLE : View.GONE);
     }
 
     private void displayNextPrevControls() {

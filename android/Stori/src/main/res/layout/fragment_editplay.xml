@@ -69,16 +69,15 @@
                 <RelativeLayout
                     android:layout_height="32dp"
                     android:layout_width="0dp"
-                    android:layout_weight="0.16"
-                    android:visibility="gone">
+                    android:layout_weight="0.16">
                     <ImageButton
-                        android:id="@+id/control_reorder"
+                        android:id="@+id/control_edit"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_centerInParent="true"
                         android:background="@drawable/button_flash"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_reorder" />
+                        android:src="@drawable/ic_edit" />
                 </RelativeLayout>
                 <RelativeLayout
                     android:layout_height="32dp"
