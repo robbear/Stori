@@ -196,7 +196,7 @@ public class SlideShareJSON extends JSONObject {
             }
 
             if (forceNulls || (slideText != null)) {
-                slide.put(KEY_TEXT, slideText == null ? null : new JSONObject(slideText));
+                slide.put(KEY_TEXT, slideText);
             }
         }
         else {
@@ -207,7 +207,7 @@ public class SlideShareJSON extends JSONObject {
             JSONObject paths = new JSONObject();
             paths.put(KEY_IMAGE, imageUrl);
             paths.put(KEY_AUDIO, audioUrl);
-            paths.put(KEY_TEXT, slideText == null ? null : new JSONObject(slideText));
+            paths.put(KEY_TEXT, slideText);
 
             int oldCount = orderArray.length();
             slides.put(uuidString, paths);

@@ -85,6 +85,12 @@ public class Config
     // Standard SlideShareJSON file name
     public static final String slideShareJSONFilename = "stori.json";
 
+    // Maximum slide text characters
+    public static final int maxSlideTextCharacters = 140;
+
+    // Number of lines to display in Slide text dialog
+    public static final int numberOfEditTextLinesForSlideText = 5;
+
     // JPG file compression level (0 - 100)
     public static final int jpgCompressionLevel = 25;
 

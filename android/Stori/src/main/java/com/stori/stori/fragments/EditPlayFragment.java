@@ -459,6 +459,7 @@ public class EditPlayFragment extends Fragment implements
                 textMenu.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
+                        m_editPlayActivity.enterStoriText(m_slideUuid);
                         return true;
                     }
                 });

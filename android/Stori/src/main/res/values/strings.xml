@@ -16,6 +16,8 @@
     <string name="download_errordialog_message">Filed to download the files necessary for viewing this Stori show</string>
     <string name="editplay_actionbar_format">%1$d of %2$d - %3$s</string>
     <string name="editplay_copydialog_title">Copying...</string>
+    <string name="editplay_entertext_title">Stori text</string>
+    <string name="editplay_entertext_hint">Enter text for this slide</string>
     <string name="editplay_maxpublishedexceeded_title">Cannot publish</string>
     <string name="editplay_maxpublishedexceeded_message_format">You have exceeded your allotment of %1$s published Storis. Please delete one or more in order to publish this Stori.</string>
     <string name="editplay_overwriteaudio_title">Replace audio?</string>

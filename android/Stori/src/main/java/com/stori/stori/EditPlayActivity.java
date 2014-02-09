@@ -15,11 +15,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageSwitcher;
@@ -557,6 +559,73 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         startActivityForResult(intent, REQUEST_GOOGLE_LOGIN_FROM_SWITCHACCOUNT);
     }
 
+    public void enterStoriText(final String slideUuid) {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.enterStoriText: slideUuid=%s", slideUuid));
+
+        String slideText = getSlideText(slideUuid);
+
+        InputFilter[] filters = new InputFilter[1];
+        filters[0] = new InputFilter.LengthFilter(Config.maxSlideTextCharacters);
+
+        final EditText editText = new EditText(this);
+        editText.setText(slideText);
+        editText.setHint(getString(R.string.editplay_entertext_hint));
+        editText.setSingleLine(false);
+        editText.setImeOptions(EditorInfo.IME_FLAG_NO_ENTER_ACTION);
+        editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        editText.setLines(Config.numberOfEditTextLinesForSlideText);
+        editText.selectAll();
+        editText.setFilters(filters);
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle(getString(R.string.editplay_entertext_title));
+        adb.setCancelable(true);
+        adb.setView(editText);
+        adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Utilities.unfreezeOrientation(EditPlayActivity.this);
+
+                String storiText = editText.getText().toString();
+                updateSlideShareJSON(slideUuid, null, null, storiText);
+            }
+        });
+        adb.setNegativeButton(getString(R.string.cancel_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Utilities.unfreezeOrientation(EditPlayActivity.this);
+            }
+        });
+        adb.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                dialog.dismiss();
+                Utilities.unfreezeOrientation(EditPlayActivity.this);
+            }
+        });
+
+        // TODO: Fix #14 and #15. This is a temporary workaround.
+        Utilities.freezeActivityOrientation(this);
+
+        final AlertDialog ad = adb.create();
+
+        if (!Utilities.deviceHasHardwareKeyboard(this)) {
+            editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean hasFocus) {
+                    if (hasFocus) {
+                        if(D)Log.d(TAG, "EditPlayActivity.enterStoriText.editText.onFocusChangeListener");
+                        ad.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                    }
+                }
+            });
+        }
+
+        ad.show();
+    }
+
     //
     // setSlideShareTitle
     // Sets the title in the SlideShareJSON file.
@@ -849,6 +918,27 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         AlertDialog ad = adb.create();
         ad.show();
+    }
+
+    public String getSlideText(String slideUuid) {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.getSlideText: slideUuid=%s", slideUuid));
+
+        String slideText = null;
+
+        try {
+            SlideJSON sj = m_ssj.getSlide(slideUuid);
+            slideText = sj.getText();
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "EditPlayActivity.getSlideText", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "EditPlayActivity.getSlideText", e);
+            e.printStackTrace();
+        }
+
+        return slideText;
     }
 
     public void deleteAudio(String slideUuid, String audioFileName) {
