@@ -368,7 +368,18 @@ public class DownloadActivity extends FragmentActivity {
                 }
                 else {
                     String oldSlideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(DownloadActivity.this), SSPreferences.DEFAULT_PLAYSLIDESNAME(DownloadActivity.this));
-                    if (oldSlideShareName != null && !oldSlideShareName.equals(m_slideShareName)) {
+                    String currentEditSlideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(DownloadActivity.this), SSPreferences.DEFAULT_EDITPROJECTNAME(DownloadActivity.this));
+
+                    // Need to test for the case where the current Edit slideShareName is the same as the old Play slideShareName.
+                    // This will occur when the user is editing "Foo" which has previously been published, then downloads Foo for play.
+                    // In this case, both Edit and Play slideshares are the same. If the user then downloads another Stori for play,
+                    // we do NOT want to delete the old Play directory, because this is the same directory being used for the current Edit.
+                    // See Issue #51
+
+                    // We also test for oldSlideShareName being the same as m_slideShareName. In this case we also don't want to delete
+                    // the old directory because it's the one we're currently using.
+
+                    if (oldSlideShareName != null && !oldSlideShareName.equals(m_slideShareName) && !oldSlideShareName.equals(currentEditSlideShareName)) {
                         if(D)Log.d(TAG, String.format("DownloadActivity.DownloadTask.onPostExecute: deleting old slideshare playslide directory for %s", oldSlideShareName));
                         Utilities.deleteSlideShareDirectory(DownloadActivity.this, oldSlideShareName);
                     }
