@@ -875,7 +875,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             e.printStackTrace();
         }
 
-        updateSlideShareJSON(slideUuid, imageFileName, null, true);
+        updateSlideShareJSON(slideUuid, imageFileName, null, null, true);
     }
 
     public void deleteImage(String slideUuid, String imageFileName) {
@@ -902,7 +902,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             e.printStackTrace();
         }
 
-        updateSlideShareJSON(slideUuid, null, audioFileName, true);
+        updateSlideShareJSON(slideUuid, null, audioFileName, null, true);
     }
 
     public void deleteSlide(String slideUuid, String imageFileName, String audioFileName) {
@@ -990,7 +990,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             m_currentTabPosition = newIndex;
         }
 
-        updateSlideShareJSON(UUID.randomUUID().toString(), null, null);
+        updateSlideShareJSON(UUID.randomUUID().toString(), null, null, null);
 
         m_viewPager.setCurrentItem(m_currentTabPosition);
     }
@@ -1048,12 +1048,12 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         ad.show();
     }
 
-    public void updateSlideShareJSON(String slideUuid, String imageFileName, String audioFileName) {
-        updateSlideShareJSON(slideUuid, imageFileName, audioFileName, false);
+    public void updateSlideShareJSON(String slideUuid, String imageFileName, String audioFileName, String slideText) {
+        updateSlideShareJSON(slideUuid, imageFileName, audioFileName, slideText, false);
     }
 
-    public void updateSlideShareJSON(String slideUuid, String imageFileName, String audioFileName, boolean forceNulls) {
-        if(D)Log.d(TAG, String.format("EditPlayActivity.updateSlideShareJSON: slideUuid=%s, imageFileName=%s, audioFileName=%s, forceNulls=%b", slideUuid, imageFileName, audioFileName, forceNulls));
+    public void updateSlideShareJSON(String slideUuid, String imageFileName, String audioFileName, String slideText, boolean forceNulls) {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.updateSlideShareJSON: slideUuid=%s, imageFileName=%s, audioFileName=%s, slideText=%s, forceNulls=%b", slideUuid, imageFileName, audioFileName, slideText, forceNulls));
         if(D)Log.d(TAG, "Current JSON:");
         Utilities.printSlideShareJSON(TAG, m_ssj);
 
@@ -1065,7 +1065,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
             needsAdapterUpdate = (m_ssj.getSlide(slideUuid) == null);
 
-            m_ssj.upsertSlide(slideUuid, m_currentTabPosition, imageUrl, audioUrl, forceNulls);
+            m_ssj.upsertSlide(slideUuid, m_currentTabPosition, imageUrl, audioUrl, slideText, forceNulls);
             m_ssj.save(this, m_slideShareName, Config.slideShareJSONFilename);
         }
         catch (Exception e) {

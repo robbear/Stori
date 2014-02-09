@@ -53,6 +53,7 @@ public class EditPlayFragment extends Fragment implements
 
     private final static String INSTANCE_STATE_IMAGEFILENAME = "instance_state_imagefilename";
     private final static String INSTANCE_STATE_AUDIOFILENAME = "instance_state_audiofilename";
+    private final static String INSTANCE_STATE_SLIDETEXT = "instance_state_slidetext";
     private final static String INSTANCE_STATE_SLIDESHARENAME = "instance_state_slidesharename";
     private final static String INSTANCE_STATE_SLIDUUID = "instance_state_slideuuid";
     private final static String INSTANCE_STATE_CURRENTCAMERAPHOTOFILEPATH = "instance_state_currentcameraphotofilepath";
@@ -76,6 +77,7 @@ public class EditPlayFragment extends Fragment implements
     private View m_nextPrevPanel;
     private String m_imageFileName;
     private String m_audioFileName;
+    private String m_slideText;
     private String m_slideUuid;
     private StoriService m_storiService = null;
 
@@ -109,6 +111,7 @@ public class EditPlayFragment extends Fragment implements
             m_slideUuid = slideUuid;
             m_imageFileName = sj.getImageFilename();
             m_audioFileName = sj.getAudioFilename();
+            m_slideText = sj.getText();
         }
         catch (Exception e) {
             if(E)Log.e(TAG, "EditPlayFragment.setSlideJSON", e);
@@ -137,6 +140,7 @@ public class EditPlayFragment extends Fragment implements
 
             m_audioFileName = savedInstanceState.getString(INSTANCE_STATE_AUDIOFILENAME);
             m_imageFileName = savedInstanceState.getString(INSTANCE_STATE_IMAGEFILENAME);
+            m_slideText = savedInstanceState.getString(INSTANCE_STATE_SLIDETEXT);
             m_slideShareName = savedInstanceState.getString(INSTANCE_STATE_SLIDESHARENAME);
             m_slideUuid = savedInstanceState.getString(INSTANCE_STATE_SLIDUUID);
             m_currentCameraPhotoFilePath = savedInstanceState.getString(INSTANCE_STATE_CURRENTCAMERAPHOTOFILEPATH);
@@ -151,6 +155,7 @@ public class EditPlayFragment extends Fragment implements
 
         savedInstanceState.putString(INSTANCE_STATE_AUDIOFILENAME, m_audioFileName);
         savedInstanceState.putString(INSTANCE_STATE_IMAGEFILENAME, m_imageFileName);
+        savedInstanceState.putString(INSTANCE_STATE_SLIDETEXT, m_slideText);
         savedInstanceState.putString(INSTANCE_STATE_SLIDESHARENAME, m_slideShareName);
         savedInstanceState.putString(INSTANCE_STATE_SLIDUUID, m_slideUuid);
         savedInstanceState.putString(INSTANCE_STATE_CURRENTCAMERAPHOTOFILEPATH, m_currentCameraPhotoFilePath);
@@ -739,6 +744,7 @@ public class EditPlayFragment extends Fragment implements
         m_imageFileName = null;
         m_editPlayActivity.deleteAudio(m_slideUuid, m_audioFileName);
         m_audioFileName = null;
+        m_slideText = null;
         displayPlayStopControl();
         renderImage();
     }
@@ -821,7 +827,7 @@ public class EditPlayFragment extends Fragment implements
 
         if (m_audioFileName == null) {
             m_audioFileName = getNewAudioFileName();
-            m_editPlayActivity.updateSlideShareJSON(m_slideUuid, m_imageFileName, m_audioFileName);
+            m_editPlayActivity.updateSlideShareJSON(m_slideUuid, m_imageFileName, m_audioFileName, m_slideText);
         }
 
         boolean success = m_storiService.startRecording(m_slideShareName, m_audioFileName);
@@ -996,6 +1002,10 @@ public class EditPlayFragment extends Fragment implements
         return m_imageFileName != null;
     }
 
+    private boolean hasText() {
+        return !(m_slideText == null || m_slideText.isEmpty());
+    }
+
     private static String getNewImageFileName() {
         return UUID.randomUUID().toString() + ".jpg";
     }
@@ -1050,7 +1060,7 @@ public class EditPlayFragment extends Fragment implements
             m_imageFileName = null;
         }
 
-        m_editPlayActivity.updateSlideShareJSON(m_slideUuid, m_imageFileName, m_audioFileName);
+        m_editPlayActivity.updateSlideShareJSON(m_slideUuid, m_imageFileName, m_audioFileName, m_slideText);
     }
 
     protected void initializeStoriService() {

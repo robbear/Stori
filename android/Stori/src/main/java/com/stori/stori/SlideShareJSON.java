@@ -22,9 +22,9 @@ import static com.stori.stori.Config.E;
 //      version: 1,
 //      transitionEffect: 0,
 //      slides: {
-//          guidval1: { image: "http://foo.com/1.jpg", audio: "http://foo.com/1.3gp" },
-//          guidval2: { image: "http://foo.com/2.jpg", audio: "http://foo.com/2.3gp" },
-//          guidval3: { image: "http://foo.com/3.jpg", audio: "http://foo.com/3.3gp" }
+//          guidval1: { image: "http://foo.com/1.jpg", audio: "http://foo.com/1.3gp", text: "user text" },
+//          guidval2: { image: "http://foo.com/2.jpg", audio: "http://foo.com/2.3gp", text: "user text" },
+//          guidval3: { image: "http://foo.com/3.jpg", audio: "http://foo.com/3.3gp", text: "user text" }
 //      },
 //      order: [ guidval2, guidval3, guidval1 ]
 //  }
@@ -40,6 +40,7 @@ public class SlideShareJSON extends JSONObject {
     public final static String KEY_SLIDES = "slides";
     public final static String KEY_IMAGE = "image";
     public final static String KEY_AUDIO = "audio";
+    public final static String KEY_TEXT = "text";
     public final static String KEY_ORDER = "order";
 
     private Context m_context;
@@ -138,8 +139,9 @@ public class SlideShareJSON extends JSONObject {
 
         String imageUrl = slide.getImageUrlString();
         String audioUrl = slide.getAudioUrlString();
+        String slideText = slide.getText();
 
-        upsertSlide(uuidString, index, imageUrl, audioUrl, false);
+        upsertSlide(uuidString, index, imageUrl, audioUrl, slideText, false);
     }
 
     public void reorder(int currentPosition, int newPosition) throws JSONException {
@@ -172,8 +174,8 @@ public class SlideShareJSON extends JSONObject {
         setOrder(newOrderArray);
     }
 
-    public void upsertSlide(String uuidString, int index, String imageUrl, String audioUrl, boolean forceNulls) throws JSONException {
-        if(D)Log.d(TAG, String.format("SlideShareJSON.upsertSlide: uuid=%s, index=%d, imageUrl=%s, audioUrl=%s", uuidString, index, imageUrl, audioUrl));
+    public void upsertSlide(String uuidString, int index, String imageUrl, String audioUrl, String slideText, boolean forceNulls) throws JSONException {
+        if(D)Log.d(TAG, String.format("SlideShareJSON.upsertSlide: uuid=%s, index=%d, imageUrl=%s, audioUrl=%s, slideText=%s", uuidString, index, imageUrl, audioUrl, slideText));
 
         JSONObject slides = getSlides();
         JSONObject slide = null;
@@ -192,6 +194,10 @@ public class SlideShareJSON extends JSONObject {
             if (forceNulls || (audioUrl != null)) {
                 slide.put(KEY_AUDIO, audioUrl);
             }
+
+            if (forceNulls || (slideText != null)) {
+                slide.put(KEY_TEXT, slideText == null ? null : new JSONObject(slideText));
+            }
         }
         else {
             if(D)Log.d(TAG, String.format("SlideShareJSON.upsertSlide - no slide found for %s, so creating new slide", uuidString));
@@ -201,6 +207,7 @@ public class SlideShareJSON extends JSONObject {
             JSONObject paths = new JSONObject();
             paths.put(KEY_IMAGE, imageUrl);
             paths.put(KEY_AUDIO, audioUrl);
+            paths.put(KEY_TEXT, slideText == null ? null : new JSONObject(slideText));
 
             int oldCount = orderArray.length();
             slides.put(uuidString, paths);

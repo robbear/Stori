@@ -14,7 +14,7 @@ import static com.stori.stori.Config.E;
 //
 // SlideJSON example (see SlideShareJSON):
 //
-// { image: "http://foo.com/1.jpg", audio: "http://foo.com/1.3gp" }
+// { image: "http://foo.com/1.jpg", audio: "http://foo.com/1.3gp", text: "user text" }
 //
 public class SlideJSON extends JSONObject {
     public final static String TAG = "SlideJSON";
@@ -24,6 +24,7 @@ public class SlideJSON extends JSONObject {
 
         put(SlideShareJSON.KEY_IMAGE, null);
         put(SlideShareJSON.KEY_AUDIO, null);
+        put(SlideShareJSON.KEY_TEXT, null);
     }
 
     public SlideJSON(String json) throws JSONException {
@@ -39,6 +40,7 @@ public class SlideJSON extends JSONObject {
 
         put(SlideShareJSON.KEY_IMAGE, slide.has(SlideShareJSON.KEY_IMAGE) ? slide.getString(SlideShareJSON.KEY_IMAGE) : null);
         put(SlideShareJSON.KEY_AUDIO, slide.has(SlideShareJSON.KEY_AUDIO) ? slide.getString(SlideShareJSON.KEY_AUDIO) : null);
+        put(SlideShareJSON.KEY_TEXT, slide.has(SlideShareJSON.KEY_TEXT) ? slide.getString(SlideShareJSON.KEY_TEXT) : null);
     }
 
     public String getImageUrlString() throws JSONException {
@@ -79,5 +81,14 @@ public class SlideJSON extends JSONObject {
         }
         if(D)Log.d(TAG, String.format("SlideJSON.getAudioFilename returns %s", fileName));
         return fileName;
+    }
+
+    public String getText() throws JSONException {
+        String s = null;
+        if (has(SlideShareJSON.KEY_TEXT)) {
+            s = getString(SlideShareJSON.KEY_TEXT);
+        }
+        if(D)Log.d(TAG, String.format("SlideJSON.getText returns %s", s));
+        return s;
     }
 }
