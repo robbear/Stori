@@ -125,6 +125,8 @@
                     android:focusable="false"
                     android:clickable="false"
                     android:linksClickable="true"
+                    android:textColor="#FFFFFF"
+                    android:background="#10000000"
                 />
             </RelativeLayout>
             <RelativeLayout
