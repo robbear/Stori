@@ -17,6 +17,8 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -24,6 +26,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.PopupMenu;
@@ -72,6 +77,7 @@ public class EditPlayFragment extends Fragment implements
     private ImageButton m_trashControl;
     private ImageButton m_nextControl;
     private ImageButton m_prevControl;
+    private TextView m_slideTextControl;
     private TextView m_slidePositionTextControl;
     private TextView m_titleControl;
     private View m_nextPrevPanel;
@@ -206,6 +212,7 @@ public class EditPlayFragment extends Fragment implements
 
         displayNextPrevControls();
         displaySlideTitleAndPosition();
+        displaySlideTextControl();
     }
 
     @Override
@@ -241,6 +248,7 @@ public class EditPlayFragment extends Fragment implements
         m_slidePositionTextControl = (TextView)view.findViewById(R.id.control_slide_position);
         m_titleControl = (TextView)view.findViewById(R.id.control_title);
         m_nextPrevPanel = view.findViewById(R.id.control_nextprev_panel);
+        m_slideTextControl = (TextView)view.findViewById(R.id.slidetext_control);
 
         m_nextControl = (ImageButton)view.findViewById(R.id.control_next_slide);
         m_nextControl.setOnClickListener(new View.OnClickListener() {
@@ -459,7 +467,7 @@ public class EditPlayFragment extends Fragment implements
                 textMenu.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        m_editPlayActivity.enterStoriText(m_slideUuid);
+                        enterSlideText();
                         return true;
                     }
                 });
@@ -710,6 +718,7 @@ public class EditPlayFragment extends Fragment implements
 
         displayNextPrevControls();
         displaySlideTitleAndPosition();
+        displaySlideTextControl();
 
         int tabPosition = m_editPlayActivity.getSlidePosition(m_slideUuid);
 
@@ -752,6 +761,76 @@ public class EditPlayFragment extends Fragment implements
         }
     }
 
+    private void enterSlideText() {
+        if(D)Log.d(TAG, String.format("EditPlayFragment.enterSlideText: slideUuid=%s", m_slideUuid));
+
+        String slideText = m_editPlayActivity.getSlideText(m_slideUuid);
+
+        InputFilter[] filters = new InputFilter[1];
+        filters[0] = new InputFilter.LengthFilter(Config.maxSlideTextCharacters);
+
+        final EditText editText = new EditText(m_editPlayActivity);
+        editText.setText(slideText);
+        editText.setHint(getString(R.string.editplay_entertext_hint));
+        editText.setSingleLine(false);
+        editText.setImeOptions(EditorInfo.IME_FLAG_NO_ENTER_ACTION);
+        editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        editText.setLines(Config.numberOfEditTextLinesForSlideText);
+        editText.selectAll();
+        editText.setFilters(filters);
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(m_editPlayActivity);
+        adb.setTitle(getString(R.string.editplay_entertext_title));
+        adb.setCancelable(true);
+        adb.setView(editText);
+        adb.setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Utilities.unfreezeOrientation(m_editPlayActivity);
+
+                String slideText = editText.getText().toString();
+                m_editPlayActivity.updateSlideShareJSON(m_slideUuid, null, null, slideText);
+
+                m_slideText = m_editPlayActivity.getSlideText(m_slideUuid);
+                displaySlideTextControl();
+            }
+        });
+        adb.setNegativeButton(getString(R.string.cancel_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Utilities.unfreezeOrientation(m_editPlayActivity);
+            }
+        });
+        adb.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                dialog.dismiss();
+                Utilities.unfreezeOrientation(m_editPlayActivity);
+            }
+        });
+
+        // TODO: Fix #14 and #15. This is a temporary workaround.
+        Utilities.freezeActivityOrientation(m_editPlayActivity);
+
+        final AlertDialog ad = adb.create();
+
+        if (!Utilities.deviceHasHardwareKeyboard(m_editPlayActivity)) {
+            editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean hasFocus) {
+                    if (hasFocus) {
+                        if(D)Log.d(TAG, "EditPlayActivity.enterStoriText.editText.onFocusChangeListener");
+                        ad.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                    }
+                }
+            });
+        }
+
+        ad.show();
+    }
+
     private void updateOverlay() {
         if(D)Log.d(TAG, String.format("EditPlayFragment.updateOverlay: %s", m_editPlayMode.toString()));
 
@@ -773,6 +852,7 @@ public class EditPlayFragment extends Fragment implements
         m_audioFileName = null;
         m_slideText = null;
         displayPlayStopControl();
+        displaySlideTextControl();
         renderImage();
     }
 
@@ -924,6 +1004,13 @@ public class EditPlayFragment extends Fragment implements
 
         Vibrator v = (Vibrator)m_editPlayActivity.getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(Config.recordingTimeoutVibrateMillis);
+    }
+
+    private void displaySlideTextControl() {
+        if(D)Log.d(TAG, "EditPlayFragment.displaySlideTextControl");
+
+        m_slideTextControl.setText(m_slideText);
+        m_slideTextControl.setVisibility(hasText() ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void displayPlayStopControl() {

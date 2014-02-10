@@ -175,7 +175,7 @@ public class SlideShareJSON extends JSONObject {
     }
 
     public void upsertSlide(String uuidString, int index, String imageUrl, String audioUrl, String slideText, boolean forceNulls) throws JSONException {
-        if(D)Log.d(TAG, String.format("SlideShareJSON.upsertSlide: uuid=%s, index=%d, imageUrl=%s, audioUrl=%s, slideText=%s", uuidString, index, imageUrl, audioUrl, slideText));
+        if(D)Log.d(TAG, String.format("SlideShareJSON.upsertSlide: uuid=%s, index=%d, imageUrl=%s, audioUrl=%s, slideText=%s, forceNulls=%b", uuidString, index, imageUrl, audioUrl, slideText, forceNulls));
 
         JSONObject slides = getSlides();
         JSONObject slide = null;
