@@ -80,6 +80,7 @@ public class EditPlayFragment extends Fragment implements
     private TextView m_slideTextControl;
     private TextView m_slidePositionTextControl;
     private TextView m_titleControl;
+    private TextView m_noPictureText;
     private View m_nextPrevPanel;
     private String m_imageFileName;
     private String m_audioFileName;
@@ -249,6 +250,7 @@ public class EditPlayFragment extends Fragment implements
         m_titleControl = (TextView)view.findViewById(R.id.control_title);
         m_nextPrevPanel = view.findViewById(R.id.control_nextprev_panel);
         m_slideTextControl = (TextView)view.findViewById(R.id.slidetext_control);
+        m_noPictureText = (TextView)view.findViewById(R.id.no_picture_text);
 
         m_nextControl = (ImageButton)view.findViewById(R.id.control_next_slide);
         m_nextControl.setOnClickListener(new View.OnClickListener() {
@@ -860,14 +862,17 @@ public class EditPlayFragment extends Fragment implements
         if(D)Log.d(TAG, "EditPlayFragment.renderImage");
 
         if (m_imageFileName == null) {
+            m_imageSwitcher.setImageDrawable(null);
             if (m_editPlayMode == EditPlayActivity.EditPlayMode.Play) {
-                m_imageSwitcher.setImageDrawable(null);
+                m_noPictureText.setVisibility(View.GONE);
             }
             else {
-                m_imageSwitcher.setImageResource(R.drawable.ic_defaultslideimage);
+                m_noPictureText.setVisibility(View.VISIBLE);
             }
         }
         else {
+            m_noPictureText.setVisibility(View.GONE);
+
             try {
                 int targetW = m_imageSwitcher.getWidth();
                 int targetH = m_imageSwitcher.getHeight();
