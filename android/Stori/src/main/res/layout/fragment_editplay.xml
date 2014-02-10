@@ -20,7 +20,9 @@
         android:orientation="vertical"
         android:visibility="visible"
         android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:background="#30000000"
+        >
             <LinearLayout
                 android:orientation="horizontal"
                 android:paddingTop="10dp"
@@ -126,7 +128,6 @@
                     android:clickable="false"
                     android:linksClickable="true"
                     android:textColor="#FFFFFF"
-                    android:background="#10000000"
                 />
             </RelativeLayout>
             <RelativeLayout
@@ -220,6 +221,7 @@
                         android:layout_width="match_parent"
                         android:gravity="center_horizontal"
                         android:text="1 of 100"
+                        android:textColor="#FFFFFF"
                         />
                     <TextView
                         android:id="@+id/control_title"
@@ -227,6 +229,7 @@
                         android:layout_width="match_parent"
                         android:gravity="center_horizontal"
                         android:text="My slides"
+                        android:textColor="#FFFFFF"
                         />
                 </LinearLayout>
             </RelativeLayout>
