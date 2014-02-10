@@ -24,7 +24,7 @@
         <RelativeLayout
             android:layout_marginTop="10dp"
             android:layout_height="0dp"
-            android:layout_weight=".20"
+            android:layout_weight=".15"
             android:layout_width="match_parent">
             <ImageButton
                 android:id="@+id/control_main_menu"
@@ -39,9 +39,29 @@
                 android:src="@drawable/ic_three_dot" />
         </RelativeLayout>
         <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".30"
+            >
+            <TextView
+                android:id="@+id/slidetext_control"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:autoLink="web"
+                android:visibility="invisible"
+                android:focusable="false"
+                android:clickable="false"
+                android:linksClickable="true"
+                />
+        </RelativeLayout>
+        <RelativeLayout
             android:layout_height="0dp"
             android:layout_width="match_parent"
-            android:layout_weight=".50">
+            android:layout_weight=".10">
             <ImageButton
                 android:id="@+id/edit_prev_control"
                 android:layout_height="48dp"
@@ -66,7 +86,7 @@
         <RelativeLayout
             android:orientation="vertical"
             android:layout_height="0dp"
-            android:layout_weight=".30"
+            android:layout_weight=".45"
             android:layout_width="match_parent">
             <LinearLayout
                 android:orientation="horizontal"

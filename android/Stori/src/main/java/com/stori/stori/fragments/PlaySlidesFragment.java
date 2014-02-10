@@ -47,6 +47,7 @@ public class PlaySlidesFragment extends Fragment implements
 
     private final static String INSTANCE_STATE_IMAGEFILENAME = "instance_state_imagefilename";
     private final static String INSTANCE_STATE_AUDIOFILENAME = "instance_state_audiofilename";
+    private final static String INSTANCE_STATE_SLIDETEXT = "instance_state_slidetext";
     private final static String INSTANCE_STATE_SLIDESHARENAME = "instance_state_slidesharename";
     private final static String INSTANCE_STATE_SLIDUUID = "instance_state_slideuuid";
 
@@ -58,11 +59,13 @@ public class PlaySlidesFragment extends Fragment implements
     private ImageButton m_playstopControl;
     private ImageButton m_nextControl;
     private ImageButton m_prevControl;
+    private TextView m_slideTextControl;
     private TextView m_slidePositionTextControl;
     private TextView m_titleControl;
     private boolean m_fOverlayVisible = true;
     private String m_imageFileName;
     private String m_audioFileName;
+    private String m_slideText;
     private int m_displayWidth = 0;
     private int m_displayHeight = 0;
     private StoriService m_storiService = null;
@@ -93,6 +96,7 @@ public class PlaySlidesFragment extends Fragment implements
             m_slideUuid = slideUuid;
             m_imageFileName = sj.getImageFilename();
             m_audioFileName = sj.getAudioFilename();
+            m_slideText = sj.getText();
         }
         catch (Exception e) {
             if(E)Log.e(TAG, "PlaySlidesFragment.setSlideJSON", e);
@@ -121,6 +125,7 @@ public class PlaySlidesFragment extends Fragment implements
 
             m_audioFileName = savedInstanceState.getString(INSTANCE_STATE_AUDIOFILENAME);
             m_imageFileName = savedInstanceState.getString(INSTANCE_STATE_IMAGEFILENAME);
+            m_slideText = savedInstanceState.getString(INSTANCE_STATE_SLIDETEXT);
             m_slideShareName = savedInstanceState.getString(INSTANCE_STATE_SLIDESHARENAME);
             m_slideUuid = savedInstanceState.getString(INSTANCE_STATE_SLIDUUID);
         }
@@ -134,6 +139,7 @@ public class PlaySlidesFragment extends Fragment implements
 
         savedInstanceState.putString(INSTANCE_STATE_AUDIOFILENAME, m_audioFileName);
         savedInstanceState.putString(INSTANCE_STATE_IMAGEFILENAME, m_imageFileName);
+        savedInstanceState.putString(INSTANCE_STATE_SLIDETEXT, m_slideText);
         savedInstanceState.putString(INSTANCE_STATE_SLIDESHARENAME, m_slideShareName);
         savedInstanceState.putString(INSTANCE_STATE_SLIDUUID, m_slideUuid);
     }
@@ -184,6 +190,7 @@ public class PlaySlidesFragment extends Fragment implements
 
         displayNextPrevControls();
         displaySlideTitleAndPosition();
+        displaySlideTextControl();
     }
 
     @Override
@@ -225,6 +232,7 @@ public class PlaySlidesFragment extends Fragment implements
 
         m_slidePositionTextControl = (TextView)view.findViewById(R.id.control_slide_position);
         m_titleControl = (TextView)view.findViewById(R.id.control_title);
+        m_slideTextControl = (TextView)view.findViewById(R.id.slidetext_control);
 
         m_nextControl = (ImageButton)view.findViewById(R.id.control_next_slide);
         m_nextControl.setOnClickListener(new View.OnClickListener() {
@@ -399,6 +407,7 @@ public class PlaySlidesFragment extends Fragment implements
 
         displayNextPrevControls();
         displaySlideTitleAndPosition();
+        displaySlideTextControl();
 
         int tabPosition = m_playSlidesActivity.getSlidePosition(m_slideUuid);
 
@@ -473,6 +482,13 @@ public class PlaySlidesFragment extends Fragment implements
                 e.printStackTrace();
             }
         }
+    }
+
+    private void displaySlideTextControl() {
+        if(D)Log.d(TAG, "PlaySlidesFragment.displaySlideTextControl");
+
+        m_slideTextControl.setText(m_slideText);
+        m_slideTextControl.setVisibility(hasText() ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void displayPlayStopControl() {
@@ -606,6 +622,10 @@ public class PlaySlidesFragment extends Fragment implements
         if (m_audioFileName != null && m_audioFileName.equals(audioFileName)) {
             m_playstopControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stopplaying));
         }
+    }
+
+    private boolean hasText() {
+        return !(m_slideText == null || m_slideText.isEmpty());
     }
 
     private boolean hasAudio() {
