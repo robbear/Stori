@@ -10,6 +10,9 @@ var hfUtilities = (function() {
         },
         getVersionString: function() {
             return m_versionString;
+        },
+        getInternalImagePath: function(imageFile) {
+            return "/" + this.getVersionString() + "/images/" + imageFile;
         }
     }
 })();

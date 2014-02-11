@@ -16,25 +16,50 @@ a:hover{color:#900;text-decoration:underline}
 .menu a, .men a:hover{text-decoration:none}
 .nav{position:relative;padding:18px 30px 11px 16px}
 .slab{margin-left:auto;margin-right:auto;margin-top:20px;background-image:url(../images/hyperfine-branch.png);background-repeat:no-repeat;background-position:0px 20px;}
-body{color:#111;font-family:Verdana, Arial, Helvetica, sans-serif;font-size:90%;line-height:160%;margin:0}
+body{color:#FFFFFF;background-color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif;font-size:90%;line-height:160%;margin:0}
 li{margin-bottom:5px}
 p{margin-bottom:25px}
 .mug{float:left;margin:6px 10px 6px 0;height:110px;width:110px}
 
-
 #slides .slidesjs-previous {
     position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 33%;
-    height: 100%;
+    bottom: 10%;
+    left: 10%;
     z-index: 10;
 }
 #slides .slidesjs-next {
     position: absolute;
-    top: 0px;
-    right: 0px;
-    width: 33%;
-    height: 100%;
+    bottom: 10%;
+    right: 10%;
     z-index: 10;
+}
+
+#playstopcontrol {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    margin-left: -24px;
+    z-index: 10;
+}
+#stopfetcher {
+    position: absolute;
+    top:-10000px;
+    background-image: url(../images/ic_stopplaying.png);
+}
+
+#slidetitlecontainer {
+    position: absolute;
+    left: 50%;
+    z-index: 10;
+    bottom: 2%;
+}
+#slidepositioncontainer {
+    position: absolute;
+    left: 50%;
+    z-index: 10;
+    bottom: 5%;
+}
+.info_text {
+    position: relative;
+    left: -50%;
 }

@@ -8,6 +8,11 @@ var slideShow = (function() {
     var m_currentSlideIndex = 0;
     var m_slideCount = 0;
     var m_slidesjsDiv = $('#slides');
+    var m_playStopControl = $('#playstopcontrol');
+    var m_nextControl = $('#slides .slidesjs-next');
+    var m_prevControl = $('#slides .slidesjs-previous');
+    var m_slidePositionControl = $('#slideposition');
+    var m_slideTitle = $('#slidetitle');
     var m_jPlayerDiv = $('#jquery_jplayer_1');
     var m_isPlayerConstructed = false;
     var m_orderArray = null;
@@ -24,6 +29,10 @@ var slideShow = (function() {
         return Modernizr.touch;
     }
 
+    function _getSlidePositionText() {
+        return (m_currentSlideIndex + 1) + " of " + m_slideCount;
+    }
+
     function _initializePage(ssjUrl) {
         m_supportsTouch = supportsTouch();
         hFLog.log("m_supportsTouch is " + m_supportsTouch);
@@ -34,6 +43,7 @@ var slideShow = (function() {
         m_ssjUrl = ssjUrl;
 
         m_slidesjsDiv.on('click', _onImageClicked);
+        m_playStopControl.on('click', _onPlayStopClicked);
 
         // Test for audio support
         if (Modernizr.audio.mp3) {
@@ -56,6 +66,10 @@ var slideShow = (function() {
         _fetchSlideShareJSON();
     }
 
+    function _togglePlayStopControl() {
+        m_playStopControl.attr('src', hfUtilities.getInternalImagePath(m_audioPlaying ? "ic_stopplaying.png" : "ic_play.png"));
+    }
+
     function _fetchSlideShareJSON() {
         $.getJSON(m_ssjUrl, _onFetchSlideShareJSONComplete);
     }
@@ -72,10 +86,12 @@ var slideShow = (function() {
                     $(this).jPlayer("setMedia", { mp3: url });
                     $(this).jPlayer("play");
                     m_audioPlaying = true;
+                    _togglePlayStopControl();
                 },
                 ended: function() {
                     hFLog.log("_playAudio.jPlayer has stopped playing");
                     m_audioPlaying = false;
+                    _togglePlayStopControl();
                 },
                 supplied: "mp3",
                 swfPath: "/" + hfUtilities.getVersionString() + "/lib/jQuery.jPlayer.2.4.0/Jplayer.swf",
@@ -89,6 +105,7 @@ var slideShow = (function() {
             m_jPlayerDiv.jPlayer("setMedia", { mp3: url });
             m_jPlayerDiv.jPlayer("play");
             m_audioPlaying = true;
+            _togglePlayStopControl();
         }
     }
 
@@ -108,6 +125,9 @@ var slideShow = (function() {
         m_orderArray = m_ssj.order;
         m_slideCount = m_orderArray.length;
 
+        m_slideTitle.html(m_ssj.title);
+        m_slidePositionControl.html(_getSlidePositionText());
+
         _prefetchAudio();
 
         var html = "";
@@ -115,6 +135,9 @@ var slideShow = (function() {
             var url = _getImageUrl(i);
             html += '<img src="' + url + '"/>'
         }
+
+        // BUGBUG: TODO: Add the Stori upsell image here
+        // html += ...
 
         m_slidesjsDiv.html(html);
         hFLog.log("Initializing slidesjs");
@@ -124,11 +147,12 @@ var slideShow = (function() {
             callback: {
                 loaded: function(number) {
                     hFLog.log("slides.loaded: number=" + number);
-                    $('.slidesjs-next').html("");
-                    $('.slidesjs-previous').html("");
+                    $('.slidesjs-next').html("<img src='" + hfUtilities.getInternalImagePath("ic_arrow_right.png") + "'/>");
+                    $('.slidesjs-previous').html("<img src='" + hfUtilities.getInternalImagePath("ic_arrow_left.png") + "'/>");
 
                     m_currentSlideIndex = number - 1;
 
+                    /*
                     //
                     // If the browser supports touch, then we hide the sliderjs
                     // navigation controls and manage the right/left side of the
@@ -141,6 +165,8 @@ var slideShow = (function() {
                     else {
                         $('.slidesjs-pagination').hide(0);
                     }
+                    */
+                    $('.slidesjs-pagination').hide(0);
                 },
                 start: function(number) {
                     hFLog.log("slides.start: number=" + number);
@@ -148,6 +174,7 @@ var slideShow = (function() {
                 complete: function(number) {
                     hFLog.log("slides.complete: number=" + number);
                     m_currentSlideIndex = number - 1;
+                    m_slidePositionControl.html(_getSlidePositionText());
 
                     var audioUrl = _getCurrentAudioUrl();
                     hFLog.log("audioUrl = " + audioUrl);
@@ -173,53 +200,51 @@ var slideShow = (function() {
         return sj.audio;
     }
 
+    function _getSlideText(index) {
+        var slideUuid = m_orderArray[index];
+        var sj = m_ssj.slides[slideUuid];
+
+        return sj.text;
+    }
+
     function _getCurrentImageUrl() {
         return _getImageUrl(m_currentSlideIndex);
     }
 
     function _getCurrentAudioUrl() {
-        var slideUuid = m_orderArray[m_currentSlideIndex];
-        var sj = m_ssj.slides[slideUuid];
+        return _getAudioUrl(m_currentSlideIndex);
+    }
 
-        return sj.audio;
+    function _getCurrentSlideText() {
+        return _getSlideText(m_currentSlideIndex);
+    }
+
+    function _onPlayStopClicked(e) {
+        e.preventDefault();
+
+        hFLog.log("_onPlayStopClicked");
+
+        // Toggle audio
+        if (m_audioPlaying) {
+            hFLog.log("_onPlayStopClicked: m_audioPlaying==true, so calling jPlayer(stop)");
+            m_jPlayerDiv.jPlayer("stop");
+            m_audioPlaying = false;
+            _togglePlayStopControl();
+        }
+        else {
+            hFLog.log("_onPlayStopClicked: m_audioPlaying==false, so calling _playAudio");
+            var url = _getCurrentAudioUrl();
+            _playAudio(url);
+            m_audioPlaying = true;
+        }
+
+        return false;
     }
 
     function _onImageClicked(e) {
         e.preventDefault();
 
         hFLog.log("_onImageClicked");
-
-        var width = m_slidesjsDiv.width();
-        var clickX = e.offsetX;
-        hFLog.log("_onImageClicked: width=" + width + " and clickX=" + clickX);
-
-        //
-        // IE11 (and probably downlevel versions of IE) can't deal with
-        // non-native click events on the slidesjs object. So we turn
-        // that feature off for IE.
-        //
-        if (!m_isInternetExplorer && clickX < (width / 3)) {
-            hFLog.log("_onImageClicked: left click - previous");
-            m_slidesjsDiv.slidesjs.previous();
-        }
-        else if (!m_isInternetExplorer && clickX > ((2 * width) / 3)) {
-            hFLog.log("_onImageClicked: right click - next");
-            m_slidesjsDiv.slidesjs.next();
-        }
-        else {
-            // Toggle audio
-            if (m_audioPlaying) {
-                hFLog.log("_onImageClicked: middle click, m_audioPlaying==true, so calling jPlayer(stop)");
-                m_jPlayerDiv.jPlayer("stop");
-                m_audioPlaying = false;
-            }
-            else {
-                hFLog.log("_onImageClicked: middle click, m_audioPlaying==false, so calling _playAudio");
-                var url = _getCurrentAudioUrl();
-                _playAudio(url);
-                m_audioPlaying = true;
-            }
-        }
 
         return false;
     }
