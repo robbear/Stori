@@ -9,8 +9,7 @@ var slideShow = (function() {
     var m_slideCount = 0;
     var m_slidesjsDiv = $('#slides');
     var m_playStopControl = $('#playstopcontrol');
-    var m_nextControl = $('#slides .slidesjs-next');
-    var m_prevControl = $('#slides .slidesjs-previous');
+    var m_overlay = $('#overlay');
     var m_slidePositionControl = $('#slideposition');
     var m_slideTitle = $('#slidetitle');
     var m_jPlayerDiv = $('#jquery_jplayer_1');
@@ -19,6 +18,12 @@ var slideShow = (function() {
     var m_audioPlaying = false;
     var m_supportsTouch = false;
     var m_isInternetExplorer = false;
+    var m_navControlClicked = false;
+
+    // Remember: m_nextControl and m_prevControl aren't instantiated until the sliderjs control is loaded
+    var m_nextControl;
+    var m_prevControl;
+
 
     function isInternetExplorer() {
         var index = navigator.userAgent.indexOf("Trident");
@@ -68,6 +73,17 @@ var slideShow = (function() {
 
     function _togglePlayStopControl() {
         m_playStopControl.attr('src', hfUtilities.getInternalImagePath(m_audioPlaying ? "ic_stopplaying.png" : "ic_play.png"));
+    }
+
+    function _toggleOverlay() {
+        hFLog.log("_toggleOverlay");
+
+        m_nextControl.toggle();
+        m_prevControl.toggle();
+        m_playStopControl.toggle();
+        m_slidePositionControl.toggle();
+        m_slideTitle.toggle();
+        m_overlay.toggle();
     }
 
     function _fetchSlideShareJSON() {
@@ -147,8 +163,22 @@ var slideShow = (function() {
             callback: {
                 loaded: function(number) {
                     hFLog.log("slides.loaded: number=" + number);
-                    $('.slidesjs-next').html("<img src='" + hfUtilities.getInternalImagePath("ic_arrow_right.png") + "'/>");
-                    $('.slidesjs-previous').html("<img src='" + hfUtilities.getInternalImagePath("ic_arrow_left.png") + "'/>");
+
+                    // Remember: the next/prev controls aren't instantiated until here.
+                    m_nextControl = $('#slides .slidesjs-next');
+                    m_prevControl = $('#slides .slidesjs-previous');
+
+                    m_nextControl.on('click', function() {
+                        hFLog.log("**** Got click on next control");
+                        m_navControlClicked = true;
+                    });
+                    m_prevControl.on('click', function() {
+                        hFLog.log("**** Got click on prev control");
+                        m_navControlClicked = true;
+                    });
+
+                    m_nextControl.html("<img src='" + hfUtilities.getInternalImagePath("ic_arrow_right.png") + "'/>");
+                    m_prevControl.html("<img src='" + hfUtilities.getInternalImagePath("ic_arrow_left.png") + "'/>");
 
                     m_currentSlideIndex = number - 1;
 
@@ -244,7 +274,16 @@ var slideShow = (function() {
     function _onImageClicked(e) {
         e.preventDefault();
 
+        if (m_navControlClicked) {
+            hFLog.log("_onImageClicked - ignoring since m_navControClicked is true.");
+            m_navControlClicked = false;
+            return false;
+        }
+
         hFLog.log("_onImageClicked");
+        hFLog.log(e);
+
+        _toggleOverlay();
 
         return false;
     }
