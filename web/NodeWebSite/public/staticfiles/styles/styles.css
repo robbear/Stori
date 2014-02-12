@@ -58,6 +58,16 @@ p{margin-bottom:25px}
     background-image: url(../images/ic_stopplaying.png);
 }
 
+#slidetextcontainer {
+    position: absolute;
+    left: 50%;
+    top: 50px;
+    z-index: 10;
+}
+#slidetext {
+
+}
+
 #slidetitlecontainer {
     position: absolute;
     left: 50%;

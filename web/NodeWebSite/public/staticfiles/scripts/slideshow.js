@@ -8,6 +8,7 @@ var slideShow = (function() {
     var m_currentSlideIndex = 0;
     var m_slideCount = 0;
     var m_slidesjsDiv = $('#slides');
+    var m_slideTextControl = $('#slidetext');
     var m_playStopControl = $('#playstopcontrol');
     var m_overlay = $('#overlay');
     var m_slidePositionControl = $('#slideposition');
@@ -78,6 +79,7 @@ var slideShow = (function() {
     function _toggleOverlay() {
         hFLog.log("_toggleOverlay");
 
+        m_slideTextControl.toggle();
         m_nextControl.toggle();
         m_prevControl.toggle();
         m_playStopControl.toggle();
@@ -143,6 +145,7 @@ var slideShow = (function() {
 
         m_slideTitle.html(m_ssj.title);
         m_slidePositionControl.html(_getSlidePositionText());
+        m_slideTextControl.html(_getCurrentSlideText());
 
         _prefetchAudio();
 
@@ -205,6 +208,7 @@ var slideShow = (function() {
                     hFLog.log("slides.complete: number=" + number);
                     m_currentSlideIndex = number - 1;
                     m_slidePositionControl.html(_getSlidePositionText());
+                    m_slideTextControl.html(_getCurrentSlideText());
 
                     var audioUrl = _getCurrentAudioUrl();
                     hFLog.log("audioUrl = " + audioUrl);
