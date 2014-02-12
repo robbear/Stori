@@ -70,6 +70,13 @@ p{margin-bottom:25px}
     font-size:90%;
     line-height:100%;
 }
+#slidetextcontainer a {
+    color:#0099cc;
+    text-decoration: underline;
+}
+#slidetextcontainer a img {
+    border: none;
+}
 #slidetext {
 
 }

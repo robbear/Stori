@@ -13,6 +13,11 @@ var hfUtilities = (function() {
         },
         getInternalImagePath: function(imageFile) {
             return "/" + this.getVersionString() + "/images/" + imageFile;
+        },
+        getLinkedString: function(string) {
+            return URI.withinString(string, function(url) {
+                return "<a> href=\"" + url + "\" " + url + "</a>";
+            });
         }
     }
 })();

@@ -146,7 +146,7 @@ var slideShow = (function() {
         // User-supplied string. HTML encode it via call to text()
         m_slideTitle.text(m_ssj.title);
         m_slidePositionControl.text(_getSlidePositionText());
-        m_slideTextControl.text(_getCurrentSlideText());
+        m_slideTextControl.html(_getHtmlSafeCurrentSlideText());
 
         _prefetchAudio();
 
@@ -209,7 +209,7 @@ var slideShow = (function() {
                     hFLog.log("slides.complete: number=" + number);
                     m_currentSlideIndex = number - 1;
                     m_slidePositionControl.text(_getSlidePositionText());
-                    m_slideTextControl.text(_getCurrentSlideText());
+                    m_slideTextControl.html(_getHtmlSafeCurrentSlideText());
 
                     var audioUrl = _getCurrentAudioUrl();
                     hFLog.log("audioUrl = " + audioUrl);
@@ -235,11 +235,40 @@ var slideShow = (function() {
         return sj.audio;
     }
 
-    function _getSlideText(index) {
+    //
+    // Returns an HTML encoded string with linkable URLs
+    //
+    function _getHtmlSafeSlideText(index) {
         var slideUuid = m_orderArray[index];
         var sj = m_ssj.slides[slideUuid];
 
-        return sj.text;
+        // HTML encode the slide text
+        var slideText = $('<div/>').text(sj.text).html();
+
+        // Decoration function for any URLs embedded in the slide text
+        var decorate = function(url) {
+            var uri = new URI(url);
+            if (!uri.protocol()) {
+                uri = uri.protocol("http");
+            }
+            uri = uri.normalize();
+
+            return "<a href=\"" + uri + "\" target=\"_blank\">" + url + "</a>";
+        }
+
+        // Call URI.withinString to replace embedded URLs with anchor links.
+        // Note: our start expression drops the requirement for terminating '/' character,
+        // allowing "foo.com" rather than "foo.com/"
+        // To add it back:
+        // start: /\b(?:([a-z][a-z0-9.+-]*:\/\/)|www\.|[a-z]+\.[a-z]{2,4}\/)/gi
+        var linkedString = URI.withinString(slideText, decorate, {
+            start: /\b(?:([a-z][a-z0-9.+-]*:\/\/)|www\.|[a-z]+\.[a-z]{2,4})/gi
+        });
+
+        hFLog.log("_getHtmlSafeSlideText returns:");
+        hFLog.log(linkedString);
+
+        return linkedString;
     }
 
     function _getCurrentImageUrl() {
@@ -250,8 +279,8 @@ var slideShow = (function() {
         return _getAudioUrl(m_currentSlideIndex);
     }
 
-    function _getCurrentSlideText() {
-        return _getSlideText(m_currentSlideIndex);
+    function _getHtmlSafeCurrentSlideText() {
+        return _getHtmlSafeSlideText(m_currentSlideIndex);
     }
 
     function _onPlayStopClicked(e) {
