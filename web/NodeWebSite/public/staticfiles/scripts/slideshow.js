@@ -8,6 +8,7 @@ var slideShow = (function() {
     var m_currentSlideIndex = 0;
     var m_slideCount = 0;
     var m_slidesjsDiv = $('#slides');
+    var m_controlsContainer = $('#controlscontainer');
     var m_slideTextControl = $('#slidetext');
     var m_playStopControl = $('#playstopcontrol');
     var m_overlay = $('#overlay');
@@ -81,15 +82,9 @@ var slideShow = (function() {
     function _toggleOverlay() {
         hFLog.log("_toggleOverlay");
 
-        if (_getCurrentAudioUrl()) {
-            m_playStopControl.toggle();
-        }
-
-        m_slideTextControl.toggle();
+        m_controlsContainer.toggle();
         m_nextControl.toggle();
         m_prevControl.toggle();
-        m_slidePositionControl.toggle();
-        m_slideTitle.toggle();
         m_overlay.toggle();
     }
 
