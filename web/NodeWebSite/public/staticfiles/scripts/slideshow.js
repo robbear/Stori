@@ -247,7 +247,7 @@ var slideShow = (function() {
     //
     function _getHtmlSafeSlideText(index) {
         if (index == (m_slideCount - 1)) {
-            return "Get a better viewing experience. Download the Stori application now!\n\nPlaceholder Stori slide";
+            return "Get a better viewing experience. Download the Stori application now!<br/><br/>Placeholder Stori slide";
         }
 
         var slideUuid = m_orderArray[index];
@@ -279,6 +279,9 @@ var slideShow = (function() {
         var linkedString = URI.withinString(slideText, decorate, {
             start: /\b(?:([a-z][a-z0-9.+-]*:\/\/)|www\.|[a-z]+\.[a-z]{2,4})/gi
         });
+
+        // Replace line breaks with <br/>
+        linkedString = linkedString.replace(/\n/g, '<br/>');
 
         hFLog.log("_getHtmlSafeSlideText returns:");
         hFLog.log(linkedString);
