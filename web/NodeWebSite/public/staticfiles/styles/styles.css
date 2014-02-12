@@ -64,6 +64,12 @@ p{margin-bottom:25px}
     top: 50px;
     z-index: 10;
 }
+#slidetextcontainer pre {
+    color: #FFFFFF;
+    font-family:Verdana, Arial, Helvetica, sans-serif;
+    font-size:90%;
+    line-height:100%;
+}
 #slidetext {
 
 }

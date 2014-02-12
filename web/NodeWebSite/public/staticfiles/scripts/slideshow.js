@@ -143,9 +143,10 @@ var slideShow = (function() {
         m_orderArray = m_ssj.order;
         m_slideCount = m_orderArray.length;
 
-        m_slideTitle.html(m_ssj.title);
-        m_slidePositionControl.html(_getSlidePositionText());
-        m_slideTextControl.html(_getCurrentSlideText());
+        // User-supplied string. HTML encode it via call to text()
+        m_slideTitle.text(m_ssj.title);
+        m_slidePositionControl.text(_getSlidePositionText());
+        m_slideTextControl.text(_getCurrentSlideText());
 
         _prefetchAudio();
 
@@ -207,8 +208,8 @@ var slideShow = (function() {
                 complete: function(number) {
                     hFLog.log("slides.complete: number=" + number);
                     m_currentSlideIndex = number - 1;
-                    m_slidePositionControl.html(_getSlidePositionText());
-                    m_slideTextControl.html(_getCurrentSlideText());
+                    m_slidePositionControl.text(_getSlidePositionText());
+                    m_slideTextControl.text(_getCurrentSlideText());
 
                     var audioUrl = _getCurrentAudioUrl();
                     hFLog.log("audioUrl = " + audioUrl);
