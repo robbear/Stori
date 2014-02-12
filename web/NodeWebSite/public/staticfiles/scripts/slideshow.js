@@ -81,10 +81,13 @@ var slideShow = (function() {
     function _toggleOverlay() {
         hFLog.log("_toggleOverlay");
 
+        if (_getCurrentAudioUrl()) {
+            m_playStopControl.toggle();
+        }
+
         m_slideTextControl.toggle();
         m_nextControl.toggle();
         m_prevControl.toggle();
-        m_playStopControl.toggle();
         m_slidePositionControl.toggle();
         m_slideTitle.toggle();
         m_overlay.toggle();
@@ -201,10 +204,15 @@ var slideShow = (function() {
                     var audioUrl = _getCurrentAudioUrl();
                     hFLog.log("audioUrl = " + audioUrl);
                     if (audioUrl) {
+                        m_playStopControl.show();
                         _playAudio(audioUrl);
                     }
-                    else if (m_audioPlaying) {
-                        _onPlayStopClicked();
+                    else {
+                        m_playStopControl.hide();
+
+                        if (m_audioPlaying) {
+                            _onPlayStopClicked();
+                        }
                     }
                 }
             }
@@ -239,7 +247,7 @@ var slideShow = (function() {
     //
     function _getHtmlSafeSlideText(index) {
         if (index == (m_slideCount - 1)) {
-            return "Get a better viewing experience. Download the Stori application now!";
+            return "Get a better viewing experience. Download the Stori application now!\n\nPlaceholder Stori slide";
         }
 
         var slideUuid = m_orderArray[index];
