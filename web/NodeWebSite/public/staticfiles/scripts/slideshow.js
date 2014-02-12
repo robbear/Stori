@@ -64,7 +64,9 @@ var slideShow = (function() {
                 Ok: function() {
                     $(this).dialog("close");
                     var audioUrl = _getCurrentAudioUrl();
-                    _playAudio(audioUrl);
+                    if (audioUrl) {
+                        _playAudio(audioUrl);
+                    }
                 }
             }
         });
@@ -130,18 +132,20 @@ var slideShow = (function() {
     function _prefetchAudio() {
         if (m_ssj == null) return;
 
-        for (var i = 0; i < m_slideCount; i++) {
+        for (var i = 0; i < m_slideCount - 1; i++) {
             var url = _getAudioUrl(i);
             $.ajax({url: url, success: function() {
                 hFLog.log("Prefetched " + url);
             }});
         }
+
+        // BUGBUG: TODO: prefetch the upsell audio, too.
     }
 
     function _onFetchSlideShareJSONComplete(json) {
         m_ssj = json;
         m_orderArray = m_ssj.order;
-        m_slideCount = m_orderArray.length;
+        m_slideCount = m_orderArray.length + 1;
 
         // User-supplied string. HTML encode it via call to text()
         m_slideTitle.text(m_ssj.title);
@@ -153,11 +157,8 @@ var slideShow = (function() {
         var html = "";
         for (var i = 0; i < m_slideCount; i++) {
             var url = _getImageUrl(i);
-            html += '<img src="' + url + '"/>'
+            html += '<img src="' + url + '"/>';
         }
-
-        // BUGBUG: TODO: Add the Stori upsell image here
-        // html += ...
 
         m_slidesjsDiv.html(html);
         hFLog.log("Initializing slidesjs");
@@ -186,20 +187,6 @@ var slideShow = (function() {
 
                     m_currentSlideIndex = number - 1;
 
-                    /*
-                    //
-                    // If the browser supports touch, then we hide the sliderjs
-                    // navigation controls and manage the right/left side of the
-                    // image click detection directly. Otherwise, we style and
-                    // show the navigation controls for mouse-based browsers.
-                    //
-                    if (m_supportsTouch) {
-                        $('.slidesjs-navigation, .slidesjs-pagination').hide(0);
-                    }
-                    else {
-                        $('.slidesjs-pagination').hide(0);
-                    }
-                    */
                     $('.slidesjs-pagination').hide(0);
                 },
                 start: function(number) {
@@ -216,12 +203,19 @@ var slideShow = (function() {
                     if (audioUrl) {
                         _playAudio(audioUrl);
                     }
+                    else if (m_audioPlaying) {
+                        _onPlayStopClicked();
+                    }
                 }
             }
         });
     }
 
     function _getImageUrl(index) {
+        if (index == (m_slideCount - 1)) {
+            return "/" + hfUtilities.getVersionString() + "/images/lastslide.png";
+        }
+
         var slideUuid = m_orderArray[index];
         var sj = m_ssj.slides[slideUuid];
 
@@ -229,6 +223,11 @@ var slideShow = (function() {
     }
 
     function _getAudioUrl(index) {
+        if (index == (m_slideCount - 1)) {
+            // BUGBUG TODO: need upsell audio
+            return null;
+        }
+
         var slideUuid = m_orderArray[index];
         var sj = m_ssj.slides[slideUuid];
 
@@ -239,8 +238,16 @@ var slideShow = (function() {
     // Returns an HTML encoded string with linkable URLs
     //
     function _getHtmlSafeSlideText(index) {
+        if (index == (m_slideCount - 1)) {
+            return "Get a better viewing experience. Download the Stori application now!";
+        }
+
         var slideUuid = m_orderArray[index];
         var sj = m_ssj.slides[slideUuid];
+
+        if (sj.text == null) {
+            return null;
+        }
 
         // HTML encode the slide text
         var slideText = $('<div/>').text(sj.text).html();
@@ -284,7 +291,9 @@ var slideShow = (function() {
     }
 
     function _onPlayStopClicked(e) {
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
 
         hFLog.log("_onPlayStopClicked");
 
@@ -298,8 +307,10 @@ var slideShow = (function() {
         else {
             hFLog.log("_onPlayStopClicked: m_audioPlaying==false, so calling _playAudio");
             var url = _getCurrentAudioUrl();
-            _playAudio(url);
-            m_audioPlaying = true;
+            if (url) {
+                _playAudio(url);
+                m_audioPlaying = true;
+            }
         }
 
         return false;
