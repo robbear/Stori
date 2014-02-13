@@ -242,7 +242,7 @@ var slideShow = (function() {
     //
     function _getHtmlSafeSlideText(index) {
         if (index == (m_slideCount - 1)) {
-            return "Get a better viewing experience. Download the Stori application now!<br/><br/>Placeholder Stori slide";
+            return null;
         }
 
         var slideUuid = m_orderArray[index];

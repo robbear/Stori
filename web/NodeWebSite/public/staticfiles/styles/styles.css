@@ -23,6 +23,15 @@ p{margin-bottom:25px}
 
 /* Remember: image slide img elements are at z-order 10 */
 
+* {
+    outline: none;
+}
+
+#opening-dialog a {
+    color: #0099cc;
+    text-decoration: underline;
+}
+
 #overlay {
     position: absolute;
     top: 0px;
