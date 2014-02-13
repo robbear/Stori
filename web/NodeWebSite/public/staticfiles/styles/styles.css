@@ -72,6 +72,7 @@ p{margin-bottom:25px}
     color:#0099cc;
     text-decoration: underline;
     pointer-events: auto;
+    position: relative;
 }
 #slidetextcontainer a img {
     border: none;
