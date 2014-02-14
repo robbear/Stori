@@ -126,7 +126,7 @@
                 <RelativeLayout
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
-                    android:layout_weight=".25" />
+                    android:layout_weight=".2" />
                 <TextView
                     android:id="@+id/slidetext_control"
                     android:paddingTop="10dp"
@@ -135,7 +135,7 @@
                     android:paddingRight="20dp"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
-                    android:layout_weight=".5"
+                    android:layout_weight=".6"
                     android:layout_centerHorizontal="true"
                     android:autoLink="web"
                     android:visibility="visible"
@@ -149,7 +149,7 @@
                 <RelativeLayout
                     android:layout_height="match_parent"
                     android:layout_width="0dp"
-                    android:layout_weight=".25" />
+                    android:layout_weight=".2" />
             </LinearLayout>
             <RelativeLayout
                 android:id="@+id/control_nextprev_panel"
