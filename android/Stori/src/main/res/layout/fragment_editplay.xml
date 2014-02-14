@@ -117,11 +117,16 @@
                         android:src="@drawable/ic_three_dot" />
                 </RelativeLayout>
             </LinearLayout>
-            <RelativeLayout
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight=".30"
                 >
+                <RelativeLayout
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight=".25" />
                 <TextView
                     android:id="@+id/slidetext_control"
                     android:paddingTop="10dp"
@@ -129,16 +134,23 @@
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
                     android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight=".5"
                     android:layout_centerHorizontal="true"
                     android:autoLink="web"
-                    android:visibility="invisible"
+                    android:visibility="visible"
                     android:focusable="false"
                     android:clickable="false"
                     android:linksClickable="true"
+                    android:gravity="center"
                     android:textColor="#FFFFFF"
+                    android:background="@drawable/rounded_edges"
                 />
-            </RelativeLayout>
+                <RelativeLayout
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight=".25" />
+            </LinearLayout>
             <RelativeLayout
                 android:id="@+id/control_nextprev_panel"
                 android:layout_height="0dp"

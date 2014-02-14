@@ -60,16 +60,20 @@ p {
 #stopfetcher {
     position: absolute;
     top:-10000px;
+    z-index: -100;
     background-image: url(../images/ic_stopplaying.png);
 }
 
 #slidetextcontainer {
     position: absolute;
-    left: 10%;
-    right: 10%;
+    left: 25%;
+    right: 25%;
     top: 50px;
     z-index: 12;
     pointer-events: none;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
 }
 #slidetextcontainer a {
     color:#0099cc;
