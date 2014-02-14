@@ -1,6 +1,7 @@
 package com.stori.stori.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,6 +13,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.stori.stori.R;
+import com.stori.stori.SSPreferences;
 import com.stori.stori.StoriListActivity;
 import com.stori.stori.StoriListItem;
 import com.stori.stori.Utilities;
@@ -31,6 +33,7 @@ public class StoriListAdapter extends BaseAdapter {
     private LayoutInflater m_inflater;
     private ArrayList<StoriListItem> m_storiListItems;
     private String m_userUuid;
+    private SharedPreferences m_prefs;
 
     public StoriListAdapter(StoriListActivity storiListActivity, String userUuid) {
         if(D)Log.d(TAG, "StoriListAdapter constructor");
@@ -38,6 +41,7 @@ public class StoriListAdapter extends BaseAdapter {
         m_storiListActivity = storiListActivity;
         m_userUuid = userUuid;
         m_inflater = (LayoutInflater)storiListActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        m_prefs = storiListActivity.getSharedPreferences(SSPreferences.PREFS(storiListActivity), Context.MODE_PRIVATE);
     }
 
     public void setStoriListItems(ArrayList<StoriListItem> items) {
@@ -123,15 +127,25 @@ public class StoriListAdapter extends BaseAdapter {
                 pm.inflate(R.menu.menu_storilistitem);
                 Menu menu = pm.getMenu();
 
-                MenuItem play = menu.findItem(R.id.menu_storilistitem_play);
-                play.setTitle(m_storiListActivity.getString(R.string.menu_storilistitem_play));
-                play.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        m_storiListActivity.downloadForPlay(sli);
-                        return true;
-                    }
-                });
+                // Address issue #52. Do not allow download and play of current
+                // edit item.
+                String currentEditSlideshareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(m_storiListActivity), SSPreferences.DEFAULT_EDITPROJECTNAME(m_storiListActivity));
+
+                if (currentEditSlideshareName != null && currentEditSlideshareName.equals(sli.getSlideShareName())) {
+                    if(D)Log.d(TAG, String.format("StoriListAdapter.getView: blocking Play menu for slideShareName=%s", currentEditSlideshareName));
+                    menu.removeItem(R.id.menu_storilistitem_play);
+                }
+                else {
+                    MenuItem play = menu.findItem(R.id.menu_storilistitem_play);
+                    play.setTitle(m_storiListActivity.getString(R.string.menu_storilistitem_play));
+                    play.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            m_storiListActivity.downloadForPlay(sli);
+                            return true;
+                        }
+                    });
+                }
 
                 MenuItem edit = menu.findItem(R.id.menu_storilistitem_edit);
                 edit.setTitle(m_storiListActivity.getString(R.string.menu_storilistitem_edit));
