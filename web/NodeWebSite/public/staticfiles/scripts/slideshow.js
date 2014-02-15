@@ -140,6 +140,23 @@ var slideShow = (function() {
         // BUGBUG: TODO: prefetch the upsell audio, too.
     }
 
+    function _displaySlideTextControl() {
+        var slideTextString = _getHtmlSafeCurrentSlideText();
+        m_slideTextControl.html(slideTextString);
+
+        var slideTextContainer = $("#slidetextcontainer");
+
+        // Chrome Android seems to need us to toggle between hidden/shown.
+        // Otherwise, when coming back to a slide that has text from one
+        // that doesn't, it will show only the rectangular background.
+        if (slideTextString == null || slideTextString.length < 1) {
+            slideTextContainer.hide();
+        }
+        else {
+            slideTextContainer.show();
+        }
+    }
+
     function _onFetchSlideShareJSONComplete(json) {
         m_ssj = json;
         m_orderArray = m_ssj.order;
@@ -148,7 +165,7 @@ var slideShow = (function() {
         // User-supplied string. HTML encode it via call to text()
         m_slideTitle.text(m_ssj.title);
         m_slidePositionControl.text(_getSlidePositionText());
-        m_slideTextControl.html(_getHtmlSafeCurrentSlideText());
+        _displaySlideTextControl();
 
         _prefetchAudio();
 
@@ -194,7 +211,7 @@ var slideShow = (function() {
                     hFLog.log("slides.complete: number=" + number);
                     m_currentSlideIndex = number - 1;
                     m_slidePositionControl.text(_getSlidePositionText());
-                    m_slideTextControl.html(_getHtmlSafeCurrentSlideText());
+                    _displaySlideTextControl();
 
                     var audioUrl = _getCurrentAudioUrl();
                     hFLog.log("audioUrl = " + audioUrl);
