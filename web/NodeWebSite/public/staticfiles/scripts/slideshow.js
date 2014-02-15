@@ -21,6 +21,8 @@ var slideShow = (function() {
     var m_supportsTouch = false;
     var m_isInternetExplorer = false;
     var m_navControlClicked = false;
+    var m_autoAudioCB = $('#autoplayaudio');
+    var m_autoPlayAudio = true;
 
     // Remember: m_nextControl and m_prevControl aren't instantiated until the sliderjs control is loaded
     var m_nextControl;
@@ -51,6 +53,10 @@ var slideShow = (function() {
 
         m_slidesjsDiv.on('click', _onImageClicked);
         m_playStopControl.on('click', _onPlayStopClicked);
+        m_autoAudioCB.on('click', _onAutoPlayAudioClicked);
+
+        m_autoPlayAudio = m_autoAudioCB.prop('checked');
+        hFLog.log("m_autoPlayAudio is " + m_autoPlayAudio);
 
         // Test for audio support
         if (Modernizr.audio.mp3) {
@@ -65,7 +71,7 @@ var slideShow = (function() {
                 Ok: function() {
                     $(this).dialog("close");
                     var audioUrl = _getCurrentAudioUrl();
-                    if (audioUrl) {
+                    if (m_autoPlayAudio && audioUrl) {
                         _playAudio(audioUrl);
                     }
                 }
@@ -217,7 +223,9 @@ var slideShow = (function() {
                     hFLog.log("audioUrl = " + audioUrl);
                     if (audioUrl) {
                         m_playStopControl.show();
-                        _playAudio(audioUrl);
+                        if (m_autoPlayAudio) {
+                            _playAudio(audioUrl);
+                        }
                     }
                     else {
                         m_playStopControl.hide();
@@ -313,6 +321,11 @@ var slideShow = (function() {
         return _getHtmlSafeSlideText(m_currentSlideIndex);
     }
 
+    function _onAutoPlayAudioClicked(e) {
+        m_autoPlayAudio = m_autoAudioCB.prop('checked');
+        hFLog.log("m_autoPlayAudio is " + m_autoPlayAudio);
+    }
+
     function _onPlayStopClicked(e) {
         if (e) {
             e.preventDefault();
@@ -340,7 +353,9 @@ var slideShow = (function() {
     }
 
     function _onImageClicked(e) {
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
 
         if (m_navControlClicked) {
             hFLog.log("_onImageClicked - ignoring since m_navControClicked is true.");
