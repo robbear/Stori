@@ -582,11 +582,11 @@ public class EditPlayFragment extends Fragment implements
 
                 switch (m_editPlayMode) {
                     case Edit:
+                        /* NEVER - no more PlayEdit mode
                         m_editPlayMode = EditPlayActivity.EditPlayMode.PlayEdit;
                         setActivityEditPlayMode(m_editPlayMode);
                         updateOverlay();
-                        // No more audio upon tapping image
-                        //startPlaying();
+                        */
                         break;
 
                     case PlayEdit:
