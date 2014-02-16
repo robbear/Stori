@@ -26,8 +26,11 @@ public class Config
     // Use cache space rather than files space
     public static final boolean USE_CACHE = true;
 
-    // Default inSampleSize scale factor for images
-    public static final int imageScaleFactor = 4;
+    // Default dimensions for ideal bitmap display/compression
+    public static final int imageDisplayWidthLandcape = 1024;
+    public static final int imageDisplayHeightLandscape = 768;
+    public static final int imageDisplayWidthPortrait = 768;
+    public static final int imageDisplayHeightPortrait = 1024;
 
     // Recording time limits - recordingTimeSegmentMillis * numRecordingSegments = 1 minute
     // Note that recordingTimeSegmeentMillis indicates the resolution with which check for cancel.

@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.PopupMenu;
@@ -66,8 +67,6 @@ public class PlaySlidesFragment extends Fragment implements
     private String m_imageFileName;
     private String m_audioFileName;
     private String m_slideText;
-    private int m_displayWidth = 0;
-    private int m_displayHeight = 0;
     private StoriService m_storiService = null;
     private SharedPreferences m_prefs;
 
@@ -202,14 +201,6 @@ public class PlaySlidesFragment extends Fragment implements
         m_playSlidesActivity = (PlaySlidesActivity)activity;
 
         m_prefs = activity.getSharedPreferences(SSPreferences.PREFS(activity), Context.MODE_PRIVATE);
-
-        Display display = activity.getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        m_displayWidth = size.x;
-        m_displayHeight = size.y;
-
-        if(D)Log.d(TAG, String.format("PlaySlidesFragment.onAttach: displayWidth=%d, displayHeight=%d", m_displayWidth, m_displayHeight));
 
         // if (activity instanceof SomeActivityInterface) {
         // }
@@ -463,12 +454,15 @@ public class PlaySlidesFragment extends Fragment implements
                 // use the screen dimensions if this is the case.
                 // See issue #9
                 if (targetW == 0 || targetH == 0) {
-                    targetW = m_displayWidth;
-                    targetH = m_displayHeight;
+                    WindowManager wm = (WindowManager)m_playSlidesActivity.getSystemService(Context.WINDOW_SERVICE);
+                    Point outSize = new Point();
+                    wm.getDefaultDisplay().getSize(outSize);
+                    targetW = outSize.x;
+                    targetH = outSize.y;
                 }
 
                 String filePath = Utilities.getAbsoluteFilePath(m_playSlidesActivity, m_slideShareName, m_imageFileName);
-                Bitmap bitmap = Utilities.getConstrainedBitmap(filePath, targetW, targetH, false);
+                Bitmap bitmap = Utilities.getConstrainedBitmap(filePath, targetW, targetH);
 
                 Drawable drawableImage = new BitmapDrawable(m_playSlidesActivity.getResources(), bitmap);
                 m_imageSwitcher.setImageDrawable(drawableImage);

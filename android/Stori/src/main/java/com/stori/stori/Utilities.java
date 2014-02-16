@@ -307,30 +307,27 @@ public class Utilities {
     private static int calculateInSampleSize(int bitmapWidth, int bitmapHeight, int displayWidth, int displayHeight) {
         if(D)Log.d(TAG, String.format("Utilities.calculateInSampleSize: bW=%d, bH=%d, dW=%d, dH=%d", bitmapWidth, bitmapHeight, displayWidth, displayHeight));
 
-        int inSampleSize = 1;
-
-        if (bitmapWidth > displayWidth || bitmapHeight > displayHeight) {
-            int halfHeight = bitmapHeight / 2;
-            int halfWidth = bitmapWidth / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // bitmapWidth and bitmapHeight larger than the requested width/height
-            while (((halfHeight / inSampleSize) > displayHeight) && ((halfWidth / inSampleSize) > displayWidth)) {
-                inSampleSize *= 2;
-            }
+        if (displayWidth == 0 || displayHeight == 0) {
+            return 1;
         }
 
-        return inSampleSize;
+        int scaleFactor = Math.max(bitmapWidth / displayWidth, bitmapHeight / displayHeight);
+
+        return Math.max(1, scaleFactor);
     }
 
-    public static Bitmap getConstrainedBitmap(String filePath, int displayWidth, int displayHeight, boolean forFileCopy) {
-        if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: displayWidth=%d, displayHeight=%d, forFileCopy=%b, filePath=%s", displayWidth, displayHeight, forFileCopy, filePath));
+    public static Bitmap getConstrainedBitmap(String filePath) {
+        if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap for file copy: filePath=%s", filePath));
 
         long bitmapSize = 0;
         File file = new File(filePath);
         if (file.exists()) {
             bitmapSize = file.length();
             if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: length %d for file %s", bitmapSize, filePath));
+        }
+        else {
+            if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: %s does not exist. Bailing.", filePath));
+            return null;
         }
 
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -339,13 +336,61 @@ public class Utilities {
         int bitmapWidth = options.outWidth;
         int bitmapHeight = options.outHeight;
         int scaleFactor = 1;
+        boolean isLandscape = bitmapWidth > bitmapHeight;
+
+        if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: bitmapWidth=%d, bitmapHeight=%d", bitmapWidth, bitmapHeight));
+
+        if (bitmapSize > Config.imageFileSizeFloorBytes) {
+            scaleFactor = calculateInSampleSize(
+                    bitmapWidth, bitmapHeight,
+                    isLandscape ? Config.imageDisplayWidthLandcape : Config.imageDisplayWidthPortrait,
+                    isLandscape ? Config.imageDisplayHeightLandscape : Config.imageDisplayHeightPortrait);
+        }
+        if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: scaleFactor=%d", scaleFactor));
+
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = scaleFactor;
+        options.inPurgeable = true;
+
+        if(D)Log.d(TAG, "Utilities.getConstrainedBitmap - returning bitmap from decodeFile");
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
+        if(D)Log.d(TAG, String.format("Utililties.getConstrainedBitmap: bitmap %s null", bitmap == null ? "is" : "is not"));
+
+        return bitmap;
+    }
+
+    public static Bitmap getConstrainedBitmap(String filePath, int displayWidth, int displayHeight) {
+        if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: displayWidth=%d, displayHeight=%d, filePath=%s", displayWidth, displayHeight, filePath));
+
+        long bitmapSize = 0;
+        File file = new File(filePath);
+        if (file.exists()) {
+            bitmapSize = file.length();
+            if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: length %d for file %s", bitmapSize, filePath));
+        }
+        else {
+            if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: %s does not exist. Bailing.", filePath));
+            return null;
+        }
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, options);
+        int bitmapWidth = options.outWidth;
+        int bitmapHeight = options.outHeight;
+        int scaleFactor = 1;
+        boolean isLandscape = bitmapWidth > bitmapHeight;
 
         if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: bitmapWidth=%d, bitmapHeight=%d", bitmapWidth, bitmapHeight));
 
         if (displayWidth == 0 && displayHeight == 0) {
-            // Don't compress the image if it's under Config.imageFileSizeFloorBytes in size during a file copy
-            if (forFileCopy && (bitmapSize > Config.imageFileSizeFloorBytes)) {
-                scaleFactor = Config.imageScaleFactor;
+            if (isLandscape) {
+                displayWidth = Config.imageDisplayWidthLandcape;
+                displayHeight = Config.imageDisplayHeightLandscape;
+            }
+            else {
+                displayWidth = Config.imageDisplayWidthPortrait;
+                displayHeight = Config.imageDisplayHeightPortrait;
             }
         }
         else {
@@ -357,9 +402,7 @@ public class Utilities {
             }
         }
 
-        if (scaleFactor == 1 && !forFileCopy) {
-            scaleFactor = calculateInSampleSize(bitmapWidth, bitmapHeight, displayWidth, displayHeight);
-        }
+        scaleFactor = calculateInSampleSize(bitmapWidth, bitmapHeight, displayWidth, displayHeight);
         if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap: scaleFactor=%d", scaleFactor));
 
         options.inJustDecodeBounds = false;
@@ -412,7 +455,7 @@ public class Utilities {
 
             // Now compress the file
             ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
-            Bitmap bitmap = getConstrainedBitmap(Utilities.getAbsoluteFilePath(context, slideShareName, fileName), 0, 0, true);
+            Bitmap bitmap = getConstrainedBitmap(Utilities.getAbsoluteFilePath(context, slideShareName, fileName));
             if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputBuffer)) {
                 file = createFile(context, slideShareName, fileName);
                 outStream = new FileOutputStream(file);
@@ -498,7 +541,7 @@ public class Utilities {
 
             // Now compress the file
             ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
-            Bitmap bitmap = getConstrainedBitmap(Utilities.getAbsoluteFilePath(context, slideShareName, fileName), 0, 0, true);
+            Bitmap bitmap = getConstrainedBitmap(Utilities.getAbsoluteFilePath(context, slideShareName, fileName));
             if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputBuffer)) {
                 file = createFile(context, slideShareName, fileName);
                 outStream = new FileOutputStream(file);
