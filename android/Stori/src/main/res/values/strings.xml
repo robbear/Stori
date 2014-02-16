@@ -20,7 +20,7 @@
     <string name="editplay_entertext_hint">Enter text for this slide</string>
     <string name="editplay_maxpublishedexceeded_title">Cannot publish</string>
     <string name="editplay_maxpublishedexceeded_message_format">You have exceeded your allotment of %1$s published Storis. Please delete one or more in order to publish this Stori.</string>
-    <string name="editplay_nopicture_text">Add a picture!</string>
+    <string name="editplay_nopicture_text">Choose a picture!</string>
     <string name="editplay_overwriteaudio_title">Replace audio?</string>
     <string name="editplay_overwriteaudio_message">Do you want to replace the audio you have already recorded for this slide?</string>
     <string name="googlelogin_wait_message">Signing in...</string>

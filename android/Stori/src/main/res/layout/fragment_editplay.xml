@@ -14,15 +14,32 @@
         android:background="#000000"
         android:inAnimation="@anim/fade_in"
         android:outAnimation="@anim/fade_out" />
-    <TextView
-        android:id="@+id/no_picture_text"
+    <LinearLayout
+        android:id="@+id/no_picture_panel"
+        android:orientation="vertical"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="@string/editplay_nopicture_text"
-        android:textColor="#FFFFFF"
         android:layout_centerInParent="true"
-        android:visibility="gone"
-    />
+        android:background="@drawable/button_flash"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:visibility="visible"
+        >
+        <ImageView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@null"
+            android:src="@drawable/ic_selectimage" />
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/editplay_nopicture_text"
+            android:textColor="#FFFFFF"
+        />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/overlay_panel"

@@ -75,10 +75,10 @@ public class EditPlayFragment extends Fragment implements
     private ImageButton m_trashControl;
     private ImageButton m_nextControl;
     private ImageButton m_prevControl;
+    private View m_noPicturePanel;
     private TextView m_slideTextControl;
     private TextView m_slidePositionTextControl;
     private TextView m_titleControl;
-    private TextView m_noPictureText;
     private View m_nextPrevPanel;
     private String m_imageFileName;
     private String m_audioFileName;
@@ -238,7 +238,14 @@ public class EditPlayFragment extends Fragment implements
         m_titleControl = (TextView)view.findViewById(R.id.control_title);
         m_nextPrevPanel = view.findViewById(R.id.control_nextprev_panel);
         m_slideTextControl = (TextView)view.findViewById(R.id.slidetext_control);
-        m_noPictureText = (TextView)view.findViewById(R.id.no_picture_text);
+
+        m_noPicturePanel = view.findViewById(R.id.no_picture_panel);
+        m_noPicturePanel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popUpChooseImageMenu(view);
+            }
+        });
 
         m_nextControl = (ImageButton)view.findViewById(R.id.control_next_slide);
         m_nextControl.setOnClickListener(new View.OnClickListener() {
@@ -427,31 +434,7 @@ public class EditPlayFragment extends Fragment implements
             public void onClick(View view) {
                 if(D)Log.d(TAG, "EditPlayFragment.onSelectPhotoControlClicked");
 
-                PopupMenu pm = new PopupMenu(m_editPlayActivity, view);
-                pm.inflate(R.menu.menu_editplay_image);
-                Menu menu = pm.getMenu();
-
-                MenuItem picture = menu.findItem(R.id.menu_editplay_image_picture);
-                picture.setTitle(hasImage() ? getString(R.string.menu_editplay_image_replacepicture) : getString(R.string.menu_editplay_image_choosepicture));
-                picture.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        selectImageFromGallery();;
-                        return true;
-                    }
-                });
-
-                MenuItem camera = menu.findItem(R.id.menu_editplay_image_camera);
-                camera.setTitle(hasImage() ? getString(R.string.menu_editplay_image_replacecamera) : getString(R.string.menu_editplay_image_usecamera));
-                camera.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        selectImageFromCamera();
-                        return true;
-                    }
-                });
-
-                pm.show();
+                popUpChooseImageMenu(view);
             }
         });
 
@@ -694,6 +677,36 @@ public class EditPlayFragment extends Fragment implements
         }
     }
 
+    private void popUpChooseImageMenu(View view) {
+        if(D)Log.d(TAG, "EditPlayFragment.popUpChooseImageMenu");
+
+        PopupMenu pm = new PopupMenu(m_editPlayActivity, view);
+        pm.inflate(R.menu.menu_editplay_image);
+        Menu menu = pm.getMenu();
+
+        MenuItem picture = menu.findItem(R.id.menu_editplay_image_picture);
+        picture.setTitle(hasImage() ? getString(R.string.menu_editplay_image_replacepicture) : getString(R.string.menu_editplay_image_choosepicture));
+        picture.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                selectImageFromGallery();;
+                return true;
+            }
+        });
+
+        MenuItem camera = menu.findItem(R.id.menu_editplay_image_camera);
+        camera.setTitle(hasImage() ? getString(R.string.menu_editplay_image_replacecamera) : getString(R.string.menu_editplay_image_usecamera));
+        camera.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                selectImageFromCamera();
+                return true;
+            }
+        });
+
+        pm.show();
+    }
+
     private EditPlayActivity.EditPlayMode getActivityEditPlayMode() {
         EditPlayActivity.EditPlayMode epm = m_editPlayActivity.getEditPlayMode();
         if(D)Log.d(TAG, String.format("EditPlayFragment.getActivityEditPlayMode: %s", epm.toString()));
@@ -864,14 +877,14 @@ public class EditPlayFragment extends Fragment implements
         if (m_imageFileName == null) {
             m_imageSwitcher.setImageDrawable(null);
             if (m_editPlayMode == EditPlayActivity.EditPlayMode.Play) {
-                m_noPictureText.setVisibility(View.GONE);
+                m_noPicturePanel.setVisibility(View.GONE);
             }
             else {
-                m_noPictureText.setVisibility(View.VISIBLE);
+                m_noPicturePanel.setVisibility(View.VISIBLE);
             }
         }
         else {
-            m_noPictureText.setVisibility(View.GONE);
+            m_noPicturePanel.setVisibility(View.GONE);
 
             try {
                 int targetW = m_imageSwitcher.getWidth();
