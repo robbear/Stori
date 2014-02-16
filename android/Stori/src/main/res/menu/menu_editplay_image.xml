@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_editplay_image_picture"
+        android:title="@string/menu_editplay_image_choosepicture" />
+    <item
+        android:id="@+id/menu_editplay_image_camera"
+        android:title="@string/menu_editplay_image_usecamera" />
+</menu>

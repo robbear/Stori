@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,7 +69,6 @@ public class EditPlayFragment extends Fragment implements
     private ImageButton m_insertBeforeControl;
     private ImageButton m_insertAfterControl;
     private ImageButton m_selectPhotoControl;
-    private ImageButton m_cameraControl;
     private ImageButton m_editControl;
     private ImageButton m_recordControl;
     private ImageButton m_playstopControl;
@@ -423,25 +421,37 @@ public class EditPlayFragment extends Fragment implements
             }
         });
 
-        m_cameraControl = (ImageButton)view.findViewById(R.id.control_camera);
-        m_cameraControl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(D)Log.d(TAG, "EditPlayFragment.onCameraControlClicked");
-
-                if (Utilities.isCameraAvailable(m_editPlayActivity)) {
-                    selectImageFromCamera();
-                }
-            }
-        });
-
         m_selectPhotoControl = (ImageButton)view.findViewById(R.id.select_from_gallery_control);
         m_selectPhotoControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(D)Log.d(TAG, "EditPlayFragment.onSelectPhotoControlClicked");
 
-                selectImageFromGallery();
+                PopupMenu pm = new PopupMenu(m_editPlayActivity, view);
+                pm.inflate(R.menu.menu_editplay_image);
+                Menu menu = pm.getMenu();
+
+                MenuItem picture = menu.findItem(R.id.menu_editplay_image_picture);
+                picture.setTitle(hasImage() ? getString(R.string.menu_editplay_image_replacepicture) : getString(R.string.menu_editplay_image_choosepicture));
+                picture.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        selectImageFromGallery();;
+                        return true;
+                    }
+                });
+
+                MenuItem camera = menu.findItem(R.id.menu_editplay_image_camera);
+                camera.setTitle(hasImage() ? getString(R.string.menu_editplay_image_replacecamera) : getString(R.string.menu_editplay_image_usecamera));
+                camera.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        selectImageFromCamera();
+                        return true;
+                    }
+                });
+
+                pm.show();
             }
         });
 
@@ -938,7 +948,7 @@ public class EditPlayFragment extends Fragment implements
         boolean success = m_storiService.startRecording(m_slideShareName, m_audioFileName);
         if (success) {
             m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stoprecording));
-            m_playstopControl.setEnabled(false);
+            enableControlsWhileRecording(false);
         }
     }
 
@@ -953,7 +963,7 @@ public class EditPlayFragment extends Fragment implements
         boolean success = m_storiService.stopRecording(m_audioFileName);
 
         m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
-        m_playstopControl.setEnabled(true);
+        enableControlsWhileRecording(true);
 
         if (!success) {
             if(D)Log.d(TAG, String.format("EditPlayFragment.stopRecording - failure. Cleaning up %s", m_audioFileName));
@@ -975,7 +985,7 @@ public class EditPlayFragment extends Fragment implements
         playBeep();
         vibrateDevice();
         m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_record));
-        m_playstopControl.setEnabled(true);
+        enableControlsWhileRecording(true);
 
         if (!success) {
             if(D)Log.d(TAG, String.format("EditPlayFragment.onRecordingTimeLimit - failure. Cleaning up %s", m_audioFileName));
@@ -1098,6 +1108,20 @@ public class EditPlayFragment extends Fragment implements
         m_recordControl.setEnabled(true);
     }
 
+    private void enableControlsWhileRecording(boolean enable) {
+        if(D)Log.d(TAG, String.format("EditPlayFragment.enableControlsWhileRecording: %b", enable));
+
+        m_playstopControl.setEnabled(enable);
+        m_selectPhotoControl.setEnabled(enable);
+        m_mainMenuControl.setEnabled(enable);
+        m_insertAfterControl.setEnabled(enable);
+        m_insertBeforeControl.setEnabled(enable);
+        m_trashControl.setEnabled(enable);
+        m_nextControl.setEnabled(enable);
+        m_prevControl.setEnabled(enable);
+        m_editControl.setEnabled(enable);
+    }
+
     private boolean hasAudio() {
         return m_audioFileName != null;
     }
@@ -1196,7 +1220,7 @@ public class EditPlayFragment extends Fragment implements
 
         if (m_storiService.isRecording(m_audioFileName)) {
             m_recordControl.setImageDrawable(getResources().getDrawable(R.drawable.ic_stoprecording));
-            m_playstopControl.setEnabled(false);
+            enableControlsWhileRecording(false);
         }
     }
 

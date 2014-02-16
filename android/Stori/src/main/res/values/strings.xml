@@ -44,6 +44,10 @@
     <string name="menu_editplayactivity_viewpublished">List my Storis</string>
     <string name="menu_editplay_edit_reorder">Reorder</string>
     <string name="menu_editplay_edit_text">Text</string>
+    <string name="menu_editplay_image_choosepicture">Choose picture</string>
+    <string name="menu_editplay_image_replacecamera">Replace with camera</string>
+    <string name="menu_editplay_image_replacepicture">Replace picture</string>
+    <string name="menu_editplay_image_usecamera">Use camera</string>
     <string name="menu_editplay_trash_deleteslide">Remove slide</string>
     <string name="menu_editplay_trash_deleteimage">Remove image</string>
     <string name="menu_editplay_trash_deleteaudio">Remove audio</string>
