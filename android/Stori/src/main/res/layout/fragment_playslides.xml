@@ -18,7 +18,7 @@
     <LinearLayout
         android:id="@+id/overlay_panel"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:background="#30000000"
@@ -28,6 +28,26 @@
             android:layout_height="0dp"
             android:layout_weight=".15"
             android:layout_width="match_parent">
+            <LinearLayout
+                android:id="@+id/control_faux_actionbar_back"
+                android:orientation="horizontal"
+                android:layout_height="36dp"
+                android:layout_width="wrap_content"
+                android:background="@drawable/button_flash"
+                >
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_back"
+                    />
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_launcher"
+                    />
+            </LinearLayout>
             <ImageButton
                 android:id="@+id/control_main_menu"
                 android:layout_height="32dp"

@@ -63,6 +63,7 @@ public class PlaySlidesFragment extends Fragment implements
     private TextView m_slideTextControl;
     private TextView m_slidePositionTextControl;
     private TextView m_titleControl;
+    private View m_fauxActionBarBackControl;
     private boolean m_fOverlayVisible = true;
     private String m_imageFileName;
     private String m_audioFileName;
@@ -224,6 +225,15 @@ public class PlaySlidesFragment extends Fragment implements
         m_slidePositionTextControl = (TextView)view.findViewById(R.id.control_slide_position);
         m_titleControl = (TextView)view.findViewById(R.id.control_title);
         m_slideTextControl = (TextView)view.findViewById(R.id.slidetext_control);
+
+        m_fauxActionBarBackControl = view.findViewById(R.id.control_faux_actionbar_back);
+        m_fauxActionBarBackControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                m_playSlidesActivity.finish();
+                return;
+            }
+        });
 
         m_nextControl = (ImageButton)view.findViewById(R.id.control_next_slide);
         m_nextControl.setOnClickListener(new View.OnClickListener() {
