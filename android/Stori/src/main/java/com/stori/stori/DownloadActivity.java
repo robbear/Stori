@@ -112,8 +112,22 @@ public class DownloadActivity extends FragmentActivity {
             }
 
             if (!m_downloadForEdit) {
+                // Check to see if we're editing this m_slideShareName. If so, we don't want to download
+                // and overwrite it. See issue #52
+                String slideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(this), null);
+                if (m_slideShareName.equalsIgnoreCase(slideShareName)) {
+                    if(D)Log.d(TAG, "DownloadActivity.onCreate - this Stori is currently under edit. Launch Stori to EditPlayActivity->PlaySlidesActivity rather than downloading");
+
+                    Intent intentLaunch = getPackageManager().getLaunchIntentForPackage(getPackageName());
+                    intentLaunch.putExtra(EditPlayActivity.EXTRA_LAUNCH_INTO_PLAY, true);
+                    startActivity(intentLaunch);
+
+                    finish();
+                    return;
+                }
+
                 // Check to see if we already have this m_slideShareName downloaded.
-                String slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), null);
+                slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), null);
                 if (m_slideShareName.equalsIgnoreCase(slideShareName)) {
                     if(D)Log.d(TAG, "DownloadActivity.onCreate - we already have this Stori downloaded. Use it rather than refetching");
 

@@ -77,6 +77,8 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
     public final static int RESULT_EDITDOWNLOAD_OK = RESULT_FIRST_USER + 1;
 
+    public final static String EXTRA_LAUNCH_INTO_PLAY = "extra_launch_into_play";
+
     public static AmazonClientManager s_amazonClientManager = null;
 
     public enum EditPlayMode {
@@ -1251,6 +1253,13 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
             for (StoriService.StoriServiceConnectionListener nscl : storiServiceConnectionListeners) {
                 nscl.onServiceConnected(m_storiService);
+            }
+
+            Intent intent = getIntent();
+            boolean launchIntoPlay = intent.getBooleanExtra(EXTRA_LAUNCH_INTO_PLAY, false);
+            if (launchIntoPlay) {
+                if(D)Log.d(TAG, "EditPlayActivity.onServiceConnected - got intent for launching into play. Starting PlaySlidesActivity");
+                previewSlides();
             }
         }
 
