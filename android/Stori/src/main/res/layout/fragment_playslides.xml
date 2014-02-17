@@ -61,7 +61,7 @@
                 android:layout_weight=".6"
                 android:layout_centerHorizontal="true"
                 android:autoLink="web"
-                android:visibility="visible"
+                android:visibility="invisible"
                 android:focusable="false"
                 android:clickable="false"
                 android:linksClickable="true"

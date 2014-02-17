@@ -25,7 +25,7 @@
         android:paddingBottom="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:visibility="visible"
+        android:visibility="gone"
         >
         <ImageView
             android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
     <LinearLayout
         android:id="@+id/overlay_panel"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:background="#30000000"
@@ -139,7 +139,7 @@
                     android:layout_weight=".6"
                     android:layout_centerHorizontal="true"
                     android:autoLink="web"
-                    android:visibility="visible"
+                    android:visibility="invisible"
                     android:focusable="false"
                     android:clickable="false"
                     android:linksClickable="true"
@@ -156,7 +156,7 @@
                 android:id="@+id/control_nextprev_panel"
                 android:layout_height="0dp"
                 android:layout_width="match_parent"
-                android:visibility="visible"
+                android:visibility="invisible"
                 android:layout_weight=".10">
                 <RelativeLayout
                     android:layout_height="48dp"
