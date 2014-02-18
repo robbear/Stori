@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -26,6 +27,7 @@ import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -497,6 +499,23 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
                 }
 
                 m_newSlideOrderValueForDialog = 0;
+
+                int count = 0;
+
+                try {
+                    count = m_ssj.getSlideCount();
+                }
+                catch (Exception e) {
+                    if(E)Log.d(TAG, "EditPlayActivity.addSlide", e);
+                    e.printStackTrace();
+                }
+                catch (OutOfMemoryError e) {
+                    if(E)Log.d(TAG, "EditPlayActivity.addSlide", e);
+                    e.printStackTrace();
+                }
+
+                String toastString = String.format(getString(R.string.toast_reorderslide_format), m_currentTabPosition + 1, count);
+                showToast(toastString);
             }
         });
 
@@ -970,6 +989,9 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
             m_currentTabPosition--;
         }
         m_viewPager.setCurrentItem(m_currentTabPosition);
+
+        String toastString = String.format(getString(R.string.toast_deleteslide_format), m_currentTabPosition + 1, count);
+        showToast(toastString);
     }
 
     public void publishSlides() {
@@ -1007,7 +1029,38 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         ad.show();
     }
 
-    public void initializeNewSlide(int newIndex) {
+    private void showToast(String toastString) {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.showToast: %s", toastString));
+
+        Toast toast = Toast.makeText(this, toastString, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.show();
+    }
+
+    public void addSlide(int newIndex) {
+        if(D)Log.d(TAG, String.format("EditPlayActivity.addSlide: newIndex=%d", newIndex));
+
+        initializeNewSlide(newIndex);
+
+        int count = 0;
+
+        try {
+            count = m_ssj.getSlideCount();
+        }
+        catch (Exception e) {
+            if(E)Log.d(TAG, "EditPlayActivity.addSlide", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.d(TAG, "EditPlayActivity.addSlide", e);
+            e.printStackTrace();
+        }
+
+        String toastString = String.format(getString(R.string.toast_addslide_format), m_currentTabPosition + 1, count);
+        showToast(toastString);
+    }
+
+    private void initializeNewSlide(int newIndex) {
         if(D)Log.d(TAG, String.format("EditPlayActivity.initializeNewSlide: newIndex=%d", newIndex));
 
         if (newIndex < 0) {

@@ -548,7 +548,7 @@ public class EditPlayFragment extends Fragment implements
             public void onClick(View v) {
                 if(D)Log.d(TAG, "EditPlayFragment.onInsertBeforeButtonClicked");
                 int selectedTabPosition = m_editPlayActivity.getCurrentTabPosition();
-                m_editPlayActivity.initializeNewSlide(selectedTabPosition);
+                m_editPlayActivity.addSlide(selectedTabPosition);
             }
         });
 
@@ -558,7 +558,7 @@ public class EditPlayFragment extends Fragment implements
             public void onClick(View v) {
                 if(D)Log.d(TAG, "EditPlayFragment.onInsertAfterButtonClicked");
                 int selectedTabPosition = m_editPlayActivity.getCurrentTabPosition();
-                m_editPlayActivity.initializeNewSlide(selectedTabPosition + 1);
+                m_editPlayActivity.addSlide(selectedTabPosition + 1);
             }
         });
 

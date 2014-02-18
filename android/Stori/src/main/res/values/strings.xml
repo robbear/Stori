@@ -82,6 +82,9 @@
     <string name="storilistadapter_count_text_single">1 slide</string>
     <string name="switch_account_dialog_title">Switch account?</string>
     <string name="switch_account_dialog_message">If you switch your account, you will lose any unpublished changes to your current work. Continue?</string>
+    <string name="toast_addslide_format">Added slide. Now viewing %1$d of %2$d.</string>
+    <string name="toast_deleteslide_format">Removed slide. Now viewing %1$d of %2$d.</string>
+    <string name="toast_reorderslide_format">Reordered slides. Now viewing %1$d of %2$d.</string>
     <string name="upload_dialog_title">Uploading...</string>
     <string name="upload_dialog_complete_title">Upload complete</string>
     <string name="upload_dialog_complete_message_format">Do you want to share this show?</string>
