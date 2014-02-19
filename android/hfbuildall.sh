@@ -14,28 +14,28 @@ usage()
 
 buildRelease()
 {
-    ./hfbuild.sh release release $1 $2
-#   cp ./build/bin_ant/proguard/mapping.txt ./skus/release/release_bin/
+    ./hfbuild.sh release release proguard $1 $2
+    cp ./build/bin_ant/proguard/mapping.txt ./skus/release/release_bin/
     cp ./build/bin_ant/stori-release.apk ./skus/release/release_bin/stori-release.apk
 }
 
 buildTrial()
 {
-    ./hfbuild.sh trial release $1 $2
+    ./hfbuild.sh trial release proguard $1 $2
     cp ./build/bin_ant/proguard/mapping.txt ./skus/trial/release_bin/
     cp ./build/bin_ant/stori-release.apk ./skus/trial/release_bin/stori-trial.apk
 }
 
 buildAmazon()
 {
-    ./hfbuild.sh amazon release $1a $2
+    ./hfbuild.sh amazon release proguard $1a $2
     cp ./build/bin_ant/proguard/mapping.txt ./skus/amazon/release_bin/
     cp ./build/bin_ant/stori-release.apk ./skus/amazon/release_bin/stori-release.apk
 }
 
 buildAmazonTrial()
 {
-    ./hfbuild.sh amazon_trial release $1a $2
+    ./hfbuild.sh amazon_trial release proguard $1a $2
     cp ./build/bin_ant/proguard/mapping.txt ./skus/amazon_trial/release_bin/
     cp ./build/bin_ant/stori-release.apk ./skus/amazon_trial/release_bin/stori-trial.apk
 }

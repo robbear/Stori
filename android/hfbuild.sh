@@ -2,16 +2,16 @@
 
 # Command line build tool.
 # Use like ant:
-# -- hfbuild <sku> <debug or release> <build string> <password> [install to device]
-# -- hfbuild trial|release|amazon|amazon_trial debug|release 201112060900 password install
+# -- hfbuild <sku> <debug or release> <proguard or dev> <build string> <password> [install to device]
+# -- hfbuild trial|release|amazon|amazon_trial debug|release proguard|dev 201112060900 password install
 
-EXPECTED_ARGS=4
+EXPECTED_ARGS=5
 E_BADARGS=65
 
 usage()
 {
     echo "hfbuild - command line tool to build Stori indicating sku as first parameter"
-    echo "usage: hfbuild <trial|release|amazon|amazon_trial> <debug|release> <buildstring> <password> [install]"
+    echo "usage: hfbuild <trial|release|amazon|amazon_trial> <debug|release> <proguard|dev> <buildstring> <password> [install]"
     echo ""
 }
 
@@ -104,6 +104,13 @@ fixAntPropertiesForPassword()
     sed -i -e 's/foo.alias.password=foo/key.alias.password='$1'/g' build/ant.properties
 }
 
+fixProjectPropertiesToBuildForDev()
+{
+    echo "---"
+    echo "Fix build/project.properties to build for dev"
+    sed -i -e 's/proguard.config/#proguard.config/g' build/project.properties
+}
+
 moveToBuildDirectory()
 {
     echo "---"
@@ -150,20 +157,25 @@ copyTrunkTreeToBuildTree
 
 #copySkuExceptionsToBuildTree $1
 #populateStringReplace $1
-fixAntPropertiesForPassword $4
+fixAntPropertiesForPassword $5
+
+if [ "$3" != "proguard" ]
+then
+    fixProjectPropertiesToBuildForDev
+fi
 
 case "$1" in
     'release')
-	setBuildStringForRelease $3
+	setBuildStringForRelease $4
 	;;
     'amazon')
-	setBuildStringForRelease $3
+	setBuildStringForRelease $4
 	;;
     'trial')
-	setBuildStringForTrial $3
+	setBuildStringForTrial $4
 	;;
     'amazon_trial')
-        setBuildStringForTrial $3
+        setBuildStringForTrial $4
 	;;
 esac
 
