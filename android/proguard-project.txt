@@ -2,20 +2,39 @@
 
 -dontnote **ILicensingService
 
-# Settings for AWS. See https://mobile.awsblog.com/post/Tx2OC71PFCTC63E/Using-ProGuard-with-the-AWS-SDK-for-Android
--keep class org.apache.commons.logging.** { *; }
--keep class com.amazonaws.services.sqs.QueueUrlHandler { *; }
--keep class com.amazonaws.javax.xml.transform.sax.* { public *; }
--keep class com.amazonaws.javax.xml.stream.** { *; }
--keep class com.amazonaws.services.**.model.*Exception* { *; }
+-dontwarn org.apache.**
+-dontwarn com.amazonaws.**
+-dontwarn org.codehaus.**
+-dontwarn org.w3c.**
+-dontwarn com.google.**
+-dontwarn ccom.google.**
+-dontwarn com.fasterxml.**
+
+-keep class org.apache.** { *; }
+-keep class com.amazonaws.** { *; }
 -keep class org.codehaus.** { *; }
+-keep class org.w3c.** { *; }
+-keep class com.google.** { *; }
+-keep class ccom.google.** { *; }
+-keep class com.fasterxml.** { *; }
 -keepattributes Signature,*Annotation*
 
--dontwarn javax.xml.stream.events.**
--dontwarn org.codehaus.jackson.**
--dontwarn org.apache.commons.logging.impl.**
--dontwarn org.apache.http.conn.scheme.**
--dontwarn com.amazonaws.services.securitytoken.**
+
+# Settings for AWS. See https://mobile.awsblog.com/post/Tx2OC71PFCTC63E/Using-ProGuard-with-the-AWS-SDK-for-Android
+#-keep class org.apache.commons.logging.** { *; }
+#-keep class com.amazonaws.services.sqs.QueueUrlHandler { *; }
+#-keep class com.amazonaws.javax.xml.transform.sax.* { public *; }
+#-keep class com.amazonaws.javax.xml.stream.** { *; }
+#-keep class com.amazonaws.services.**.model.*Exception* { *; }
+#-keep class org.codehaus.** { *; }
+#-keepattributes Signature,*Annotation*
+
+#-dontwarn javax.xml.stream.events.**
+#-dontwarn org.codehaus.jackson.**
+#-dontwarn org.apache.commons.logging.impl.**
+#-dontwarn org.apache.http.conn.scheme.**
+#-dontwarn com.amazonaws.services.securitytoken.**
+
 
 # Settings for Google Play Services
 -keep class * extends java.util.ListResourceBundle {
@@ -34,4 +53,8 @@
 -keepnames class * implements android.os.Parcelable {
     public static final ** CREATOR;
 }
+
+#-dontshrink
+#-dontoptimize
+#-dontpreverify
 
