@@ -376,6 +376,22 @@ public class DownloadActivity extends FragmentActivity {
                     edit.putString(SSPreferences.PREFS_EDITPROJECTNAME(DownloadActivity.this), m_slideShareName);
                     edit.commit();
 
+                    // Update the version
+                    // Fixes issue #61
+                    try {
+                        int version = m_ssj.getVersion();
+                        m_ssj.setVersion(version + 1);
+                        m_ssj.save(DownloadActivity.this, m_slideShareName, Config.slideShareJSONFilename);
+                    }
+                    catch (Exception e) {
+                        if(E)Log.e(TAG, "DownloadActivity.DownloadTask.onPostExecute", e);
+                        e.printStackTrace();
+                    }
+                    catch (OutOfMemoryError e) {
+                        if(E)Log.e(TAG, "DownloadActivity.DownloadTask.onPostExecute", e);
+                        e.printStackTrace();
+                    }
+
                     setResult(RESULT_OK);
                     finish();
                     return;
