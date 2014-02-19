@@ -10,6 +10,8 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -316,6 +318,75 @@ public class Utilities {
         return Math.max(1, scaleFactor);
     }
 
+    private static Bitmap rotateBitmap(String filePath, Bitmap bitmap) {
+        if(D)Log.d(TAG, String.format("Utilities.rotateBitmap for %s", filePath));
+
+        if (bitmap == null) {
+            return null;
+        }
+
+        // See: https://gist.github.com/9re/1990019
+
+        try {
+            ExifInterface exif = new ExifInterface(filePath);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            if(D)Log.d(TAG, String.format("Utilities.rotateBitmap: orientation=%d", orientation));
+
+            Matrix matrix = new Matrix();
+            switch (orientation) {
+                //2
+                case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                    matrix.setScale(-1, 1);
+                    break;
+                //3
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    matrix.setRotate(180);
+                    break;
+                //4
+                case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                    matrix.setRotate(180);
+                    matrix.postScale(-1, 1);
+                    break;
+                //5
+                case ExifInterface.ORIENTATION_TRANSPOSE:
+                    matrix.setRotate(90);
+                    matrix.postScale(-1, 1);
+                    break;
+                //6
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    matrix.setRotate(90);
+                    break;
+                //7
+                case ExifInterface.ORIENTATION_TRANSVERSE:
+                    matrix.setRotate(-90);
+                    matrix.postScale(-1, 1);
+                    break;
+                //8
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    matrix.setRotate(-90);
+                    break;
+                default:
+                    return bitmap;
+            }
+
+            if(D)Log.d(TAG, "Utilities.rotateBitmap - creating a rotated bitmap");
+            Bitmap bitmapOriented = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            bitmap.recycle();
+
+            return bitmapOriented;
+        }
+        catch (Exception e) {
+            if(E)Log.e(TAG, "Utilities.rotateBitmap", e);
+            e.printStackTrace();
+        }
+        catch (OutOfMemoryError e) {
+            if(E)Log.e(TAG, "Utilities.rotateBitmap", e);
+            e.printStackTrace();
+        }
+
+        return bitmap;
+    }
+
     public static Bitmap getConstrainedBitmap(String filePath) {
         if(D)Log.d(TAG, String.format("Utilities.getConstrainedBitmap for file copy: filePath=%s", filePath));
 
@@ -354,7 +425,8 @@ public class Utilities {
 
         if(D)Log.d(TAG, "Utilities.getConstrainedBitmap - returning bitmap from decodeFile");
         Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
-        if(D)Log.d(TAG, String.format("Utililties.getConstrainedBitmap: bitmap %s null", bitmap == null ? "is" : "is not"));
+        bitmap = rotateBitmap(filePath, bitmap);
+        if(D)Log.d(TAG, String.format("Utililties.getConstrained/RotatedBitmap: bitmap %s null", bitmap == null ? "is" : "is not"));
 
         return bitmap;
     }
@@ -411,7 +483,8 @@ public class Utilities {
 
         if(D)Log.d(TAG, "Utilities.getConstrainedBitmap - returning bitmap from decodeFile");
         Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
-        if(D)Log.d(TAG, String.format("Utililties.getConstrainedBitmap: bitmap %s null", bitmap == null ? "is" : "is not"));
+        bitmap = rotateBitmap(filePath, bitmap);
+        if(D)Log.d(TAG, String.format("Utililties.getConstrained/RotatedBitmap: bitmap %s null", bitmap == null ? "is" : "is not"));
 
         return bitmap;
     }
