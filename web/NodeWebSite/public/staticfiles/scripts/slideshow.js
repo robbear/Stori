@@ -14,6 +14,7 @@ var slideShow = (function() {
     var m_overlay = $('#overlay');
     var m_slidePositionControl = $('#slideposition');
     var m_slideTitle = $('#slidetitle');
+    var m_getTheAppDiv = $('#get-the-app');
     var m_jPlayerDiv = $('#jquery_jplayer_1');
     var m_isPlayerConstructed = false;
     var m_orderArray = null;
@@ -218,6 +219,15 @@ var slideShow = (function() {
                     m_currentSlideIndex = number - 1;
                     m_slidePositionControl.text(_getSlidePositionText());
                     _displaySlideTextControl();
+
+                    if (m_currentSlideIndex == m_slideCount - 1) {
+                        hFLog.log("Showing get-the-app");
+                        m_getTheAppDiv.show();
+                    }
+                    else {
+                        hFLog.log("Hiding get-the-app");
+                        m_getTheAppDiv.hide();
+                    }
 
                     var audioUrl = _getCurrentAudioUrl();
                     hFLog.log("audioUrl = " + audioUrl);
