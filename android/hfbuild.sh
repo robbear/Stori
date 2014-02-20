@@ -86,14 +86,24 @@ setBuildStringForRelease()
 {
     echo "---"
     echo "Setting build string for release sku"
-    sed -i -e 's/g000000000000/'$1'/g' build/src/com/stori/stori/Config.java
+    if [ "$2" != "proguard" ]
+    then
+        sed -i -e 's/g000000000000/'$1'dev/g' build/src/com/stori/stori/Config.java
+    else
+        sed -i -e 's/g000000000000/'$1'/g' build/src/com/stori/stori/Config.java
+    fi
 }
 
 setBuildStringForTrial()
 {
     echo "---"
     echo "Setting build string for trial sku"
-    sed -i -e 's/g000000000000/'$1'/g' build/src/com/stori/stori/Config.java
+    if [ "$2" != "proguard" ]
+    then
+        sed -i -e 's/g000000000000/'$1'dev/g' build/src/com/stori/stori/Config.java
+    else
+        sed -i -e 's/g000000000000/'$1'/g' build/src/com/stori/stori/Config.java
+    fi
 }
 
 fixAntPropertiesForPassword()
@@ -166,16 +176,16 @@ fi
 
 case "$1" in
     'release')
-	setBuildStringForRelease $4
+	setBuildStringForRelease $4 $3
 	;;
     'amazon')
-	setBuildStringForRelease $4
+	setBuildStringForRelease $4 $3
 	;;
     'trial')
-	setBuildStringForTrial $4
+	setBuildStringForTrial $4 $3
 	;;
     'amazon_trial')
-        setBuildStringForTrial $4
+    setBuildStringForTrial $4 $3
 	;;
 esac
 
