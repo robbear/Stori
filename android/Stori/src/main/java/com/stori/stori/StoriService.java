@@ -474,7 +474,9 @@ public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTi
             // modifiedDate is a comparator-capable string, formatted in YYYY-MM-DDTHH:MM:SS.sssz
             // UTC time format.
 
-            Collections.sort(items, new StoriListItemComparator());
+            if (items != null) {
+                Collections.sort(items, new StoriListItemComparator());
+            }
 
             return items;
         }

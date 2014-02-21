@@ -22,6 +22,7 @@ import com.stori.stori.adapters.StoriListAdapter;
 import com.stori.stori.cloudproviders.AmazonSharedPreferencesWrapper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
@@ -252,7 +253,13 @@ public class StoriListActivity extends ListActivity implements StoriService.Read
 
             CloudStore cloudStore = new CloudStore(StoriListActivity.this, m_userUuid, null, Config.CLOUD_STORAGE_PROVIDER, null);
 
-            return cloudStore.deleteStoriItemsAndReturnItems(items);
+            ArrayList<StoriListItem> returnedItems = cloudStore.deleteStoriItemsAndReturnItems(items);
+
+            if (returnedItems != null) {
+                Collections.sort(returnedItems, new StoriListItemComparator());
+            }
+
+            return returnedItems;
         }
 
         @Override
