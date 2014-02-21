@@ -97,9 +97,6 @@ public class Config
     // Number of lines to display in Slide text dialog
     public static final int numberOfEditTextLinesForSlideText = 5;
 
-    // JPG file compression level (0 - 100)
-    public static final int jpgCompressionLevel = 25;
-
     // Delay in milliseconds before slide audio starts playing
     public static final int audioDelayMillis = 1000;
 
@@ -107,17 +104,17 @@ public class Config
     public static final int maxPublishedForFree = 20;
 
     // Maximum number of slides per Stori for free version
-    public static final int maxSlidesPerStoriForFree = 20;
+    public static final int maxSlidesPerStoriForFree = 10;
 
     // Image file size floor under which we don't compress
     public static final int imageFileSizeFloorBytes = 1000000;
 
 	// Error logs - ship with this set to false
-	public static final boolean E = true;
+	public static final boolean E = false;
 	
 	// Debug logs - ship with this set to false
-	public static final boolean D = true;
+	public static final boolean D = false;
 	
 	// Verbose logs - ship with this set to false
-	public static final boolean V = true;
+	public static final boolean V = false;
 }
