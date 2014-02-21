@@ -26,6 +26,9 @@ public class Config
     // Use cache space rather than files space
     public static final boolean USE_CACHE = true;
 
+    // Toast vertical offset to keep it off centered controls
+    public static final int toastVerticalOffset = -100;
+
     // Default dimensions for ideal bitmap display/compression
     public static final int imageDisplayWidthLandcape = 1024;
     public static final int imageDisplayHeightLandscape = 768;

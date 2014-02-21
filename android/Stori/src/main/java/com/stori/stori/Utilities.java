@@ -750,7 +750,8 @@ public class Utilities {
 
         String appName = context.getString(R.string.app_name);
         String url = Utilities.buildShowWebPageUrlString(userUuid, slideShareName);
-        String message = String.format(context.getString(R.string.share_email_body_format), appName, title, url);
+        String marketUrl = context.getString(R.string.google_play_market_link);
+        String message = String.format(context.getString(R.string.share_email_body_format), appName, title, url, marketUrl);
         String subject = String.format(context.getString(R.string.share_email_subject_format), appName, title);
 
         Intent intent = new Intent();

@@ -1033,7 +1033,7 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         if(D)Log.d(TAG, String.format("EditPlayActivity.showToast: %s", toastString));
 
         Toast toast = Toast.makeText(this, toastString, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER_VERTICAL, 0, -100);
+        toast.setGravity(Gravity.CENTER_VERTICAL, 0, Config.toastVerticalOffset);
         toast.show();
     }
 
