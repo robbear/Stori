@@ -110,11 +110,11 @@ public class Config
     public static final int imageFileSizeFloorBytes = 1000000;
 
 	// Error logs - ship with this set to false
-	public static final boolean E = false;
+	public static final boolean E = true;
 	
 	// Debug logs - ship with this set to false
-	public static final boolean D = false;
+	public static final boolean D = true;
 	
 	// Verbose logs - ship with this set to false
-	public static final boolean V = false;
+	public static final boolean V = true;
 }
