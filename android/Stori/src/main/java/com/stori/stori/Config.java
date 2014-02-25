@@ -109,6 +109,9 @@ public class Config
     // Image file size floor under which we don't compress
     public static final int imageFileSizeFloorBytes = 1000000;
 
+    // Download buffer size in bytes
+    public static final int downloadBufferSize = 8*1024;
+
 	// Error logs - ship with this set to false
 	public static final boolean E = true;
 	

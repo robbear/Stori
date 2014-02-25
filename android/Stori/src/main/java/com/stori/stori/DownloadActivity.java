@@ -228,7 +228,7 @@ public class DownloadActivity extends FragmentActivity {
 
                     output = new FileOutputStream(file);
 
-                    byte data[] = new byte[4096];
+                    byte data[] = new byte[Config.downloadBufferSize];
                     long total = 0;
                     int count;
                     while ((count = input.read(data)) != -1) {
