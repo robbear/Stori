@@ -35,6 +35,10 @@ public class Config
     public static final int imageDisplayWidthPortrait = 768;
     public static final int imageDisplayHeightPortrait = 1024;
 
+    // Image file size floor under which we don't compress
+    public static final int imageFileSizeFloorBytes = 800*1024;
+    public static final int jpgCompressionValue = 75;
+
     // Recording time limits - recordingTimeSegmentMillis * numRecordingSegments = 1 minute
     // Note that recordingTimeSegmeentMillis indicates the resolution with which check for cancel.
     public static final int recordingTimeSegmentMillis = 500;
@@ -105,9 +109,6 @@ public class Config
 
     // Maximum number of slides per Stori for free version
     public static final int maxSlidesPerStoriForFree = 10;
-
-    // Image file size floor under which we don't compress
-    public static final int imageFileSizeFloorBytes = 1000000;
 
     // Download buffer size in bytes
     public static final int downloadBufferSize = 8*1024;

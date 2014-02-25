@@ -530,6 +530,15 @@ public class Utilities {
             ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
             Bitmap bitmap = getConstrainedBitmap(Utilities.getAbsoluteFilePath(context, slideShareName, fileName));
             if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputBuffer)) {
+                int bufferLength = outputBuffer.size();
+                if(D)Log.d(TAG, String.format("Utilities.copyExternalStorageImageToJPG: outBuffer size=%d", bufferLength));
+                if (bufferLength > Config.imageFileSizeFloorBytes) {
+                    outputBuffer = new ByteArrayOutputStream();
+                    if (!bitmap.compress(Bitmap.CompressFormat.JPEG, getJpgCompressionValueFromFileSize(bufferLength), outputBuffer)) {
+                        if(D)Log.d(TAG, "Utilities.copyExternalStorageImageToJPG failed");
+                        return false;
+                    }
+                }
                 file = createFile(context, slideShareName, fileName);
                 outStream = new FileOutputStream(file);
 
@@ -577,6 +586,19 @@ public class Utilities {
         return success;
     }
 
+    private static int getJpgCompressionValueFromFileSize(int fileSize) {
+        if(D)Log.d(TAG, String.format("Utilities.getJpgCompressionValueFromFile: fileSize=%d", fileSize));
+
+        int compressionValue = 100;
+
+        if (fileSize > Config.imageFileSizeFloorBytes) {
+            compressionValue = Config.jpgCompressionValue;
+        }
+
+        if(D)Log.d(TAG, String.format("Utilities.getJpgCompressionValueFromFile: compressionValue=%d", compressionValue));
+        return compressionValue;
+    }
+
     public static boolean copyGalleryImageToJPG(Context context, String slideShareName, String fileName, Uri uri) {
         if(D)Log.d(TAG, String.format("Utilities.copyGalleryImageToJPG: slideShareName=%s, fileName=%s", slideShareName, fileName));
 
@@ -616,6 +638,15 @@ public class Utilities {
             ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
             Bitmap bitmap = getConstrainedBitmap(Utilities.getAbsoluteFilePath(context, slideShareName, fileName));
             if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputBuffer)) {
+                int bufferLength = outputBuffer.size();
+                if(D)Log.d(TAG, String.format("Utilities.copyGalleryImageToJPG: outBuffer size=%d", bufferLength));
+                if (bufferLength > Config.imageFileSizeFloorBytes) {
+                    outputBuffer = new ByteArrayOutputStream();
+                    if (!bitmap.compress(Bitmap.CompressFormat.JPEG, getJpgCompressionValueFromFileSize(bufferLength), outputBuffer)) {
+                        if(D)Log.d(TAG, "Utilities.copyGalleryImageToJPG failed");
+                        return false;
+                    }
+                }
                 file = createFile(context, slideShareName, fileName);
                 outStream = new FileOutputStream(file);
 
