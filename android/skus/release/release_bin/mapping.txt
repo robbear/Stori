@@ -46431,6 +46431,7 @@ com.stori.stori.Utilities -> com.stori.stori.bs:
     android.graphics.Bitmap getConstrainedBitmap(java.lang.String) -> a
     android.graphics.Bitmap getConstrainedBitmap(java.lang.String,int,int) -> a
     boolean copyExternalStorageImageToJPG(android.content.Context,java.lang.String,java.lang.String,java.lang.String) -> b
+    int getJpgCompressionValueFromFileSize(int) -> a
     boolean copyGalleryImageToJPG(android.content.Context,java.lang.String,java.lang.String,android.net.Uri) -> a
     boolean copyFile(java.io.File,java.io.File) -> a
     void shareShow(android.content.Context,java.lang.String,java.lang.String,java.lang.String) -> c
