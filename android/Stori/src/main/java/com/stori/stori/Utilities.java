@@ -306,6 +306,31 @@ public class Utilities {
         }
     }
 
+    public static boolean doStoriFilesExist(Context context, String slideShareName) {
+        if(D)Log.d(TAG, String.format("Utilities.doStoriFilesExist: slideShareName=%s", slideShareName));
+
+        boolean retVal = false;
+
+        File rootDir = getRootFilesDirectory(context);
+        File slideShareDirectory = new File(rootDir.getAbsolutePath() + "/" + slideShareName);
+
+        if (slideShareDirectory.exists()) {
+            File[] files = slideShareDirectory.listFiles();
+            if (files != null && files.length > 0) {
+                retVal = true;
+            }
+            else {
+                retVal = false;
+            }
+        }
+        else {
+            retVal = false;
+        }
+
+        if(D)Log.d(TAG, String.format("Utilities.doStoriFilesExist: returning %b", retVal));
+        return retVal;
+    }
+
     private static int calculateInSampleSize(int bitmapWidth, int bitmapHeight, int displayWidth, int displayHeight) {
         if(D)Log.d(TAG, String.format("Utilities.calculateInSampleSize: bW=%d, bH=%d, dW=%d, dH=%d", bitmapWidth, bitmapHeight, displayWidth, displayHeight));
 

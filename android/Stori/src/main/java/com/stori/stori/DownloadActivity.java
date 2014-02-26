@@ -127,17 +127,20 @@ public class DownloadActivity extends FragmentActivity {
                 }
 
                 // Check to see if we already have this m_slideShareName downloaded.
+                // We also need to check whether files for this actually exist. See issue #63
                 slideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), null);
                 if (m_slideShareName.equalsIgnoreCase(slideShareName)) {
-                    if(D)Log.d(TAG, "DownloadActivity.onCreate - we already have this Stori downloaded. Use it rather than refetching");
+                    if (Utilities.doStoriFilesExist(this, m_slideShareName)) {
+                        if(D)Log.d(TAG, "DownloadActivity.onCreate - we already have this Stori downloaded. Use it rather than refetching");
 
-                    Intent intentPlay = new Intent(this, PlaySlidesActivity.class);
-                    intentPlay.putExtra(PlaySlidesActivity.EXTRA_FROMURL, true);
-                    intentPlay.putExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, m_intentFromStoriApp);
-                    startActivity(intentPlay);
+                        Intent intentPlay = new Intent(this, PlaySlidesActivity.class);
+                        intentPlay.putExtra(PlaySlidesActivity.EXTRA_FROMURL, true);
+                        intentPlay.putExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, m_intentFromStoriApp);
+                        startActivity(intentPlay);
 
-                    finish();
-                    return;
+                        finish();
+                        return;
+                    }
                 }
             }
 
