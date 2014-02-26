@@ -866,6 +866,10 @@ public class EditPlayFragment extends Fragment implements
         m_editPlayActivity.deleteAudio(m_slideUuid, m_audioFileName);
         m_audioFileName = null;
         m_slideText = null;
+
+        // Fixes issue #64 - make sure slide text is removed from json
+        m_editPlayActivity.updateSlideShareJSON(m_slideUuid, null, null, null, true);
+
         displayPlayStopControl();
         displaySlideTextControl();
         renderImage();
