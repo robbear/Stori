@@ -209,6 +209,13 @@ var slideShow = (function() {
 
                     m_currentSlideIndex = number - 1;
 
+                    if (_currentSlideHasAudio()) {
+                        m_playStopControl.show();
+                    }
+                    else {
+                        m_playStopControl.hide();
+                    }
+
                     $('.slidesjs-pagination').hide(0);
                 },
                 start: function(number) {
@@ -325,6 +332,12 @@ var slideShow = (function() {
 
     function _getCurrentAudioUrl() {
         return _getAudioUrl(m_currentSlideIndex);
+    }
+
+    function _currentSlideHasAudio() {
+        var audioUrl = _getAudioUrl(m_currentSlideIndex);
+
+        return !(audioUrl == null || audioUrl.length < 1);
     }
 
     function _getHtmlSafeCurrentSlideText() {
