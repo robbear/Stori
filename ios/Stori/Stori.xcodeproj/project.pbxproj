@@ -21,6 +21,7 @@
 		504ECC8018C245B900507582 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECC6218C245B900507582 /* UIKit.framework */; };
 		504ECC8818C245B900507582 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 504ECC8618C245B900507582 /* InfoPlist.strings */; };
 		504ECC8A18C245B900507582 /* StoriTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECC8918C245B900507582 /* StoriTests.m */; };
+		504ECC9518C24EF000507582 /* HFLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECC9418C24EF000507582 /* HFLogging.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,8 @@
 		504ECC8518C245B900507582 /* StoriTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "StoriTests-Info.plist"; sourceTree = "<group>"; };
 		504ECC8718C245B900507582 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		504ECC8918C245B900507582 /* StoriTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoriTests.m; sourceTree = "<group>"; };
+		504ECC9318C24EF000507582 /* HFLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFLogging.h; sourceTree = "<group>"; };
+		504ECC9418C24EF000507582 /* HFLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFLogging.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +122,8 @@
 				504ECC7418C245B900507582 /* ViewController.m */,
 				504ECC7618C245B900507582 /* Images.xcassets */,
 				504ECC6518C245B900507582 /* Supporting Files */,
+				504ECC9318C24EF000507582 /* HFLogging.h */,
+				504ECC9418C24EF000507582 /* HFLogging.m */,
 			);
 			path = Stori;
 			sourceTree = "<group>";
@@ -252,6 +257,7 @@
 				504ECC7518C245B900507582 /* ViewController.m in Sources */,
 				504ECC6F18C245B900507582 /* AppDelegate.m in Sources */,
 				504ECC6B18C245B900507582 /* main.m in Sources */,
+				504ECC9518C24EF000507582 /* HFLogging.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
