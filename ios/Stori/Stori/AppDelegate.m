@@ -7,12 +7,15 @@
 //
 
 #import "AppDelegate.h"
+#import "SlideShareJSON.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     HFLogDebug(@"AppDelegate.didFinishLaunchingWithOptions");
+    
+    [self initialTests];
     
     // Override point for customization after application launch.
     return YES;
@@ -53,6 +56,14 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     
     HFLogDebug(@"AppDelegate.applicationWillTerminate");
+}
+
+- (void)initialTests {
+    HFLogDebug(@"Beginning initialTests");
+    
+    SlideShareJSON *ssj = [[SlideShareJSON alloc] init];
+    
+    HFLogDebug(@"ssj.getJsonDictionary: %@", ssj.jsonDictionary);
 }
 
 @end
