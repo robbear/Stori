@@ -61,8 +61,14 @@
 - (void)initialTests {
     HFLogDebug(@"Beginning initialTests");
     
+    HFLogDebug(@"Calling SlideShareJSON.init");
     SlideShareJSON *ssj = [[SlideShareJSON alloc] init];
+    HFLogDebug(@"ssj.getJsonDictionary: %@", ssj.jsonDictionary);
     
+    // Note: jsonString without keys having quotes will fail to create the ssj.jsonDictionary.
+    NSString *jsonString = @"{\"title\":\"My Stori\", \"description\":\"My description\"}";
+    HFLogDebug(@"Calling SlideShareJSON.initWithString: jsonString=%@", jsonString);
+    ssj = [[SlideShareJSON alloc] initWithString:jsonString];
     HFLogDebug(@"ssj.getJsonDictionary: %@", ssj.jsonDictionary);
 }
 

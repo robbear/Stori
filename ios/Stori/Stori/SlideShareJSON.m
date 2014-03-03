@@ -22,6 +22,7 @@ static NSString *const KEY_ORDER = @"order";
 
 - (id)init {
     self = [super init];
+    
     if (self) {
         HFLogDebug(@"SlideShareJSON constructor");
         
@@ -37,6 +38,29 @@ static NSString *const KEY_ORDER = @"order";
         
         NSMutableArray *orderArray = [[NSMutableArray alloc] init];
         [_jsonDictionary setObject:orderArray forKey:KEY_ORDER];
+    }
+    
+    return self;
+}
+
+- (id)initWithString:(NSString *)jsonString {
+    self = [super init];
+    
+    if (self) {
+        HFLogDebug(@"SlideShareJSON.initWithString: %@", jsonString);
+        
+        NSError *err;
+        
+        NSData * dataTest = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+        HFLogDebug(@"SlideShareJSON.initWithString: dataTest=%@", dataTest);
+        
+        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding]
+                                                          options:NSJSONReadingMutableContainers error:&err];
+        if (err) {
+            HFLogDebug(@"SlideShareJSON.initWithString: error=%@", err);
+        }
+        
+        _jsonDictionary = [dict mutableCopy];
     }
     
     return self;

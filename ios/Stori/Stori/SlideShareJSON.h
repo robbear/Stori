@@ -12,4 +12,6 @@
 
 @property (readonly) NSMutableDictionary *jsonDictionary;
 
+- (id)initWithString:(NSString *)jsonString;
+
 @end
