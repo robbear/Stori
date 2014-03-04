@@ -23,6 +23,7 @@
 		504ECC8A18C245B900507582 /* StoriTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECC8918C245B900507582 /* StoriTests.m */; };
 		504ECC9518C24EF000507582 /* HFLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECC9418C24EF000507582 /* HFLogging.m */; };
 		504ECC9818C4F0AE00507582 /* SlideShareJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECC9718C4F0AE00507582 /* SlideShareJSON.m */; };
+		504ECC9A18C632D100507582 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 504ECC9918C632D100507582 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		504ECC9418C24EF000507582 /* HFLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFLogging.m; sourceTree = "<group>"; };
 		504ECC9618C4F0AE00507582 /* SlideShareJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideShareJSON.h; sourceTree = "<group>"; };
 		504ECC9718C4F0AE00507582 /* SlideShareJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideShareJSON.m; sourceTree = "<group>"; };
+		504ECC9918C632D100507582 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +131,7 @@
 				504ECC9418C24EF000507582 /* HFLogging.m */,
 				504ECC9618C4F0AE00507582 /* SlideShareJSON.h */,
 				504ECC9718C4F0AE00507582 /* SlideShareJSON.m */,
+				504ECC9918C632D100507582 /* Localizable.strings */,
 			);
 			path = Stori;
 			sourceTree = "<group>";
@@ -241,6 +244,7 @@
 				504ECC7718C245B900507582 /* Images.xcassets in Resources */,
 				504ECC6918C245B900507582 /* InfoPlist.strings in Resources */,
 				504ECC7218C245B900507582 /* Main.storyboard in Resources */,
+				504ECC9A18C632D100507582 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

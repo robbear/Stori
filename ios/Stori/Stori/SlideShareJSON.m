@@ -27,8 +27,8 @@ static NSString *const KEY_ORDER = @"order";
         HFLogDebug(@"SlideShareJSON constructor");
         
         _jsonDictionary = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                           @"Default title", KEY_TITLE,
-                           @"Default description", KEY_DESCRIPTION,
+                           NSLocalizedString(@"default_stori_title", nil), KEY_TITLE,
+                           NSLocalizedString(@"default_stori_description", nil), KEY_DESCRIPTION,
                            [NSNumber numberWithInteger:1], KEY_VERSION,
                            [NSNumber numberWithInteger:0], KEY_TRANSITIONEFFECT,
                            nil];
