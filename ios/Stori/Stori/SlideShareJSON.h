@@ -13,5 +13,16 @@
 @property (readonly) NSMutableDictionary *jsonDictionary;
 
 - (id)initWithString:(NSString *)jsonString;
+- (void)setTitle:(NSString *)title;
+- (NSString *)getTitle;
+- (void)setDescription:(NSString *)description;
+- (NSString *)getDescription;
+- (void)setVersion:(int)version;
+- (int)getVersion;
+- (BOOL)isPublished;
+- (void)setSlides:(NSMutableDictionary *)slides;
+- (NSMutableDictionary *)getSlides;
+- (void)setOrder:(NSMutableArray *)order;
+- (NSMutableArray *)getOrder;
 
 @end

@@ -8,6 +8,23 @@
 
 #import "SlideShareJSON.h"
 
+//
+// SlideShareJSON example:
+//
+//  {
+//      title: "Title text",
+//      description: "Description text",
+//      version: 1,
+//      transitionEffect: 0,
+//      slides: {
+//          guidval1: { image: "http://foo.com/1.jpg", audio: "http://foo.com/1.3gp", text: "user text" },
+//          guidval2: { image: "http://foo.com/2.jpg", audio: "http://foo.com/2.3gp", text: "user text" },
+//          guidval3: { image: "http://foo.com/3.jpg", audio: "http://foo.com/3.3gp", text: "user text" }
+//      },
+//      order: [ guidval2, guidval3, guidval1 ]
+//  }
+//
+
 static NSString *const KEY_TITLE = @"title";
 static NSString *const KEY_DESCRIPTION = @"description";
 static NSString *const KEY_VERSION = @"version";
@@ -64,6 +81,52 @@ static NSString *const KEY_ORDER = @"order";
     }
     
     return self;
+}
+
+- (void)setTitle:(NSString *)title {
+    [_jsonDictionary setObject:title forKey:KEY_TITLE];
+}
+
+- (NSString *)getTitle {
+    return [_jsonDictionary objectForKey:KEY_TITLE];
+}
+
+- (void)setDescription:(NSString *)description {
+    [_jsonDictionary setObject:description forKey:KEY_DESCRIPTION];
+}
+
+- (NSString *)getDescription {
+    return [_jsonDictionary objectForKey:KEY_DESCRIPTION];
+}
+
+- (void)setVersion:(int)version {
+    [_jsonDictionary setObject:[NSNumber numberWithInt:version] forKey:KEY_VERSION];
+}
+
+- (int)getVersion {
+    return (int)[_jsonDictionary objectForKey:KEY_VERSION];
+}
+
+- (BOOL)isPublished {
+    int version = [self getVersion];
+    
+    return (version > 1);
+}
+
+- (void)setSlides:(NSMutableDictionary *)slides {
+    [_jsonDictionary setObject:slides forKey:KEY_SLIDES];
+}
+
+- (NSMutableDictionary *)getSlides {
+    return [_jsonDictionary objectForKey:KEY_SLIDES];
+}
+
+- (void)setOrder:(NSMutableArray *)order {
+    [_jsonDictionary setObject:order forKey:KEY_ORDER];
+}
+
+- (NSMutableArray *)getOrder {
+    return [_jsonDictionary objectForKey:KEY_ORDER];
 }
 
 @end
