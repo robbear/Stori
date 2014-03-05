@@ -225,7 +225,10 @@
     HFLogDebug(@"SlideShareJSON.getSlideBySlideId: %@", uuidSlide);
     
     NSMutableDictionary *slides = [self getSlides];
-    return [slides objectForKey:uuidSlide];
+    NSDictionary *slide = [slides objectForKey:uuidSlide];
+    SlideJSON *sj = [[SlideJSON alloc] initWithSlide:slide];
+    
+    return sj;
 }
 
 - (SlideJSON *)getSlideAtIndex:(int)index {
@@ -241,7 +244,7 @@
     NSMutableArray *orderArray = [self getOrder];
     
     for (int i = 0; i < orderArray.count; i++) {
-        if ([uuidSlide caseInsensitiveCompare:[orderArray objectAtIndex:i]]) {
+        if ([uuidSlide caseInsensitiveCompare:[orderArray objectAtIndex:i]] == NSOrderedSame) {
             HFLogDebug(@"SlideShareJSON.getOrderIndexForSlide returning %d", i);
             return i;
         }
