@@ -37,6 +37,7 @@
 - (NSArray *)getImageFileNames;
 - (NSArray *)getAudioFileNames;
 - (BOOL)saveToFolder:(NSString *)folder withFileName:(NSString *)fileName;
+- (NSString *)toString;
 
 + (SlideShareJSON *)loadFromFolder:(NSString *)folder withFileName:(NSString *)fileName;
 + (NSString *)getSlideShareTitle:(NSString *)folder;

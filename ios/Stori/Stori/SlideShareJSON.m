@@ -70,8 +70,22 @@
     return self;
 }
 
+- (NSString *)toString {
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:_jsonDictionary
+                                                       options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
+                                                         error:&error];
+    
+    if (jsonData) {
+        return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    }
+    else {
+        return nil;
+    }
+}
+
 - (void)setTitle:(NSString *)title {
-    [_jsonDictionary setObject:title forKey:KEY_TITLE];
+    [_jsonDictionary setObject:(title ? title : [NSNull null]) forKey:KEY_TITLE];
 }
 
 - (NSString *)getTitle {
@@ -79,7 +93,7 @@
 }
 
 - (void)setDescription:(NSString *)description {
-    [_jsonDictionary setObject:description forKey:KEY_DESCRIPTION];
+    [_jsonDictionary setObject:(description ? description : [NSNull null]) forKey:KEY_DESCRIPTION];
 }
 
 - (NSString *)getDescription {
@@ -101,7 +115,7 @@
 }
 
 - (void)setSlides:(NSMutableDictionary *)slides {
-    [_jsonDictionary setObject:slides forKey:KEY_SLIDES];
+    [_jsonDictionary setObject:(slides ? slides : [NSNull null]) forKey:KEY_SLIDES];
 }
 
 - (NSMutableDictionary *)getSlides {
@@ -109,7 +123,7 @@
 }
 
 - (void)setOrder:(NSMutableArray *)order {
-    [_jsonDictionary setObject:order forKey:KEY_ORDER];
+    [_jsonDictionary setObject:(order ? order : [NSNull null]) forKey:KEY_ORDER];
 }
 
 - (NSMutableArray *)getOrder {
@@ -138,15 +152,15 @@
         HFLogDebug(@"SlideShareJSON.upsertSlideWithSlideId - found slide and updating for uuid=%@", uuidString);
         
         if (forceNulls || imageUrl) {
-            [slide setObject:imageUrl forKey:KEY_IMAGE];
+            [slide setObject:(imageUrl ? imageUrl : [NSNull null]) forKey:KEY_IMAGE];
         }
         
         if (forceNulls || audioUrl) {
-            [slide setObject:audioUrl forKey:KEY_AUDIO];
+            [slide setObject:(audioUrl ? audioUrl : [NSNull null]) forKey:KEY_AUDIO];
         }
         
         if (forceNulls || slideText) {
-            [slide setObject:slideText forKey:KEY_TEXT];
+            [slide setObject:(slideText ? slideText : [NSNull null]) forKey:KEY_TEXT];
         }
     }
     else {
@@ -155,9 +169,9 @@
         NSMutableArray *orderArray = [self getOrder];
         
         NSMutableDictionary *paths = [[NSMutableDictionary alloc] init];
-        [paths setObject:imageUrl forKey:KEY_IMAGE];
-        [paths setObject:audioUrl forKey:KEY_AUDIO];
-        [paths setObject:slideText forKey:KEY_TEXT];
+        [paths setObject:(imageUrl ? imageUrl : [NSNull null]) forKey:KEY_IMAGE];
+        [paths setObject:(audioUrl ? audioUrl : [NSNull null]) forKey:KEY_AUDIO];
+        [paths setObject:(slideText ? slideText : [NSNull null]) forKey:KEY_TEXT];
         
         int oldCount = [orderArray count];
         [slides setObject:paths forKey:uuidString];

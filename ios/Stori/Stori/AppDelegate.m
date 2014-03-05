@@ -58,18 +58,32 @@
     HFLogDebug(@"AppDelegate.applicationWillTerminate");
 }
 
+//
+// Tests
+//
+
 - (void)initialTests {
     HFLogDebug(@"Beginning initialTests");
     
-    HFLogDebug(@"Calling SlideShareJSON.init");
-    SlideShareJSON *ssj = [[SlideShareJSON alloc] init];
-    HFLogDebug(@"ssj.getJsonDictionary: %@", ssj.jsonDictionary);
+    //NSString *slideShareName = [[NSUUID UUID] UUIDString];
     
     // Note: jsonString without keys having quotes will fail to create the ssj.jsonDictionary.
     NSString *jsonString = @"{\"title\":\"My Stori\", \"description\":\"My description\"}";
     HFLogDebug(@"Calling SlideShareJSON.initWithString: jsonString=%@", jsonString);
-    ssj = [[SlideShareJSON alloc] initWithString:jsonString];
-    HFLogDebug(@"ssj.getJsonDictionary: %@", ssj.jsonDictionary);
+    SlideShareJSON *ssj = [[SlideShareJSON alloc] initWithString:jsonString];
+    HFLogDebug(@"ssj.getJsonDictionary: %@", [ssj toString]);
+    
+    HFLogDebug(@"Calling SlideShareJSON.init");
+    ssj = [[SlideShareJSON alloc] init];
+    HFLogDebug(@"ssj.getJsonDictionary: %@", [ssj toString]);
+    HFLogDebug(@"Create 5 slides");
+    for (int i = 0; i < 5; i++) {
+        NSString *slideUuid = [[NSUUID UUID] UUIDString];
+        NSString *imageUrl = [NSString stringWithFormat:@"http://stori-app.com/foobar/image%d.jpg", i];
+        NSString *audioUrl = [NSString stringWithFormat:@"http://stori-app.com/foobar/audio%d.m4p", i];
+        [ssj upsertSlideWithSlideId:slideUuid atIndex:i withImageUrl:imageUrl withAudioUrl:audioUrl withSlideText:nil forceNulls:TRUE];
+    }
+    HFLogDebug(@"ssj.getJsonDictionary: %@", [ssj toString]);
 }
 
 @end
