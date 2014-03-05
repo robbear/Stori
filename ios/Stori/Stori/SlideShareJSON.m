@@ -172,6 +172,22 @@
     }
 }
 
+- (void)reorderWithCurrentPosition:(int)currentPosition atNewPosition:(int)newPosition {
+    HFLogDebug(@"SlideShareJSON.reorderWithCurrentPostion: currentPosition=%d, newPosition=%d", currentPosition, newPosition);
+    
+    NSMutableArray *orderArray = [self getOrder];
+    int count = [orderArray count];
+    
+    if ((currentPosition >= count) || (currentPosition < 0) || (newPosition >= count) || (newPosition < 0)) {
+        HFLogDebug(@"SlideShareJSON.reorderWithCurrentPosition: bailing with currentPosition or newPosition out of range");
+        return;
+    }
+    
+    NSString *uuid = [orderArray objectAtIndex:currentPosition];
+    [orderArray removeObjectAtIndex:currentPosition];
+    [orderArray insertObject:uuid atIndex:newPosition];
+}
+
 - (void)removeSlideBySlideId:(NSString *)uuidSlide {
     HFLogDebug(@"SlideShareJSON.removeSlideBySlideId: %@", uuidSlide);
     
