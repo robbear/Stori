@@ -7,8 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SlideJSON.h"
 
-@interface SlideShareJSON : NSDictionary
+@interface SlideShareJSON : NSObject
 
 @property (readonly) NSMutableDictionary *jsonDictionary;
 
@@ -24,5 +25,21 @@
 - (NSMutableDictionary *)getSlides;
 - (void)setOrder:(NSMutableArray *)order;
 - (NSMutableArray *)getOrder;
+- (void)upsertSlideWithSlideId:(NSString *)uuidString atIndex:(int)index withSlide:(SlideJSON *)slide;
+- (void)upsertSlideWithSlideId:(NSString *)uuidString atIndex:(int)index withImageUrl:(NSString *)imageUrl withAudioUrl:(NSString *)audioUrl withSlideText:(NSString *)slideText forceNulls:(BOOL)forceNulls;
+- (void)reorderWithCurrentPosition:(int)currentPosition atNewPosition:(int)newPosition;
+- (void)removeSlideBySlideId:(NSString *)uuidSlide;
+- (SlideJSON *)getSlideAtIndex:(int)index;
+- (SlideJSON *)getSlideBySlideId:(NSString *)uuidSlide;
+- (int)getOrderIndexForSlide:(NSString *)uuidSlide;
+- (int)getSlideCount;
+- (NSString *)getSlideUuidByOrderIndex:(int)index;
+- (NSArray *)getImageFileNames;
+- (NSArray *)getAudioFileNames;
+- (BOOL)saveToFolder:(NSString *)folder withFileName:(NSString *)fileName;
+
++ (SlideShareJSON *)loadFromFolder:(NSString *)folder withFileName:(NSString *)fileName;
++ (NSString *)getSlideShareTitle:(NSString *)folder;
++ (BOOL)isSlideSharePublished:(NSString *)folder;
 
 @end

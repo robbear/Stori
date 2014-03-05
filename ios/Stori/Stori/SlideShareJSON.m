@@ -25,16 +25,6 @@
 //  }
 //
 
-static NSString *const KEY_TITLE = @"title";
-static NSString *const KEY_DESCRIPTION = @"description";
-static NSString *const KEY_VERSION = @"version";
-static NSString *const KEY_TRANSITIONEFFECT = @"transitionEffect";
-static NSString *const KEY_SLIDES = @"slides";
-static NSString *const KEY_IMAGE = @"image";
-static NSString *const KEY_AUDIO = @"audio";
-static NSString *const KEY_TEXT = @"text";
-static NSString *const KEY_ORDER = @"order";
-
 @implementation SlideShareJSON
 
 - (id)init {
@@ -67,9 +57,6 @@ static NSString *const KEY_ORDER = @"order";
         HFLogDebug(@"SlideShareJSON.initWithString: %@", jsonString);
         
         NSError *err;
-        
-        NSData * dataTest = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-        HFLogDebug(@"SlideShareJSON.initWithString: dataTest=%@", dataTest);
         
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding]
                                                           options:NSJSONReadingMutableContainers error:&err];
@@ -127,6 +114,183 @@ static NSString *const KEY_ORDER = @"order";
 
 - (NSMutableArray *)getOrder {
     return [_jsonDictionary objectForKey:KEY_ORDER];
+}
+
+- (void)upsertSlideWithSlideId:(NSString *)uuidString atIndex:(int)index withSlide:(SlideJSON *)slide {
+    HFLogDebug(@"SlideShareJSON.upsertSlideWithSlideId: uuidString=%@, index=%d", uuidString, index);
+    
+    NSString *imageUrl = [slide getImageUrlString];
+    NSString *audioUrl = [slide getAudioUrlString];
+    NSString *slideText = [slide getText];
+
+    [self upsertSlideWithSlideId:uuidString atIndex:index withImageUrl:imageUrl withAudioUrl:audioUrl withSlideText:slideText forceNulls:FALSE];
+}
+
+- (void)upsertSlideWithSlideId:(NSString *)uuidString atIndex:(int)index withImageUrl:(NSString *)imageUrl
+                      withAudioUrl:(NSString *)audioUrl withSlideText:(NSString *)slideText forceNulls:(BOOL)forceNulls {
+    HFLogDebug(@"SlideShareJSON.upsertSlideWithSlideId: uuidString=%@, index=%d, imageUrl=%@, audioUrl=%@, slideText=%@, forceNulls=%d",
+               uuidString, index, imageUrl, audioUrl, slideText, forceNulls);
+    
+    NSMutableDictionary *slides = [self getSlides];
+    NSMutableDictionary *slide = [slides objectForKey:uuidString];
+    
+    if (slide) {
+        HFLogDebug(@"SlideShareJSON.upsertSlideWithSlideId - found slide and updating for uuid=%@", uuidString);
+        
+        if (forceNulls || imageUrl) {
+            [slide setObject:imageUrl forKey:KEY_IMAGE];
+        }
+        
+        if (forceNulls || audioUrl) {
+            [slide setObject:audioUrl forKey:KEY_AUDIO];
+        }
+        
+        if (forceNulls || slideText) {
+            [slide setObject:slideText forKey:KEY_TEXT];
+        }
+    }
+    else {
+        HFLogDebug(@"SlideShareJSON.upsertSlideWithSlideId - no slide found for %@, so creating new slide", uuidString);
+        
+        NSMutableArray *orderArray = [self getOrder];
+        
+        NSMutableDictionary *paths = [[NSMutableDictionary alloc] init];
+        [paths setObject:imageUrl forKey:KEY_IMAGE];
+        [paths setObject:audioUrl forKey:KEY_AUDIO];
+        [paths setObject:slideText forKey:KEY_TEXT];
+        
+        int oldCount = [orderArray count];
+        [slides setObject:paths forKey:uuidString];
+        if (index < 0 || index >= oldCount) {
+            // Put the new item at the end
+            [orderArray addObject:uuidString];
+        }
+        else {
+            // Insert the new item at the specified index
+            [orderArray insertObject:uuidString atIndex:index];
+        }
+    }
+}
+
+- (void)removeSlideBySlideId:(NSString *)uuidSlide {
+    HFLogDebug(@"SlideShareJSON.removeSlideBySlideId: %@", uuidSlide);
+    
+    NSMutableDictionary *slides = [self getSlides];
+    NSMutableDictionary *slide = [slides objectForKey:uuidSlide];
+    
+    if (slide) {
+        HFLogDebug(@"SlideShareJSON.removeSlideBySlideId - removing slide and order entry");
+        
+        NSMutableArray *orderArray = [self getOrder];
+        [orderArray removeObject:uuidSlide];
+        
+        [slides removeObjectForKey:uuidSlide];
+    }
+    else {
+        HFLogDebug(@"SlideShareJSON.removeSlideBySlideId - no slide found. Bailing");
+    }
+}
+
+- (SlideJSON *)getSlideBySlideId:(NSString *)uuidSlide {
+    HFLogDebug(@"SlideShareJSON.getSlideBySlideId: %@", uuidSlide);
+    
+    NSMutableDictionary *slides = [self getSlides];
+    return [slides objectForKey:uuidSlide];
+}
+
+- (SlideJSON *)getSlideAtIndex:(int)index {
+    HFLogDebug(@"SlideShareJSON.getSlideAtIndex: %d", index);
+    
+    NSString *uuid = [self getSlideUuidByOrderIndex:index];
+    return [self getSlideBySlideId:uuid];
+}
+
+- (int)getOrderIndexForSlide:(NSString *)uuidSlide {
+    HFLogDebug(@"SlideShareJSON.getOrderIndexForSlide: %@", uuidSlide);
+    
+    NSMutableArray *orderArray = [self getOrder];
+    
+    for (int i = 0; i < orderArray.count; i++) {
+        if ([uuidSlide caseInsensitiveCompare:[orderArray objectAtIndex:i]]) {
+            HFLogDebug(@"SlideShareJSON.getOrderIndexForSlide returning %d", i);
+            return i;
+        }
+    }
+    
+    HFLogDebug(@"SlideShareJSON.getOrderIndexForSlide - no slide found");
+    return -1;
+}
+
+- (int)getSlideCount {
+    return [[self getOrder] count];
+}
+
+- (NSString *)getSlideUuidByOrderIndex:(int)index {
+    HFLogDebug(@"SlideShareJSON.getSlideUuidByOrderIndex: index=%d", index);
+    
+    int count = [self getSlideCount];
+    
+    if (index < 0 || index > count - 1) {
+        return nil;
+    }
+    
+    return [[self getOrder] objectAtIndex:index];
+}
+
+- (NSArray *)getImageFileNames {
+    NSMutableArray *imageFileNames = [[NSMutableArray alloc] init];
+    SlideJSON *sj;
+    
+    int count = [self getSlideCount];
+    for (int i = 0; i < count; i++) {
+        sj = [self getSlideAtIndex:i];
+        NSString *fileName = [sj getImageFilename];
+        if (fileName) {
+            [imageFileNames addObject:fileName];
+        }
+    }
+    
+    return imageFileNames;
+}
+
+- (NSArray *)getAudioFileNames {
+    NSMutableArray *audioFileNames = [[NSMutableArray alloc] init];
+    SlideJSON *sj;
+    
+    int count = [self getSlideCount];
+    for (int i = 0; i < count; i++) {
+        sj = [self getSlideAtIndex:i];
+        NSString *fileName = [sj getAudioFilename];
+        if (fileName) {
+            [audioFileNames addObject:fileName];
+        }
+    }
+    
+    return audioFileNames;
+}
+
+- (BOOL)saveToFolder:(NSString *)folder withFileName:(NSString *)fileName {
+    HFLogDebug(@"SlideShareJSON.saveToFolder: folder=%@, fileName=%@", folder, fileName);
+    
+    // BUGBUG: TODO
+    // return [Utilities.saveStringToFile(_jsonDictionary.toString, folder, fileName);
+    
+    return FALSE;
+}
+
++ (SlideShareJSON *)loadFromFolder:(NSString *)folder withFileName:(NSString *)fileName {
+    // BUGBUG: TODO
+    return nil;
+}
+
++ (NSString *)getSlideShareTitle:(NSString *)folder {
+    // BUGBUG: TODO
+    return nil;
+}
+
++ (BOOL)isSlideSharePublished:(NSString *)folder {
+    // BUGBUG: TODO
+    return FALSE;
 }
 
 @end
