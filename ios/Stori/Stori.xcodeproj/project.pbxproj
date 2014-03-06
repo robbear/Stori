@@ -26,6 +26,8 @@
 		504ECC9A18C632D100507582 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 504ECC9918C632D100507582 /* Localizable.strings */; };
 		504ECC9D18C645FE00507582 /* SlideJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECC9C18C645FE00507582 /* SlideJSON.m */; };
 		504ECCA018C64EEF00507582 /* constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECC9F18C64EEF00507582 /* constants.m */; };
+		504ECCA318C8DA8700507582 /* STOPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCA218C8DA8700507582 /* STOPreferences.m */; };
+		504ECCA718C8ECFB00507582 /* PrefsDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 504ECCA618C8ECFB00507582 /* PrefsDefaults.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +69,9 @@
 		504ECC9C18C645FE00507582 /* SlideJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideJSON.m; sourceTree = "<group>"; };
 		504ECC9E18C64EEF00507582 /* constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = constants.h; sourceTree = "<group>"; };
 		504ECC9F18C64EEF00507582 /* constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = constants.m; sourceTree = "<group>"; };
+		504ECCA118C8DA8700507582 /* STOPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STOPreferences.h; sourceTree = "<group>"; };
+		504ECCA218C8DA8700507582 /* STOPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STOPreferences.m; sourceTree = "<group>"; };
+		504ECCA618C8ECFB00507582 /* PrefsDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PrefsDefaults.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +147,9 @@
 				504ECC9C18C645FE00507582 /* SlideJSON.m */,
 				504ECC9E18C64EEF00507582 /* constants.h */,
 				504ECC9F18C64EEF00507582 /* constants.m */,
+				504ECCA118C8DA8700507582 /* STOPreferences.h */,
+				504ECCA218C8DA8700507582 /* STOPreferences.m */,
+				504ECCA618C8ECFB00507582 /* PrefsDefaults.plist */,
 			);
 			path = Stori;
 			sourceTree = "<group>";
@@ -253,6 +261,7 @@
 			files = (
 				504ECC7718C245B900507582 /* Images.xcassets in Resources */,
 				504ECC6918C245B900507582 /* InfoPlist.strings in Resources */,
+				504ECCA718C8ECFB00507582 /* PrefsDefaults.plist in Resources */,
 				504ECC7218C245B900507582 /* Main.storyboard in Resources */,
 				504ECC9A18C632D100507582 /* Localizable.strings in Resources */,
 			);
@@ -276,6 +285,7 @@
 				504ECC7518C245B900507582 /* ViewController.m in Sources */,
 				504ECC6F18C245B900507582 /* AppDelegate.m in Sources */,
 				504ECC6B18C245B900507582 /* main.m in Sources */,
+				504ECCA318C8DA8700507582 /* STOPreferences.m in Sources */,
 				504ECCA018C64EEF00507582 /* constants.m in Sources */,
 				504ECC9D18C645FE00507582 /* SlideJSON.m in Sources */,
 				504ECC9518C24EF000507582 /* HFLogging.m in Sources */,

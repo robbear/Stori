@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "SlideShareJSON.h"
+#import "STOPreferences.h"
 
 @interface StoriTests : XCTestCase
 @end
@@ -187,6 +188,29 @@ SlideShareJSON *_ssj;
     int count = [_ssj getSlideCount];
     if (count != 4) {
         XCTFail("Failed to remove slide");
+    }
+}
+
+- (void)testSTOPreferencesInitialization {
+    [STOPreferences initializeDefaults];
+    
+    NSString *editPlayName = [STOPreferences getEditPlayName];
+    HFLogDebug(@"testSTOPreferencesInitialization: editPlayName=%@", editPlayName);
+    if (editPlayName) {
+        XCTFail("EditPlayName preference should be null");
+    }
+    
+    BOOL autoPlay = [STOPreferences getPlaySlidesAutoAudio];
+    HFLogDebug(@"testSTOPreferencesInitialization: playSlidesAutoAudio=%d", autoPlay);
+    if (autoPlay) {
+        XCTFail("PlaySlidesAutoAudio should default to FALSE");
+    }
+    
+    [STOPreferences savePlaySlidesAutoAudio:YES];
+    autoPlay = [STOPreferences getPlaySlidesAutoAudio];
+    HFLogDebug(@"testSTOPreferencesInitialization: playSlidesAutoAudio=%d", autoPlay);
+    if (!autoPlay) {
+        XCTFail("PlaySlidesAutoAudio should be set to TRUE");
     }
 }
 

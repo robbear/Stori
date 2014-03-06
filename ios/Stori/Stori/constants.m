@@ -20,3 +20,10 @@ NSString *const KEY_IMAGE = @"image";
 NSString *const KEY_AUDIO = @"audio";
 NSString *const KEY_TEXT = @"text";
 NSString *const KEY_ORDER = @"order";
+
+//
+// STOPreferences keys
+//
+NSString *const PREFS_EDITPLAYNAME = @"prefs_editplayname";
+NSString *const PREFS_PLAYSLIDESNAME = @"prefs_playslidesname";
+NSString *const PREFS_PLAYSLIDESAUTOAUDIO = @"prefs_playslidesautoaudio";

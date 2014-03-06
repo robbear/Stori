@@ -8,12 +8,16 @@
 
 #import "AppDelegate.h"
 #import "SlideShareJSON.h"
+#import "STOPreferences.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     HFLogDebug(@"AppDelegate.didFinishLaunchingWithOptions");
+    
+    // Initialize user preference defaults
+    [STOPreferences initializeDefaults];
     
     // Override point for customization after application launch.
     return YES;

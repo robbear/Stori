@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+//
+// SlideShareJSON and SlideJSON keys
+//
 extern NSString *const KEY_TITLE;
 extern NSString *const KEY_DESCRIPTION;
 extern NSString *const KEY_VERSION;
@@ -17,3 +20,10 @@ extern NSString *const KEY_IMAGE;
 extern NSString *const KEY_AUDIO;
 extern NSString *const KEY_TEXT;
 extern NSString *const KEY_ORDER;
+
+//
+// STOPreferences keys
+//
+extern NSString *const PREFS_EDITPLAYNAME;
+extern NSString *const PREFS_PLAYSLIDESNAME;
+extern NSString *const PREFS_PLAYSLIDESAUTOAUDIO;
