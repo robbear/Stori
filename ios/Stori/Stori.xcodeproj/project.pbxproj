@@ -28,6 +28,7 @@
 		504ECCA018C64EEF00507582 /* constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECC9F18C64EEF00507582 /* constants.m */; };
 		504ECCA318C8DA8700507582 /* STOPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCA218C8DA8700507582 /* STOPreferences.m */; };
 		504ECCA718C8ECFB00507582 /* PrefsDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 504ECCA618C8ECFB00507582 /* PrefsDefaults.plist */; };
+		504ECCAA18C8F70D00507582 /* STOUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCA918C8F70D00507582 /* STOUtilities.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,8 @@
 		504ECCA118C8DA8700507582 /* STOPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STOPreferences.h; sourceTree = "<group>"; };
 		504ECCA218C8DA8700507582 /* STOPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STOPreferences.m; sourceTree = "<group>"; };
 		504ECCA618C8ECFB00507582 /* PrefsDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PrefsDefaults.plist; sourceTree = "<group>"; };
+		504ECCA818C8F70D00507582 /* STOUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STOUtilities.h; sourceTree = "<group>"; };
+		504ECCA918C8F70D00507582 /* STOUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STOUtilities.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +153,8 @@
 				504ECCA118C8DA8700507582 /* STOPreferences.h */,
 				504ECCA218C8DA8700507582 /* STOPreferences.m */,
 				504ECCA618C8ECFB00507582 /* PrefsDefaults.plist */,
+				504ECCA818C8F70D00507582 /* STOUtilities.h */,
+				504ECCA918C8F70D00507582 /* STOUtilities.m */,
 			);
 			path = Stori;
 			sourceTree = "<group>";
@@ -288,6 +293,7 @@
 				504ECCA318C8DA8700507582 /* STOPreferences.m in Sources */,
 				504ECCA018C64EEF00507582 /* constants.m in Sources */,
 				504ECC9D18C645FE00507582 /* SlideJSON.m in Sources */,
+				504ECCAA18C8F70D00507582 /* STOUtilities.m in Sources */,
 				504ECC9518C24EF000507582 /* HFLogging.m in Sources */,
 				504ECC9818C4F0AE00507582 /* SlideShareJSON.m in Sources */,
 			);

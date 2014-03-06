@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #import "SlideShareJSON.h"
 #import "STOPreferences.h"
+#import "STOUtilities.h"
 
 @interface StoriTests : XCTestCase
 @end
@@ -211,6 +212,29 @@ SlideShareJSON *_ssj;
     HFLogDebug(@"testSTOPreferencesInitialization: playSlidesAutoAudio=%d", autoPlay);
     if (!autoPlay) {
         XCTFail("PlaySlidesAutoAudio should be set to TRUE");
+    }
+}
+
+- (void)testRootFilesDir {
+    NSURL *rootDir = [STOUtilities getRootFilesDirectory];
+    HFLogDebug(@"testRootFilesDir: rootDir=%@", [rootDir path]);
+    if (!rootDir) {
+        XCTFail("Root directory returns nil");
+    }
+}
+
+- (void)testAbsolutePath {
+    NSURL *absPath = [STOUtilities getAbsoluteFilePathWithFolder:@"MyDirectory" withFileName:@"MyFileName"];
+    HFLogDebug(@"testAbsolutePath: absPath=%@", [absPath path]);
+}
+
+- (void)testCreateOrGetSlideShareDirectory {
+    NSURL *slideShareDirectory = [STOUtilities createOrGetSlideShareDirectory:@"myslidesharename"];
+
+    NSFileManager *fm = [NSFileManager defaultManager];
+    BOOL isDirectory;
+    if (!([fm fileExistsAtPath:[slideShareDirectory path] isDirectory:&isDirectory] && isDirectory)) {
+        XCTFail(@"Failed to create SlideShareDirectory");
     }
 }
 
