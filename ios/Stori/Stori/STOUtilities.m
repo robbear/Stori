@@ -53,4 +53,61 @@
     return slideShareDirectory;
 }
 
++ (BOOL)deleteSlideShareDirectory:(NSString *)slideShareName {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSURL *rootDir = [STOUtilities getRootFilesDirectory];
+    NSURL *slideShareDirectory = [rootDir URLByAppendingPathComponent:slideShareName];
+
+    NSError *err;
+    BOOL retVal = [fm removeItemAtURL:slideShareDirectory error:&err];
+    if (!retVal || err) {
+        HFLogDebug(@"STOUtilities.deleteSlideShareDirectory failed: err=%@", err);
+    }
+    
+    return retVal;
+}
+
++ (BOOL)deleteFileAtFolder:(NSString *)folder withFileName:(NSString *)fileName {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSURL *rootDir = [STOUtilities getRootFilesDirectory];
+    NSURL *folderDirectory = [rootDir URLByAppendingPathComponent:folder];
+    NSURL *fileURL = [folderDirectory URLByAppendingPathComponent:fileName];
+    
+    NSError *err;
+    BOOL retVal = [fm removeItemAtURL:fileURL error:&err];
+    if (!retVal || err) {
+        HFLogDebug(@"STOUtilities.deleteFileAtFolder failed: err=%@", err);
+    }
+    
+    return retVal;
+}
+
++ (BOOL)saveStringToFile:(NSString *)stringData withFolder:(NSString *)folder withFileName:(NSString *)fileName {
+    NSURL *rootDir = [STOUtilities getRootFilesDirectory];
+    NSURL *folderDirectory = [rootDir URLByAppendingPathComponent:folder];
+    NSURL *fileURL = [folderDirectory URLByAppendingPathComponent:fileName];
+    
+    NSError *err;
+    BOOL retVal = [stringData writeToURL:fileURL atomically:YES encoding:NSUTF8StringEncoding error:&err];
+    if (!retVal || err) {
+        HFLogDebug(@"STOUtilities.saveStringToFile failed: err=%@", err);
+    }
+    
+    return retVal;
+}
+
++ (NSString *)loadStringFromFolder:(NSString *)folder withFile:(NSString *)fileName {
+    NSURL *rootDir = [STOUtilities getRootFilesDirectory];
+    NSURL *folderDirectory = [rootDir URLByAppendingPathComponent:folder];
+    NSURL *fileURL = [folderDirectory URLByAppendingPathComponent:fileName];
+    
+    NSError *err;
+    NSString *str = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:&err];
+    if (!str || err) {
+        HFLogDebug(@"STOUtilities.loadStringFromFolder failed: err=%@", err);
+    }
+    
+    return str;
+}
+
 @end

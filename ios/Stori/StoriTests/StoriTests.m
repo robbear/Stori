@@ -238,4 +238,45 @@ SlideShareJSON *_ssj;
     }
 }
 
+- (void)testDeleteSlideShareDirectory {
+    NSString *slideShareName = @"myslidesharename";
+    NSURL *slideShareDirectory = [STOUtilities createOrGetSlideShareDirectory:slideShareName];
+    
+    BOOL retVal = [STOUtilities deleteSlideShareDirectory:slideShareName];
+    if (!retVal) {
+        XCTFail(@"Failed to delete SlideShareDirectory");
+    }
+    
+    NSFileManager *fm = [NSFileManager defaultManager];
+    BOOL isDirectory;
+    if ([fm fileExistsAtPath:[slideShareDirectory path] isDirectory:&isDirectory] && isDirectory) {
+        XCTFail(@"Failed to delete SlideShareDirectory");
+    }
+}
+
+- (void)testSaveLoadAndDeleteFile {
+    NSString *folder = @"myslidesharename";
+    NSString *fileName = @"testfile.txt";
+    NSString *stringData = @"Every Stori tells a picture!";
+
+    [STOUtilities createOrGetSlideShareDirectory:folder];
+    
+    BOOL retVal = [STOUtilities saveStringToFile:stringData withFolder:folder withFileName:fileName];
+    if (!retVal) {
+        XCTFail(@"Failed to write string to file");
+    }
+    
+    NSString *stringReturn = [STOUtilities loadStringFromFolder:folder withFile:fileName];
+    if (!stringReturn || ([stringReturn compare:stringData] != NSOrderedSame)) {
+        XCTFail(@"Failed to read string from file");
+    }
+    
+    retVal = [STOUtilities deleteFileAtFolder:folder withFileName:fileName];
+    if (!retVal) {
+        XCTFail(@"Failed to delete file");
+    }
+    
+    [STOUtilities deleteSlideShareDirectory:folder];
+}
+
 @end
