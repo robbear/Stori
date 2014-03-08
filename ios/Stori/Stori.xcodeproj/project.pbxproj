@@ -31,6 +31,7 @@
 		504ECCAA18C8F70D00507582 /* STOUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCA918C8F70D00507582 /* STOUtilities.m */; };
 		504ECCAC18CB789D00507582 /* GooglePlus.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 504ECCAB18CB789D00507582 /* GooglePlus.bundle */; };
 		504ECCAE18CB78B500507582 /* GooglePlus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCAD18CB78B500507582 /* GooglePlus.framework */; };
+		504ECCB018CB7F1600507582 /* GoogleOpenSource.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCAF18CB7F1600507582 /* GoogleOpenSource.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +80,7 @@
 		504ECCA918C8F70D00507582 /* STOUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STOUtilities.m; sourceTree = "<group>"; };
 		504ECCAB18CB789D00507582 /* GooglePlus.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GooglePlus.bundle; sourceTree = "<group>"; };
 		504ECCAD18CB78B500507582 /* GooglePlus.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GooglePlus.framework; sourceTree = "<group>"; };
+		504ECCAF18CB7F1600507582 /* GoogleOpenSource.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleOpenSource.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				504ECCB018CB7F1600507582 /* GoogleOpenSource.framework in Frameworks */,
 				504ECC6118C245B900507582 /* CoreGraphics.framework in Frameworks */,
 				504ECCAE18CB78B500507582 /* GooglePlus.framework in Frameworks */,
 				504ECC6318C245B900507582 /* UIKit.framework in Frameworks */,
@@ -128,6 +131,7 @@
 		504ECC5D18C245B900507582 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				504ECCAF18CB7F1600507582 /* GoogleOpenSource.framework */,
 				504ECCAD18CB78B500507582 /* GooglePlus.framework */,
 				504ECCAB18CB789D00507582 /* GooglePlus.bundle */,
 				504ECC5E18C245B900507582 /* Foundation.framework */,

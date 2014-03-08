@@ -27,3 +27,12 @@ extern NSString *const KEY_ORDER;
 extern NSString *const PREFS_EDITPLAYNAME;
 extern NSString *const PREFS_PLAYSLIDESNAME;
 extern NSString *const PREFS_PLAYSLIDESAUTOAUDIO;
+
+//
+// AWS credentials
+//
+extern NSString *const AWS_BUCKET_NAME;
+extern NSString *const AMAZON_ROLE_ARN;
+extern NSString *const FACEBOOK_ROLE_ARN;
+extern NSString *const GOOGLE_ROLE_ARN;
+extern NSString *const GOOGLE_CLIENT_ID;

@@ -27,3 +27,12 @@ NSString *const KEY_ORDER = @"order";
 NSString *const PREFS_EDITPLAYNAME = @"prefs_editplayname";
 NSString *const PREFS_PLAYSLIDESNAME = @"prefs_playslidesname";
 NSString *const PREFS_PLAYSLIDESAUTOAUDIO = @"prefs_playslidesautoaudio";
+
+//
+// AWS credentials
+//
+NSString *const AWS_BUCKET_NAME = @"hfstori";
+NSString *const AMAZON_ROLE_ARN = @"ROLE_ARN";
+NSString *const FACEBOOK_ROLE_ARN = @"ROLE_ARN";
+NSString *const GOOGLE_ROLE_ARN = @"arn:aws:iam::226207118720:role/GoogleWIFS3FileStoreForStori";
+NSString *const GOOGLE_CLIENT_ID = @"578112260663-po9jok8bu0nm49d29f800g5cat4d8ni9.apps.googleusercontent.com";
