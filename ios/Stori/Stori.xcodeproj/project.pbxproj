@@ -32,6 +32,14 @@
 		504ECCAC18CB789D00507582 /* GooglePlus.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 504ECCAB18CB789D00507582 /* GooglePlus.bundle */; };
 		504ECCAE18CB78B500507582 /* GooglePlus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCAD18CB78B500507582 /* GooglePlus.framework */; };
 		504ECCB018CB7F1600507582 /* GoogleOpenSource.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCAF18CB7F1600507582 /* GoogleOpenSource.framework */; };
+		504ECCB918CB831B00507582 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCB118CB831B00507582 /* AddressBook.framework */; };
+		504ECCBA18CB831B00507582 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCB218CB831B00507582 /* AssetsLibrary.framework */; };
+		504ECCBB18CB831B00507582 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCB318CB831B00507582 /* CoreLocation.framework */; };
+		504ECCBC18CB831B00507582 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCB418CB831B00507582 /* CoreMotion.framework */; };
+		504ECCBD18CB831B00507582 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCB518CB831B00507582 /* CoreText.framework */; };
+		504ECCBE18CB831B00507582 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCB618CB831B00507582 /* MediaPlayer.framework */; };
+		504ECCBF18CB831B00507582 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCB718CB831B00507582 /* Security.framework */; };
+		504ECCC018CB831B00507582 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCB818CB831B00507582 /* SystemConfiguration.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +89,14 @@
 		504ECCAB18CB789D00507582 /* GooglePlus.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GooglePlus.bundle; sourceTree = "<group>"; };
 		504ECCAD18CB78B500507582 /* GooglePlus.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GooglePlus.framework; sourceTree = "<group>"; };
 		504ECCAF18CB7F1600507582 /* GoogleOpenSource.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleOpenSource.framework; sourceTree = "<group>"; };
+		504ECCB118CB831B00507582 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		504ECCB218CB831B00507582 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		504ECCB318CB831B00507582 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		504ECCB418CB831B00507582 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		504ECCB518CB831B00507582 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		504ECCB618CB831B00507582 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		504ECCB718CB831B00507582 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		504ECCB818CB831B00507582 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,11 +104,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				504ECCB018CB7F1600507582 /* GoogleOpenSource.framework in Frameworks */,
+				504ECCB918CB831B00507582 /* AddressBook.framework in Frameworks */,
+				504ECCBA18CB831B00507582 /* AssetsLibrary.framework in Frameworks */,
+				504ECCBB18CB831B00507582 /* CoreLocation.framework in Frameworks */,
+				504ECCBC18CB831B00507582 /* CoreMotion.framework in Frameworks */,
+				504ECCBD18CB831B00507582 /* CoreText.framework in Frameworks */,
+				504ECCBE18CB831B00507582 /* MediaPlayer.framework in Frameworks */,
+				504ECCBF18CB831B00507582 /* Security.framework in Frameworks */,
+				504ECCC018CB831B00507582 /* SystemConfiguration.framework in Frameworks */,
 				504ECC6118C245B900507582 /* CoreGraphics.framework in Frameworks */,
-				504ECCAE18CB78B500507582 /* GooglePlus.framework in Frameworks */,
-				504ECC6318C245B900507582 /* UIKit.framework in Frameworks */,
 				504ECC5F18C245B900507582 /* Foundation.framework in Frameworks */,
+				504ECC6318C245B900507582 /* UIKit.framework in Frameworks */,
+				504ECCB018CB7F1600507582 /* GoogleOpenSource.framework in Frameworks */,
+				504ECCAE18CB78B500507582 /* GooglePlus.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,6 +155,14 @@
 		504ECC5D18C245B900507582 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				504ECCB118CB831B00507582 /* AddressBook.framework */,
+				504ECCB218CB831B00507582 /* AssetsLibrary.framework */,
+				504ECCB318CB831B00507582 /* CoreLocation.framework */,
+				504ECCB418CB831B00507582 /* CoreMotion.framework */,
+				504ECCB518CB831B00507582 /* CoreText.framework */,
+				504ECCB618CB831B00507582 /* MediaPlayer.framework */,
+				504ECCB718CB831B00507582 /* Security.framework */,
+				504ECCB818CB831B00507582 /* SystemConfiguration.framework */,
 				504ECCAF18CB7F1600507582 /* GoogleOpenSource.framework */,
 				504ECCAD18CB78B500507582 /* GooglePlus.framework */,
 				504ECCAB18CB789D00507582 /* GooglePlus.bundle */,
@@ -441,6 +473,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Stori/Stori-Prefix.pch";
 				INFOPLIST_FILE = "Stori/Stori-Info.plist";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -458,6 +491,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Stori/Stori-Prefix.pch";
 				INFOPLIST_FILE = "Stori/Stori-Info.plist";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
