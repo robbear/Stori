@@ -29,6 +29,8 @@
 		504ECCA318C8DA8700507582 /* STOPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCA218C8DA8700507582 /* STOPreferences.m */; };
 		504ECCA718C8ECFB00507582 /* PrefsDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 504ECCA618C8ECFB00507582 /* PrefsDefaults.plist */; };
 		504ECCAA18C8F70D00507582 /* STOUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCA918C8F70D00507582 /* STOUtilities.m */; };
+		504ECCAC18CB789D00507582 /* GooglePlus.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 504ECCAB18CB789D00507582 /* GooglePlus.bundle */; };
+		504ECCAE18CB78B500507582 /* GooglePlus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCAD18CB78B500507582 /* GooglePlus.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +77,8 @@
 		504ECCA618C8ECFB00507582 /* PrefsDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PrefsDefaults.plist; sourceTree = "<group>"; };
 		504ECCA818C8F70D00507582 /* STOUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STOUtilities.h; sourceTree = "<group>"; };
 		504ECCA918C8F70D00507582 /* STOUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STOUtilities.m; sourceTree = "<group>"; };
+		504ECCAB18CB789D00507582 /* GooglePlus.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GooglePlus.bundle; sourceTree = "<group>"; };
+		504ECCAD18CB78B500507582 /* GooglePlus.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GooglePlus.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +87,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				504ECC6118C245B900507582 /* CoreGraphics.framework in Frameworks */,
+				504ECCAE18CB78B500507582 /* GooglePlus.framework in Frameworks */,
 				504ECC6318C245B900507582 /* UIKit.framework in Frameworks */,
 				504ECC5F18C245B900507582 /* Foundation.framework in Frameworks */,
 			);
@@ -123,6 +128,8 @@
 		504ECC5D18C245B900507582 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				504ECCAD18CB78B500507582 /* GooglePlus.framework */,
+				504ECCAB18CB789D00507582 /* GooglePlus.bundle */,
 				504ECC5E18C245B900507582 /* Foundation.framework */,
 				504ECC6018C245B900507582 /* CoreGraphics.framework */,
 				504ECC6218C245B900507582 /* UIKit.framework */,
@@ -268,6 +275,7 @@
 				504ECC6918C245B900507582 /* InfoPlist.strings in Resources */,
 				504ECCA718C8ECFB00507582 /* PrefsDefaults.plist in Resources */,
 				504ECC7218C245B900507582 /* Main.storyboard in Resources */,
+				504ECCAC18CB789D00507582 /* GooglePlus.bundle in Resources */,
 				504ECC9A18C632D100507582 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -422,6 +430,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/robbear/dev/robbear/slideshare/ios/Stori,
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Stori/Stori-Prefix.pch";
 				INFOPLIST_FILE = "Stori/Stori-Info.plist";
@@ -435,6 +447,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/robbear/dev/robbear/slideshare/ios/Stori,
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Stori/Stori-Prefix.pch";
 				INFOPLIST_FILE = "Stori/Stori-Info.plist";
