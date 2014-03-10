@@ -40,6 +40,9 @@
 		504ECCBE18CB831B00507582 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCB618CB831B00507582 /* MediaPlayer.framework */; };
 		504ECCBF18CB831B00507582 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCB718CB831B00507582 /* Security.framework */; };
 		504ECCC018CB831B00507582 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCB818CB831B00507582 /* SystemConfiguration.framework */; };
+		504ECCCA18CE67B400507582 /* AWSRuntime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCC718CE67B400507582 /* AWSRuntime.framework */; };
+		504ECCCB18CE67B400507582 /* AWSS3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCC818CE67B400507582 /* AWSS3.framework */; };
+		504ECCCC18CE67B400507582 /* AWSSecurityTokenService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCC918CE67B400507582 /* AWSSecurityTokenService.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,6 +100,9 @@
 		504ECCB618CB831B00507582 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		504ECCB718CB831B00507582 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		504ECCB818CB831B00507582 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		504ECCC718CE67B400507582 /* AWSRuntime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSRuntime.framework; sourceTree = "<group>"; };
+		504ECCC818CE67B400507582 /* AWSS3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSS3.framework; sourceTree = "<group>"; };
+		504ECCC918CE67B400507582 /* AWSSecurityTokenService.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSSecurityTokenService.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +116,7 @@
 				504ECCBC18CB831B00507582 /* CoreMotion.framework in Frameworks */,
 				504ECCBD18CB831B00507582 /* CoreText.framework in Frameworks */,
 				504ECCBE18CB831B00507582 /* MediaPlayer.framework in Frameworks */,
+				504ECCCC18CE67B400507582 /* AWSSecurityTokenService.framework in Frameworks */,
 				504ECCBF18CB831B00507582 /* Security.framework in Frameworks */,
 				504ECCC018CB831B00507582 /* SystemConfiguration.framework in Frameworks */,
 				504ECC6118C245B900507582 /* CoreGraphics.framework in Frameworks */,
@@ -117,6 +124,8 @@
 				504ECC6318C245B900507582 /* UIKit.framework in Frameworks */,
 				504ECCB018CB7F1600507582 /* GoogleOpenSource.framework in Frameworks */,
 				504ECCAE18CB78B500507582 /* GooglePlus.framework in Frameworks */,
+				504ECCCA18CE67B400507582 /* AWSRuntime.framework in Frameworks */,
+				504ECCCB18CE67B400507582 /* AWSS3.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,6 +164,9 @@
 		504ECC5D18C245B900507582 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				504ECCC718CE67B400507582 /* AWSRuntime.framework */,
+				504ECCC818CE67B400507582 /* AWSS3.framework */,
+				504ECCC918CE67B400507582 /* AWSSecurityTokenService.framework */,
 				504ECCB118CB831B00507582 /* AddressBook.framework */,
 				504ECCB218CB831B00507582 /* AssetsLibrary.framework */,
 				504ECCB318CB831B00507582 /* CoreLocation.framework */,
@@ -558,6 +570,7 @@
 				504ECC8F18C245B900507582 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		504ECC9018C245B900507582 /* Build configuration list for PBXNativeTarget "StoriTests" */ = {
 			isa = XCConfigurationList;
@@ -566,6 +579,7 @@
 				504ECC9218C245B900507582 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
