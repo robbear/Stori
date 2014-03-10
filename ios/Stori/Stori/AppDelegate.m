@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import <GooglePlus/GooglePlus.h>
 #import "SlideShareJSON.h"
 #import "STOPreferences.h"
 
@@ -58,6 +59,12 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     
     HFLogDebug(@"AppDelegate.applicationWillTerminate");
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    HFLogDebug(@"AppDelegate.application:openURL:sourceApplication:annotation");
+    
+    return [GPPURLHandler handleURL:url sourceApplication:sourceApplication annotation:annotation];
 }
 
 @end
