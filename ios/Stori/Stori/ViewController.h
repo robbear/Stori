@@ -8,15 +8,20 @@
 
 #import <UIKit/UIKit.h>
 #import <GooglePlus/GooglePlus.h>
+#import "AmazonClientManager.h"
+#import "LoginViewController.h"
 
 @class GPPSignInButton;
 
-@interface ViewController : UIViewController <GPPSignInDelegate>
+@interface ViewController : UIViewController <GPPSignInDelegate, AmazonClientManagerGoogleSignInDelegate>
 
 @property (retain, nonatomic) IBOutlet GPPSignInButton *signInButton;
 @property (weak, nonatomic) IBOutlet UIButton *signOutButton;
 @property (weak, nonatomic) IBOutlet UIButton *disconnectButton;
 @property (weak, nonatomic) IBOutlet UILabel *userIDLabel;
 @property (weak, nonatomic) IBOutlet UILabel *userEmailLabel;
+@property (weak, nonatomic) IBOutlet UIView *amazonLoginButton;
+
+@property LoginViewController *loginViewController;
 
 @end

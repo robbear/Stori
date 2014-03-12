@@ -43,6 +43,9 @@
 		504ECCCA18CE67B400507582 /* AWSRuntime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCC718CE67B400507582 /* AWSRuntime.framework */; };
 		504ECCCB18CE67B400507582 /* AWSS3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCC818CE67B400507582 /* AWSS3.framework */; };
 		504ECCCC18CE67B400507582 /* AWSSecurityTokenService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCC918CE67B400507582 /* AWSSecurityTokenService.framework */; };
+		504ECCE018D0B88A00507582 /* AmazonClientManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCDD18D0B88A00507582 /* AmazonClientManager.m */; };
+		504ECCE418D0BEC600507582 /* AmazonSharedPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCE318D0BEC600507582 /* AmazonSharedPreferences.m */; };
+		504ECCE718D0C6F800507582 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCE618D0C6F800507582 /* LoginViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,6 +106,12 @@
 		504ECCC718CE67B400507582 /* AWSRuntime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSRuntime.framework; sourceTree = "<group>"; };
 		504ECCC818CE67B400507582 /* AWSS3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSS3.framework; sourceTree = "<group>"; };
 		504ECCC918CE67B400507582 /* AWSSecurityTokenService.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSSecurityTokenService.framework; sourceTree = "<group>"; };
+		504ECCDC18D0B88A00507582 /* AmazonClientManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmazonClientManager.h; sourceTree = "<group>"; };
+		504ECCDD18D0B88A00507582 /* AmazonClientManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmazonClientManager.m; sourceTree = "<group>"; };
+		504ECCE218D0BEC600507582 /* AmazonSharedPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmazonSharedPreferences.h; sourceTree = "<group>"; };
+		504ECCE318D0BEC600507582 /* AmazonSharedPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmazonSharedPreferences.m; sourceTree = "<group>"; };
+		504ECCE518D0C6F800507582 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		504ECCE618D0C6F800507582 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +198,10 @@
 		504ECC6418C245B900507582 /* Stori */ = {
 			isa = PBXGroup;
 			children = (
+				504ECCE518D0C6F800507582 /* LoginViewController.h */,
+				504ECCE618D0C6F800507582 /* LoginViewController.m */,
+				504ECCDC18D0B88A00507582 /* AmazonClientManager.h */,
+				504ECCDD18D0B88A00507582 /* AmazonClientManager.m */,
 				504ECC6D18C245B900507582 /* AppDelegate.h */,
 				504ECC6E18C245B900507582 /* AppDelegate.m */,
 				504ECC7018C245B900507582 /* Main.storyboard */,
@@ -210,6 +223,8 @@
 				504ECCA618C8ECFB00507582 /* PrefsDefaults.plist */,
 				504ECCA818C8F70D00507582 /* STOUtilities.h */,
 				504ECCA918C8F70D00507582 /* STOUtilities.m */,
+				504ECCE218D0BEC600507582 /* AmazonSharedPreferences.h */,
+				504ECCE318D0BEC600507582 /* AmazonSharedPreferences.m */,
 			);
 			path = Stori;
 			sourceTree = "<group>";
@@ -346,9 +361,12 @@
 				504ECC7518C245B900507582 /* ViewController.m in Sources */,
 				504ECC6F18C245B900507582 /* AppDelegate.m in Sources */,
 				504ECC6B18C245B900507582 /* main.m in Sources */,
+				504ECCE418D0BEC600507582 /* AmazonSharedPreferences.m in Sources */,
 				504ECCA318C8DA8700507582 /* STOPreferences.m in Sources */,
+				504ECCE018D0B88A00507582 /* AmazonClientManager.m in Sources */,
 				504ECCA018C64EEF00507582 /* constants.m in Sources */,
 				504ECC9D18C645FE00507582 /* SlideJSON.m in Sources */,
+				504ECCE718D0C6F800507582 /* LoginViewController.m in Sources */,
 				504ECCAA18C8F70D00507582 /* STOUtilities.m in Sources */,
 				504ECC9518C24EF000507582 /* HFLogging.m in Sources */,
 				504ECC9818C4F0AE00507582 /* SlideShareJSON.m in Sources */,

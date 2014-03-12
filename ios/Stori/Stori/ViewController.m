@@ -136,4 +136,26 @@
     self.userIDLabel.text = NULL;
 }
 
+- (IBAction)onAmazonLoginButtonClicked:(id)sender {
+    self.loginViewController = [[LoginViewController alloc] init];
+    self.loginViewController.amazonClientManagerSignInDelegate = self;
+    [self presentViewController:self.loginViewController animated:YES completion:nil];
+}
+
+- (void) googleSignInComplete:(BOOL)success {
+    HFLogDebug(@"ViewController.googleSignInComplete: success=%d", success);
+
+    if (self.loginViewController) {
+        [self.loginViewController dismissViewControllerAnimated:NO completion:nil];
+        self.loginViewController = nil;
+    }
+
+    [self refreshInterfaceBasedOnSignIn];
+    
+    GPPSignIn *signIn = [GPPSignIn sharedInstance];
+    
+    self.userIDLabel.text = signIn.userID;
+    self.userEmailLabel.text = signIn.userEmail;
+}
+
 @end
