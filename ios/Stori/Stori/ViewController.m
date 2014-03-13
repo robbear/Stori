@@ -73,10 +73,12 @@
         // The user is signed in
         self.amazonLoginButton.hidden = YES;
         self.disconnectButton.hidden = NO;
+        self.testS3Button.hidden = NO;
     }
     else {
         self.amazonLoginButton.hidden = NO;
         self.disconnectButton.hidden = YES;
+        self.testS3Button.hidden = YES;
     }
     
     self.userEmailLabel.text = [AmazonSharedPreferences userEmail];
@@ -109,6 +111,38 @@
     HFLogDebug(@"ViewController.googleDisconnectComplete: success=%d", success);
     
     [self refreshInterface];
+}
+
+- (IBAction)onTestS3ButtonClicked:(id)sender {
+    HFLogDebug(@"ViewController.onTestS3ButtonClicked");
+    
+    @try {
+        S3ListObjectsRequest  *listObjectRequest = [[S3ListObjectsRequest alloc] initWithName:@"hfstori"];
+        listObjectRequest.prefix = [NSString stringWithFormat:@"%@/", [AmazonSharedPreferences userName]];
+        
+        S3ListObjectsResponse *listObjectResponse = [[[AmazonClientManager sharedInstance] s3] listObjects:listObjectRequest];
+        S3ListObjectsResult   *listObjectsResults = listObjectResponse.listObjectsResult;
+        
+        NSMutableArray *objects;
+        
+        if (objects == nil) {
+            objects = [[NSMutableArray alloc] initWithCapacity:[listObjectsResults.objectSummaries count]];
+        }
+        else {
+            [objects removeAllObjects];
+        }
+        for (S3ObjectSummary *objectSummary in listObjectsResults.objectSummaries) {
+            [objects addObject:[objectSummary key]];
+        }
+        [objects sortUsingSelector:@selector(compare:)];
+        
+        HFLogDebug(@"ViewController.onTestS3ButtonClicked - found %d S3 objects under %@", [objects count], [AmazonSharedPreferences userName]);
+    }
+    @catch (AmazonClientException *exception)
+    {
+        HFLogDebug(@"Exception = %@", exception);
+        [[Constants errorAlert:[NSString stringWithFormat:@"Error list objects: %@", exception.message]] show];
+    }
 }
 
 @end

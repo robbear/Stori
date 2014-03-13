@@ -19,6 +19,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *userEmailLabel;
 @property (weak, nonatomic) IBOutlet UIButton *amazonLoginButton;
 @property (weak, nonatomic) IBOutlet UIButton *disconnectButton;
+@property (weak, nonatomic) IBOutlet UIButton *testS3Button;
 
 @property (strong, nonatomic) LoginViewController *loginViewController;
 
