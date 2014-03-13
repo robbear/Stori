@@ -19,6 +19,4 @@
 
 @interface LoginViewController:UIViewController
 
-@property (nonatomic, weak) id<AmazonClientManagerGoogleSignInDelegate> amazonClientManagerSignInDelegate;
-
 @end

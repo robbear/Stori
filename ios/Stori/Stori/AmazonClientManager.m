@@ -33,11 +33,16 @@ static GTMOAuth2Authentication  *_auth;
 
 + (AmazonClientManager *)sharedInstance
 {
+    HFLogDebug(@"AmazonClientManager.sharedInstance");
+    
     static AmazonClientManager *sharedInstance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        HFLogDebug(@"AmazonClientManager.sharedInstance - allocating sharedInstance");
         sharedInstance = [[AmazonClientManager alloc] init];
     });
+    
+    HFLogDebug(@"AmazonClientManager.sharedInstance - returning sharedInstance");
     return sharedInstance;
 }
 
@@ -208,23 +213,51 @@ static GTMOAuth2Authentication  *_auth;
     
     // if we have an id, we are logged in
     if (_wif.subjectFromWIF != nil) {
-        HFLogDebug(@"AmazonClientManager.completeGLogin: IDP id: %@", _wif.subjectFromWIF);
-        
+        GPPSignIn *signIn = [GPPSignIn sharedInstance];
         [AmazonSharedPreferences storeUserName:_wif.subjectFromWIF];
+        [AmazonSharedPreferences storeUserEmail:signIn.userEmail];
+        
+        HFLogDebug(@"AmazonClientManager.completeGLogin: userID: %@, userEmail: %@", _wif.subjectFromWIF, signIn.userEmail);
+        
         [self initClients];
         
-        if ([self.amazonClientManagerGoogleSignInDelegate respondsToSelector:@selector(googleSignInComplete:)]) {
-            [self.amazonClientManagerGoogleSignInDelegate googleSignInComplete:TRUE];
+        if ([self.amazonClientManagerGoogleAccountDelegate respondsToSelector:@selector(googleSignInComplete:)]) {
+            [self.amazonClientManagerGoogleAccountDelegate googleSignInComplete:TRUE];
         }
     }
     else {
         [[Constants errorAlert:@"Unable to assume role, please check logs for error"] show];
 
-        if ([self.amazonClientManagerGoogleSignInDelegate respondsToSelector:@selector(googleSignInComplete:)]) {
-            [self.amazonClientManagerGoogleSignInDelegate googleSignInComplete:FALSE];
+        if ([self.amazonClientManagerGoogleAccountDelegate respondsToSelector:@selector(googleSignInComplete:)]) {
+            [self.amazonClientManagerGoogleAccountDelegate googleSignInComplete:FALSE];
         }
     }
 }
+
+- (void)disconnectFromGoogle {
+    HFLogDebug(@"AmazonClientManager.disconnectFromGoogle");
+    
+    [[GPPSignIn sharedInstance] disconnect];
+}
+
+- (void)didDisconnectWithError:(NSError *)error {
+    HFLogDebug(@"AmazonClientManager.didDisconnectWithError: error=%@", error);
+    
+    if (error) {
+        // TODO
+    }
+    else {
+        // The user is signed out and disconnected
+        // Clean up user data as specified by the Google+ terms
+        
+        [self wipeAllCredentials];
+    }
+    
+    if ([self.amazonClientManagerGoogleAccountDelegate respondsToSelector:@selector(googleDisconnectComplete:)]) {
+        [self.amazonClientManagerGoogleAccountDelegate googleDisconnectComplete:(error == nil)];
+    }
+}
+
 #endif
 
 #if AMZN_LOGIN

@@ -18,7 +18,7 @@
 #import <AWSSecurityTokenService/AWSSecurityTokenService.h>
 #import "Constants.h"
 
-@protocol AmazonClientManagerGoogleSignInDelegate;
+@protocol AmazonClientManagerGoogleAccountDelegate;
 
 #if GOOGLE_LOGIN
 #if AMZN_LOGIN
@@ -27,6 +27,7 @@
 #else
 // Just Google
 @interface AmazonClientManager:NSObject<GPPSignInDelegate> {}
+@property (nonatomic, weak) id<AmazonClientManagerGoogleAccountDelegate> amazonClientManagerGoogleAccountDelegate;
 #endif
 #elif AMZN_LOGIN
 // Just Amazon
@@ -35,8 +36,6 @@
 // Neither Amazon nor Google
 @interface AmazonClientManager:NSObject {}
 #endif
-
-@property (weak, nonatomic) id<AmazonClientManagerGoogleSignInDelegate> amazonClientManagerGoogleSignInDelegate;
 
 #if FB_LOGIN
 @property (retain, nonatomic) FBSession *session;
@@ -48,6 +47,7 @@
 #if GOOGLE_LOGIN
 -(void)reloadGSession;
 -(void)initGPlusLogin;
+-(void)disconnectFromGoogle;
 #endif
 
 #if AMZN_LOGIN
@@ -64,8 +64,9 @@
 
 @end
 
-@protocol AmazonClientManagerGoogleSignInDelegate <NSObject>
+@protocol AmazonClientManagerGoogleAccountDelegate <NSObject>
 
 - (void)googleSignInComplete:(BOOL)success;
+- (void)googleDisconnectComplete:(BOOL)success;
 
 @end

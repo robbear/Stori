@@ -7,15 +7,11 @@
 //
 
 #import "ViewController.h"
-#import <GooglePlus/GooglePlus.h>
-#import <GoogleOpenSource/GoogleOpenSource.h>
+#import "AmazonSharedPreferences.h"
 
 @interface ViewController ()
 
-- (void)initiateGoogleLogin;
-- (void)refreshInterfaceBasedOnSignIn;
-- (void)signOut;
-- (void)disconnect;
+- (void)refreshInterface;
 
 @end
 
@@ -23,23 +19,23 @@
 
 - (void)viewDidLoad
 {
+    HFLogDebug(@"ViewController.viewDidLoad");
+    
     [super viewDidLoad];
-    
-    self.signInButton.hidden = NO;
-    self.signOutButton.hidden = YES;
-    self.disconnectButton.hidden = YES;
-    self.userEmailLabel.text = NULL;
-    self.userIDLabel.text = NULL;
-    
-    [self initiateGoogleLogin];
+
+    [AmazonClientManager sharedInstance].amazonClientManagerGoogleAccountDelegate = self;
+    [self refreshInterface];
 }
 
 - (void)didReceiveMemoryWarning
 {
+    HFLogDebug(@"ViewController.didReceiveMemoryWarning");
+    
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
+#if NEVER
 - (void)initiateGoogleLogin {
     HFLogDebug(@"ViewController.initiateGoogleLogin");
     
@@ -64,81 +60,37 @@
         // TODO: error handling
     }
     else {
-        [self refreshInterfaceBasedOnSignIn];
-        
-        GPPSignIn *signIn = [GPPSignIn sharedInstance];
-        
-        self.userIDLabel.text = signIn.userID;
-        self.userEmailLabel.text = signIn.userEmail;
+        [self refreshInterface];
     }
 }
+#endif
 
-- (void)refreshInterfaceBasedOnSignIn {
-    HFLogDebug(@"ViewController.refreshInterfaceBasedOnSignIn");
-    
-    if ([[GPPSignIn sharedInstance] authentication]) {
+- (void)refreshInterface {
+    HFLogDebug(@"ViewController.refreshInterface");
+
+    HFLogDebug(@"ViewController.refreshInterface: userName = %@", [AmazonSharedPreferences userName]);
+    if ([AmazonSharedPreferences userName]) {
         // The user is signed in
-        self.signInButton.hidden = YES;
-        self.signOutButton.hidden = NO;
+        self.amazonLoginButton.hidden = YES;
         self.disconnectButton.hidden = NO;
     }
     else {
-        self.signInButton.hidden = NO;
-    }
-}
-
-- (void)signOut {
-    HFLogDebug(@"ViewController.signOut");
-    
-    [[GPPSignIn sharedInstance] signOut];
-}
-
-- (void)disconnect {
-    HFLogDebug(@"ViewController.disconnect");
-    
-    [[GPPSignIn sharedInstance] disconnect];
-}
-
-- (void)didDisconnectWithError:(NSError *)error {
-    HFLogDebug(@"ViewController.didDisconnectWithError: error=%@", error);
-    
-    if (error) {
-        // TODO
-    }
-    else {
-        // The user is signed out and disconnected
-        // Clean up user data as specified by the Google+ terms
-        
-        self.signInButton.hidden = NO;
-        self.signOutButton.hidden = YES;
+        self.amazonLoginButton.hidden = NO;
         self.disconnectButton.hidden = YES;
     }
-}
-
-- (IBAction)onSignOutClick:(id)sender {
-    HFLogDebug(@"ViewController.onSignOutClick");
     
-    [self signOut];
-    self.signInButton.hidden = NO;
-    self.signOutButton.hidden = YES;
-    self.disconnectButton.hidden = NO;
+    self.userEmailLabel.text = [AmazonSharedPreferences userEmail];
+    self.userIDLabel.text = [AmazonSharedPreferences userName];
 }
 
 - (IBAction)onDisconnectClick:(id)sender {
     HFLogDebug(@"ViewController.onDisconnectClick");
-    
-    [self disconnect];
-    self.signInButton.hidden = NO;
-    self.disconnectButton.hidden = YES;
-    self.signOutButton.hidden = YES;
-    
-    self.userEmailLabel.text = NULL;
-    self.userIDLabel.text = NULL;
+
+    [[AmazonClientManager sharedInstance] disconnectFromGoogle];
 }
 
 - (IBAction)onAmazonLoginButtonClicked:(id)sender {
     self.loginViewController = [[LoginViewController alloc] init];
-    self.loginViewController.amazonClientManagerSignInDelegate = self;
     [self presentViewController:self.loginViewController animated:YES completion:nil];
 }
 
@@ -150,12 +102,13 @@
         self.loginViewController = nil;
     }
 
-    [self refreshInterfaceBasedOnSignIn];
+    [self refreshInterface];
+}
+
+- (void) googleDisconnectComplete:(BOOL)success {
+    HFLogDebug(@"ViewController.googleDisconnectComplete: success=%d", success);
     
-    GPPSignIn *signIn = [GPPSignIn sharedInstance];
-    
-    self.userIDLabel.text = signIn.userID;
-    self.userEmailLabel.text = signIn.userEmail;
+    [self refreshInterface];
 }
 
 @end

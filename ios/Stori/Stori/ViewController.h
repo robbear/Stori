@@ -13,15 +13,13 @@
 
 @class GPPSignInButton;
 
-@interface ViewController : UIViewController <GPPSignInDelegate, AmazonClientManagerGoogleSignInDelegate>
+@interface ViewController : UIViewController <AmazonClientManagerGoogleAccountDelegate>
 
-@property (retain, nonatomic) IBOutlet GPPSignInButton *signInButton;
-@property (weak, nonatomic) IBOutlet UIButton *signOutButton;
-@property (weak, nonatomic) IBOutlet UIButton *disconnectButton;
 @property (weak, nonatomic) IBOutlet UILabel *userIDLabel;
 @property (weak, nonatomic) IBOutlet UILabel *userEmailLabel;
-@property (weak, nonatomic) IBOutlet UIView *amazonLoginButton;
+@property (weak, nonatomic) IBOutlet UIButton *amazonLoginButton;
+@property (weak, nonatomic) IBOutlet UIButton *disconnectButton;
 
-@property LoginViewController *loginViewController;
+@property (strong, nonatomic) LoginViewController *loginViewController;
 
 @end

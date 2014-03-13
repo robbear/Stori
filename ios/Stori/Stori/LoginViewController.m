@@ -30,7 +30,6 @@
 #if GOOGLE_LOGIN
     HFLogDebug(@"LoginViewController.viewDidLoad - prepping Google login button");
     
-    [AmazonClientManager sharedInstance].amazonClientManagerGoogleSignInDelegate = self.amazonClientManagerSignInDelegate;
     [[AmazonClientManager sharedInstance] initGPlusLogin];
     GPPSignInButton *signInButton = [[GPPSignInButton alloc] initWithFrame:CGRectMake(20, 122, 280, 44)];
     [self.view addSubview:signInButton];
