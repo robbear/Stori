@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "AmazonSharedPreferences.h"
+#import "AWSS3Provider.h"
 
 @interface ViewController ()
 
@@ -17,14 +18,29 @@
 
 @implementation ViewController
 
+bool _needsAuthentication = TRUE;
+
 - (void)viewDidLoad
 {
     HFLogDebug(@"ViewController.viewDidLoad");
     
     [super viewDidLoad];
-
-    [AmazonClientManager sharedInstance].amazonClientManagerGoogleAccountDelegate = self;
+    
     [self refreshInterface];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    HFLogDebug(@"ViewController.viewDidAppear");
+    
+    [super viewDidAppear:animated];
+    
+    if (_needsAuthentication) {
+        [AmazonClientManager sharedInstance].amazonClientManagerGoogleAccountDelegate = self;
+        if (![[AmazonClientManager sharedInstance] silentGPlusLogin]) {
+            HFLogDebug(@"ViewController.viewDidAppear: silentGPlusLogin failed");
+            [self googleSignInComplete:FALSE];
+        }
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -98,10 +114,19 @@
 
 - (void) googleSignInComplete:(BOOL)success {
     HFLogDebug(@"ViewController.googleSignInComplete: success=%d", success);
+    
+    _needsAuthentication = !success;
 
-    if (self.loginViewController) {
-        [self.loginViewController dismissViewControllerAnimated:NO completion:nil];
-        self.loginViewController = nil;
+    if (_needsAuthentication) {
+        HFLogDebug(@"ViewController.googleSignInComplete - _needsAuthentication is still TRUE, so that means login UI is needed");
+        self.loginViewController = [[LoginViewController alloc] init];
+        [self presentViewController:self.loginViewController animated:YES completion:nil];
+    }
+    else {
+        if (self.loginViewController) {
+            [self.loginViewController dismissViewControllerAnimated:NO completion:nil];
+            self.loginViewController = nil;
+        }
     }
 
     [self refreshInterface];
@@ -116,33 +141,9 @@
 - (IBAction)onTestS3ButtonClicked:(id)sender {
     HFLogDebug(@"ViewController.onTestS3ButtonClicked");
     
-    @try {
-        S3ListObjectsRequest  *listObjectRequest = [[S3ListObjectsRequest alloc] initWithName:@"hfstori"];
-        listObjectRequest.prefix = [NSString stringWithFormat:@"%@/", [AmazonSharedPreferences userName]];
-        
-        S3ListObjectsResponse *listObjectResponse = [[[AmazonClientManager sharedInstance] s3] listObjects:listObjectRequest];
-        S3ListObjectsResult   *listObjectsResults = listObjectResponse.listObjectsResult;
-        
-        NSMutableArray *objects;
-        
-        if (objects == nil) {
-            objects = [[NSMutableArray alloc] initWithCapacity:[listObjectsResults.objectSummaries count]];
-        }
-        else {
-            [objects removeAllObjects];
-        }
-        for (S3ObjectSummary *objectSummary in listObjectsResults.objectSummaries) {
-            [objects addObject:[objectSummary key]];
-        }
-        [objects sortUsingSelector:@selector(compare:)];
-        
-        HFLogDebug(@"ViewController.onTestS3ButtonClicked - found %d S3 objects under %@", [objects count], [AmazonSharedPreferences userName]);
-    }
-    @catch (AmazonClientException *exception)
-    {
-        HFLogDebug(@"Exception = %@", exception);
-        [[Constants errorAlert:[NSString stringWithFormat:@"Error list objects: %@", exception.message]] show];
-    }
+    AWSS3Provider *provider = [[AWSS3Provider alloc] init];
+    [provider initializeProvider:[AmazonSharedPreferences userName]];
+    [provider getStoriItems];
 }
 
 @end

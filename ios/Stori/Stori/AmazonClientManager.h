@@ -48,6 +48,7 @@
 -(void)reloadGSession;
 -(void)initGPlusLogin;
 -(void)disconnectFromGoogle;
+-(BOOL)silentGPlusLogin;
 #endif
 
 #if AMZN_LOGIN

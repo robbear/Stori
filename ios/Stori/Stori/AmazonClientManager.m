@@ -46,8 +46,6 @@ static GTMOAuth2Authentication  *_auth;
     return sharedInstance;
 }
 
-
-
 -(AmazonS3Client *)s3
 {
     return _s3;
@@ -55,7 +53,7 @@ static GTMOAuth2Authentication  *_auth;
 
 -(bool)hasCredentials
 {
-    return TRUE;
+    return [[GPPSignIn sharedInstance] authentication];
 }
 
 -(bool)isLoggedIn
@@ -165,6 +163,13 @@ static GTMOAuth2Authentication  *_auth;
     
     signIn.clientID = GOOGLE_CLIENT_ID;
     signIn.scopes = @[kGTLAuthScopePlusLogin];
+}
+
+- (BOOL)silentGPlusLogin {
+    HFLogDebug(@"AmazonClientManager.silentGPlusLogin");
+    
+    [self initGPlusLogin];
+    return [[GPPSignIn sharedInstance] trySilentAuthentication];
 }
 
 - (void)reloadGSession

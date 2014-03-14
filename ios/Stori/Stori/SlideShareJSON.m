@@ -173,7 +173,7 @@
         [paths setObject:(audioUrl ? audioUrl : [NSNull null]) forKey:KEY_AUDIO];
         [paths setObject:(slideText ? slideText : [NSNull null]) forKey:KEY_TEXT];
         
-        int oldCount = [orderArray count];
+        NSUInteger oldCount = [orderArray count];
         [slides setObject:paths forKey:uuidString];
         if (index < 0 || index >= oldCount) {
             // Put the new item at the end
@@ -190,7 +190,7 @@
     HFLogDebug(@"SlideShareJSON.reorderWithCurrentPostion: currentPosition=%d, newPosition=%d", currentPosition, newPosition);
     
     NSMutableArray *orderArray = [self getOrder];
-    int count = [orderArray count];
+    NSUInteger count = [orderArray count];
     
     if ((currentPosition >= count) || (currentPosition < 0) || (newPosition >= count) || (newPosition < 0)) {
         HFLogDebug(@"SlideShareJSON.reorderWithCurrentPosition: bailing with currentPosition or newPosition out of range");
@@ -255,7 +255,7 @@
 }
 
 - (int)getSlideCount {
-    return [[self getOrder] count];
+    return (int)[[self getOrder] count];
 }
 
 - (NSString *)getSlideUuidByOrderIndex:(int)index {

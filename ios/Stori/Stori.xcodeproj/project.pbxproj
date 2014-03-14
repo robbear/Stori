@@ -46,6 +46,7 @@
 		504ECCE018D0B88A00507582 /* AmazonClientManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCDD18D0B88A00507582 /* AmazonClientManager.m */; };
 		504ECCE418D0BEC600507582 /* AmazonSharedPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCE318D0BEC600507582 /* AmazonSharedPreferences.m */; };
 		504ECCE718D0C6F800507582 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCE618D0C6F800507582 /* LoginViewController.m */; };
+		504ECCED18D3620200507582 /* AWSS3Provider.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCEC18D3620200507582 /* AWSS3Provider.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,6 +113,8 @@
 		504ECCE318D0BEC600507582 /* AmazonSharedPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmazonSharedPreferences.m; sourceTree = "<group>"; };
 		504ECCE518D0C6F800507582 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		504ECCE618D0C6F800507582 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
+		504ECCEB18D3620200507582 /* AWSS3Provider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AWSS3Provider.h; sourceTree = "<group>"; };
+		504ECCEC18D3620200507582 /* AWSS3Provider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AWSS3Provider.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -225,6 +228,8 @@
 				504ECCA918C8F70D00507582 /* STOUtilities.m */,
 				504ECCE218D0BEC600507582 /* AmazonSharedPreferences.h */,
 				504ECCE318D0BEC600507582 /* AmazonSharedPreferences.m */,
+				504ECCEB18D3620200507582 /* AWSS3Provider.h */,
+				504ECCEC18D3620200507582 /* AWSS3Provider.m */,
 			);
 			path = Stori;
 			sourceTree = "<group>";
@@ -305,6 +310,9 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Hyperfine Software";
 				TargetAttributes = {
+					504ECC5A18C245B900507582 = {
+						DevelopmentTeam = 23W92W6TYN;
+					};
 					504ECC7B18C245B900507582 = {
 						TestTargetID = 504ECC5A18C245B900507582;
 					};
@@ -367,6 +375,7 @@
 				504ECCA018C64EEF00507582 /* constants.m in Sources */,
 				504ECC9D18C645FE00507582 /* SlideJSON.m in Sources */,
 				504ECCE718D0C6F800507582 /* LoginViewController.m in Sources */,
+				504ECCED18D3620200507582 /* AWSS3Provider.m in Sources */,
 				504ECCAA18C8F70D00507582 /* STOUtilities.m in Sources */,
 				504ECC9518C24EF000507582 /* HFLogging.m in Sources */,
 				504ECC9818C4F0AE00507582 /* SlideShareJSON.m in Sources */,
@@ -496,6 +505,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/robbear/dev/robbear/slideshare/ios/Stori,
@@ -505,6 +516,7 @@
 				INFOPLIST_FILE = "Stori/Stori-Info.plist";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -514,6 +526,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/robbear/dev/robbear/slideshare/ios/Stori,
@@ -523,6 +537,7 @@
 				INFOPLIST_FILE = "Stori/Stori-Info.plist";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
