@@ -77,77 +77,6 @@ static GTMOAuth2Authentication  *_auth;
     }
 }
 
-#if FB_LOGIN
-#pragma mark - Facebook
-
--(void)reloadFBSession
-{
-    if (!self.session.isOpen) {
-        // create a fresh session object
-        self.session = [[[FBSession alloc] init] autorelease];
-        
-        // if we don't have a cached token, a call to open here would cause UX for login to
-        // occur; we don't want that to happen unless the user clicks the login button, and so
-        // we check here to make sure we have a token before calling open
-        if (self.session.state == FBSessionStateCreatedTokenLoaded) {
-            
-            // even though we had a cached token, we need to login to make the session usable
-            [self.session openWithCompletionHandler:^(FBSession *session,
-                                                      FBSessionState status,
-                                                      NSError *error) {
-                if (error != nil) {
-                    [[Constants errorAlert:[NSString stringWithFormat:@"Error logging in with FB: %@", error.description]] show];
-                }
-            }];
-        }
-    }
-}
-
-
--(void)CompleteFBLogin
-{
-    _wif = [[AmazonWIFCredentialsProvider alloc] initWithRole:FB_ROLE_ARN
-                                          andWebIdentityToken:self.session.accessTokenData.accessToken
-                                                 fromProvider:@"graph.facebook.com"];
-    
-    // if we have an id, we are logged in
-    if (_wif.subjectFromWIF != nil) {
-        HFLogDebug(@"IDP id: %@", _wif.subjectFromWIF);
-        [AmazonKeyChainWrapper storeUsername:_wif.subjectFromWIF];
-        [self initClients];
-    }
-    else {
-        [[Constants errorAlert:@"Unable to assume role, please check logs for error"] show];
-    }
-}
-
--(void)FBLogin
-{
-    // session already open, exit
-    if (self.session.isOpen) {
-        [self CompleteFBLogin];
-        return;
-    }
-    
-    if (self.session.state != FBSessionStateCreated) {
-        // Create a new, logged out session.
-        self.session = [[[FBSession alloc] init] autorelease];
-    }
-    
-    [self.session openWithCompletionHandler:^(FBSession *session,
-                                              FBSessionState status,
-                                              NSError *error) {
-        if (error != nil) {
-            [[Constants errorAlert:[NSString stringWithFormat:@"Error logging in with FB: %@", error.description]] show];
-        }
-        else {
-            [self CompleteFBLogin];
-        }
-    }];
-    
-}
-#endif
-
 #if GOOGLE_LOGIN
 #pragma mark - Google
 - (void)initGPlusLogin
@@ -264,6 +193,79 @@ static GTMOAuth2Authentication  *_auth;
 }
 
 #endif
+
+#if FB_LOGIN
+#pragma mark - Facebook
+
+-(void)reloadFBSession
+{
+    if (!self.session.isOpen) {
+        // create a fresh session object
+        self.session = [[[FBSession alloc] init] autorelease];
+        
+        // if we don't have a cached token, a call to open here would cause UX for login to
+        // occur; we don't want that to happen unless the user clicks the login button, and so
+        // we check here to make sure we have a token before calling open
+        if (self.session.state == FBSessionStateCreatedTokenLoaded) {
+            
+            // even though we had a cached token, we need to login to make the session usable
+            [self.session openWithCompletionHandler:^(FBSession *session,
+                                                      FBSessionState status,
+                                                      NSError *error) {
+                if (error != nil) {
+                    [[Constants errorAlert:[NSString stringWithFormat:@"Error logging in with FB: %@", error.description]] show];
+                }
+            }];
+        }
+    }
+}
+
+
+-(void)CompleteFBLogin
+{
+    _wif = [[AmazonWIFCredentialsProvider alloc] initWithRole:FB_ROLE_ARN
+                                          andWebIdentityToken:self.session.accessTokenData.accessToken
+                                                 fromProvider:@"graph.facebook.com"];
+    
+    // if we have an id, we are logged in
+    if (_wif.subjectFromWIF != nil) {
+        HFLogDebug(@"IDP id: %@", _wif.subjectFromWIF);
+        [AmazonKeyChainWrapper storeUsername:_wif.subjectFromWIF];
+        [self initClients];
+    }
+    else {
+        [[Constants errorAlert:@"Unable to assume role, please check logs for error"] show];
+    }
+}
+
+-(void)FBLogin
+{
+    // session already open, exit
+    if (self.session.isOpen) {
+        [self CompleteFBLogin];
+        return;
+    }
+    
+    if (self.session.state != FBSessionStateCreated) {
+        // Create a new, logged out session.
+        self.session = [[[FBSession alloc] init] autorelease];
+    }
+    
+    [self.session openWithCompletionHandler:^(FBSession *session,
+                                              FBSessionState status,
+                                              NSError *error) {
+        if (error != nil) {
+            [[Constants errorAlert:[NSString stringWithFormat:@"Error logging in with FB: %@", error.description]] show];
+        }
+        else {
+            [self CompleteFBLogin];
+        }
+    }];
+    
+}
+#endif
+
+
 
 #if AMZN_LOGIN
 #pragma mark - Login With Amazon
