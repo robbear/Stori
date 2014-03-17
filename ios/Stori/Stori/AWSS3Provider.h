@@ -12,11 +12,11 @@
 typedef void (^AWSS3ProviderBlockType)(void);
 @protocol AWSS3ProviderDelegate;
 
-@interface AWSS3Provider : NSObject <AmazonClientManagerGoogleAccountDelegate>
+@interface AWSS3Provider : NSObject <AmazonClientManagerGoogleAccountDelegate, AmazonServiceRequestDelegate>
 
 - (void)initializeProvider:(NSString *)userUuid withDelegate:(id<AWSS3ProviderDelegate>)delgate;
 - (void)getStoriItemsAsync;
-+ (NSArray *)getStoriItems:(NSString *)userUuid;
+- (void)onGetStoriItemsComplete:(AmazonServiceRequest *)request withResponse:(AmazonServiceResponse *)response withException:(NSException *)exception;
 - (BOOL)deleteVirtualDirectory:(NSString *)directoryName;
 - (void)uploadFile:(NSString *)folder withFileName:(NSString *)fileName withType:(NSString *)contentType;
 - (void)uploadDirectoryEntry:(NSString *)folder withTitle:(NSString *)title withCount:(int)count;

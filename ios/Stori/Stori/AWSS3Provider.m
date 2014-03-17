@@ -41,33 +41,40 @@ NSString *_userUuid;
 
 - (void)getStoriItemsAsync {
     HFLogDebug(@"AWSS3Provider.getStoriItemsAsync");
-
-    id<AWSS3ProviderDelegate> delegate = self.awsS3ProviderDelegate;
+    
+    id<AmazonServiceRequestDelegate> amazonServiceRequestDelegate = self;
+    NSString *userUuid = _userUuid;
     [self setAwsS3ProviderBlock:^{
-        NSArray *arrayItems = [AWSS3Provider getStoriItems:_userUuid];
-
-        if ([delegate respondsToSelector:@selector(getStoriItemsComplete:)]) {
-            [delegate getStoriItemsComplete:arrayItems];
+        HFLogDebug(@"AWSS3Provider.getStoriItemsBlock");
+        
+        S3ListObjectsRequest *request = [[S3ListObjectsRequest alloc] initWithName:@"hfstori"];
+        request.prefix = [NSString stringWithFormat:@"%@/", userUuid];
+        request.delegate = amazonServiceRequestDelegate;
+        request.requestTag = @"getStoriItemsAsync";
+        
+        @try {
+            [[[AmazonClientManager sharedInstance] s3] listObjects:request];
+        }
+        @catch (AmazonClientException *exception) {
+            HFLogDebug(@"Exception = %@", exception);
+            [[Constants errorAlert:[NSString stringWithFormat:@"Error list objects: %@", exception.message]] show];
+            
+            // TODO: handle error correctly
         }
     }];
     
     [self silentLogin];
 }
 
-+ (NSArray *)getStoriItems:(NSString *)userUuid {
-    HFLogDebug(@"AWSS3Provider.getStoriItems");
+- (void)onGetStoriItemsComplete:(AmazonServiceRequest *)request withResponse:(AmazonServiceResponse *)response withException:(NSException *)exception {
+    HFLogDebug(@"AWSS3Provider.onGetStoriItemsComplete");
     
-    NSArray *returnObjects = nil;
-    
-    @try {
-        S3ListObjectsRequest  *listObjectRequest = [[S3ListObjectsRequest alloc] initWithName:@"hfstori"];
-        listObjectRequest.prefix = [NSString stringWithFormat:@"%@/", userUuid];
-        
-        S3ListObjectsResponse *listObjectResponse = [[[AmazonClientManager sharedInstance] s3] listObjects:listObjectRequest];
+    NSMutableArray *objects;
+
+    if (!exception) {
+        S3ListObjectsResponse *listObjectResponse = (S3ListObjectsResponse *)response;
         S3ListObjectsResult   *listObjectsResults = listObjectResponse.listObjectsResult;
-        
-        NSMutableArray *objects;
-        
+    
         if (objects == nil) {
             objects = [[NSMutableArray alloc] initWithCapacity:[listObjectsResults.objectSummaries count]];
         }
@@ -78,18 +85,16 @@ NSString *_userUuid;
             [objects addObject:[objectSummary key]];
         }
         [objects sortUsingSelector:@selector(compare:)];
-        
-        returnObjects = objects;
-        
-        HFLogDebug(@"AWSS3Provider.getStoriItems - found %d S3 objects under %@", [returnObjects count], userUuid);
     }
-    @catch (AmazonClientException *exception)
-    {
-        HFLogDebug(@"Exception = %@", exception);
-        [[Constants errorAlert:[NSString stringWithFormat:@"Error list objects: %@", exception.message]] show];
+    else {
+        HFLogDebug(@"AWSS3Provider.onGetStoriItemsComplete: exception=%@", exception.debugDescription);
     }
 
-    return returnObjects;
+    HFLogDebug(@"AWSS3Provider.onGetStoriItemsComplete - found %d S3 objects under %@", [objects count], _userUuid);
+
+    if ([self.awsS3ProviderDelegate respondsToSelector:@selector(getStoriItemsComplete:)]) {
+        [self.awsS3ProviderDelegate getStoriItemsComplete:objects];
+    }
 }
 
 - (BOOL)deleteVirtualDirectory:(NSString *)directoryName {
@@ -115,4 +120,30 @@ NSString *_userUuid;
 - (void)googleDisconnectComplete:(BOOL)success {
     HFLogDebug(@"AWSS3Provider.googleDisconnectComplete: success=%d", success);
 }
+
+//
+// AmazonRequestService delegate calls
+//
+- (void)request:(AmazonServiceRequest *)request didCompleteWithResponse:(AmazonServiceResponse *)response {
+    HFLogDebug(@"AWSS3Provider.request:didCompleteWithResponse");
+
+    if ([request.requestTag isEqualToString:@"getStoriItemsAsync"]) {
+        [self onGetStoriItemsComplete:request withResponse:response withException:nil];
+    }
+    else {
+        HFLogDebug(@"AWSS3Provider.request:DidCompleteWithResponse - no matching request found");
+    }
+}
+
+- (void)request:(AmazonServiceRequest *)request didFailWithServiceException:(NSException *)exception {
+    HFLogDebug(@"AWSS3Provider.request:didFailWithServiceException: %@", exception);
+
+    if ([request.requestTag isEqualToString:@"getStoriItemsAsync"]) {
+        [self onGetStoriItemsComplete:request withResponse:nil withException:exception];
+    }
+    else {
+        HFLogDebug(@"AWSS3Provider.request:DidCompleteWithResponse - no matching request found");
+    }
+}
+
 @end
