@@ -9,12 +9,26 @@
 #import <Foundation/Foundation.h>
 #import "AmazonClientManager.h"
 
+typedef void (^AWSS3ProviderBlockType)(void);
+@protocol AWSS3ProviderDelegate;
+
 @interface AWSS3Provider : NSObject <AmazonClientManagerGoogleAccountDelegate>
 
-- (void)initializeProvider:(NSString *)userUuid;
-- (NSArray *)getStoriItems;
+- (void)initializeProvider:(NSString *)userUuid withDelegate:(id<AWSS3ProviderDelegate>)delgate;
+- (void)getStoriItemsAsync;
++ (NSArray *)getStoriItems:(NSString *)userUuid;
 - (BOOL)deleteVirtualDirectory:(NSString *)directoryName;
 - (void)uploadFile:(NSString *)folder withFileName:(NSString *)fileName withType:(NSString *)contentType;
 - (void)uploadDirectoryEntry:(NSString *)folder withTitle:(NSString *)title withCount:(int)count;
+
+@property (nonatomic, copy) AWSS3ProviderBlockType awsS3ProviderBlock;
+@property (nonatomic, weak) id<AWSS3ProviderDelegate> awsS3ProviderDelegate;
+-(void)executeAWSS3ProviderBlock;
+
+@end
+
+@protocol AWSS3ProviderDelegate <NSObject>
+
+- (void)getStoriItemsComplete:(NSArray *)arrayItems;
 
 @end

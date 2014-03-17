@@ -12,38 +12,56 @@
 
 NSString *_userUuid;
 
-- (void)initializeProvider:(NSString *)userUuid {
+- (void)silentLogin {
+    HFLogDebug(@"AWSS3Provider.silentLogin");
+    
+    [AmazonClientManager sharedInstance].amazonClientManagerGoogleAccountDelegate = self;
+    if (![[AmazonClientManager sharedInstance] silentGPlusLogin]) {
+        HFLogDebug(@"AWSS3Provider.slientLogin silentGPlusLogin failed");
+        [self googleSignInComplete:FALSE];
+    }
+}
+
+-(void)executeAWSS3ProviderBlock {
+    HFLogDebug(@"AWSS3Provider.executeAWSS3ProviderBlock");
+    
+    if ([self awsS3ProviderBlock]) {
+        HFLogDebug(@"AWSS3Provider.executeAWSS3ProviderBlock - executing");
+        [self awsS3ProviderBlock]();
+        self.awsS3ProviderBlock = nil;
+    }
+}
+
+- (void)initializeProvider:(NSString *)userUuid withDelegate:(id<AWSS3ProviderDelegate>)delgate {
     HFLogDebug(@"AWSS3Provider.initializeProvider: userUuid=%@", userUuid);
     
     _userUuid = userUuid;
-
-#if NEVER
-    GPPSignIn *signIn = [GPPSignIn sharedInstance];
-    signIn.shouldFetchGooglePlusUser = YES;
-    signIn.shouldFetchGoogleUserEmail = YES;
-    signIn.shouldFetchGoogleUserID = YES;
-    signIn.clientID = GOOGLE_CLIENT_ID;
-    signIn.scopes = @[kGTLAuthScopePlusLogin];
-    
-    [signIn trySilentAuthentication];
-    
-    GTMOAuth2Authentication *auth = [signIn authentication];
-    
-    if (!auth) {
-        HFLogDebug(@"AWSS3Provider.initializeProvider - no authentication object!! Bailing.");
-        return;
-    }
-    
-    [[AmazonClientManager sharedInstance] finishedWithAuth:auth error:nil];
-#endif
+    self.awsS3ProviderDelegate = delgate;
 }
 
-- (NSArray *)getStoriItems {
+- (void)getStoriItemsAsync {
+    HFLogDebug(@"AWSS3Provider.getStoriItemsAsync");
+
+    id<AWSS3ProviderDelegate> delegate = self.awsS3ProviderDelegate;
+    [self setAwsS3ProviderBlock:^{
+        NSArray *arrayItems = [AWSS3Provider getStoriItems:_userUuid];
+
+        if ([delegate respondsToSelector:@selector(getStoriItemsComplete:)]) {
+            [delegate getStoriItemsComplete:arrayItems];
+        }
+    }];
+    
+    [self silentLogin];
+}
+
++ (NSArray *)getStoriItems:(NSString *)userUuid {
     HFLogDebug(@"AWSS3Provider.getStoriItems");
+    
+    NSArray *returnObjects = nil;
     
     @try {
         S3ListObjectsRequest  *listObjectRequest = [[S3ListObjectsRequest alloc] initWithName:@"hfstori"];
-        listObjectRequest.prefix = [NSString stringWithFormat:@"%@/", _userUuid];
+        listObjectRequest.prefix = [NSString stringWithFormat:@"%@/", userUuid];
         
         S3ListObjectsResponse *listObjectResponse = [[[AmazonClientManager sharedInstance] s3] listObjects:listObjectRequest];
         S3ListObjectsResult   *listObjectsResults = listObjectResponse.listObjectsResult;
@@ -61,7 +79,9 @@ NSString *_userUuid;
         }
         [objects sortUsingSelector:@selector(compare:)];
         
-        HFLogDebug(@"AWSS3Provider.getStoriItems - found %d S3 objects under %@", [objects count], _userUuid);
+        returnObjects = objects;
+        
+        HFLogDebug(@"AWSS3Provider.getStoriItems - found %d S3 objects under %@", [returnObjects count], userUuid);
     }
     @catch (AmazonClientException *exception)
     {
@@ -69,7 +89,7 @@ NSString *_userUuid;
         [[Constants errorAlert:[NSString stringWithFormat:@"Error list objects: %@", exception.message]] show];
     }
 
-    return nil;
+    return returnObjects;
 }
 
 - (BOOL)deleteVirtualDirectory:(NSString *)directoryName {
@@ -89,7 +109,8 @@ NSString *_userUuid;
 - (void)googleSignInComplete:(BOOL)success {
     HFLogDebug(@"AWSS3Provider.googleSignInComplete: success=%d", success);
     
-}
+    [self executeAWSS3ProviderBlock];
+ }
 
 - (void)googleDisconnectComplete:(BOOL)success {
     HFLogDebug(@"AWSS3Provider.googleDisconnectComplete: success=%d", success);

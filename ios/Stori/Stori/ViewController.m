@@ -8,7 +8,6 @@
 
 #import "ViewController.h"
 #import "AmazonSharedPreferences.h"
-#import "AWSS3Provider.h"
 
 @interface ViewController ()
 
@@ -50,36 +49,6 @@ bool _needsAuthentication = TRUE;
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-#if NEVER
-- (void)initiateGoogleLogin {
-    HFLogDebug(@"ViewController.initiateGoogleLogin");
-    
-    GPPSignIn *signIn = [GPPSignIn sharedInstance];
-    signIn.shouldFetchGooglePlusUser = YES;
-    signIn.shouldFetchGoogleUserEmail = YES;
-    signIn.shouldFetchGoogleUserID = YES;
-    
-    signIn.clientID = GOOGLE_CLIENT_ID;
-    
-    signIn.scopes = @[kGTLAuthScopePlusLogin];
-    
-    signIn.delegate = self;
-    
-    [signIn trySilentAuthentication];
-}
-
-- (void)finishedWithAuth:(GTMOAuth2Authentication *)auth error:(NSError *)error {
-    HFLogDebug(@"ViewController.finishedWithAuth: auth=%@, error=%@", auth, error);
-    
-    if (error) {
-        // TODO: error handling
-    }
-    else {
-        [self refreshInterface];
-    }
-}
-#endif
 
 - (void)refreshInterface {
     HFLogDebug(@"ViewController.refreshInterface");
@@ -138,12 +107,23 @@ bool _needsAuthentication = TRUE;
     [self refreshInterface];
 }
 
+- (void)getStoriItemsComplete:(NSArray *)arrayItems {
+    HFLogDebug(@"ViewController.getStoriItemsComplete - found %d S3 objects", [arrayItems count]);
+    
+    // Release the provider
+    self.awsS3Provider = nil;
+}
+
 - (IBAction)onTestS3ButtonClicked:(id)sender {
     HFLogDebug(@"ViewController.onTestS3ButtonClicked");
     
-    AWSS3Provider *provider = [[AWSS3Provider alloc] init];
-    [provider initializeProvider:[AmazonSharedPreferences userName]];
-    [provider getStoriItems];
+    if (self.awsS3Provider) {
+        HFLogDebug(@"ViewController.onTestS3ButtonClicked - ***** self.awsS3Provider is not nil *****");
+    }
+    
+    self.awsS3Provider = [[AWSS3Provider alloc] init];
+    [self.awsS3Provider initializeProvider:[AmazonSharedPreferences userName] withDelegate:self];
+    [self.awsS3Provider getStoriItemsAsync];
 }
 
 @end
