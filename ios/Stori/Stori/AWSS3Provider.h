@@ -16,7 +16,7 @@ typedef void (^AWSS3ProviderBlockType)(void);
 
 - (void)initializeProvider:(NSString *)userUuid withDelegate:(id<AWSS3ProviderDelegate>)delgate;
 - (void)getStoriItemsAsync;
-- (BOOL)deleteVirtualDirectory:(NSString *)directoryName;
+- (void)deleteVirtualDirectoryAsync:(NSString *)directoryName;
 - (void)uploadFile:(NSString *)folder withFileName:(NSString *)fileName withType:(NSString *)contentType;
 - (void)uploadDirectoryEntry:(NSString *)folder withTitle:(NSString *)title withCount:(int)count;
 
@@ -29,5 +29,6 @@ typedef void (^AWSS3ProviderBlockType)(void);
 @protocol AWSS3ProviderDelegate <NSObject>
 
 - (void)getStoriItemsComplete:(NSArray *)arrayItems;
+- (void)deleteVirtualDirectoryComplete;
 
 @end

@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "AmazonSharedPreferences.h"
+#import "StoriListItem.h"
 
 @interface ViewController ()
 
@@ -110,8 +111,16 @@ bool _needsAuthentication = TRUE;
 - (void)getStoriItemsComplete:(NSArray *)arrayItems {
     HFLogDebug(@"ViewController.getStoriItemsComplete - found %d S3 objects", [arrayItems count]);
     
+    for (StoriListItem *sli in arrayItems) {
+        HFLogDebug(@"***\nslideShareName=%@\ntitle=%@\nmodifiedDate=%@\ncountSlides=%d\n\n", sli.slideShareName, sli.title, sli.modifiedDate, sli.countSlides);
+    }
+    
     // Release the provider
     self.awsS3Provider = nil;
+}
+
+- (void)deleteVirtualDirectoryComplete {
+    HFLogDebug(@"ViewController.deleteVirtualDirectoryComplete");
 }
 
 - (IBAction)onTestS3ButtonClicked:(id)sender {

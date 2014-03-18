@@ -36,6 +36,10 @@ extern NSString *const PREFS_PLAYSLIDESAUTOAUDIO;
 
 extern NSString *const AMAZONSHAREDPREFERENCES_USERNAME;
 extern NSString *const AMAZONSHAREDPREFERENCES_USEREMAIL;
+extern NSString *const BASE_AWS_STORAGE_URL;
+extern NSString *const DIRECTORY_ENTRY_SEGMENT_STRING;
+extern NSString *const TITLE_SEGMENT_STRING;
+extern NSString *const SLIDE_COUNT_SEGMENT_STRING;
 
 /**
  * The Amazon S3 Bucket in your account to use for this application.
@@ -133,5 +137,7 @@ extern NSString *const AMAZONSHAREDPREFERENCES_USEREMAIL;
 +(UIAlertView *)credentialsAlert;
 +(UIAlertView *)errorAlert:(NSString *)message;
 +(UIAlertView *)expiredCredentialsAlert;
+
++(NSString *)baseAWSStorageURL;
 
 @end

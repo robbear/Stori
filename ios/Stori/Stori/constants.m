@@ -34,9 +34,12 @@ NSString *const PREFS_PLAYSLIDESAUTOAUDIO = @"prefs_playslidesautoaudio";
 //
 NSString *const AMAZONSHAREDPREFERENCES_USERNAME = @"amazonsharedpreferences_username";
 NSString *const AMAZONSHAREDPREFERENCES_USEREMAIL = @"amazonsharedpreferences_useremail";
+NSString *const DIRECTORY_ENTRY_SEGMENT_STRING = @"manifests/";
+NSString *const TITLE_SEGMENT_STRING = @"title/";
+NSString *const SLIDE_COUNT_SEGMENT_STRING = @"count/";
+
 
 @implementation Constants
-
 
 +(UIAlertView *)credentialsAlert
 {
@@ -51,6 +54,10 @@ NSString *const AMAZONSHAREDPREFERENCES_USEREMAIL = @"amazonsharedpreferences_us
 +(UIAlertView *)expiredCredentialsAlert
 {
     return [[UIAlertView alloc] initWithTitle:@"AWS Credentials" message:@"Credentials Expired, retry your request." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+}
+
++ (NSString *)baseAWSStorageURL {
+    return [NSString stringWithFormat:@"https://s3-us-west-2.amazonaws.com/%@/", BUCKET_NAME];
 }
 
 @end
