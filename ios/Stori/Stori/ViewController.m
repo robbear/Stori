@@ -111,16 +111,33 @@ bool _needsAuthentication = TRUE;
 - (void)getStoriItemsComplete:(NSArray *)arrayItems {
     HFLogDebug(@"ViewController.getStoriItemsComplete - found %d S3 objects", [arrayItems count]);
     
+    NSString *slideShareName = nil;
+    
     for (StoriListItem *sli in arrayItems) {
         HFLogDebug(@"***\nslideShareName=%@\ntitle=%@\nmodifiedDate=%@\ncountSlides=%d\n\n", sli.slideShareName, sli.title, sli.modifiedDate, sli.countSlides);
+        
+        if ([sli.title isEqualToString:@"Delete this test"]) {
+            slideShareName = sli.slideShareName;
+        }
     }
     
     // Release the provider
     self.awsS3Provider = nil;
+    
+    // BUGBUG - test delete virtual directory
+    if (slideShareName) {
+        HFLogDebug(@"**** Found slideShareName to delete. Now test deleteVirtualDirectory");
+        
+        self.awsS3Provider = [[AWSS3Provider alloc] init];
+        [self.awsS3Provider initializeProvider:[AmazonSharedPreferences userName] withDelegate:self];
+        [self.awsS3Provider deleteVirtualDirectoryAsync:slideShareName];
+    }
 }
 
 - (void)deleteVirtualDirectoryComplete {
     HFLogDebug(@"ViewController.deleteVirtualDirectoryComplete");
+    
+    self.awsS3Provider = nil;
 }
 
 - (IBAction)onTestS3ButtonClicked:(id)sender {

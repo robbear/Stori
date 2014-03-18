@@ -140,9 +140,6 @@ NSString *_userUuid;
     return [partial substringWithRange:range];
 }
 
-//
-// BUGBUG: TODO: Not yet tested
-//
 - (void)deleteVirtualDirectoryAsync:(NSString *)directoryName {
     HFLogDebug(@"AWSS3Provider.deleteVirtualDirectory: directoryName=%@", directoryName);
     
