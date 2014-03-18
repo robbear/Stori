@@ -8,6 +8,10 @@
 
 #import "AWSS3Provider.h"
 
+@interface AWSS3Provider()
+- (void)onGetStoriItemsComplete:(AmazonServiceRequest *)request withResponse:(AmazonServiceResponse *)response withException:(NSException *)exception;
+@end
+
 @implementation AWSS3Provider
 
 NSString *_userUuid;

@@ -16,7 +16,6 @@ typedef void (^AWSS3ProviderBlockType)(void);
 
 - (void)initializeProvider:(NSString *)userUuid withDelegate:(id<AWSS3ProviderDelegate>)delgate;
 - (void)getStoriItemsAsync;
-- (void)onGetStoriItemsComplete:(AmazonServiceRequest *)request withResponse:(AmazonServiceResponse *)response withException:(NSException *)exception;
 - (BOOL)deleteVirtualDirectory:(NSString *)directoryName;
 - (void)uploadFile:(NSString *)folder withFileName:(NSString *)fileName withType:(NSString *)contentType;
 - (void)uploadDirectoryEntry:(NSString *)folder withTitle:(NSString *)title withCount:(int)count;
