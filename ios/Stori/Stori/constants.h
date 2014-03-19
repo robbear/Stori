@@ -28,6 +28,7 @@ extern NSString *const PREFS_EDITPLAYNAME;
 extern NSString *const PREFS_PLAYSLIDESNAME;
 extern NSString *const PREFS_PLAYSLIDESAUTOAUDIO;
 
+extern NSString *const SLIDESHARE_JSON_FILENAME;
 
 
 //

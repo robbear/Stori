@@ -11,5 +11,6 @@
 @interface NSString (STONSString)
 
 - (NSString *)urlDecode;
+- (NSString *)urlEncode;
 
 @end

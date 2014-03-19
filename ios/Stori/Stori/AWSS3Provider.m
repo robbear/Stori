@@ -8,10 +8,15 @@
 
 #import "AWSS3Provider.h"
 #import "StoriListItem.h"
+#import "STOUtilities.h"
+#import "SlideShareJSON.h"
 
 @interface AWSS3Provider()
 - (void)onGetStoriItemsComplete:(AmazonServiceRequest *)request withResponse:(AmazonServiceResponse *)response withException:(NSException *)exception;
 - (NSString *)getStringSegmentFromManifestUrlString:(NSString *)urlString withSegment:(NSString *)segment;
++ (void)deleteVirtualDirectoryHelper:(NSString *)userUuid withFolder:(NSString *)directoryName;
++ (void)uploadFile:(NSString *)userUuid withFolder:(NSString *)folder withFileName:(NSString *)fileName withContentType:(NSString *)contentType;
++ (void)uploadDirectoryEntry:(NSString *)userUuid withFolder:(NSString *)slideShareName withTitle:(NSString *)title withCount:(int)count;
 @end
 
 @implementation AWSS3Provider
@@ -140,6 +145,46 @@ NSString *_userUuid;
     return [partial substringWithRange:range];
 }
 
++ (void)deleteVirtualDirectoryHelper:(NSString *)userUuid withFolder:(NSString *)directoryName {
+    HFLogDebug(@"AWSS3Provider.deleteVirtualDirectoryHelper: userUuid=%@, directoryName=%@", userUuid, directoryName);
+    
+    @try {
+        NSString *prefix = [NSString stringWithFormat:@"%@/%@", userUuid, directoryName];
+        
+        S3ListObjectsRequest *request = [[S3ListObjectsRequest alloc] initWithName:BUCKET_NAME];
+        request.prefix = prefix;
+        
+        S3ListObjectsResponse *response = [[[AmazonClientManager sharedInstance] s3] listObjects:request];
+        S3ListObjectsResult *results = response.listObjectsResult;
+        
+        for (S3ObjectSummary *summary in results.objectSummaries) {
+            [[[AmazonClientManager sharedInstance] s3] deleteObjectWithKey:summary.key withBucket:BUCKET_NAME];
+        }
+        
+        //
+        // Delete the directory entry
+        //
+        
+        prefix = nil;
+        request = nil;
+        response = nil;
+        results = nil;
+        prefix = [NSString stringWithFormat:@"%@/%@%@", userUuid, DIRECTORY_ENTRY_SEGMENT_STRING, directoryName];
+        request = [[S3ListObjectsRequest alloc] initWithName:BUCKET_NAME];
+        request.prefix = prefix;
+        
+        response = [[[AmazonClientManager sharedInstance] s3] listObjects:request];
+        results = response.listObjectsResult;
+        
+        for (S3ObjectSummary *summary in results.objectSummaries) {
+            [[[AmazonClientManager sharedInstance] s3] deleteObjectWithKey:summary.key withBucket:BUCKET_NAME];
+        }
+    }
+    @catch (AmazonClientException *exception) {
+        HFLogDebug(@"AWSS3Provider.deleteVirtualDirectoryHelper: exception = %@", exception);
+    }
+}
+
 - (void)deleteVirtualDirectoryAsync:(NSString *)directoryName {
     HFLogDebug(@"AWSS3Provider.deleteVirtualDirectory: directoryName=%@", directoryName);
     
@@ -148,42 +193,7 @@ NSString *_userUuid;
     
     [self setAwsS3ProviderBlock:^{
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-            //Background Thread
-            @try {
-                NSString *prefix = [NSString stringWithFormat:@"%@/%@", userUuid, directoryName];
-
-                S3ListObjectsRequest *request = [[S3ListObjectsRequest alloc] initWithName:BUCKET_NAME];
-                request.prefix = prefix;
-                
-                S3ListObjectsResponse *response = [[[AmazonClientManager sharedInstance] s3] listObjects:request];
-                S3ListObjectsResult *results = response.listObjectsResult;
-                
-                for (S3ObjectSummary *summary in results.objectSummaries) {
-                    [[[AmazonClientManager sharedInstance] s3] deleteObjectWithKey:summary.key withBucket:BUCKET_NAME];
-                }
-                
-                //
-                // Delete the directory entry
-                //
-                
-                prefix = nil;
-                request = nil;
-                response = nil;
-                results = nil;
-                prefix = [NSString stringWithFormat:@"%@/%@%@", userUuid, DIRECTORY_ENTRY_SEGMENT_STRING, directoryName];
-                request = [[S3ListObjectsRequest alloc] initWithName:BUCKET_NAME];
-                request.prefix = prefix;
-                
-                response = [[[AmazonClientManager sharedInstance] s3] listObjects:request];
-                results = response.listObjectsResult;
-                
-                for (S3ObjectSummary *summary in results.objectSummaries) {
-                    [[[AmazonClientManager sharedInstance] s3] deleteObjectWithKey:summary.key withBucket:BUCKET_NAME];
-                }
-            }
-            @catch (AmazonClientException *exception) {
-                HFLogDebug(@"AWSS3Provider.deleteVirtualDirectory: exception = %@", exception);
-            }
+            [AWSS3Provider deleteVirtualDirectoryHelper:userUuid withFolder:directoryName];
             
             dispatch_async(dispatch_get_main_queue(), ^(void){
                 if ([awsS3ProviderDelegate respondsToSelector:@selector(deleteVirtualDirectoryComplete)]) {
@@ -196,12 +206,97 @@ NSString *_userUuid;
     [self silentLogin];
 }
 
-- (void)uploadFile:(NSString *)folder withFileName:(NSString *)fileName withType:(NSString *)contentType {
-    HFLogDebug(@"AWSS3Provider.uploadFile: folder=%@, fileName=%@, contentType=%@", folder, fileName, contentType);
+//
+// BUGBUG - Not yet tested
+//
++ (void)uploadDirectoryEntry:(NSString *)userUuid withFolder:(NSString *)folder withTitle:(NSString *)title withCount:(int)count {
+    HFLogDebug(@"AWSS3Provider.uploadDirectoryEntry");
+
+    NSString *encodedTitle = [title urlEncode];
+    NSString *relPath = [NSString stringWithFormat:@"%@/%@%@/%@%@/%@%d", userUuid, DIRECTORY_ENTRY_SEGMENT_STRING, folder, TITLE_SEGMENT_STRING, encodedTitle, SLIDE_COUNT_SEGMENT_STRING, count];
+    
+    HFLogDebug(@"AWSS3Provider.uploadDirectoryEntry: relPath=%@", relPath);
+    
+    unsigned char buffer[1];
+    NSData *data = [NSData dataWithBytes:buffer length:1];
+
+    S3PutObjectRequest *por = [[S3PutObjectRequest alloc] initWithKey:relPath inBucket:BUCKET_NAME];
+    [por setCacheControl:@"If-None-Match"];
+    [por setContentType:@"application/octet-stream"];
+    [por setData:data];
+    
+    S3PutObjectResponse *response = [[[AmazonClientManager sharedInstance] s3] putObject:por];
+    HFLogDebug(@"AWSS3Provider.uploadDirectoryEntry: response=%@", response);
 }
 
-- (void)uploadDirectoryEntry:(NSString *)folder withTitle:(NSString *)title withCount:(int)count {
-    HFLogDebug(@"AWSS3Provider.uploadDirectoryEntry: folder=%@, title=%@", folder, title);
+//
+// BUGBUG - Not yet tested
+//
++ (void)uploadFile:(NSString *)userUuid withFolder:(NSString *)folder withFileName:(NSString *)fileName withContentType:(NSString *)contentType {
+    HFLogDebug(@"AWSS3Provider.uploadFile: userUuid=%@, folder=%@, fileName=%@, contentType=%@", userUuid, folder, fileName, contentType);
+
+    NSString *relPath = [NSString stringWithFormat:@"%@/%@/%@", userUuid, folder, fileName];
+    NSURL *fileURL = [STOUtilities getAbsoluteFilePathWithFolder:folder withFileName:fileName];
+    NSString *filePath = [fileURL path];
+    
+    S3PutObjectRequest *por = [[S3PutObjectRequest alloc] initWithKey:relPath inBucket:BUCKET_NAME];
+    [por setCacheControl:@"If-None-Match"];
+    [por setContentType:contentType];
+    [por setFilename:filePath];
+    
+    S3PutObjectResponse *response = [[[AmazonClientManager sharedInstance] s3] putObject:por];
+    HFLogDebug(@"AWSS3Provider.uploadFile: response=%@", response);
+}
+
+//
+// BUGBUG - Not yet tested
+//
+- (void)uploadAsync:(NSString *)folder {
+    HFLogDebug(@"AWSS3Provider.uploadAsync: folder=%@", folder);
+    
+    NSString *userUuid = _userUuid;
+    id<AWSS3ProviderDelegate> awsS3ProviderDelegate = self.awsS3ProviderDelegate;
+    
+    [self setAwsS3ProviderBlock:^{
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+            BOOL success = FALSE;
+            SlideShareJSON *ssj = [SlideShareJSON loadFromFolder:folder withFileName:SLIDESHARE_JSON_FILENAME];
+            
+            if (ssj) {
+                NSArray *imageFileNames = [ssj getImageFileNames];
+                NSArray *audioFileNames = [ssj getAudioFileNames];
+                NSString *title = [ssj getTitle];
+                int count = [ssj getSlideCount];
+                
+                [AWSS3Provider deleteVirtualDirectoryHelper:userUuid withFolder:folder];
+
+                @try {
+                    for (NSString *fileName in imageFileNames) {
+                        [AWSS3Provider uploadFile:userUuid withFolder:folder withFileName:fileName withContentType:@"image/jpeg"];
+                    }
+                    for (NSString *fileName in audioFileNames) {
+                        [AWSS3Provider uploadFile:userUuid withFolder:folder withFileName:fileName withContentType:@"audio/mp4"];
+                    }
+                    
+                    [AWSS3Provider uploadFile:userUuid withFolder:folder withFileName:SLIDESHARE_JSON_FILENAME withContentType:@"application/json"];
+                    [AWSS3Provider uploadDirectoryEntry:userUuid withFolder:folder withTitle:title withCount:count];
+                    
+                    success = TRUE;
+                }
+                @catch (AmazonClientException *exception) {
+                    HFLogDebug(@"AWSS3Provider.uploadFilesAsync: exception = %@", exception);
+                }
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^(void){
+                if ([awsS3ProviderDelegate respondsToSelector:@selector(uploadComplete:)]) {
+                    [awsS3ProviderDelegate uploadComplete:success];
+                }
+            });
+        });
+    }];
+    
+    [self silentLogin];
 }
 
 - (void)googleSignInComplete:(BOOL)success {

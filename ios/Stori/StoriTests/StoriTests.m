@@ -279,4 +279,38 @@ SlideShareJSON *_ssj;
     [STOUtilities deleteSlideShareDirectory:folder];
 }
 
+- (void)testUrlEncoding {
+    NSString *test = @"This is a test";
+    NSString *encoded = [test urlEncode];
+    NSString *decoded = [encoded urlDecode];
+    
+    if (![test isEqualToString:decoded]) {
+        XCTFail(@"Not equal:\n%@\n%@\n", test, decoded);
+    }
+    
+    test = @"backslash: \\, quote: \", braces: {}, star: *";
+    encoded = [test urlEncode];
+    decoded = [encoded urlDecode];
+    
+    if (![test isEqualToString:decoded]) {
+        XCTFail(@"Not equal:\n%@\n%@\n", test, decoded);
+    }
+    
+    test = @"<script>alert(\"Warning!!\");</script>";
+    encoded = [test urlEncode];
+    decoded = [encoded urlDecode];
+    
+    if (![test isEqualToString:decoded]) {
+        XCTFail(@"Not equal:\n%@\n%@\n", test, decoded);
+    }
+
+    test = @"1 + 1 = 2";
+    encoded = [test urlEncode];
+    decoded = [encoded urlDecode];
+    
+    if (![test isEqualToString:decoded]) {
+        XCTFail(@"Not equal:\n%@\n%@\n", test, decoded);
+    }
+}
+
 @end

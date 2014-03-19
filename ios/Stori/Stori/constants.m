@@ -28,6 +28,7 @@ NSString *const PREFS_EDITPLAYNAME = @"prefs_editplayname";
 NSString *const PREFS_PLAYSLIDESNAME = @"prefs_playslidesname";
 NSString *const PREFS_PLAYSLIDESAUTOAUDIO = @"prefs_playslidesautoaudio";
 
+NSString *const SLIDESHARE_JSON_FILENAME = @"stori.json";
 
 //
 // AWS SDK constants

@@ -140,6 +140,10 @@ bool _needsAuthentication = TRUE;
     self.awsS3Provider = nil;
 }
 
+- (void)uploadComplete:(BOOL)success {
+    HFLogDebug(@"ViewController.uploadComplete: success=%d", success);
+}
+
 - (IBAction)onTestS3ButtonClicked:(id)sender {
     HFLogDebug(@"ViewController.onTestS3ButtonClicked");
     

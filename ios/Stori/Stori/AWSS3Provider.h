@@ -17,8 +17,7 @@ typedef void (^AWSS3ProviderBlockType)(void);
 - (void)initializeProvider:(NSString *)userUuid withDelegate:(id<AWSS3ProviderDelegate>)delgate;
 - (void)getStoriItemsAsync;
 - (void)deleteVirtualDirectoryAsync:(NSString *)directoryName;
-- (void)uploadFile:(NSString *)folder withFileName:(NSString *)fileName withType:(NSString *)contentType;
-- (void)uploadDirectoryEntry:(NSString *)folder withTitle:(NSString *)title withCount:(int)count;
+- (void)uploadAsync:(NSString *)folder;
 
 @property (nonatomic, copy) AWSS3ProviderBlockType awsS3ProviderBlock;
 @property (nonatomic, weak) id<AWSS3ProviderDelegate> awsS3ProviderDelegate;
@@ -30,5 +29,6 @@ typedef void (^AWSS3ProviderBlockType)(void);
 
 - (void)getStoriItemsComplete:(NSArray *)arrayItems;
 - (void)deleteVirtualDirectoryComplete;
+- (void)uploadComplete:(BOOL)success;
 
 @end
