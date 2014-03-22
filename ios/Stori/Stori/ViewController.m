@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "AmazonSharedPreferences.h"
 #import "StoriListItem.h"
+#import "StoriListController.h"
 
 @interface ViewController ()
 
@@ -89,7 +90,9 @@ bool _needsAuthentication = TRUE;
 
     if (_needsAuthentication) {
         HFLogDebug(@"ViewController.googleSignInComplete - _needsAuthentication is still TRUE, so that means login UI is needed");
-        self.loginViewController = [[LoginViewController alloc] init];
+        
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        self.loginViewController = (LoginViewController *)[storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
         [self presentViewController:self.loginViewController animated:YES completion:nil];
     }
     else {
@@ -155,5 +158,4 @@ bool _needsAuthentication = TRUE;
     [self.awsS3Provider initializeProvider:[AmazonSharedPreferences userName] withDelegate:self];
     [self.awsS3Provider getStoriItemsAsync];
 }
-
 @end

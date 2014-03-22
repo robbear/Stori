@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="O3A-6D-kfE">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--View Controller - Stori EditPlay View-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
                 <viewController id="vXZ-lx-hvc" customClass="ViewController" sceneMemberID="viewController">
@@ -62,7 +62,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yv3-Bd-Zje">
-                                <rect key="frame" x="127" y="198" width="66" height="30"/>
+                                <rect key="frame" x="127" y="185" width="66" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Test S3">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -71,12 +71,24 @@
                                     <action selector="onTestS3ButtonClicked:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="pOE-Ob-0m7"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xpx-D0-q0i">
+                                <rect key="frame" x="122" y="223" width="76" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="List Storis">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="feS-YX-Ecz" kind="push" id="tG0-53-wKV"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <navigationItem key="navigationItem" title="Stori EditPlay View" id="lXj-px-Thq"/>
                     <connections>
                         <outlet property="amazonLoginButton" destination="9Wn-ha-ZVh" id="D4X-b9-UTE"/>
                         <outlet property="disconnectButton" destination="qdy-EA-5mi" id="b2z-YN-9VG"/>
+                        <outlet property="listStorisButton" destination="xpx-D0-q0i" id="vUR-Y8-UUn"/>
                         <outlet property="testS3Button" destination="yv3-Bd-Zje" id="QdY-dC-bz6"/>
                         <outlet property="userEmailLabel" destination="G12-Qf-yDZ" id="oWa-aV-DkX"/>
                         <outlet property="userIDLabel" destination="H3z-Q3-GlD" id="d9p-KZ-NGJ"/>
@@ -84,11 +96,41 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="330" y="217"/>
+        </scene>
+        <!--Stori List Controller - StoriListController-->
+        <scene sceneID="Al9-Qm-uJ1">
+            <objects>
+                <tableViewController title="StoriListController" id="feS-YX-Ecz" customClass="StoriListController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="xdW-ev-b4I">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="Nhu-la-sNn">
+                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Nhu-la-sNn" id="laY-0M-NTt">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="feS-YX-Ecz" id="RwV-Yj-KQe"/>
+                            <outlet property="delegate" destination="feS-YX-Ecz" id="jaQ-H8-px8"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="yCg-LZ-FPq"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="26W-U6-JBC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="788" y="215"/>
         </scene>
         <!--Login View Controller - LoginViewController-->
         <scene sceneID="B30-TZ-exe">
             <objects>
-                <viewController title="LoginViewController" id="Yjl-2b-5mM" customClass="LoginViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginViewController" title="LoginViewController" id="Yjl-2b-5mM" customClass="LoginViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="q0c-rQ-d7S"/>
                         <viewControllerLayoutGuide type="bottom" id="IkO-Rn-IXH"/>
@@ -134,7 +176,25 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NyY-zt-F1a" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="834" y="163"/>
+            <point key="canvasLocation" x="322" y="-468"/>
+        </scene>
+        <!--Navigation Controller - Stori-->
+        <scene sceneID="mew-RS-N9m">
+            <objects>
+                <navigationController title="Stori" automaticallyAdjustsScrollViewInsets="NO" id="O3A-6D-kfE" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="bof-Z4-5s1">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="vXZ-lx-hvc" kind="relationship" relationship="rootViewController" id="GMa-GQ-Zoy"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="q41-c8-c39" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-166" y="-30"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		503655CB18D8AF290014E574 /* StoriListItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655CA18D8AF290014E574 /* StoriListItem.m */; };
 		503655CE18D8B8020014E574 /* NSString+STONSString.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655CD18D8B8020014E574 /* NSString+STONSString.m */; };
+		503655E318DB50240014E574 /* StoriListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655E218DB50240014E574 /* StoriListController.m */; };
 		504ECC5F18C245B900507582 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECC5E18C245B900507582 /* Foundation.framework */; };
 		504ECC6118C245B900507582 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECC6018C245B900507582 /* CoreGraphics.framework */; };
 		504ECC6318C245B900507582 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECC6218C245B900507582 /* UIKit.framework */; };
@@ -66,6 +67,8 @@
 		503655CA18D8AF290014E574 /* StoriListItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoriListItem.m; sourceTree = "<group>"; };
 		503655CC18D8B8020014E574 /* NSString+STONSString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+STONSString.h"; sourceTree = "<group>"; };
 		503655CD18D8B8020014E574 /* NSString+STONSString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+STONSString.m"; sourceTree = "<group>"; };
+		503655E118DB50240014E574 /* StoriListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoriListController.h; sourceTree = "<group>"; };
+		503655E218DB50240014E574 /* StoriListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoriListController.m; sourceTree = "<group>"; };
 		504ECC5B18C245B900507582 /* Stori.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stori.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		504ECC5E18C245B900507582 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		504ECC6018C245B900507582 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -207,39 +210,41 @@
 		504ECC6418C245B900507582 /* Stori */ = {
 			isa = PBXGroup;
 			children = (
-				504ECCE518D0C6F800507582 /* LoginViewController.h */,
-				504ECCE618D0C6F800507582 /* LoginViewController.m */,
 				504ECCDC18D0B88A00507582 /* AmazonClientManager.h */,
 				504ECCDD18D0B88A00507582 /* AmazonClientManager.m */,
-				504ECC6D18C245B900507582 /* AppDelegate.h */,
-				504ECC6E18C245B900507582 /* AppDelegate.m */,
-				504ECC7018C245B900507582 /* Main.storyboard */,
-				504ECC7318C245B900507582 /* ViewController.h */,
-				504ECC7418C245B900507582 /* ViewController.m */,
-				504ECC7618C245B900507582 /* Images.xcassets */,
-				504ECC6518C245B900507582 /* Supporting Files */,
-				504ECC9318C24EF000507582 /* HFLogging.h */,
-				504ECC9418C24EF000507582 /* HFLogging.m */,
-				504ECC9618C4F0AE00507582 /* SlideShareJSON.h */,
-				504ECC9718C4F0AE00507582 /* SlideShareJSON.m */,
-				504ECC9918C632D100507582 /* Localizable.strings */,
-				504ECC9B18C645FE00507582 /* SlideJSON.h */,
-				504ECC9C18C645FE00507582 /* SlideJSON.m */,
-				504ECC9E18C64EEF00507582 /* constants.h */,
-				504ECC9F18C64EEF00507582 /* constants.m */,
-				504ECCA118C8DA8700507582 /* STOPreferences.h */,
-				504ECCA218C8DA8700507582 /* STOPreferences.m */,
-				504ECCA618C8ECFB00507582 /* PrefsDefaults.plist */,
-				504ECCA818C8F70D00507582 /* STOUtilities.h */,
-				504ECCA918C8F70D00507582 /* STOUtilities.m */,
 				504ECCE218D0BEC600507582 /* AmazonSharedPreferences.h */,
 				504ECCE318D0BEC600507582 /* AmazonSharedPreferences.m */,
+				504ECC6D18C245B900507582 /* AppDelegate.h */,
+				504ECC6E18C245B900507582 /* AppDelegate.m */,
 				504ECCEB18D3620200507582 /* AWSS3Provider.h */,
 				504ECCEC18D3620200507582 /* AWSS3Provider.m */,
-				503655C918D8AF290014E574 /* StoriListItem.h */,
-				503655CA18D8AF290014E574 /* StoriListItem.m */,
+				504ECC9E18C64EEF00507582 /* constants.h */,
+				504ECC9F18C64EEF00507582 /* constants.m */,
+				504ECC9318C24EF000507582 /* HFLogging.h */,
+				504ECC9418C24EF000507582 /* HFLogging.m */,
+				504ECC7618C245B900507582 /* Images.xcassets */,
+				504ECC9918C632D100507582 /* Localizable.strings */,
+				504ECCE518D0C6F800507582 /* LoginViewController.h */,
+				504ECCE618D0C6F800507582 /* LoginViewController.m */,
+				504ECC7018C245B900507582 /* Main.storyboard */,
 				503655CC18D8B8020014E574 /* NSString+STONSString.h */,
 				503655CD18D8B8020014E574 /* NSString+STONSString.m */,
+				504ECCA618C8ECFB00507582 /* PrefsDefaults.plist */,
+				504ECC9B18C645FE00507582 /* SlideJSON.h */,
+				504ECC9C18C645FE00507582 /* SlideJSON.m */,
+				504ECC9618C4F0AE00507582 /* SlideShareJSON.h */,
+				504ECC9718C4F0AE00507582 /* SlideShareJSON.m */,
+				504ECCA118C8DA8700507582 /* STOPreferences.h */,
+				504ECCA218C8DA8700507582 /* STOPreferences.m */,
+				503655E118DB50240014E574 /* StoriListController.h */,
+				503655E218DB50240014E574 /* StoriListController.m */,
+				503655C918D8AF290014E574 /* StoriListItem.h */,
+				503655CA18D8AF290014E574 /* StoriListItem.m */,
+				504ECCA818C8F70D00507582 /* STOUtilities.h */,
+				504ECCA918C8F70D00507582 /* STOUtilities.m */,
+				504ECC6518C245B900507582 /* Supporting Files */,
+				504ECC7318C245B900507582 /* ViewController.h */,
+				504ECC7418C245B900507582 /* ViewController.m */,
 			);
 			path = Stori;
 			sourceTree = "<group>";
@@ -384,6 +389,7 @@
 				504ECCA318C8DA8700507582 /* STOPreferences.m in Sources */,
 				504ECCE018D0B88A00507582 /* AmazonClientManager.m in Sources */,
 				504ECCA018C64EEF00507582 /* constants.m in Sources */,
+				503655E318DB50240014E574 /* StoriListController.m in Sources */,
 				504ECC9D18C645FE00507582 /* SlideJSON.m in Sources */,
 				504ECCE718D0C6F800507582 /* LoginViewController.m in Sources */,
 				504ECCED18D3620200507582 /* AWSS3Provider.m in Sources */,

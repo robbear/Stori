@@ -21,6 +21,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *amazonLoginButton;
 @property (weak, nonatomic) IBOutlet UIButton *disconnectButton;
 @property (weak, nonatomic) IBOutlet UIButton *testS3Button;
+@property (weak, nonatomic) IBOutlet UIButton *listStorisButton;
 
 @property (strong, nonatomic) LoginViewController *loginViewController;
 @property (strong, nonatomic) AWSS3Provider *awsS3Provider;
