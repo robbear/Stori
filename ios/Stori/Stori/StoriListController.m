@@ -7,6 +7,7 @@
 //
 
 #import "StoriListController.h"
+#import "StoriListTableViewCell.h"
 #import "StoriListItem.h"
 #import "AmazonSharedPreferences.h"
 
@@ -81,19 +82,37 @@ NSArray *_storiListItems;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    HFLogDebug(@"StoriListController.tableView:cellForRowAtIndexPath");
+    //HFLogDebug(@"StoriListController.tableView:cellForRowAtIndexPath");
+
+    static NSString *cellIdentifier = @"storiListTableViewCell";
     
-    static NSString *simpleTableIdentifier = @"Stori List";
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
+    StoriListTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
+        cell = [[StoriListTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
-    
+
     StoriListItem *sli = (StoriListItem *)[_storiListItems objectAtIndex:indexPath.row];
     
-    cell.textLabel.text = sli.title;
+    //
+    // Convert S3 modified date UTC-based NSDate
+    //
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"];
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
+    NSDate *utcDate = [dateFormatter dateFromString:sli.modifiedDate];
+    
+    //
+    // Convert UTC-based NSDate to local formatted date
+    //
+    [dateFormatter setDateFormat:@"MMM dd, yyyy h:mm:ss a"];
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    cell.modifiedDateLabel.text = [dateFormatter stringFromDate:utcDate];
+    
+    cell.titleLabel.text = sli.title;
+    int count = sli.countSlides;
+    cell.slideCountLabel.text = count == 1 ? [NSString stringWithFormat:@"%d slide", count] : [NSString stringWithFormat:@"%d slides", count];
+    
     return cell;
 }
 
@@ -104,7 +123,12 @@ NSArray *_storiListItems;
 - (void)getStoriItemsComplete:(NSArray *)arrayItems {
     HFLogDebug(@"StoriListController.getStoriItemsComplete");
     
-    _storiListItems = arrayItems;
+    // Sort by date decending
+    _storiListItems = [arrayItems sortedArrayUsingComparator:
+                            ^NSComparisonResult(StoriListItem *item1, StoriListItem *item2) {
+                                return [item2.modifiedDate compare:item1.modifiedDate];
+                            }];
+    
     if (!self.tableView) {
         HFLogDebug(@"****** tableView is nil");
     }
