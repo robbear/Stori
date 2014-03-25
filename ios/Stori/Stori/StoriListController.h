@@ -11,4 +11,6 @@
 
 @interface StoriListController : UITableViewController <UITableViewDataSource, UITableViewDelegate, AWSS3ProviderDelegate>
 
+@property (strong, nonatomic) IBOutlet UIView *headerView;
+
 @end

@@ -11,6 +11,7 @@
 		503655CE18D8B8020014E574 /* NSString+STONSString.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655CD18D8B8020014E574 /* NSString+STONSString.m */; };
 		503655E318DB50240014E574 /* StoriListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655E218DB50240014E574 /* StoriListController.m */; };
 		503655E918DF3DDB0014E574 /* StoriListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655E818DF3DDB0014E574 /* StoriListTableViewCell.m */; };
+		503655EC18E080AF0014E574 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655EB18E080AF0014E574 /* MBProgressHUD.m */; };
 		504ECC5F18C245B900507582 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECC5E18C245B900507582 /* Foundation.framework */; };
 		504ECC6118C245B900507582 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECC6018C245B900507582 /* CoreGraphics.framework */; };
 		504ECC6318C245B900507582 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECC6218C245B900507582 /* UIKit.framework */; };
@@ -72,6 +73,8 @@
 		503655E218DB50240014E574 /* StoriListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoriListController.m; sourceTree = "<group>"; };
 		503655E718DF3DDB0014E574 /* StoriListTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoriListTableViewCell.h; sourceTree = "<group>"; };
 		503655E818DF3DDB0014E574 /* StoriListTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoriListTableViewCell.m; sourceTree = "<group>"; };
+		503655EA18E080AF0014E574 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
+		503655EB18E080AF0014E574 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 		504ECC5B18C245B900507582 /* Stori.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stori.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		504ECC5E18C245B900507582 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		504ECC6018C245B900507582 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -250,6 +253,8 @@
 				504ECC6518C245B900507582 /* Supporting Files */,
 				504ECC7318C245B900507582 /* ViewController.h */,
 				504ECC7418C245B900507582 /* ViewController.m */,
+				503655EA18E080AF0014E574 /* MBProgressHUD.h */,
+				503655EB18E080AF0014E574 /* MBProgressHUD.m */,
 			);
 			path = Stori;
 			sourceTree = "<group>";
@@ -399,6 +404,7 @@
 				504ECCE718D0C6F800507582 /* LoginViewController.m in Sources */,
 				504ECCED18D3620200507582 /* AWSS3Provider.m in Sources */,
 				503655CB18D8AF290014E574 /* StoriListItem.m in Sources */,
+				503655EC18E080AF0014E574 /* MBProgressHUD.m in Sources */,
 				503655E918DF3DDB0014E574 /* StoriListTableViewCell.m in Sources */,
 				504ECCAA18C8F70D00507582 /* STOUtilities.m in Sources */,
 				504ECC9518C24EF000507582 /* HFLogging.m in Sources */,

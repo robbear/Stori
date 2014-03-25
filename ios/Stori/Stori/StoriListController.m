@@ -10,8 +10,11 @@
 #import "StoriListTableViewCell.h"
 #import "StoriListItem.h"
 #import "AmazonSharedPreferences.h"
+#import "MBProgressHUD.h"
 
 @interface StoriListController ()
+
+@property (strong, nonatomic) MBProgressHUD *progressHUD;
 
 @end
 
@@ -34,6 +37,10 @@ NSArray *_storiListItems;
     HFLogDebug(@"StoriListController.viewDidLoad");
     
     [super viewDidLoad];
+    
+    self.progressHUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+    [self.navigationController.view addSubview:self.progressHUD];
+    [self.progressHUD show:TRUE];
     
     AWSS3Provider *awsS3Provider = [[AWSS3Provider alloc] init];
     [awsS3Provider initializeProvider:[AmazonSharedPreferences userName] withDelegate:self];
@@ -133,6 +140,15 @@ NSArray *_storiListItems;
         HFLogDebug(@"****** tableView is nil");
     }
     [self.tableView reloadData];
+    
+    if (_storiListItems.count <= 0) {
+        self.tableView.tableHeaderView = self.headerView;
+    }
+    else {
+        self.tableView.tableHeaderView = nil;
+    }
+    
+    [self.progressHUD hide:TRUE];
 }
 
 - (void)deleteVirtualDirectoryComplete {
