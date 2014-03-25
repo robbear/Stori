@@ -29,10 +29,11 @@
     
 #if GOOGLE_LOGIN
     HFLogDebug(@"LoginViewController.viewDidLoad - prepping Google login button");
-    
+#if NEVER
     [[AmazonClientManager sharedInstance] initGPlusLogin];
     GPPSignInButton *signInButton = [[GPPSignInButton alloc] initWithFrame:CGRectMake(20, 122, 280, 44)];
     [self.view addSubview:signInButton];
+#endif
 #else
     UIButton *signInButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     signInButton.frame = CGRectMake(20, 122, 280, 44);
@@ -86,6 +87,13 @@
 #else
     [[[UIAlertView alloc] initWithTitle:@"Not Enabled" message:IDP_NOT_ENABLED_MESSAGE delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 #endif
+}
+
+- (IBAction)onGoogleLoginButtonClicked:(id)sender {
+    HFLogDebug(@"LoginViewController.onGoogleLoginButtonClicked");
+    
+    [[AmazonClientManager sharedInstance] initGPlusLogin];
+    [[GPPSignIn sharedInstance] authenticate];
 }
 
 @end

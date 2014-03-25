@@ -233,6 +233,8 @@
 				504ECCE518D0C6F800507582 /* LoginViewController.h */,
 				504ECCE618D0C6F800507582 /* LoginViewController.m */,
 				504ECC7018C245B900507582 /* Main.storyboard */,
+				503655EA18E080AF0014E574 /* MBProgressHUD.h */,
+				503655EB18E080AF0014E574 /* MBProgressHUD.m */,
 				503655CC18D8B8020014E574 /* NSString+STONSString.h */,
 				503655CD18D8B8020014E574 /* NSString+STONSString.m */,
 				504ECCA618C8ECFB00507582 /* PrefsDefaults.plist */,
@@ -253,8 +255,6 @@
 				504ECC6518C245B900507582 /* Supporting Files */,
 				504ECC7318C245B900507582 /* ViewController.h */,
 				504ECC7418C245B900507582 /* ViewController.m */,
-				503655EA18E080AF0014E574 /* MBProgressHUD.h */,
-				503655EB18E080AF0014E574 /* MBProgressHUD.m */,
 			);
 			path = Stori;
 			sourceTree = "<group>";
