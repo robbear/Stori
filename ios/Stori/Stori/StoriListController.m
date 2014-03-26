@@ -42,6 +42,11 @@ NSArray *_storiListItems;
     [self.navigationController.view addSubview:self.progressHUD];
     [self.progressHUD show:TRUE];
     
+    // Clear any previous list. Note that this logic will be replaced
+    // with an app-cached array to avoid unnecessary network traffic.
+    _storiListItems = nil;
+    self.tableView.tableHeaderView = nil;
+    
     AWSS3Provider *awsS3Provider = [[AWSS3Provider alloc] init];
     [awsS3Provider initializeProvider:[AmazonSharedPreferences userName] withDelegate:self];
     [awsS3Provider getStoriItemsAsync];
@@ -60,6 +65,10 @@ NSArray *_storiListItems;
     if (!self.tableView) {
         HFLogDebug(@"StoriListController.viewDidAppear - tableView is nil");
     }
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    HFLogDebug(@"StoriListController.viewDidDisappear");
 }
 
 /*

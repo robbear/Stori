@@ -95,12 +95,6 @@ extern NSString *const SLIDE_COUNT_SEGMENT_STRING;
  */
 #define GOOGLE_CLIENT_ID            @"578112260663-ppl46i6su6bnrt6d6qvrnj0slji5kovo.apps.googleusercontent.com"
 
-/**
- * Client scope that will be used with Google+
- */
-#define GOOGLE_CLIENT_SCOPE         @"https://www.googleapis.com/auth/userinfo.profile"
-#define GOOGLE_OPENID_SCOPE         @"openid"
-
 #endif
 
 /**

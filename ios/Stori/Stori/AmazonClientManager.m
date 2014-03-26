@@ -76,7 +76,7 @@ static GTMOAuth2Authentication  *_auth;
     _signIn.shouldFetchGoogleUserID = YES;
     
     _signIn.clientID = GOOGLE_CLIENT_ID;
-    _signIn.scopes = @[kGTLAuthScopePlusLogin];
+    _signIn.scopes = @[@"profile"];
 }
 
 - (void)initSharedGPlusLogin {
@@ -90,7 +90,7 @@ static GTMOAuth2Authentication  *_auth;
     signIn.shouldFetchGoogleUserID = YES;
     
     signIn.clientID = GOOGLE_CLIENT_ID;
-    signIn.scopes = @[kGTLAuthScopePlusLogin];
+    signIn.scopes = @[@"profile"];
 }
 
 - (BOOL)silentGPlusLogin {
@@ -110,7 +110,7 @@ static GTMOAuth2Authentication  *_auth;
 - (void)reloadGSession {
     HFLogDebug(@"AmazonClientManager.reloadGSession");
     
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:GOOGLE_CLIENT_SCOPE]];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"profile"]];
     
     [_auth authorizeRequest:request
                      completionHandler:^(NSError *error) {
