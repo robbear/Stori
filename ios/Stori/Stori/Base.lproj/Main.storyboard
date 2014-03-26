@@ -190,9 +190,6 @@
                                 <state key="normal" title="Facebook">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="FBlogin:" destination="Yjl-2b-5mM" eventType="touchUpInside" id="Lpx-BT-Spw"/>
-                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GrK-Qw-QvT">
                                 <rect key="frame" x="16" y="173" width="280" height="44"/>
@@ -202,9 +199,6 @@
                                 <state key="normal" title="Amazon">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="AMZNlogin:" destination="Yjl-2b-5mM" eventType="touchUpInside" id="KoY-N9-u1y"/>
-                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GNK-7O-To6">
                                 <rect key="frame" x="16" y="121" width="280" height="44"/>
@@ -222,6 +216,8 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
+                        <outlet property="amazonLoginButton" destination="GrK-Qw-QvT" id="XjS-SC-IX1"/>
+                        <outlet property="facebookLoginButton" destination="Bbr-dS-4hB" id="73U-S1-rlN"/>
                         <outlet property="googleLoginButton" destination="GNK-7O-To6" id="KQp-sR-6G7"/>
                     </connections>
                 </viewController>

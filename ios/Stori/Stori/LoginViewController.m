@@ -20,34 +20,12 @@
 
 - (void)viewDidLoad
 {
-    // Do any additional setup after loading the view from its nib.
-
-#if FB_LOGIN
-    [[AmazonClientManager sharedInstance] reloadFBSession];
-#endif
-
-    
-#if GOOGLE_LOGIN
     HFLogDebug(@"LoginViewController.viewDidLoad - prepping Google login button");
-#if NEVER
-    [[AmazonClientManager sharedInstance] initGPlusLogin];
-    GPPSignInButton *signInButton = [[GPPSignInButton alloc] initWithFrame:CGRectMake(20, 122, 280, 44)];
-    [self.view addSubview:signInButton];
-#endif
-#else
-    UIButton *signInButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    signInButton.frame = CGRectMake(20, 122, 280, 44);
-    [signInButton setTitle:@"Google"
-             forState:(UIControlState)UIControlStateNormal];
-    [signInButton addTarget:self
-                action:@selector(Glogin:)
-      forControlEvents:(UIControlEvents)UIControlEventTouchDown];
-    [signInButton setBackgroundColor:[UIColor colorWithRed:242.0/255 green:242.0/255 blue:242.0/255 alpha:1.0]];
-    [self.view addSubview:signInButton];
-#endif
 
     [super viewDidLoad];
 
+    [self.amazonLoginButton setEnabled:NO];
+    [self.facebookLoginButton setEnabled:NO];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -64,35 +42,14 @@
     [super viewWillDisappear:animated];
 }
 
--(IBAction)FBlogin:(id)sender
-{
-#if FB_LOGIN
-    [self dismissModalViewControllerAnimated:YES];
-    [[AmazonClientManager sharedInstance] FBLogin];
-#else
-    [[[UIAlertView alloc] initWithTitle:@"Not Enabled" message:IDP_NOT_ENABLED_MESSAGE delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-#endif
-}
-
--(IBAction)Glogin:(id)sender
-{
-    [[[UIAlertView alloc] initWithTitle:@"Not Enabled" message:IDP_NOT_ENABLED_MESSAGE delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-}
-
--(IBAction)AMZNlogin:(id)sender
-{
-#if AMZN_LOGIN
-    [self dismissModalViewControllerAnimated:YES];
-    [[AmazonClientManager sharedInstance] AMZNLogin];
-#else
-    [[[UIAlertView alloc] initWithTitle:@"Not Enabled" message:IDP_NOT_ENABLED_MESSAGE delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-#endif
-}
-
 - (IBAction)onGoogleLoginButtonClicked:(id)sender {
     HFLogDebug(@"LoginViewController.onGoogleLoginButtonClicked");
     
-    [[AmazonClientManager sharedInstance] initGPlusLogin];
+    //
+    // Use the shared instance versions of AmazonClientManager and
+    // GPPSignIn for the user-interactive sign in flow.
+    //
+    [[AmazonClientManager sharedInstance] initSharedGPlusLogin];
     [[GPPSignIn sharedInstance] authenticate];
 }
 

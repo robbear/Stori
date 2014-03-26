@@ -20,54 +20,27 @@
 
 @protocol AmazonClientManagerGoogleAccountDelegate;
 
-#if GOOGLE_LOGIN
-#if AMZN_LOGIN
-// Amazon and Google
-@interface AmazonClientManager:NSObject<GPPSignInDelegate,AIAuthenticationDelegate> {}
-#else
-// Just Google
 @interface AmazonClientManager:NSObject<GPPSignInDelegate> {}
-@property (nonatomic, weak) id<AmazonClientManagerGoogleAccountDelegate> amazonClientManagerGoogleAccountDelegate;
-#endif
-#elif AMZN_LOGIN
-// Just Amazon
-@interface AmazonClientManager:NSObject<AIAuthenticationDelegate> {}
-#else
-// Neither Amazon nor Google
-@interface AmazonClientManager:NSObject {}
-#endif
+@property (nonatomic, strong) id<AmazonClientManagerGoogleAccountDelegate> amazonClientManagerGoogleAccountDelegate;
+@property (strong, nonatomic) GPPSignIn *signIn;
 
-#if FB_LOGIN
-@property (retain, nonatomic) FBSession *session;
+- (void)reloadGSession;
+- (void)initGPlusLogin;
+- (void)initSharedGPlusLogin;
+- (void)disconnectFromSharedGoogle;
+- (BOOL)silentGPlusLogin;
+- (BOOL)silentSharedGPlusLogin;
+- (AmazonS3Client *)s3;
 
--(void)reloadFBSession;
--(void)FBLogin;
-#endif 
++ (AmazonClientManager *)sharedInstance;
 
-#if GOOGLE_LOGIN
--(void)reloadGSession;
--(void)initGPlusLogin;
--(void)disconnectFromGoogle;
--(BOOL)silentGPlusLogin;
-#endif
-
-#if AMZN_LOGIN
--(void)AMZNLogin;
-#endif
-
-+(AmazonClientManager *)sharedInstance;
-
--(AmazonS3Client *)s3;
-
--(bool)isLoggedIn;
--(bool)hasCredentials;
--(void)wipeAllCredentials;
+- (bool)isLoggedIn;
+- (bool)hasCredentials;
+- (void)wipeAllCredentials;
 
 @end
 
 @protocol AmazonClientManagerGoogleAccountDelegate <NSObject>
-
 - (void)googleSignInComplete:(BOOL)success;
 - (void)googleDisconnectComplete:(BOOL)success;
-
 @end

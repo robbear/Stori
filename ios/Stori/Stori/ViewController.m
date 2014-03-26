@@ -36,9 +36,13 @@ bool _needsAuthentication = TRUE;
     [super viewDidAppear:animated];
     
     if (_needsAuthentication) {
+        //
+        // Remember: Use the shared instance versions of AmazonClientManager and
+        // GPPSignIn for the user-interactive sign in flow. See also LoginViewController.
+        //
         [AmazonClientManager sharedInstance].amazonClientManagerGoogleAccountDelegate = self;
-        if (![[AmazonClientManager sharedInstance] silentGPlusLogin]) {
-            HFLogDebug(@"ViewController.viewDidAppear: silentGPlusLogin failed");
+        if (![[AmazonClientManager sharedInstance] silentSharedGPlusLogin]) {
+            HFLogDebug(@"ViewController.viewDidAppear: silentSharedGPlusLogin failed");
             [self googleSignInComplete:FALSE];
         }
     }
@@ -75,11 +79,17 @@ bool _needsAuthentication = TRUE;
 - (IBAction)onDisconnectClick:(id)sender {
     HFLogDebug(@"ViewController.onDisconnectClick");
 
-    [[AmazonClientManager sharedInstance] disconnectFromGoogle];
+    //
+    // Remember: Use the shared instance versions of
+    // AmazonClientManager and GPPSignIn for the user-interactive
+    // sign in and sign out flows.
+    //
+    [[AmazonClientManager sharedInstance] disconnectFromSharedGoogle];
 }
 
 - (IBAction)onAmazonLoginButtonClicked:(id)sender {
-    self.loginViewController = [[LoginViewController alloc] init];
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    self.loginViewController = (LoginViewController *)[storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
     [self presentViewController:self.loginViewController animated:YES completion:nil];
 }
 

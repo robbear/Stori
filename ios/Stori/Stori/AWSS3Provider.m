@@ -18,6 +18,8 @@
 + (void)uploadDirectoryEntry:(NSString *)userUuid withFolder:(NSString *)slideShareName withTitle:(NSString *)title withCount:(int)count;
 @end
 
+AmazonClientManager *_amazonClientManager;
+
 @implementation AWSS3Provider
 
 NSString *_userUuid;
@@ -25,8 +27,8 @@ NSString *_userUuid;
 - (void)silentLogin {
     HFLogDebug(@"AWSS3Provider.silentLogin");
     
-    [AmazonClientManager sharedInstance].amazonClientManagerGoogleAccountDelegate = self;
-    if (![[AmazonClientManager sharedInstance] silentGPlusLogin]) {
+    _amazonClientManager.amazonClientManagerGoogleAccountDelegate = self;
+    if (![_amazonClientManager silentGPlusLogin]) {
         HFLogDebug(@"AWSS3Provider.slientLogin silentGPlusLogin failed");
         [self googleSignInComplete:FALSE];
     }
@@ -45,6 +47,15 @@ NSString *_userUuid;
 - (void)initializeProvider:(NSString *)userUuid withDelegate:(id<AWSS3ProviderDelegate>)delgate {
     HFLogDebug(@"AWSS3Provider.initializeProvider: userUuid=%@", userUuid);
     
+    //
+    // Instantiate a per-AWSS3Provider instance of AmazonClientManager.
+    // This allows us to perform a per-S3 call reinstantiation of Google Login.
+    // At some future point, we will work at managing a persistent cache
+    // of the Google auth and refresh token so we don't have to re-signin
+    // on each call.
+    //
+    _amazonClientManager = [[AmazonClientManager alloc] init];
+    
     _userUuid = userUuid;
     self.awsS3ProviderDelegate = delgate;
 }
@@ -62,7 +73,7 @@ NSString *_userUuid;
             request.prefix = [NSString stringWithFormat:@"%@/%@", userUuid, DIRECTORY_ENTRY_SEGMENT_STRING];
             
             @try {
-                S3ListObjectsResponse *response = [[[AmazonClientManager sharedInstance] s3] listObjects:request];
+                S3ListObjectsResponse *response = [[_amazonClientManager s3] listObjects:request];
                 S3ListObjectsResult   *results = response.listObjectsResult;
 
                 if (objects == nil) {
@@ -137,11 +148,11 @@ NSString *_userUuid;
         S3ListObjectsRequest *request = [[S3ListObjectsRequest alloc] initWithName:BUCKET_NAME];
         request.prefix = prefix;
         
-        S3ListObjectsResponse *response = [[[AmazonClientManager sharedInstance] s3] listObjects:request];
+        S3ListObjectsResponse *response = [[_amazonClientManager s3] listObjects:request];
         S3ListObjectsResult *results = response.listObjectsResult;
         
         for (S3ObjectSummary *summary in results.objectSummaries) {
-            [[[AmazonClientManager sharedInstance] s3] deleteObjectWithKey:summary.key withBucket:BUCKET_NAME];
+            [[_amazonClientManager s3] deleteObjectWithKey:summary.key withBucket:BUCKET_NAME];
         }
         
         //
@@ -156,11 +167,11 @@ NSString *_userUuid;
         request = [[S3ListObjectsRequest alloc] initWithName:BUCKET_NAME];
         request.prefix = prefix;
         
-        response = [[[AmazonClientManager sharedInstance] s3] listObjects:request];
+        response = [[_amazonClientManager s3] listObjects:request];
         results = response.listObjectsResult;
         
         for (S3ObjectSummary *summary in results.objectSummaries) {
-            [[[AmazonClientManager sharedInstance] s3] deleteObjectWithKey:summary.key withBucket:BUCKET_NAME];
+            [[_amazonClientManager s3] deleteObjectWithKey:summary.key withBucket:BUCKET_NAME];
         }
     }
     @catch (AmazonClientException *exception) {
@@ -208,7 +219,7 @@ NSString *_userUuid;
     [por setContentType:@"application/octet-stream"];
     [por setData:data];
     
-    S3PutObjectResponse *response = [[[AmazonClientManager sharedInstance] s3] putObject:por];
+    S3PutObjectResponse *response = [[_amazonClientManager s3] putObject:por];
     HFLogDebug(@"AWSS3Provider.uploadDirectoryEntry: response=%@", response);
 }
 
@@ -227,7 +238,7 @@ NSString *_userUuid;
     [por setContentType:contentType];
     [por setFilename:filePath];
     
-    S3PutObjectResponse *response = [[[AmazonClientManager sharedInstance] s3] putObject:por];
+    S3PutObjectResponse *response = [[_amazonClientManager s3] putObject:por];
     HFLogDebug(@"AWSS3Provider.uploadFile: response=%@", response);
 }
 

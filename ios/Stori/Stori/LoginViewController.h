@@ -20,5 +20,7 @@
 @interface LoginViewController:UIViewController
 
 @property (weak, nonatomic) IBOutlet UIButton *googleLoginButton;
+@property (weak, nonatomic) IBOutlet UIButton *facebookLoginButton;
+@property (weak, nonatomic) IBOutlet UIButton *amazonLoginButton;
 
 @end
