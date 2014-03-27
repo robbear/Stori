@@ -9,6 +9,7 @@
 #import "StoriListController.h"
 #import "StoriListTableViewCell.h"
 #import "StoriListItem.h"
+#import "STOPreferences.h"
 #import "AmazonSharedPreferences.h"
 #import "MBProgressHUD.h"
 
@@ -16,11 +17,14 @@
 
 @property (strong, nonatomic) MBProgressHUD *progressHUD;
 
+- (void)handleStoriItemDelete:(StoriListItem *)sli;
+
 @end
 
 @implementation StoriListController
 
 NSArray *_storiListItems;
+StoriListItem *_selectedStoriListItem;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     HFLogDebug(@"StoriListController.initWithNibName: %@", nibNameOrNil);
@@ -82,10 +86,52 @@ NSArray *_storiListItems;
 }
 */
 
+- (void)handleStoriItemDelete:(StoriListItem *)sli {
+    HFLogDebug(@"StoriListController.handleStoriItemDelete");
+    
+    UIAlertView *alert = [[UIAlertView alloc]
+                          initWithTitle:NSLocalizedString(@"storilistcontroller_delete_title", nil)
+                          message:NSLocalizedString(@"storilistcontroller_delete_message", nil)
+                          delegate:self cancelButtonTitle:NSLocalizedString(@"menu_cancel", nil)
+                          otherButtonTitles:NSLocalizedString(@"storilistcontroller_delete_button", nil), nil];
+    alert.tag = 1; // BUGBUG - need file-static enum
+    [alert show];
+}
+
 
 //
 // UITableViewDelegate methods
 //
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    HFLogDebug(@"StoriListController.tableView:didSelectRowAtIndexPath: %d", indexPath.item);
+    
+    _selectedStoriListItem = _storiListItems[indexPath.item];
+
+    UIActionSheet *popup = [[UIActionSheet alloc]
+                            initWithTitle:_selectedStoriListItem.title
+                            delegate:self
+                            cancelButtonTitle:nil
+                            destructiveButtonTitle:nil
+                            otherButtonTitles:nil];
+    
+    NSString *currentEditSlideShareName = [STOPreferences getEditPlayName];
+
+    // Don't allow download and playof current edit item
+    if (![currentEditSlideShareName isEqualToString:_selectedStoriListItem.slideShareName]) {
+        [popup addButtonWithTitle:NSLocalizedString(@"menu_storilistitem_play", nil)];
+    }
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_storilistitem_edit", nil)];
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_storilistitem_share", nil)];
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_storilistitem_delete", nil)];
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_cancel", nil)];
+    
+    popup.cancelButtonIndex = popup.numberOfButtons - 1;
+    popup.destructiveButtonIndex = popup.numberOfButtons - 2;
+    
+    popup.tag = 1;
+    [popup showInView:[UIApplication sharedApplication].keyWindow];
+}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     HFLogDebug(@"StoriListController.tableView:numberOfRowsInSection");
@@ -130,6 +176,38 @@ NSArray *_storiListItems;
     cell.slideCountLabel.text = count == 1 ? [NSString stringWithFormat:@"%d slide", count] : [NSString stringWithFormat:@"%d slides", count];
     
     return cell;
+}
+
+//
+// UIAlertViewDelegate methods
+//
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    HFLogDebug(@"StoriListController.alertView:%d didDismissWithButtonIndex:%d", alertView.tag, buttonIndex);
+}
+
+//
+// UIActionSheetDelegate methods
+//
+
+- (void)actionSheet:(UIActionSheet *)popup clickedButtonAtIndex:(NSInteger)index {
+    HFLogDebug(@"StoriListController.actionSheet:clickedButtonAtIndex %d, menutitle=%@", index, [popup buttonTitleAtIndex:index]);
+    
+    NSString *buttonTitle = [popup buttonTitleAtIndex:index];
+    if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_play", nil)]) {
+        HFLogDebug(@"Play clicked for %@", _selectedStoriListItem.title);
+    }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_edit", nil)]) {
+        HFLogDebug(@"Edit clicked for %@", _selectedStoriListItem.title);
+    }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_share", nil)]) {
+        HFLogDebug(@"Share clicked for %@", _selectedStoriListItem.title);
+    }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_delete", nil)]) {
+        HFLogDebug(@"Delete clicked for %@", _selectedStoriListItem.title);
+        
+        [self handleStoriItemDelete:_selectedStoriListItem];
+    }
 }
 
 //
