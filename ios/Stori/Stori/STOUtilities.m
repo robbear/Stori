@@ -110,4 +110,26 @@
     return str;
 }
 
++ (NSString *)buildShowWebPageUrlString:(NSString *)userUuid withSlideShareName:(NSString *)slideShareName {
+    NSString *urlString = [NSString stringWithFormat:@"%@%@/%@", [Constants baseWebSlidesUrl], userUuid, slideShareName];
+    
+    HFLogDebug(@"STOUtilities.buildShowWebPageUrlString: %@", urlString);
+    
+    return urlString;
+}
+
++ (void) shareShow:(UIViewController *)viewController withUserUuid:(NSString *)userUuid withSlideShareName:(NSString *)slideShareName withTitle:(NSString *)title {
+    HFLogDebug(@"STOUtilities.shareShow");
+    
+    NSString *appName = NSLocalizedString(@"app_name", nil);
+    NSString *urlString = [STOUtilities buildShowWebPageUrlString:userUuid withSlideShareName:slideShareName];
+    NSString *marketUrl = NSLocalizedString(@"google_play_market_link", nil);
+    NSString *message = [NSString stringWithFormat:NSLocalizedString(@"share_email_body_format", nil), appName, title, urlString, marketUrl];
+    NSString *subject = [NSString stringWithFormat:NSLocalizedString(@"share_email_subject_format", nil), appName, title];
+    
+    UIActivityViewController *shareController = [[UIActivityViewController alloc] initWithActivityItems:@[message] applicationActivities:nil];
+    [shareController setValue:subject forKey:@"subject"];
+    [viewController presentViewController:shareController animated:TRUE completion:nil];
+}
+
 @end

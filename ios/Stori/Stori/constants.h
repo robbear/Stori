@@ -42,6 +42,13 @@ extern NSString *const DIRECTORY_ENTRY_SEGMENT_STRING;
 extern NSString *const TITLE_SEGMENT_STRING;
 extern NSString *const SLIDE_COUNT_SEGMENT_STRING;
 
+//
+// Default web site base url
+//
+extern NSString *const BASE_WEB_URL;
+extern NSString *const SLIDES_DIRECTORY_NAME;
+extern int const WEB_URL_SEGMENT_COUNT;
+
 /**
  * The Amazon S3 Bucket in your account to use for this application.
  * This bucket should have been previously created.
@@ -134,5 +141,6 @@ extern NSString *const SLIDE_COUNT_SEGMENT_STRING;
 +(UIAlertView *)expiredCredentialsAlert;
 
 +(NSString *)baseAWSStorageURL;
++(NSString *)baseWebSlidesUrl;
 
 @end

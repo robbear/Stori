@@ -39,6 +39,13 @@ NSString *const DIRECTORY_ENTRY_SEGMENT_STRING = @"manifests/";
 NSString *const TITLE_SEGMENT_STRING = @"title/";
 NSString *const SLIDE_COUNT_SEGMENT_STRING = @"count/";
 
+//
+// Default web site base url
+//
+NSString *const BASE_WEB_URL = @"http://stori-app.com/";
+NSString *const SLIDES_DIRECTORY_NAME = @"slides/";
+int const WEB_URL_SEGMENT_COUNT = 3;
+
 
 @implementation Constants
 
@@ -59,6 +66,10 @@ NSString *const SLIDE_COUNT_SEGMENT_STRING = @"count/";
 
 + (NSString *)baseAWSStorageURL {
     return [NSString stringWithFormat:@"https://s3-us-west-2.amazonaws.com/%@/", BUCKET_NAME];
+}
+
++ (NSString *)baseWebSlidesUrl {
+    return [NSString stringWithFormat:@"%@%@", BASE_WEB_URL, SLIDES_DIRECTORY_NAME];
 }
 
 @end

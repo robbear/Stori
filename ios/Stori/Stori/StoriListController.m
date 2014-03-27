@@ -10,6 +10,7 @@
 #import "StoriListTableViewCell.h"
 #import "StoriListItem.h"
 #import "STOPreferences.h"
+#import "STOUtilities.h"
 #import "AmazonSharedPreferences.h"
 #import "AWSS3Provider.h"
 #import "MBProgressHUD.h"
@@ -231,6 +232,9 @@ StoriListItem *_selectedStoriListItem;
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_share", nil)]) {
         HFLogDebug(@"Share clicked for %@", _selectedStoriListItem.title);
+        
+        NSString *userUuid = [AmazonSharedPreferences userName];
+        [STOUtilities shareShow:self withUserUuid:userUuid withSlideShareName:_selectedStoriListItem.slideShareName withTitle:_selectedStoriListItem.title];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_delete", nil)]) {
         HFLogDebug(@"Delete clicked for %@", _selectedStoriListItem.title);
