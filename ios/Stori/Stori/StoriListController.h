@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "AWSS3Provider.h"
 
-@interface StoriListController : UITableViewController <UITableViewDataSource, UITableViewDelegate, AWSS3ProviderDelegate, UIActionSheetDelegate, UIAlertViewDelegate>
+@interface StoriListController : UITableViewController <UITableViewDataSource, UITableViewDelegate, AWSS3ProviderDelegate, UIActionSheetDelegate, UIAlertViewDelegate, NSURLConnectionDelegate>
 
 @property (strong, nonatomic) IBOutlet UIView *headerView;
 

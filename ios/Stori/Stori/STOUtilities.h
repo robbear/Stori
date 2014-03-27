@@ -19,5 +19,6 @@
 + (NSString *)loadStringFromFolder:(NSString *)folder withFile:(NSString *)fileName;
 + (void)shareShow:(UIViewController *)viewController withUserUuid:(NSString *)userUuid withSlideShareName:(NSString *)slideShareName withTitle:(NSString *)title;
 + (NSString *)buildShowWebPageUrlString:(NSString *)userUuid withSlideShareName:(NSString *)slideShareName;
++ (NSURLConnection *)downloadUrlAsync:(NSString *)urlString withDelegate:(id<NSURLConnectionDelegate>)delegate;
 
 @end

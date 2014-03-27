@@ -19,6 +19,7 @@
 
 @property (strong, nonatomic) MBProgressHUD *progressHUD;
 @property (strong, nonatomic) AWSS3Provider *awsS3Provider;
+@property (strong, nonatomic) NSMutableData *receivedData;
 
 - (void)handleStoriItemDelete:(StoriListItem *)sli;
 
@@ -28,6 +29,7 @@
 
 NSArray *_storiListItems;
 StoriListItem *_selectedStoriListItem;
+long long _expectedBytes;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     HFLogDebug(@"StoriListController.initWithNibName: %@", nibNameOrNil);
@@ -48,6 +50,7 @@ StoriListItem *_selectedStoriListItem;
     self.progressHUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
     [self.navigationController.view addSubview:self.progressHUD];
     self.progressHUD.labelText = nil;
+    self.progressHUD.mode = MBProgressHUDModeIndeterminate;
     [self.progressHUD show:TRUE];
     
     // Clear any previous list. Note that this logic will be replaced
@@ -94,6 +97,7 @@ StoriListItem *_selectedStoriListItem;
     HFLogDebug(@"StoriListController.handleStoriItemDelete");
     
     self.progressHUD.labelText = NSLocalizedString(@"storilistcontroller_delete_wait", nil);
+    self.progressHUD.mode = MBProgressHUDModeIndeterminate;
     [self.progressHUD show:TRUE];
     
     self.awsS3Provider = [[AWSS3Provider alloc] init];
@@ -223,9 +227,15 @@ StoriListItem *_selectedStoriListItem;
 - (void)actionSheet:(UIActionSheet *)popup clickedButtonAtIndex:(NSInteger)index {
     HFLogDebug(@"StoriListController.actionSheet:clickedButtonAtIndex %d, menutitle=%@", index, [popup buttonTitleAtIndex:index]);
     
+    NSString *userUuid = [AmazonSharedPreferences userName];
+    
     NSString *buttonTitle = [popup buttonTitleAtIndex:index];
     if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_play", nil)]) {
         HFLogDebug(@"Play clicked for %@", _selectedStoriListItem.title);
+        
+        self.receivedData = [[NSMutableData alloc] init];
+        NSString *urlString = [NSString stringWithFormat:@"%@%@/%@/%@", [Constants baseAWSStorageURL], userUuid, _selectedStoriListItem.slideShareName, SLIDESHARE_JSON_FILENAME];
+        [STOUtilities downloadUrlAsync:urlString withDelegate:self];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_edit", nil)]) {
         HFLogDebug(@"Edit clicked for %@", _selectedStoriListItem.title);
@@ -233,7 +243,6 @@ StoriListItem *_selectedStoriListItem;
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_share", nil)]) {
         HFLogDebug(@"Share clicked for %@", _selectedStoriListItem.title);
         
-        NSString *userUuid = [AmazonSharedPreferences userName];
         [STOUtilities shareShow:self withUserUuid:userUuid withSlideShareName:_selectedStoriListItem.slideShareName withTitle:_selectedStoriListItem.title];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_delete", nil)]) {
@@ -248,6 +257,58 @@ StoriListItem *_selectedStoriListItem;
         [alert show];
     }
 }
+
+//
+// NSURLConnectionDelegate methods
+//
+// NOTE: These methods will be implemented in the DownloadViewController class. We will
+// be following the lead of the Android client, having a special controller/view for
+// downloads that can be invoked either from StoriListController or via a click on
+// a Stori URL.
+//
+// Putting aside for now to work on EditPlayViewController and PlayViewController.
+//
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+    HFLogDebug(@"StoriListController.connection: didReceiveResponse");
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    self.progressHUD.labelText = @"Downloading n of m";
+    self.progressHUD.mode = MBProgressHUDModeDeterminateHorizontalBar;
+    [self.progressHUD show:TRUE];
+    [self.receivedData setLength:0];
+    
+    _expectedBytes = [response expectedContentLength];
+}
+
+- (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    [self.receivedData appendData:data];
+    float progressive = (float)[self.receivedData length] / (float)_expectedBytes;
+    
+    self.progressHUD.progress = progressive;
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    HFLogDebug(@"StoriListController.connectionDidFinishLoading");
+
+    // BUGBUG: TODO: Write self.receivedData to file
+    
+    [self.progressHUD hide:YES];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
+- (void) connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    HFLogDebug(@"StoriListController.connection:didFailWithError:%@", error);
+    
+    // BUGBUG - post error
+}
+
+- (NSCachedURLResponse *) connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse {
+    HFLogDebug(@"StoriListController.connection:willCacheResponse");
+    
+    return nil;
+}
+
 
 //
 // AWSS3ProviderDelegate methods
