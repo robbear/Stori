@@ -13,6 +13,7 @@
 "menu_storilistitem_edit" = "Edit";
 "menu_storilistitem_play" = "Play";
 "menu_storilistitem_share" = "Share";
-"storilistcontroller_delete_title" = "Delete this Stori?";
-"storilistcontroller_delete_message" = "This will permanently delete this Stori. Deleting cannot be undone.";
 "storilistcontroller_delete_button" = "Delete this Stori";
+"storilistcontroller_delete_message" = "This will permanently delete this Stori. Deleting cannot be undone.";
+"storilistcontroller_delete_title" = "Delete this Stori?";
+"storilistcontroller_delete_wait" = "Deleting...";

@@ -153,6 +153,10 @@ bool _needsAuthentication = TRUE;
     self.awsS3Provider = nil;
 }
 
+- (void)deleteStoriItemsAndReturnItemsComplete:(NSArray *)arrayItems {
+    HFLogDebug(@"ViewController.deleteStoriItemsAndReturnItemsComplete");
+}
+
 - (void)uploadComplete:(BOOL)success {
     HFLogDebug(@"ViewController.uploadComplete: success=%d", success);
 }

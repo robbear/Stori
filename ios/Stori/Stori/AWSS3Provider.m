@@ -13,6 +13,7 @@
 
 @interface AWSS3Provider()
 + (NSString *)getStringSegmentFromManifestUrlString:(NSString *)urlString withSegment:(NSString *)segment;
++ (NSArray *)getStoriItemsHelper:(NSString *)userUuid;
 + (void)deleteVirtualDirectoryHelper:(NSString *)userUuid withFolder:(NSString *)directoryName;
 + (void)uploadFile:(NSString *)userUuid withFolder:(NSString *)folder withFileName:(NSString *)fileName withContentType:(NSString *)contentType;
 + (void)uploadDirectoryEntry:(NSString *)userUuid withFolder:(NSString *)slideShareName withTitle:(NSString *)title withCount:(int)count;
@@ -60,6 +61,50 @@ NSString *_userUuid;
     self.awsS3ProviderDelegate = delgate;
 }
 
++ (NSArray *)getStoriItemsHelper:(NSString *)userUuid {
+    HFLogDebug(@"AWSS3Provider.getStoriItemsHelper");
+    
+    NSMutableArray *objects = nil;
+    S3ListObjectsRequest *request = [[S3ListObjectsRequest alloc] initWithName:BUCKET_NAME];
+    request.prefix = [NSString stringWithFormat:@"%@/%@", userUuid, DIRECTORY_ENTRY_SEGMENT_STRING];
+    
+    @try {
+        S3ListObjectsResponse *response = [[_amazonClientManager s3] listObjects:request];
+        S3ListObjectsResult   *results = response.listObjectsResult;
+        
+        if (objects == nil) {
+            objects = [[NSMutableArray alloc] initWithCapacity:[results.objectSummaries count]];
+        }
+        else {
+            [objects removeAllObjects];
+        }
+        
+        for (S3ObjectSummary *objectSummary in results.objectSummaries) {
+            int slideCount = 0;
+            NSString *key = [objectSummary key];
+            NSString *slideShareName = [AWSS3Provider getStringSegmentFromManifestUrlString:key withSegment:DIRECTORY_ENTRY_SEGMENT_STRING];
+            NSString *title = [AWSS3Provider getStringSegmentFromManifestUrlString:key withSegment:TITLE_SEGMENT_STRING];
+            NSString *decodedTitle = nil;
+            if (title) {
+                decodedTitle = [title urlDecode];
+            }
+            NSString *countString = [AWSS3Provider getStringSegmentFromManifestUrlString:key withSegment:SLIDE_COUNT_SEGMENT_STRING];
+            if (countString) {
+                slideCount = countString.intValue;
+            }
+            NSString *dateString = objectSummary.lastModified;
+            
+            StoriListItem *sli = [[StoriListItem alloc] initWithSlideShareName:slideShareName withTitle:decodedTitle withDate:dateString withCount:slideCount];
+            [objects addObject:sli];
+        }
+    }
+    @catch (AmazonClientException *exception) {
+        HFLogDebug(@"AWSS3Provider.getStoriItemsHelper: exception = %@", exception);
+    }
+    
+    return objects;
+}
+
 - (void)getStoriItemsAsync {
     HFLogDebug(@"AWSS3Provider.getStoriItemsAsync");
     
@@ -68,43 +113,11 @@ NSString *_userUuid;
     
     [self setAwsS3ProviderBlock:^{
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-            NSMutableArray *objects = nil;
+            NSArray *objects = nil;
             S3ListObjectsRequest *request = [[S3ListObjectsRequest alloc] initWithName:BUCKET_NAME];
             request.prefix = [NSString stringWithFormat:@"%@/%@", userUuid, DIRECTORY_ENTRY_SEGMENT_STRING];
             
-            @try {
-                S3ListObjectsResponse *response = [[_amazonClientManager s3] listObjects:request];
-                S3ListObjectsResult   *results = response.listObjectsResult;
-
-                if (objects == nil) {
-                    objects = [[NSMutableArray alloc] initWithCapacity:[results.objectSummaries count]];
-                }
-                else {
-                    [objects removeAllObjects];
-                }
-                
-                for (S3ObjectSummary *objectSummary in results.objectSummaries) {
-                    int slideCount = 0;
-                    NSString *key = [objectSummary key];
-                    NSString *slideShareName = [AWSS3Provider getStringSegmentFromManifestUrlString:key withSegment:DIRECTORY_ENTRY_SEGMENT_STRING];
-                    NSString *title = [AWSS3Provider getStringSegmentFromManifestUrlString:key withSegment:TITLE_SEGMENT_STRING];
-                    NSString *decodedTitle = nil;
-                    if (title) {
-                        decodedTitle = [title urlDecode];
-                    }
-                    NSString *countString = [AWSS3Provider getStringSegmentFromManifestUrlString:key withSegment:SLIDE_COUNT_SEGMENT_STRING];
-                    if (countString) {
-                        slideCount = countString.intValue;
-                    }
-                    NSString *dateString = objectSummary.lastModified;
-                    
-                    StoriListItem *sli = [[StoriListItem alloc] initWithSlideShareName:slideShareName withTitle:decodedTitle withDate:dateString withCount:slideCount];
-                    [objects addObject:sli];
-                }
-            }
-            @catch (AmazonClientException *exception) {
-                HFLogDebug(@"AWSS3Provider.getStoriItemsAsync: exception = %@", exception);
-            }
+            objects = [AWSS3Provider getStoriItemsHelper:userUuid];
            
             dispatch_async(dispatch_get_main_queue(), ^(void){
                 if ([awsS3ProviderDelegate respondsToSelector:@selector(getStoriItemsComplete:)]) {
@@ -197,6 +210,33 @@ NSString *_userUuid;
         });
     }];
 
+    [self silentLogin];
+}
+
+- (void)deleteStoriItemsAndReturnItems:(NSArray *)arrayItems {
+    HFLogDebug(@"AWSS3Provider.deleteStoriItemsAndReturnItems");
+    
+    NSString *userUuid = _userUuid;
+    id<AWSS3ProviderDelegate> awsS3ProviderDelegate = self.awsS3ProviderDelegate;
+    
+    [self setAwsS3ProviderBlock:^{
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+            NSArray *returnedObjects;
+            
+            for (StoriListItem *sli in arrayItems) {
+                [AWSS3Provider deleteVirtualDirectoryHelper:userUuid withFolder:sli.slideShareName];
+            }
+            
+            returnedObjects = [AWSS3Provider getStoriItemsHelper:userUuid];
+            
+            dispatch_async(dispatch_get_main_queue(), ^(void){
+                if ([awsS3ProviderDelegate respondsToSelector:@selector(deleteStoriItemsAndReturnItemsComplete:)]) {
+                    [awsS3ProviderDelegate deleteStoriItemsAndReturnItemsComplete:returnedObjects];
+                }
+            });
+        });
+    }];
+    
     [self silentLogin];
 }
 

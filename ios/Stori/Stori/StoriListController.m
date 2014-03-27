@@ -11,11 +11,13 @@
 #import "StoriListItem.h"
 #import "STOPreferences.h"
 #import "AmazonSharedPreferences.h"
+#import "AWSS3Provider.h"
 #import "MBProgressHUD.h"
 
 @interface StoriListController ()
 
 @property (strong, nonatomic) MBProgressHUD *progressHUD;
+@property (strong, nonatomic) AWSS3Provider *awsS3Provider;
 
 - (void)handleStoriItemDelete:(StoriListItem *)sli;
 
@@ -44,6 +46,7 @@ StoriListItem *_selectedStoriListItem;
     
     self.progressHUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
     [self.navigationController.view addSubview:self.progressHUD];
+    self.progressHUD.labelText = nil;
     [self.progressHUD show:TRUE];
     
     // Clear any previous list. Note that this logic will be replaced
@@ -89,15 +92,32 @@ StoriListItem *_selectedStoriListItem;
 - (void)handleStoriItemDelete:(StoriListItem *)sli {
     HFLogDebug(@"StoriListController.handleStoriItemDelete");
     
-    UIAlertView *alert = [[UIAlertView alloc]
-                          initWithTitle:NSLocalizedString(@"storilistcontroller_delete_title", nil)
-                          message:NSLocalizedString(@"storilistcontroller_delete_message", nil)
-                          delegate:self cancelButtonTitle:NSLocalizedString(@"menu_cancel", nil)
-                          otherButtonTitles:NSLocalizedString(@"storilistcontroller_delete_button", nil), nil];
-    alert.tag = 1; // BUGBUG - need file-static enum
-    [alert show];
+    self.progressHUD.labelText = NSLocalizedString(@"storilistcontroller_delete_wait", nil);
+    [self.progressHUD show:TRUE];
+    
+    self.awsS3Provider = [[AWSS3Provider alloc] init];
+    [self.awsS3Provider initializeProvider:[AmazonSharedPreferences userName] withDelegate:self];
+    [self.awsS3Provider deleteStoriItemsAndReturnItems:@[sli]];
 }
 
+- (void)updateWithNewStoriItemList:(NSArray *)arrayItems {
+    HFLogDebug(@"StoriListController.updateWithNewStoriItemList");
+    
+    // Sort by date decending
+    _storiListItems = [arrayItems sortedArrayUsingComparator:
+                       ^NSComparisonResult(StoriListItem *item1, StoriListItem *item2) {
+                           return [item2.modifiedDate compare:item1.modifiedDate];
+                       }];
+    
+    [self.tableView reloadData];
+    
+    if (_storiListItems.count <= 0) {
+        self.tableView.tableHeaderView = self.headerView;
+    }
+    else {
+        self.tableView.tableHeaderView = nil;
+    }
+}
 
 //
 // UITableViewDelegate methods
@@ -184,6 +204,15 @@ StoriListItem *_selectedStoriListItem;
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     HFLogDebug(@"StoriListController.alertView:%d didDismissWithButtonIndex:%d", alertView.tag, buttonIndex);
+    
+    // BUGBUG - use enum
+    if (alertView.tag == 1) {
+        NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
+        
+        if ([buttonTitle isEqualToString:NSLocalizedString(@"storilistcontroller_delete_button", nil)]) {
+            [self handleStoriItemDelete:_selectedStoriListItem];
+        }
+    }
 }
 
 //
@@ -206,7 +235,13 @@ StoriListItem *_selectedStoriListItem;
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_delete", nil)]) {
         HFLogDebug(@"Delete clicked for %@", _selectedStoriListItem.title);
         
-        [self handleStoriItemDelete:_selectedStoriListItem];
+        UIAlertView *alert = [[UIAlertView alloc]
+                              initWithTitle:NSLocalizedString(@"storilistcontroller_delete_title", nil)
+                              message:NSLocalizedString(@"storilistcontroller_delete_message", nil)
+                              delegate:self cancelButtonTitle:NSLocalizedString(@"menu_cancel", nil)
+                              otherButtonTitles:NSLocalizedString(@"storilistcontroller_delete_button", nil), nil];
+        alert.tag = 1; // BUGBUG - need file-static enum
+        [alert show];
     }
 }
 
@@ -217,33 +252,26 @@ StoriListItem *_selectedStoriListItem;
 - (void)getStoriItemsComplete:(NSArray *)arrayItems {
     HFLogDebug(@"StoriListController.getStoriItemsComplete");
     
-    // Sort by date decending
-    _storiListItems = [arrayItems sortedArrayUsingComparator:
-                            ^NSComparisonResult(StoriListItem *item1, StoriListItem *item2) {
-                                return [item2.modifiedDate compare:item1.modifiedDate];
-                            }];
-    
-    if (!self.tableView) {
-        HFLogDebug(@"****** tableView is nil");
-    }
-    [self.tableView reloadData];
-    
-    if (_storiListItems.count <= 0) {
-        self.tableView.tableHeaderView = self.headerView;
-    }
-    else {
-        self.tableView.tableHeaderView = nil;
-    }
+    [self updateWithNewStoriItemList:arrayItems];
     
     [self.progressHUD hide:TRUE];
+    self.awsS3Provider = nil;
 }
 
 - (void)deleteVirtualDirectoryComplete {
+    HFLogDebug(@"StoriListController.deleteVirtualDirectoryComplete");
+}
+
+- (void)deleteStoriItemsAndReturnItemsComplete:(NSArray *)arrayItems {
+    HFLogDebug(@"StoriListController.deleteStoriItemsAndReturnItemsComplete");
     
+    [self updateWithNewStoriItemList:arrayItems];
+
+    [self.progressHUD hide:TRUE];
+    self.awsS3Provider = nil;
 }
 
 - (void)uploadComplete:(BOOL)success {
-    
 }
 
 @end
