@@ -136,15 +136,15 @@ NSString *_userUuid;
         return nil;
     }
     
-    int index = range.location + range.length;
+    int index = (int)(range.location + range.length);
     NSString *partial = [urlString substringFromIndex:index];
     
     range = [partial rangeOfString:@"/"];
     if (range.location == NSNotFound || range.location <= 0) {
-        index = [partial length];
+        index = (int)[partial length];
     }
     else {
-        index = range.location;
+        index = (int)range.location;
     }
 
     range.location = 0;

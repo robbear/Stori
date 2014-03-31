@@ -52,6 +52,8 @@
 		504ECCE418D0BEC600507582 /* AmazonSharedPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCE318D0BEC600507582 /* AmazonSharedPreferences.m */; };
 		504ECCE718D0C6F800507582 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCE618D0C6F800507582 /* LoginViewController.m */; };
 		504ECCED18D3620200507582 /* AWSS3Provider.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCEC18D3620200507582 /* AWSS3Provider.m */; };
+		50889EDF18E9DBD900C92781 /* EditPlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50889EDE18E9DBD900C92781 /* EditPlayController.m */; };
+		50889EE218E9DEDE00C92781 /* EditPlayPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50889EE118E9DEDE00C92781 /* EditPlayPageController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,6 +132,10 @@
 		504ECCE618D0C6F800507582 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		504ECCEB18D3620200507582 /* AWSS3Provider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AWSS3Provider.h; sourceTree = "<group>"; };
 		504ECCEC18D3620200507582 /* AWSS3Provider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AWSS3Provider.m; sourceTree = "<group>"; };
+		50889EDD18E9DBD900C92781 /* EditPlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditPlayController.h; sourceTree = "<group>"; };
+		50889EDE18E9DBD900C92781 /* EditPlayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditPlayController.m; sourceTree = "<group>"; };
+		50889EE018E9DEDE00C92781 /* EditPlayPageController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditPlayPageController.h; sourceTree = "<group>"; };
+		50889EE118E9DEDE00C92781 /* EditPlayPageController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditPlayPageController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -226,6 +232,10 @@
 				504ECCEC18D3620200507582 /* AWSS3Provider.m */,
 				504ECC9E18C64EEF00507582 /* constants.h */,
 				504ECC9F18C64EEF00507582 /* constants.m */,
+				50889EDD18E9DBD900C92781 /* EditPlayController.h */,
+				50889EDE18E9DBD900C92781 /* EditPlayController.m */,
+				50889EE018E9DEDE00C92781 /* EditPlayPageController.h */,
+				50889EE118E9DEDE00C92781 /* EditPlayPageController.m */,
 				504ECC9318C24EF000507582 /* HFLogging.h */,
 				504ECC9418C24EF000507582 /* HFLogging.m */,
 				504ECC7618C245B900507582 /* Images.xcassets */,
@@ -405,7 +415,9 @@
 				504ECCED18D3620200507582 /* AWSS3Provider.m in Sources */,
 				503655CB18D8AF290014E574 /* StoriListItem.m in Sources */,
 				503655EC18E080AF0014E574 /* MBProgressHUD.m in Sources */,
+				50889EDF18E9DBD900C92781 /* EditPlayController.m in Sources */,
 				503655E918DF3DDB0014E574 /* StoriListTableViewCell.m in Sources */,
+				50889EE218E9DEDE00C92781 /* EditPlayPageController.m in Sources */,
 				504ECCAA18C8F70D00507582 /* STOUtilities.m in Sources */,
 				504ECC9518C24EF000507582 /* HFLogging.m in Sources */,
 				504ECC9818C4F0AE00507582 /* SlideShareJSON.m in Sources */,
