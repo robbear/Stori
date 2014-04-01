@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SlideShareJSON.h"
 
 @interface STOUtilities : NSObject
 
@@ -18,7 +19,9 @@
 + (BOOL)saveStringToFile:(NSString *)stringData withFolder:(NSString *)folder withFileName:(NSString *)fileName;
 + (NSString *)loadStringFromFolder:(NSString *)folder withFile:(NSString *)fileName;
 + (void)shareShow:(UIViewController *)viewController withUserUuid:(NSString *)userUuid withSlideShareName:(NSString *)slideShareName withTitle:(NSString *)title;
++ (NSString *)buildResourceUrlString:(NSString *)userUuid withSlideShareName:(NSString *)slideShareName withFileName:(NSString *)fileName;
 + (NSString *)buildShowWebPageUrlString:(NSString *)userUuid withSlideShareName:(NSString *)slideShareName;
 + (NSURLConnection *)downloadUrlAsync:(NSString *)urlString withDelegate:(id<NSURLConnectionDelegate>)delegate;
++ (void)printSlideShareJSON:(SlideShareJSON *)ssj;
 
 @end

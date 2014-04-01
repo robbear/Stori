@@ -110,6 +110,18 @@
     return str;
 }
 
++ (NSString *)buildResourceUrlString:(NSString *)userUuid withSlideShareName:(NSString *)slideShareName withFileName:(NSString *)fileName {
+    if (!fileName || [fileName length] <= 0) {
+        HFLogDebug(@"STOUtilities.buildResourceUrlString - returning nil");
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@%@/%@/%@", [Constants baseAWSStorageURL], userUuid, slideShareName, fileName];
+    HFLogDebug(@"STOUtilities.buildResourceUrlString: %@", urlString);
+    
+    return urlString;
+}
+
 + (NSString *)buildShowWebPageUrlString:(NSString *)userUuid withSlideShareName:(NSString *)slideShareName {
     NSString *urlString = [NSString stringWithFormat:@"%@%@/%@", [Constants baseWebSlidesUrl], userUuid, slideShareName];
     
@@ -139,6 +151,10 @@
     NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:60];
     
     return [[NSURLConnection alloc] initWithRequest:request delegate:delegate startImmediately:YES];
+}
+
++ (void)printSlideShareJSON:(SlideShareJSON *)ssj {
+    HFLogDebug(@"%@", [ssj toString]); 
 }
 
 @end

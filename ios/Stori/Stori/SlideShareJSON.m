@@ -226,6 +226,10 @@
     
     NSMutableDictionary *slides = [self getSlides];
     NSDictionary *slide = [slides objectForKey:uuidSlide];
+    if (!slide) {
+        return nil;
+    }
+    
     SlideJSON *sj = [[SlideJSON alloc] initWithSlide:slide];
     
     return sj;

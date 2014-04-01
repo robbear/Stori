@@ -63,7 +63,13 @@
 }
 
 - (NSString *)getImageUrlString {
-    return [_jsonDictionary objectForKey:KEY_IMAGE];
+    id typeValue = [_jsonDictionary objectForKey:KEY_IMAGE];
+    NSString *value = nil;
+    if (typeValue != [NSNull null]) {
+        value = (NSString *)typeValue;
+    }
+    
+    return value;
 }
 
 - (NSString *)getImageFilename {
@@ -81,7 +87,13 @@
 }
 
 - (NSString *)getAudioUrlString {
-    return [_jsonDictionary objectForKey:KEY_AUDIO];
+    id typeValue = [_jsonDictionary objectForKey:KEY_AUDIO];
+    NSString *value = nil;
+    if (typeValue != [NSNull null]) {
+        value = (NSString *)typeValue;
+    }
+    
+    return value;
 }
 
 - (NSString *)getAudioFilename {
@@ -99,7 +111,13 @@
 }
 
 - (NSString *)getText {
-    return [_jsonDictionary objectForKey:KEY_TEXT];
+    id typeValue = [_jsonDictionary objectForKey:KEY_TEXT];
+    NSString *value = nil;
+    if (typeValue != [NSNull null]) {
+        value = (NSString *)typeValue;
+    }
+    
+    return value;
 }
 
 @end
