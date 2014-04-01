@@ -41,6 +41,14 @@ bool _userNeedsAuthentication = TRUE;
     self.currentSlideIndex = 0;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [self.navigationController.navigationBar setHidden:YES];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [self.navigationController.navigationBar setHidden:NO];
+}
+
 - (void)viewDidAppear:(BOOL)animated {
     HFLogDebug(@"EditPlayController.viewDidAppear");
     

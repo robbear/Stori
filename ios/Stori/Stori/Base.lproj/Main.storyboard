@@ -21,7 +21,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dxr-h9-d3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="793" y="953"/>
+            <point key="canvasLocation" x="250" y="951"/>
         </scene>
         <!--Page View Controller-->
         <scene sceneID="s9Q-6f-Wep">
@@ -31,7 +31,7 @@
                 </pageViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LsK-Em-Szq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1158" y="951"/>
+            <point key="canvasLocation" x="582" y="951"/>
         </scene>
         <!--Edit Play Fragment Controller-->
         <scene sceneID="KBw-f6-UBc">
@@ -50,26 +50,26 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="UserID:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gva-DL-axm">
-                                <rect key="frame" x="10" y="10" width="62" height="21"/>
+                                <rect key="frame" x="6" y="83" width="62" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Email:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rUr-3p-WU4">
-                                <rect key="frame" x="18" y="46" width="54" height="21"/>
+                                <rect key="frame" x="14" y="119" width="54" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hD1-Vd-5tD">
-                                <rect key="frame" x="80" y="10" width="193" height="21"/>
+                                <rect key="frame" x="76" y="83" width="193" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7I9-bj-Bfp">
-                                <rect key="frame" x="80" y="46" width="193" height="21"/>
+                                <rect key="frame" x="76" y="119" width="193" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
@@ -91,13 +91,13 @@
                     <connections>
                         <outlet property="imageView" destination="jDA-vX-wwQ" id="rus-Vu-RNx"/>
                         <outlet property="listStorisButton" destination="qNq-QC-i2F" id="yI7-1s-ugJ"/>
-                        <outlet property="userEmailLabel" destination="rUr-3p-WU4" id="SiG-QE-hjL"/>
-                        <outlet property="userIDLabel" destination="Gva-DL-axm" id="7dj-iN-p4o"/>
+                        <outlet property="userEmailLabel" destination="7I9-bj-Bfp" id="zxV-mv-5cj"/>
+                        <outlet property="userIDLabel" destination="hD1-Vd-5tD" id="N3l-x6-o3f"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c48-tl-Ldi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1506" y="951"/>
+            <point key="canvasLocation" x="921" y="951"/>
         </scene>
         <!--View Controller - Stori EditPlay View-->
         <scene sceneID="ufC-wZ-h7g">
@@ -202,14 +202,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <label key="tableHeaderView" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Storis Found" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3TU-a4-648">
-                            <rect key="frame" x="0.0" y="64" width="320" height="44"/>
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="storiListTableViewCell" rowHeight="65" id="Nhu-la-sNn" customClass="StoriListTableViewCell">
-                                <rect key="frame" x="0.0" y="130" width="320" height="65"/>
+                                <rect key="frame" x="0.0" y="66" width="320" height="65"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Nhu-la-sNn" id="laY-0M-NTt">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
@@ -256,7 +256,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="26W-U6-JBC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="806" y="257"/>
+            <point key="canvasLocation" x="1504" y="951"/>
         </scene>
         <!--Login View Controller - LoginViewController-->
         <scene sceneID="B30-TZ-exe">
@@ -318,7 +318,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NyY-zt-F1a" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="806" y="-388"/>
+            <point key="canvasLocation" x="1206" y="250"/>
         </scene>
         <!--Navigation Controller - Stori-->
         <scene sceneID="mew-RS-N9m">
@@ -354,7 +354,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="job-NU-wWr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="267" y="953"/>
+            <point key="canvasLocation" x="-187" y="951"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
@@ -363,6 +363,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="tG0-53-wKV"/>
+        <segue reference="Qw7-dO-GQa"/>
     </inferredMetricsTieBreakers>
 </document>
