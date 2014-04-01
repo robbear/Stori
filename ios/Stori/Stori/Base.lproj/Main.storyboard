@@ -74,14 +74,14 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qNq-QC-i2F">
-                                <rect key="frame" x="112" y="168" width="76" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="42v-aF-faE">
+                                <rect key="frame" x="132" y="206" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="List Storis">
+                                <state key="normal" title="Menu">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="feS-YX-Ecz" kind="push" id="Qw7-dO-GQa"/>
+                                    <action selector="onMainMenuButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="Yv9-Ic-xlE"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -90,9 +90,10 @@
                     <navigationItem key="navigationItem" id="pig-gS-d4A"/>
                     <connections>
                         <outlet property="imageView" destination="jDA-vX-wwQ" id="rus-Vu-RNx"/>
-                        <outlet property="listStorisButton" destination="qNq-QC-i2F" id="yI7-1s-ugJ"/>
+                        <outlet property="mainMenuButton" destination="42v-aF-faE" id="uRd-kX-dK6"/>
                         <outlet property="userEmailLabel" destination="7I9-bj-Bfp" id="zxV-mv-5cj"/>
                         <outlet property="userIDLabel" destination="hD1-Vd-5tD" id="N3l-x6-o3f"/>
+                        <segue destination="feS-YX-Ecz" kind="push" identifier="SegueToStoriListController" id="rO1-fg-aet"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c48-tl-Ldi" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -363,6 +364,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Qw7-dO-GQa"/>
+        <segue reference="rO1-fg-aet"/>
     </inferredMetricsTieBreakers>
 </document>

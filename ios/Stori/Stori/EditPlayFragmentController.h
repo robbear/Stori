@@ -10,13 +10,14 @@
 #import "SlideJSON.h"
 #import "EditPlayController.h"
 
-@interface EditPlayFragmentController : UIViewController
+@interface EditPlayFragmentController : UIViewController <UIActionSheetDelegate>
 
 @property (weak, nonatomic) IBOutlet UILabel *userIDLabel;
 @property (weak, nonatomic) IBOutlet UILabel *userEmailLabel;
 @property (weak, nonatomic) IBOutlet UIButton *listStorisButton;
-@property (strong, nonatomic) LoginViewController *loginViewController;
+@property (weak, nonatomic) IBOutlet UIButton *mainMenuButton;
 
+@property (strong, nonatomic) LoginViewController *loginViewController;
 
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
 @property (strong, nonatomic) NSString *imageFileName;

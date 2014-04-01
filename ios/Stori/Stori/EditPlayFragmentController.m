@@ -60,6 +60,60 @@
     self.slideText = [sj getText];
 }
 
+- (IBAction)onMainMenuButtonClicked:(id)sender {
+    UIActionSheet *popup = [[UIActionSheet alloc]
+                            initWithTitle:NSLocalizedString(@"menu_editplay_title", nil)
+                            delegate:self
+                            cancelButtonTitle:nil
+                            destructiveButtonTitle:nil
+                            otherButtonTitles:nil];
+    
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_preview", nil)];
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_rename", nil)];
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_publish", nil)];
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_share", nil)];
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_createnew", nil)];
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_list", nil)];
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_settings", nil)];
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_cancel", nil)];
+    popup.cancelButtonIndex = popup.numberOfButtons - 1;
+    
+    popup.tag = 1;
+    [popup showInView:[UIApplication sharedApplication].keyWindow];    
+}
+
+//
+// UIActionSheetDelegate methods
+//
+
+- (void)actionSheet:(UIActionSheet *)popup clickedButtonAtIndex:(NSInteger)index {
+    HFLogDebug(@"EditPlayFragmentController.actionSheet:clickedButtonAtIndex %d, menutitle=%@", index, [popup buttonTitleAtIndex:index]);
+    
+    NSString *buttonTitle = [popup buttonTitleAtIndex:index];
+    if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_preview", nil)]) {
+        HFLogDebug(@"preview...");
+    }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_rename", nil)]) {
+        HFLogDebug(@"rename...");
+    }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_publish", nil)]) {
+        HFLogDebug(@"publish...");
+    }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_share", nil)]) {
+        HFLogDebug(@"share...");
+    }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_createnew", nil)]) {
+        HFLogDebug(@"create new...");
+    }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_list", nil)]) {
+        HFLogDebug(@"list my storis...");
+       [self performSegueWithIdentifier: @"SegueToStoriListController" sender: self];
+    }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_settings", nil)]) {
+        HFLogDebug(@"settings...");
+    }
+}
+
 //
 // Test stuff
 //
