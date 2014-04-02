@@ -19,6 +19,7 @@
 - (void)initializeNewSlide:(int)slideIndex;
 - (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText;
 - (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText withForcedNulls:(BOOL)forceNulls;
+- (void)updatePageViewController;
 @end
 
 @implementation EditPlayController
@@ -105,9 +106,7 @@ bool _userNeedsAuthentication = TRUE;
     self.pageViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"EditPlayPageViewController"];
     self.pageViewController.dataSource = self;
     
-    EditPlayFragmentController *startingViewController = [self viewControllerAtIndex:0];
-    NSArray *viewControllers = @[startingViewController];
-    [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+    [self updatePageViewController];
     
     // Change the size of page view controller
     self.pageViewController.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - 30);
@@ -131,6 +130,17 @@ bool _userNeedsAuthentication = TRUE;
     [STOUtilities printSlideShareJSON:self.ssj];
 }
 
+- (void)updatePageViewController {
+    HFLogDebug(@"EditPlayController.updatePageViewController");
+    
+    EditPlayFragmentController *startingViewController = [self viewControllerAtIndex:0];
+    NSArray *viewControllers = @[startingViewController];
+    [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+
+    // BUGBUG - TODO: Need to a) jump to the new page, and b) invalidate the cache.
+    // See: http://stackoverflow.com/questions/15325891/refresh-uipageviewcontroller-reorder-pages-and-add-new-pages
+}
+
 - (void)initializeNewSlide:(int)slideIndex {
     HFLogDebug(@"EditPlayController.initializeNewSlide:%d", slideIndex);
     
@@ -142,34 +152,8 @@ bool _userNeedsAuthentication = TRUE;
     }
     
     [self updateSlideShareJSON:[[NSUUID UUID] UUIDString] withImageFileName:nil withAudioFileName:nil withText:nil];
-    
-    // m_viewPager.setCurrentItem(m_currentTabPosition); ???
+    [self updatePageViewController];
 }
-
-#if NEVER
-public void addSlide(int newIndex) {
-    if(D)Log.d(TAG, String.format("EditPlayActivity.addSlide: newIndex=%d", newIndex));
-    
-    initializeNewSlide(newIndex);
-    
-    int count = 0;
-    
-    try {
-        count = m_ssj.getSlideCount();
-    }
-    catch (Exception e) {
-        if(E)Log.d(TAG, "EditPlayActivity.addSlide", e);
-        e.printStackTrace();
-    }
-    catch (OutOfMemoryError e) {
-        if(E)Log.d(TAG, "EditPlayActivity.addSlide", e);
-        e.printStackTrace();
-    }
-    
-    String toastString = String.format(getString(R.string.toast_addslide_format), m_currentTabPosition + 1, count);
-    showToast(toastString);
-}
-#endif
 
 - (void)addSlide:(int)newIndex {
     HFLogDebug(@"EditPlayController.addSlide:%d", newIndex);
