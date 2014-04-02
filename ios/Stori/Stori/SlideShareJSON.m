@@ -7,7 +7,7 @@
 //
 
 #import "SlideShareJSON.h"
-#import "STOUtilities.h";
+#import "STOUtilities.h"
 
 //
 // SlideShareJSON example:
