@@ -7,6 +7,7 @@
 //
 
 #import "SlideShareJSON.h"
+#import "STOUtilities.h";
 
 //
 // SlideShareJSON example:
@@ -309,25 +310,20 @@
 - (BOOL)saveToFolder:(NSString *)folder withFileName:(NSString *)fileName {
     HFLogDebug(@"SlideShareJSON.saveToFolder: folder=%@, fileName=%@", folder, fileName);
     
-    // BUGBUG: TODO
-    // return [Utilities.saveStringToFile(_jsonDictionary.toString, folder, fileName);
-    
-    return FALSE;
+    return [STOUtilities saveStringToFile:[self toString] withFolder:folder withFileName:fileName];
 }
 
 + (SlideShareJSON *)loadFromFolder:(NSString *)folder withFileName:(NSString *)fileName {
-    // BUGBUG: TODO
-    return nil;
-}
-
-+ (NSString *)getSlideShareTitle:(NSString *)folder {
-    // BUGBUG: TODO
-    return nil;
-}
-
-+ (BOOL)isSlideSharePublished:(NSString *)folder {
-    // BUGBUG: TODO
-    return FALSE;
+    HFLogDebug(@"SlideShareJSON.loadFromFolder:%@ withFileName:%@", folder, fileName);
+    
+    NSString *ssjString = [STOUtilities loadStringFromFolder:folder withFile:fileName];
+    if (!ssjString) {
+        return nil;
+    }
+    
+    SlideShareJSON *ssj = [[SlideShareJSON alloc] initWithString:ssjString];
+    
+    return ssj;
 }
 
 @end

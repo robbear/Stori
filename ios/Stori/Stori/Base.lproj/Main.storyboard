@@ -15,7 +15,7 @@
                     <view key="view" contentMode="scaleToFill" id="S2I-Dq-Efn">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" red="0.19927459514116463" green="1" blue="0.24878833047352844" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="fic-Nx-mLV"/>
                 </viewController>
@@ -48,6 +48,9 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CRN-zt-Lyp">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <accessibility key="accessibilityConfiguration">
+                                    <accessibilityTraits key="traits" none="YES" button="YES" image="YES"/>
+                                </accessibility>
                             </imageView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="UserID:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gva-DL-axm">
                                 <rect key="frame" x="6" y="83" width="62" height="21"/>
@@ -84,12 +87,40 @@
                                     <action selector="onMainMenuButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="Yv9-Ic-xlE"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tI8-VJ-KFg">
+                                <rect key="frame" x="14" y="264" width="45" height="45"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <accessibility key="accessibilityConfiguration">
+                                    <accessibilityTraits key="traits" none="YES" button="YES" image="YES"/>
+                                </accessibility>
+                                <state key="normal" image="ic_plus">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="onInsertBeforeButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="Ape-VY-FSa"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rUN-XP-Q36">
+                                <rect key="frame" x="260" y="264" width="43" height="45"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <accessibility key="accessibilityConfiguration">
+                                    <accessibilityTraits key="traits" none="YES" button="YES" image="YES"/>
+                                </accessibility>
+                                <state key="normal" image="ic_plus">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="onInsertAfterButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="tYZ-pB-XL9"/>
+                                </connections>
+                            </button>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="pig-gS-d4A"/>
                     <connections>
                         <outlet property="imageView" destination="jDA-vX-wwQ" id="rus-Vu-RNx"/>
+                        <outlet property="insertAfterButton" destination="rUN-XP-Q36" id="kV8-0F-nFc"/>
+                        <outlet property="insertBeforeButton" destination="tI8-VJ-KFg" id="9AF-qo-VmF"/>
                         <outlet property="mainMenuButton" destination="42v-aF-faE" id="uRd-kX-dK6"/>
                         <outlet property="userEmailLabel" destination="7I9-bj-Bfp" id="zxV-mv-5cj"/>
                         <outlet property="userIDLabel" destination="hD1-Vd-5tD" id="N3l-x6-o3f"/>
@@ -358,6 +389,9 @@
             <point key="canvasLocation" x="-187" y="951"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="ic_plus" width="43" height="43"/>
+    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

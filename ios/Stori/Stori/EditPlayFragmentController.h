@@ -16,6 +16,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *userEmailLabel;
 @property (weak, nonatomic) IBOutlet UIButton *listStorisButton;
 @property (weak, nonatomic) IBOutlet UIButton *mainMenuButton;
+@property (weak, nonatomic) IBOutlet UIButton *insertBeforeButton;
+@property (weak, nonatomic) IBOutlet UIButton *insertAfterButton;
 
 @property (strong, nonatomic) LoginViewController *loginViewController;
 

@@ -40,7 +40,5 @@
 - (NSString *)toString;
 
 + (SlideShareJSON *)loadFromFolder:(NSString *)folder withFileName:(NSString *)fileName;
-+ (NSString *)getSlideShareTitle:(NSString *)folder;
-+ (BOOL)isSlideSharePublished:(NSString *)folder;
 
 @end

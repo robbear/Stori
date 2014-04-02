@@ -82,6 +82,17 @@
     [popup showInView:[UIApplication sharedApplication].keyWindow];    
 }
 
+- (IBAction)onInsertBeforeButtonClicked:(id)sender {
+    int selectedPosition = self.editPlayController.currentSlideIndex;
+    [self.editPlayController addSlide:selectedPosition];
+}
+     
+- (IBAction)onInsertAfterButtonClicked:(id)sender {
+    int selectedPosition = self.editPlayController.currentSlideIndex;
+    [self.editPlayController addSlide:selectedPosition + 1];
+}
+     
+
 //
 // UIActionSheetDelegate methods
 //

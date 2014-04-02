@@ -22,4 +22,6 @@
 @property (nonatomic) int currentSlideIndex;
 @property (strong, nonatomic) LoginViewController *loginViewController;
 
+- (void)addSlide:(int)newIndex;
+
 @end

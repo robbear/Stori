@@ -86,6 +86,8 @@ bool _userNeedsAuthentication = TRUE;
         [STOPreferences saveEditPlayName:self.slideShareName];
     }
     
+    [STOUtilities createOrGetSlideShareDirectory:self.slideShareName];
+    
     HFLogDebug(@"EditPlayController.initializePageView - in edit mode slideShareName=%@", self.slideShareName);
     
     [self initializeSlideShareJSON];
@@ -142,6 +144,42 @@ bool _userNeedsAuthentication = TRUE;
     [self updateSlideShareJSON:[[NSUUID UUID] UUIDString] withImageFileName:nil withAudioFileName:nil withText:nil];
     
     // m_viewPager.setCurrentItem(m_currentTabPosition); ???
+}
+
+#if NEVER
+public void addSlide(int newIndex) {
+    if(D)Log.d(TAG, String.format("EditPlayActivity.addSlide: newIndex=%d", newIndex));
+    
+    initializeNewSlide(newIndex);
+    
+    int count = 0;
+    
+    try {
+        count = m_ssj.getSlideCount();
+    }
+    catch (Exception e) {
+        if(E)Log.d(TAG, "EditPlayActivity.addSlide", e);
+        e.printStackTrace();
+    }
+    catch (OutOfMemoryError e) {
+        if(E)Log.d(TAG, "EditPlayActivity.addSlide", e);
+        e.printStackTrace();
+    }
+    
+    String toastString = String.format(getString(R.string.toast_addslide_format), m_currentTabPosition + 1, count);
+    showToast(toastString);
+}
+#endif
+
+- (void)addSlide:(int)newIndex {
+    HFLogDebug(@"EditPlayController.addSlide:%d", newIndex);
+    
+    [self initializeNewSlide:newIndex];
+    
+#if TOAST_IMPLEMENTED
+    int count = [self.ssj getSlideCount];
+    ...
+#endif
 }
 
 - (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText {
