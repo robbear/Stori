@@ -78,7 +78,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="42v-aF-faE">
-                                <rect key="frame" x="132" y="206" width="46" height="30"/>
+                                <rect key="frame" x="137" y="167" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Menu">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -113,15 +113,45 @@
                                     <action selector="onInsertAfterButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="tYZ-pB-XL9"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JDc-oY-ubl">
+                                <rect key="frame" x="114" y="205" width="93" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Delete Slide">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="onDeleteSlideButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="2dX-2b-NV0"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="60u-dj-tLt">
+                                <rect key="frame" x="125" y="243" width="70" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Edit Text">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="onEditTextButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="r2J-SZ-LW4"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Slide text" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YQ2-W9-eak">
+                                <rect key="frame" x="14" y="338" width="286" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="pig-gS-d4A"/>
                     <connections>
+                        <outlet property="deleteSlideButton" destination="JDc-oY-ubl" id="6mi-ZW-ZXr"/>
+                        <outlet property="editTextButton" destination="60u-dj-tLt" id="PsM-9R-nR7"/>
                         <outlet property="imageView" destination="jDA-vX-wwQ" id="rus-Vu-RNx"/>
                         <outlet property="insertAfterButton" destination="rUN-XP-Q36" id="kV8-0F-nFc"/>
                         <outlet property="insertBeforeButton" destination="tI8-VJ-KFg" id="9AF-qo-VmF"/>
                         <outlet property="mainMenuButton" destination="42v-aF-faE" id="uRd-kX-dK6"/>
+                        <outlet property="tempSlideTextLabel" destination="YQ2-W9-eak" id="Mir-ew-azE"/>
                         <outlet property="userEmailLabel" destination="7I9-bj-Bfp" id="zxV-mv-5cj"/>
                         <outlet property="userIDLabel" destination="hD1-Vd-5tD" id="N3l-x6-o3f"/>
                         <segue destination="feS-YX-Ecz" kind="push" identifier="SegueToStoriListController" id="rO1-fg-aet"/>

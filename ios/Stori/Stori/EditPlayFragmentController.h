@@ -10,7 +10,7 @@
 #import "SlideJSON.h"
 #import "EditPlayController.h"
 
-@interface EditPlayFragmentController : UIViewController <UIActionSheetDelegate>
+@interface EditPlayFragmentController : UIViewController <UIActionSheetDelegate, UIAlertViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UILabel *userIDLabel;
 @property (weak, nonatomic) IBOutlet UILabel *userEmailLabel;
@@ -18,6 +18,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *mainMenuButton;
 @property (weak, nonatomic) IBOutlet UIButton *insertBeforeButton;
 @property (weak, nonatomic) IBOutlet UIButton *insertAfterButton;
+@property (weak, nonatomic) IBOutlet UIButton *deleteSlideButton;
+@property (weak, nonatomic) IBOutlet UIButton *editTextButton;
+@property (weak, nonatomic) IBOutlet UILabel *tempSlideTextLabel;
 
 @property (strong, nonatomic) LoginViewController *loginViewController;
 

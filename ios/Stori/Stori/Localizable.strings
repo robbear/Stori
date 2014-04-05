@@ -9,8 +9,11 @@
 "app_name" = "Stori";
 "default_stori_title" = "My Stori";
 "default_stori_description" = "My Stori slides";
+"editplay_slidetext_dialog_title" = "Stori text";
+"editplay_slidetext_dialog_message" = "Enter text for this slide";
 "google_play_market_link" = "https://play.google.com/store/apps/details?id=com.stori.stori";
 "menu_cancel" = "Cancel";
+"menu_ok" = "Ok";
 "menu_editplay_createnew" = "Create new";
 "menu_editplay_list" = "List my Storis";
 "menu_editplay_preview" = "Preview";

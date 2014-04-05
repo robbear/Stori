@@ -13,7 +13,7 @@
 #import "LoginViewController.h"
 #import "SlideShareJSON.h"
 
-@interface EditPlayController : UIViewController <UIPageViewControllerDataSource, AmazonClientManagerGoogleAccountDelegate, AWSS3ProviderDelegate>
+@interface EditPlayController : UIViewController <UIPageViewControllerDataSource, UIPageViewControllerDelegate, AmazonClientManagerGoogleAccountDelegate, AWSS3ProviderDelegate>
 
 @property (strong, nonatomic) UIPageViewController *pageViewController;
 @property (strong, nonatomic) SlideShareJSON *ssj;
@@ -23,5 +23,9 @@
 @property (strong, nonatomic) LoginViewController *loginViewController;
 
 - (void)addSlide:(int)newIndex;
+- (void)deleteSlide:(NSString *)slideUuid withImage:(NSString *)imageFileName withAudio:audioFileName;
+- (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText;
+- (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText withForcedNulls:(BOOL)forceNulls;
+- (NSString *)getSlideText:(NSString *)slideUuid;
 
 @end

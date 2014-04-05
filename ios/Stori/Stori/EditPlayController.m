@@ -17,8 +17,6 @@
 - (void)initializePageView;
 - (void)initializeSlideShareJSON;
 - (void)initializeNewSlide:(int)slideIndex;
-- (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText;
-- (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText withForcedNulls:(BOOL)forceNulls;
 - (void)updatePageViewController;
 @end
 
@@ -105,6 +103,7 @@ bool _userNeedsAuthentication = TRUE;
     // Create page view controller
     self.pageViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"EditPlayPageViewController"];
     self.pageViewController.dataSource = self;
+    self.pageViewController.delegate = self;
     
     [self updatePageViewController];
     
@@ -133,7 +132,10 @@ bool _userNeedsAuthentication = TRUE;
 - (void)updatePageViewController {
     HFLogDebug(@"EditPlayController.updatePageViewController");
     
-    EditPlayFragmentController *startingViewController = [self viewControllerAtIndex:0];
+    self.pageViewController.dataSource = nil;
+    self.pageViewController.dataSource = self;
+    
+    EditPlayFragmentController *startingViewController = [self viewControllerAtIndex:self.currentSlideIndex];
     NSArray *viewControllers = @[startingViewController];
     [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 
@@ -164,6 +166,45 @@ bool _userNeedsAuthentication = TRUE;
     int count = [self.ssj getSlideCount];
     ...
 #endif
+}
+
+- (void)deleteSlide:(NSString *)slideUuid withImage:(NSString *)imageFileName withAudio:audioFileName {
+    HFLogDebug(@"EditPlayController.deleteSlide:%@ withImage:%@ withAudio:%@", slideUuid, imageFileName, audioFileName);
+    HFLogDebug(@"Before slide deletion:");
+    [STOUtilities printSlideShareJSON:self.ssj];
+    
+    int count = 0;
+    
+    if (imageFileName) {
+        [STOUtilities deleteFileAtFolder:self.slideShareName withFileName:imageFileName];
+    }
+    
+    if (audioFileName) {
+        [STOUtilities deleteFileAtFolder:self.slideShareName withFileName:audioFileName];
+    }
+    
+    [self.ssj removeSlideBySlideId:slideUuid];
+    [self.ssj saveToFolder:self.slideShareName withFileName:SLIDESHARE_JSON_FILENAME];
+    count = [self.ssj getSlideCount];
+    
+    HFLogDebug(@"After slide deletion");
+    [STOUtilities printSlideShareJSON:self.ssj];
+
+    if (self.currentSlideIndex >= count) {
+        self.currentSlideIndex--;
+    }
+    
+    [self updatePageViewController];
+
+#if TOAST_IMPLEMENTED
+    int count = [self.ssj getSlideCount];
+    ...
+#endif
+}
+
+- (NSString *)getSlideText:(NSString *)slideUuid {
+    SlideJSON *sj = [self.ssj getSlideBySlideId:slideUuid];
+    return sj.getText;
 }
 
 - (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText {
@@ -267,11 +308,25 @@ bool _userNeedsAuthentication = TRUE;
 }
 
 //
+// UIPageViewControllerDelegate methods
+//
+
+- (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed {
+    HFLogDebug(@"EditPlayController:pageViewController:didFinishAnimating:transitionCompleted:%d", completed);
+}
+
+- (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers {
+    HFLogDebug(@"EditPlayController.willTransitionToControllers");
+}
+
+//
 // UIPageViewControllerDataSource methods
 //
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController {
     int index = [self.ssj getOrderIndexForSlide:((EditPlayFragmentController *)viewController).slideUuid];
+    
+    HFLogDebug(@"EditPlayController.pageViewController:viewControllerBeforeViewController - index=%d", index);
     
     if (index <= 0) {
         return nil;
@@ -286,6 +341,8 @@ bool _userNeedsAuthentication = TRUE;
     int index = [self.ssj getOrderIndexForSlide:((EditPlayFragmentController *)viewController).slideUuid];
     int slideCount = [self.ssj getSlideCount];
     
+    HFLogDebug(@"EditPlayController.pageViewController:viewControllerAfterViewController - index=%d", index);
+
     if ((index >= slideCount) || (index < 0)) {
         return nil;
     }
@@ -299,10 +356,16 @@ bool _userNeedsAuthentication = TRUE;
 }
 
 - (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController {
-    return [self.ssj getSlideCount];
+    int count = [self.ssj getSlideCount];
+    
+    HFLogDebug(@"EditPlayController.presentationCountForPageViewController: returning %d", count);
+    
+    return count;
 }
 
 - (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController {
+    HFLogDebug(@"EditPlayController.presentationIndexForPageViewController: returning %d", self.currentSlideIndex);
+    
     return self.currentSlideIndex;
 }
 

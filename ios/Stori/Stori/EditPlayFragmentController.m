@@ -92,6 +92,37 @@
     [self.editPlayController addSlide:selectedPosition + 1];
 }
      
+- (IBAction)onDeleteSlideButtonClicked:(id)sender {
+    [self.editPlayController deleteSlide:self.slideUuid withImage:self.imageFileName withAudio:self.audioFileName];
+}
+
+- (IBAction)onEditTextButtonClicked:(id)sender {
+    UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_slidetext_dialog_title", nil)
+                                                     message:NSLocalizedString(@"editplay_slidetext_dialog_message", nil)
+                                                    delegate:self
+                                           cancelButtonTitle:NSLocalizedString(@"menu_cancel", nil)
+                                           otherButtonTitles:NSLocalizedString(@"menu_ok", nil), nil];
+    dialog.alertViewStyle = UIAlertViewStylePlainTextInput;
+    dialog.tag = 1;
+    [dialog show];
+}
+
+//
+// UIAlertViewDelegate methods
+//
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
+    if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_ok", nil)]) {
+        UITextField *textField = [alertView textFieldAtIndex:0];
+        NSString *text = textField.text;
+        
+        [self.editPlayController updateSlideShareJSON:self.slideUuid withImageFileName:nil withAudioFileName:nil withText:text];
+        self.slideText = [self.editPlayController getSlideText:self.slideUuid];
+        
+        [self refreshInterface];
+    }
+}
 
 //
 // UIActionSheetDelegate methods
@@ -136,6 +167,7 @@
     
     self.userEmailLabel.text = [AmazonSharedPreferences userEmail];
     self.userIDLabel.text = [AmazonSharedPreferences userName];
+    self.tempSlideTextLabel.text = self.slideText;
 }
 
 @end
