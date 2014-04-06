@@ -20,6 +20,7 @@
 @property (strong, nonatomic) NSString *slideShareName;
 @property (strong, nonatomic) NSString *userUuid;
 @property (nonatomic) int currentSlideIndex;
+@property (nonatomic) int pendingSlideIndex;
 @property (strong, nonatomic) LoginViewController *loginViewController;
 
 - (void)addSlide:(int)newIndex;

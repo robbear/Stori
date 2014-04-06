@@ -132,15 +132,22 @@ bool _userNeedsAuthentication = TRUE;
 - (void)updatePageViewController {
     HFLogDebug(@"EditPlayController.updatePageViewController");
     
-    self.pageViewController.dataSource = nil;
-    self.pageViewController.dataSource = self;
-    
     EditPlayFragmentController *startingViewController = [self viewControllerAtIndex:self.currentSlideIndex];
     NSArray *viewControllers = @[startingViewController];
-    [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 
-    // BUGBUG - TODO: Need to a) jump to the new page, and b) invalidate the cache.
-    // See: http://stackoverflow.com/questions/15325891/refresh-uipageviewcontroller-reorder-pages-and-add-new-pages
+    // See: http://stackoverflow.com/questions/13633059/uipageviewcontroller-how-do-i-correctly-jump-to-a-specific-page-without-messing
+    __weak UIPageViewController* pvcw = self.pageViewController;
+    [self.pageViewController setViewControllers:viewControllers
+                  direction:UIPageViewControllerNavigationDirectionForward
+                   animated:NO completion:^(BOOL finished) {
+                       UIPageViewController* pvcs = pvcw;
+                       if (!pvcs) return;
+                       dispatch_async(dispatch_get_main_queue(), ^{
+                           [pvcs setViewControllers:viewControllers
+                                          direction:UIPageViewControllerNavigationDirectionForward
+                                           animated:NO completion:nil];
+                       });
+                   }];
 }
 
 - (void)initializeNewSlide:(int)slideIndex {
@@ -229,7 +236,7 @@ bool _userNeedsAuthentication = TRUE;
     [self.ssj saveToFolder:self.slideShareName withFileName:SLIDESHARE_JSON_FILENAME];
     
     if (needsUpdate) {
-        // ??? - initializeViewPager();
+        [self updatePageViewController];
     }
     
     HFLogDebug(@"After update:");
@@ -313,10 +320,19 @@ bool _userNeedsAuthentication = TRUE;
 
 - (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed {
     HFLogDebug(@"EditPlayController:pageViewController:didFinishAnimating:transitionCompleted:%d", completed);
+
+    self.currentSlideIndex = self.pendingSlideIndex;
+    HFLogDebug(@"EditPlayController.pageViewController:didFinishAnimating - currentSlideIndex=%d", self.currentSlideIndex);
 }
 
 - (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers {
     HFLogDebug(@"EditPlayController.willTransitionToControllers");
+
+    EditPlayFragmentController *epfc = (EditPlayFragmentController *)pendingViewControllers[0];
+    NSString *slideUuid = epfc.slideUuid;
+    self.pendingSlideIndex = [self.ssj getOrderIndexForSlide:slideUuid];
+    
+    HFLogDebug(@"EditPlayController.willTransitionToControllers: pendingSlideIndex=%d", self.pendingSlideIndex);
 }
 
 //
