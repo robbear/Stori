@@ -8,9 +8,13 @@
 
 #import "EditPlayFragmentController.h"
 #import "AmazonSharedPreferences.h"
+#import "STOUtilities.h"
 
 @interface EditPlayFragmentController ()
-
+@property (nonatomic) UIImagePickerController *imagePickerController;
+- (BOOL)hasImage;
+- (void)selectImageFromGallery;
+- (void)selectImageFromCamera;
 @end
 
 @implementation EditPlayFragmentController
@@ -107,6 +111,85 @@
     [dialog show];
 }
 
+- (IBAction)onSelectPhotoButtonClicked:(id)sender {
+    UIActionSheet *popup = [[UIActionSheet alloc]
+                            initWithTitle:NSLocalizedString(@"menu_editplay_image_title", nil)
+                            delegate:self
+                            cancelButtonTitle:nil
+                            destructiveButtonTitle:nil
+                            otherButtonTitles:nil];
+    
+    [popup addButtonWithTitle:[self hasImage] ? NSLocalizedString(@"menu_editplay_image_replacepicture", nil) : NSLocalizedString(@"menu_editplay_image_choosepicture", nil)];
+    [popup addButtonWithTitle:[self hasImage] ? NSLocalizedString(@"menu_editplay_image_replacecamera", nil) : NSLocalizedString(@"menu_editplay_image_usecamera", nil)];
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_cancel", nil)];
+    popup.cancelButtonIndex = popup.numberOfButtons - 1;
+    
+    popup.tag = 1;
+    [popup showInView:[UIApplication sharedApplication].keyWindow];
+}
+
+- (void)selectImageFromGallery {
+    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    imagePickerController.delegate = self;
+    imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
+    imagePickerController.sourceType =  UIImagePickerControllerSourceTypePhotoLibrary;
+    
+    self.imagePickerController = imagePickerController;
+    [self presentViewController:self.imagePickerController animated:YES completion:nil];
+}
+
+- (void)selectImageFromCamera {
+    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    imagePickerController.delegate = self;
+    imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+    
+    // BUGBUG: What, if any, settings allow the saving of the image to the system picture folder?
+    
+    self.imagePickerController = imagePickerController;
+    [self presentViewController:imagePickerController animated:YES completion:nil];
+}
+
+- (BOOL)hasImage {
+    return self.imageFileName != nil;
+}
+
+//
+// UIImagePickerControllerDelegate methods
+//
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    HFLogDebug(@"EditPlayFragmentController.imagePickerController:didFinishPickingMediaWithInfo");
+    
+    UIImage *image = [info valueForKey:UIImagePickerControllerOriginalImage];
+    //[self.imageView setImage:image];
+    NSString *imageFileName = self.imageFileName;
+    if (!imageFileName) {
+        imageFileName = [[NSUUID UUID] UUIDString];
+    }
+    
+    [self dismissViewControllerAnimated:YES completion:NULL];
+    self.imagePickerController = nil;
+    
+    BOOL success = [STOUtilities saveImage:image inFolder:self.slideSharename withFileName:imageFileName];
+    if (success) {
+        self.imageFileName = imageFileName;
+        [self.editPlayController updateSlideShareJSON:self.slideUuid withImageFileName:self.imageFileName withAudioFileName:self.audioFileName withText:self.slideText];
+    }
+    else {
+        HFLogDebug(@"EditPlayFragmentController.imagePickerController:didFinishPickingMediaWithInfo - failed. Bailing");
+    }
+    
+    [self refreshInterface];
+}
+
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    HFLogDebug(@"EditPlayFragmentController.imagePickerControllerDidCancel");
+    
+    [self dismissViewControllerAnimated:YES completion:NULL];
+    self.imagePickerController = nil;
+}
+
 //
 // UIAlertViewDelegate methods
 //
@@ -154,6 +237,14 @@
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_settings", nil)]) {
         HFLogDebug(@"settings...");
     }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_image_choosepicture", nil)] ||
+             [buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_image_replacepicture", nil)]) {
+        [self selectImageFromGallery];
+    }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_image_usecamera", nil)] ||
+             [buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_image_replacecamera", nil)]) {
+        [self selectImageFromCamera];
+    }
 }
 
 //
@@ -168,6 +259,10 @@
     self.userEmailLabel.text = [AmazonSharedPreferences userEmail];
     self.userIDLabel.text = [AmazonSharedPreferences userName];
     self.tempSlideTextLabel.text = self.slideText;
+    
+    NSURL *fileURL = [STOUtilities getAbsoluteFilePathWithFolder:self.slideSharename withFileName:self.imageFileName];
+    UIImage *image = [UIImage imageWithContentsOfFile:[fileURL path]];
+    [self.imageView setImage:image];
 }
 
 @end

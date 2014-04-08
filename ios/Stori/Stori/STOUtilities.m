@@ -110,6 +110,16 @@
     return str;
 }
 
++ (BOOL)saveImage:(UIImage *)image inFolder:(NSString *)folder withFileName:(NSString *)fileName {
+    NSURL *folderDirectory = [STOUtilities createOrGetSlideShareDirectory:folder];
+    NSURL *fileURL = [folderDirectory URLByAppendingPathComponent:fileName];
+    
+    // BUGBUG - TODO: Resize image before writing to file
+    
+    NSData *imageData = UIImageJPEGRepresentation(image, 100.0);
+    return [imageData writeToURL:fileURL atomically:NO];
+}
+
 + (NSString *)buildResourceUrlString:(NSString *)userUuid withSlideShareName:(NSString *)slideShareName withFileName:(NSString *)fileName {
     if (!fileName || [fileName length] <= 0) {
         HFLogDebug(@"STOUtilities.buildResourceUrlString - returning nil");

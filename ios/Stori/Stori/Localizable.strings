@@ -15,6 +15,11 @@
 "menu_cancel" = "Cancel";
 "menu_ok" = "Ok";
 "menu_editplay_createnew" = "Create new";
+"menu_editplay_image_choosepicture" = "Choose picture";
+"menu_editplay_image_replacecamera" = "Replace with camera";
+"menu_editplay_image_replacepicture" = "Replace picture";
+"menu_editplay_image_title" = "Pictures";
+"menu_editplay_image_usecamera" = "Use camera";
 "menu_editplay_list" = "List my Storis";
 "menu_editplay_preview" = "Preview";
 "menu_editplay_publish" = "Publish";
