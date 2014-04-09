@@ -206,6 +206,36 @@ bool _userNeedsAuthentication = TRUE;
 #endif
 }
 
+- (void)deleteImage:(NSString *)slideUuid withImage:(NSString *)imageFileName {
+    if (imageFileName) {
+        [STOUtilities deleteFileAtFolder:self.slideShareName withFileName:imageFileName];
+    }
+
+    NSString *audioFileName = nil;
+    NSString *slideText = nil;
+    
+    SlideJSON *sj = [self.ssj getSlideBySlideId:slideUuid];
+    audioFileName = [sj getAudioFilename];
+    slideText = [sj getText];
+    
+    [self updateSlideShareJSON:slideUuid withImageFileName:nil withAudioFileName:audioFileName withText:slideText withForcedNulls:TRUE];
+}
+
+- (void)deleteAudio:(NSString *)slideUuid withAudio:(NSString *)audioFileName {
+    if (audioFileName) {
+        [STOUtilities deleteFileAtFolder:self.slideShareName withFileName:audioFileName];
+    }
+    
+    NSString *imageFileName = nil;
+    NSString *slideText = nil;
+        
+    SlideJSON *sj = [self.ssj getSlideBySlideId:slideUuid];
+    imageFileName = [sj getImageFilename];
+    slideText = [sj getText];
+        
+    [self updateSlideShareJSON:slideUuid withImageFileName:imageFileName withAudioFileName:nil withText:slideText withForcedNulls:TRUE];
+}
+
 - (NSString *)getSlideText:(NSString *)slideUuid {
     SlideJSON *sj = [self.ssj getSlideBySlideId:slideUuid];
     return sj.getText;

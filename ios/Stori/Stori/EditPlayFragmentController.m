@@ -13,9 +13,11 @@
 @interface EditPlayFragmentController ()
 @property (nonatomic) UIImagePickerController *imagePickerController;
 - (BOOL)hasImage;
+- (BOOL)hasAudio;
 - (void)selectImageFromGallery;
 - (void)selectImageFromCamera;
 - (void)displaySlideTitleAndPosition;
+- (void)renderImage;
 @end
 
 @implementation EditPlayFragmentController
@@ -33,7 +35,7 @@
     
     [super viewDidLoad];
     
-    [self refreshInterface];
+    [self renderImage];
     [self displaySlideTitleAndPosition];
 }
 
@@ -111,8 +113,12 @@
                             otherButtonTitles:nil];
     
     [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_trash_removeslide", nil)];
-    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_trash_removeimage", nil)];
-    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_trash_removeaudio", nil)];
+    if ([self hasImage]) {
+        [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_trash_removeimage", nil)];
+    }
+    if ([self hasAudio]) {
+        [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_trash_removeaudio", nil)];
+    }
     [popup addButtonWithTitle:NSLocalizedString(@"menu_cancel", nil)];
     popup.cancelButtonIndex = popup.numberOfButtons - 1;
     
@@ -173,6 +179,10 @@
     return self.imageFileName != nil;
 }
 
+- (BOOL)hasAudio {
+    return self.audioFileName != nil;
+}
+
 //
 // UIImagePickerControllerDelegate methods
 //
@@ -199,7 +209,7 @@
         HFLogDebug(@"EditPlayFragmentController.imagePickerController:didFinishPickingMediaWithInfo - failed. Bailing");
     }
     
-    [self refreshInterface];
+    [self renderImage];
 }
 
 
@@ -223,7 +233,7 @@
         [self.editPlayController updateSlideShareJSON:self.slideUuid withImageFileName:nil withAudioFileName:nil withText:text];
         self.slideText = [self.editPlayController getSlideText:self.slideUuid];
         
-        [self refreshInterface];
+        [self renderImage];
     }
 }
 
@@ -269,8 +279,11 @@
         [self.editPlayController deleteSlide:self.slideUuid withImage:self.imageFileName withAudio:self.audioFileName];
     }
     else if ([buttonTitle isEqual:NSLocalizedString(@"menu_editplay_trash_removeimage", nil)]) {
+        [self.editPlayController deleteImage:self.slideUuid withImage:self.imageFileName];
+        [self renderImage];
     }
     else if ([buttonTitle isEqual:NSLocalizedString(@"menu_editplay_trash_removeaudio", nil)]) {
+        [self.editPlayController deleteAudio:self.slideUuid withAudio:self.audioFileName];
     }
 }
 
@@ -283,14 +296,7 @@
     self.slidePositionLabel.text = [NSString stringWithFormat:NSLocalizedString(@"slide_position_format", nil), position + 1, count];
 }
 
-//
-// Test stuff
-//
-
-- (void)refreshInterface {
-    HFLogDebug(@"EditPlayFragmentController.refreshInterface");
-    //self.tempSlideTextLabel.text = self.slideText;
-    
+- (void)renderImage {
     NSURL *fileURL = [STOUtilities getAbsoluteFilePathWithFolder:self.slideSharename withFileName:self.imageFileName];
     UIImage *image = [UIImage imageWithContentsOfFile:[fileURL path]];
     [self.imageView setImage:image];

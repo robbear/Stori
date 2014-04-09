@@ -25,6 +25,8 @@
 
 - (void)addSlide:(int)newIndex;
 - (void)deleteSlide:(NSString *)slideUuid withImage:(NSString *)imageFileName withAudio:audioFileName;
+- (void)deleteImage:(NSString *)slideUuid withImage:(NSString *)imageFileName;
+- (void)deleteAudio:(NSString *)slideUuid withAudio:(NSString *)audioFileName;
 - (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText;
 - (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText withForcedNulls:(BOOL)forceNulls;
 - (NSString *)getSlideText:(NSString *)slideUuid;
