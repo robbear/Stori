@@ -211,6 +211,18 @@ bool _userNeedsAuthentication = TRUE;
     return sj.getText;
 }
 
+- (int)getSlideCount {
+    return [self.ssj getSlideCount];
+}
+
+- (int)getSlidePosition:(NSString *)slideUuid {
+    return [self.ssj getOrderIndexForSlide:slideUuid];
+}
+
+- (NSString *)getSlidesTitle {
+    return [self.ssj getTitle];
+}
+
 - (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText {
     [self updateSlideShareJSON:slideUuid withImageFileName:imageFileName withAudioFileName:audioFileName withText:slideText withForcedNulls:NO];
 }

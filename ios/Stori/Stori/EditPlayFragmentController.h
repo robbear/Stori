@@ -20,6 +20,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *tempSlideTextLabel;
 @property (weak, nonatomic) IBOutlet UIButton *selectPhotoButton;
 @property (weak, nonatomic) IBOutlet UIButton *trashButton;
+@property (weak, nonatomic) IBOutlet UILabel *storiTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *slidePositionLabel;
 
 @property (strong, nonatomic) LoginViewController *loginViewController;
 

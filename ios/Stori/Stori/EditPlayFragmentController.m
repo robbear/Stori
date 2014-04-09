@@ -15,6 +15,7 @@
 - (BOOL)hasImage;
 - (void)selectImageFromGallery;
 - (void)selectImageFromCamera;
+- (void)displaySlideTitleAndPosition;
 @end
 
 @implementation EditPlayFragmentController
@@ -33,6 +34,7 @@
     [super viewDidLoad];
     
     [self refreshInterface];
+    [self displaySlideTitleAndPosition];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -270,6 +272,15 @@
     }
     else if ([buttonTitle isEqual:NSLocalizedString(@"menu_editplay_trash_removeaudio", nil)]) {
     }
+}
+
+- (void)displaySlideTitleAndPosition {
+    int count = [self.editPlayController getSlideCount];
+    int position = [self.editPlayController getSlidePosition:self.slideUuid];
+    NSString *title = [self.editPlayController getSlidesTitle];
+    
+    self.storiTitleLabel.text = title;
+    self.slidePositionLabel.text = [NSString stringWithFormat:NSLocalizedString(@"slide_position_format", nil), position + 1, count];
 }
 
 //

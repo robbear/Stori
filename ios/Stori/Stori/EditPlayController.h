@@ -28,5 +28,8 @@
 - (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText;
 - (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText withForcedNulls:(BOOL)forceNulls;
 - (NSString *)getSlideText:(NSString *)slideUuid;
+- (int)getSlideCount;
+- (int)getSlidePosition:(NSString *)slideUuid;
+- (NSString *)getSlidesTitle;
 
 @end
