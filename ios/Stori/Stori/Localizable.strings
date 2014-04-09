@@ -27,6 +27,10 @@
 "menu_editplay_share" = "Share";
 "menu_editplay_settings" = "Settings";
 "menu_editplay_title" = "Stori actions";
+"menu_editplay_trash_removeaudio" = "Remove audio";
+"menu_editplay_trash_removeimage" = "Remove image";
+"menu_editplay_trash_removeslide" = "Remove slide";
+"menu_editplay_trash_title" = "";
 "menu_storilistitem_delete" = "Delete";
 "menu_storilistitem_edit" = "Edit";
 "menu_storilistitem_play" = "Play";

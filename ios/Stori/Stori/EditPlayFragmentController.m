@@ -100,6 +100,24 @@
     [self.editPlayController deleteSlide:self.slideUuid withImage:self.imageFileName withAudio:self.audioFileName];
 }
 
+- (IBAction)onTrashButtonClicked:(id)sender {
+    UIActionSheet *popup = [[UIActionSheet alloc]
+                            initWithTitle:NSLocalizedString(@"menu_editplay_trash_title", nil)
+                            delegate:self
+                            cancelButtonTitle:nil
+                            destructiveButtonTitle:nil
+                            otherButtonTitles:nil];
+    
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_trash_removeslide", nil)];
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_trash_removeimage", nil)];
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_trash_removeaudio", nil)];
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_cancel", nil)];
+    popup.cancelButtonIndex = popup.numberOfButtons - 1;
+    
+    popup.tag = 1;
+    [popup showInView:[UIApplication sharedApplication].keyWindow];
+}
+
 - (IBAction)onEditTextButtonClicked:(id)sender {
     UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_slidetext_dialog_title", nil)
                                                      message:NSLocalizedString(@"editplay_slidetext_dialog_message", nil)
@@ -245,6 +263,13 @@
              [buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_image_replacecamera", nil)]) {
         [self selectImageFromCamera];
     }
+    else if ([buttonTitle isEqual:NSLocalizedString(@"menu_editplay_trash_removeslide", nil)]) {
+        [self.editPlayController deleteSlide:self.slideUuid withImage:self.imageFileName withAudio:self.audioFileName];
+    }
+    else if ([buttonTitle isEqual:NSLocalizedString(@"menu_editplay_trash_removeimage", nil)]) {
+    }
+    else if ([buttonTitle isEqual:NSLocalizedString(@"menu_editplay_trash_removeaudio", nil)]) {
+    }
 }
 
 //
@@ -253,12 +278,7 @@
 
 - (void)refreshInterface {
     HFLogDebug(@"EditPlayFragmentController.refreshInterface");
-    
-    HFLogDebug(@"EditPlayFragmentController.refreshInterface: userName = %@", [AmazonSharedPreferences userName]);
-    
-    self.userEmailLabel.text = [AmazonSharedPreferences userEmail];
-    self.userIDLabel.text = [AmazonSharedPreferences userName];
-    self.tempSlideTextLabel.text = self.slideText;
+    //self.tempSlideTextLabel.text = self.slideText;
     
     NSURL *fileURL = [STOUtilities getAbsoluteFilePathWithFolder:self.slideSharename withFileName:self.imageFileName];
     UIImage *image = [UIImage imageWithContentsOfFile:[fileURL path]];

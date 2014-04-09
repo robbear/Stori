@@ -12,8 +12,6 @@
 
 @interface EditPlayFragmentController : UIViewController <UIActionSheetDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 
-@property (weak, nonatomic) IBOutlet UILabel *userIDLabel;
-@property (weak, nonatomic) IBOutlet UILabel *userEmailLabel;
 @property (weak, nonatomic) IBOutlet UIButton *mainMenuButton;
 @property (weak, nonatomic) IBOutlet UIButton *insertBeforeButton;
 @property (weak, nonatomic) IBOutlet UIButton *insertAfterButton;
@@ -21,10 +19,11 @@
 @property (weak, nonatomic) IBOutlet UIButton *editTextButton;
 @property (weak, nonatomic) IBOutlet UILabel *tempSlideTextLabel;
 @property (weak, nonatomic) IBOutlet UIButton *selectPhotoButton;
+@property (weak, nonatomic) IBOutlet UIButton *trashButton;
 
 @property (strong, nonatomic) LoginViewController *loginViewController;
 
-@property (strong, nonatomic) IBOutlet UIImageView *imageView;
+@property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (strong, nonatomic) NSString *imageFileName;
 @property (strong, nonatomic) NSString *audioFileName;
 @property (strong, nonatomic) NSString *slideText;

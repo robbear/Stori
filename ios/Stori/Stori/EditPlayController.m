@@ -107,9 +107,6 @@ bool _userNeedsAuthentication = TRUE;
     
     [self updatePageViewController];
     
-    // Change the size of page view controller
-    self.pageViewController.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - 30);
-    
     [self addChildViewController:_pageViewController];
     [self.view addSubview:_pageViewController.view];
     [self.pageViewController didMoveToParentViewController:self];
@@ -371,6 +368,7 @@ bool _userNeedsAuthentication = TRUE;
     return [self viewControllerAtIndex:index];
 }
 
+#if NEVER // Implement only if page "dots" are required
 - (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController {
     int count = [self.ssj getSlideCount];
     
@@ -384,6 +382,7 @@ bool _userNeedsAuthentication = TRUE;
     
     return self.currentSlideIndex;
 }
+#endif
 
 
 @end
