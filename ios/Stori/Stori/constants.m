@@ -40,6 +40,11 @@ NSString *const TITLE_SEGMENT_STRING = @"title/";
 NSString *const SLIDE_COUNT_SEGMENT_STRING = @"count/";
 
 //
+// Maximum text lengths
+//
+int const MAX_SLIDE_TEXT_CHARACTERS = 140;
+
+//
 // Default web site base url
 //
 NSString *const BASE_WEB_URL = @"http://stori-app.com/";

@@ -11,6 +11,8 @@
 "default_stori_description" = "My Stori slides";
 "editplay_slidetext_dialog_title" = "Stori text";
 "editplay_slidetext_dialog_message" = "Enter text for this slide";
+"editplay_storititle_dialog_title" = "Stori title";
+"editplay_storititle_dialog_message" = "Enter your new Stori title";
 "google_play_market_link" = "https://play.google.com/store/apps/details?id=com.stori.stori";
 "menu_cancel" = "Cancel";
 "menu_ok" = "Ok";

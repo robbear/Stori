@@ -253,6 +253,15 @@ bool _userNeedsAuthentication = TRUE;
     return [self.ssj getTitle];
 }
 
+- (void)setSlideShareTitle:(NSString *)title {
+    if (!title || title.length <= 1) {
+        title = NSLocalizedString(@"default_stori_title", nil);
+    }
+    
+    [self.ssj setTitle:title];
+    [self.ssj saveToFolder:self.slideShareName withFileName:SLIDESHARE_JSON_FILENAME];
+}
+
 - (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText {
     [self updateSlideShareJSON:slideUuid withImageFileName:imageFileName withAudioFileName:audioFileName withText:slideText withForcedNulls:NO];
 }
@@ -370,6 +379,8 @@ bool _userNeedsAuthentication = TRUE;
     EditPlayFragmentController *epfc = (EditPlayFragmentController *)pendingViewControllers[0];
     NSString *slideUuid = epfc.slideUuid;
     self.pendingSlideIndex = [self.ssj getOrderIndexForSlide:slideUuid];
+    
+    [epfc onEditPlayFragmentWillBeSelected];
     
     HFLogDebug(@"EditPlayController.willTransitionToControllers: pendingSlideIndex=%d", self.pendingSlideIndex);
 }

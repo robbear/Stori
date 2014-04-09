@@ -33,5 +33,6 @@
 - (int)getSlideCount;
 - (int)getSlidePosition:(NSString *)slideUuid;
 - (NSString *)getSlidesTitle;
+- (void)setSlideShareTitle:(NSString *)title;
 
 @end

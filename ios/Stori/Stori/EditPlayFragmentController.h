@@ -10,7 +10,7 @@
 #import "SlideJSON.h"
 #import "EditPlayController.h"
 
-@interface EditPlayFragmentController : UIViewController <UIActionSheetDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+@interface EditPlayFragmentController : UIViewController <UIActionSheetDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *mainMenuButton;
 @property (weak, nonatomic) IBOutlet UIButton *insertBeforeButton;
@@ -35,5 +35,6 @@
 
 - (void)initializeWithSlideJSON:(SlideJSON *)sj withSlideShareName:(NSString *)slideShareName withUuid:(NSString *)slideUuid
                  fromController:(EditPlayController *)editPlayController;
+- (void)onEditPlayFragmentWillBeSelected;
 
 @end

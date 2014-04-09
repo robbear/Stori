@@ -10,6 +10,9 @@
 #import "AmazonSharedPreferences.h"
 #import "STOUtilities.h"
 
+#define ALERTVIEW_DIALOG_SLIDETEXT 1
+#define ALERTVIEW_DIALOG_STORITITLE 2
+
 @interface EditPlayFragmentController ()
 @property (nonatomic) UIImagePickerController *imagePickerController;
 - (BOOL)hasImage;
@@ -18,6 +21,9 @@
 - (void)selectImageFromCamera;
 - (void)displaySlideTitleAndPosition;
 - (void)renderImage;
+- (void)renameStori;
+- (void)alertViewForSlideText:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
+- (void)alertViewForStoriTitle:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 @end
 
 @implementation EditPlayFragmentController
@@ -66,6 +72,12 @@
     self.imageFileName = [sj getImageFilename];
     self.audioFileName = [sj getAudioFilename];
     self.slideText = [sj getText];
+}
+
+- (void)onEditPlayFragmentWillBeSelected {
+    HFLogAlert(@"EditPlayFragmentController.onEditPlayFragmentWillBeSelected");
+    
+    [self displaySlideTitleAndPosition];
 }
 
 - (IBAction)onMainMenuButtonClicked:(id)sender {
@@ -126,14 +138,21 @@
     [popup showInView:[UIApplication sharedApplication].keyWindow];
 }
 
-- (IBAction)onEditTextButtonClicked:(id)sender {
+- (void)enterSlideText {
     UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_slidetext_dialog_title", nil)
                                                      message:NSLocalizedString(@"editplay_slidetext_dialog_message", nil)
                                                     delegate:self
                                            cancelButtonTitle:NSLocalizedString(@"menu_cancel", nil)
                                            otherButtonTitles:NSLocalizedString(@"menu_ok", nil), nil];
     dialog.alertViewStyle = UIAlertViewStylePlainTextInput;
-    dialog.tag = 1;
+    dialog.tag = ALERTVIEW_DIALOG_SLIDETEXT;
+    
+    UITextField *textField = [dialog textFieldAtIndex:0];
+    textField.tag = ALERTVIEW_DIALOG_STORITITLE;
+    textField.text = [self.editPlayController getSlideText:self.slideUuid];
+    [textField setSelected:TRUE];
+    textField.delegate = self;
+    
     [dialog show];
 }
 
@@ -173,6 +192,23 @@
     
     self.imagePickerController = imagePickerController;
     [self presentViewController:imagePickerController animated:YES completion:nil];
+}
+
+- (void)renameStori {
+    UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_storititle_dialog_title", nil)
+                                                     message:NSLocalizedString(@"editplay_storititle_dialog_message", nil)
+                                                    delegate:self
+                                           cancelButtonTitle:NSLocalizedString(@"menu_cancel", nil)
+                                           otherButtonTitles:NSLocalizedString(@"menu_ok", nil), nil];
+    dialog.alertViewStyle = UIAlertViewStylePlainTextInput;
+    dialog.tag = ALERTVIEW_DIALOG_STORITITLE;
+    UITextField *textField = [dialog textFieldAtIndex:0];
+    textField.tag = ALERTVIEW_DIALOG_STORITITLE;
+    textField.text = [self.editPlayController getSlidesTitle];
+    [textField setSelected:TRUE];
+    textField.delegate = self;
+    
+    [dialog show];
 }
 
 - (BOOL)hasImage {
@@ -221,10 +257,46 @@
 }
 
 //
+// UITextFieldDelegate methods
+//
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    NSUInteger newLength = [textField.text length] + [string length] - range.length;
+    
+    //
+    // Restrict text field sizes
+    //
+    
+    switch (textField.tag) {
+        case ALERTVIEW_DIALOG_SLIDETEXT:
+            return (newLength > 140) ? NO : YES;
+            break;
+            
+        default:
+            return TRUE;
+    }
+}
+
+
+//
 // UIAlertViewDelegate methods
 //
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    switch (alertView.tag) {
+        case ALERTVIEW_DIALOG_SLIDETEXT:
+            [self alertViewForSlideText:alertView clickedButtonAtIndex:buttonIndex];
+            break;
+            
+        case ALERTVIEW_DIALOG_STORITITLE:
+            [self alertViewForStoriTitle:alertView clickedButtonAtIndex:buttonIndex];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (void)alertViewForSlideText:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
     if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_ok", nil)]) {
         UITextField *textField = [alertView textFieldAtIndex:0];
@@ -234,6 +306,17 @@
         self.slideText = [self.editPlayController getSlideText:self.slideUuid];
         
         [self renderImage];
+    }
+}
+
+- (void)alertViewForStoriTitle:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
+    if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_ok", nil)]) {
+        UITextField *textField = [alertView textFieldAtIndex:0];
+        NSString *text = textField.text;
+        
+        [self.editPlayController setSlideShareTitle:text];
+        [self displaySlideTitleAndPosition];
     }
 }
 
@@ -250,6 +333,7 @@
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_rename", nil)]) {
         HFLogDebug(@"rename...");
+        [self renameStori];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_publish", nil)]) {
         HFLogDebug(@"publish...");

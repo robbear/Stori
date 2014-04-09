@@ -42,6 +42,11 @@ extern NSString *const TITLE_SEGMENT_STRING;
 extern NSString *const SLIDE_COUNT_SEGMENT_STRING;
 
 //
+// Maximum text lengths
+//
+extern int const MAX_SLIDE_TEXT_CHARACTERS;
+
+//
 // Default web site base url
 //
 extern NSString *const BASE_WEB_URL;
