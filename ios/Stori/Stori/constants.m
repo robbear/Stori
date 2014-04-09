@@ -43,6 +43,7 @@ NSString *const SLIDE_COUNT_SEGMENT_STRING = @"count/";
 // Maximum text lengths
 //
 int const MAX_SLIDE_TEXT_CHARACTERS = 140;
+int const MAX_STORI_TITLE_CHARACTERS = 140;
 
 //
 // Default web site base url

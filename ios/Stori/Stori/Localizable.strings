@@ -17,6 +17,9 @@
 "menu_cancel" = "Cancel";
 "menu_ok" = "Ok";
 "menu_editplay_createnew" = "Create new";
+"menu_editplay_edit_reorder" = "Reorder";
+"menu_editplay_edit_text" = "Text";
+"menu_editplay_edit_title" = "";
 "menu_editplay_image_choosepicture" = "Choose picture";
 "menu_editplay_image_replacecamera" = "Replace with camera";
 "menu_editplay_image_replacepicture" = "Replace picture";

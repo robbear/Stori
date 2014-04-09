@@ -116,6 +116,25 @@
     [self.editPlayController deleteSlide:self.slideUuid withImage:self.imageFileName withAudio:self.audioFileName];
 }
 
+- (IBAction)onEditButtonClicked:(id)sender {
+    UIActionSheet *popup = [[UIActionSheet alloc]
+                            initWithTitle:NSLocalizedString(@"menu_editplay_edit_title", nil)
+                            delegate:self
+                            cancelButtonTitle:nil
+                            destructiveButtonTitle:nil
+                            otherButtonTitles:nil];
+    
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_edit_text", nil)];
+    if ([self.editPlayController getSlideCount] > 1) {
+        [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_edit_reorder", nil)];
+    }
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_cancel", nil)];
+    popup.cancelButtonIndex = popup.numberOfButtons - 1;
+    
+    popup.tag = 1;
+    [popup showInView:[UIApplication sharedApplication].keyWindow];
+}
+
 - (IBAction)onTrashButtonClicked:(id)sender {
     UIActionSheet *popup = [[UIActionSheet alloc]
                             initWithTitle:NSLocalizedString(@"menu_editplay_trash_title", nil)
@@ -148,7 +167,7 @@
     dialog.tag = ALERTVIEW_DIALOG_SLIDETEXT;
     
     UITextField *textField = [dialog textFieldAtIndex:0];
-    textField.tag = ALERTVIEW_DIALOG_STORITITLE;
+    textField.tag = ALERTVIEW_DIALOG_SLIDETEXT;
     textField.text = [self.editPlayController getSlideText:self.slideUuid];
     [textField setSelected:TRUE];
     textField.delegate = self;
@@ -268,9 +287,13 @@
     
     switch (textField.tag) {
         case ALERTVIEW_DIALOG_SLIDETEXT:
-            return (newLength > 140) ? NO : YES;
+            return (newLength > MAX_SLIDE_TEXT_CHARACTERS) ? NO : YES;
             break;
             
+        case ALERTVIEW_DIALOG_STORITITLE:
+            return (newLength > MAX_STORI_TITLE_CHARACTERS) ? NO : YES;
+            break;
+
         default:
             return TRUE;
     }
@@ -359,15 +382,21 @@
              [buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_image_replacecamera", nil)]) {
         [self selectImageFromCamera];
     }
-    else if ([buttonTitle isEqual:NSLocalizedString(@"menu_editplay_trash_removeslide", nil)]) {
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_trash_removeslide", nil)]) {
         [self.editPlayController deleteSlide:self.slideUuid withImage:self.imageFileName withAudio:self.audioFileName];
     }
-    else if ([buttonTitle isEqual:NSLocalizedString(@"menu_editplay_trash_removeimage", nil)]) {
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_trash_removeimage", nil)]) {
         [self.editPlayController deleteImage:self.slideUuid withImage:self.imageFileName];
         [self renderImage];
     }
-    else if ([buttonTitle isEqual:NSLocalizedString(@"menu_editplay_trash_removeaudio", nil)]) {
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_trash_removeaudio", nil)]) {
         [self.editPlayController deleteAudio:self.slideUuid withAudio:self.audioFileName];
+    }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_edit_text", nil)]) {
+        [self enterSlideText];
+    }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_edit_reorder", nil)]) {
+        HFLogAlert(@"Reorder...");
     }
 }
 

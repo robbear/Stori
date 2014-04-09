@@ -15,13 +15,11 @@
 @property (weak, nonatomic) IBOutlet UIButton *mainMenuButton;
 @property (weak, nonatomic) IBOutlet UIButton *insertBeforeButton;
 @property (weak, nonatomic) IBOutlet UIButton *insertAfterButton;
-@property (weak, nonatomic) IBOutlet UIButton *deleteSlideButton;
-@property (weak, nonatomic) IBOutlet UIButton *editTextButton;
-@property (weak, nonatomic) IBOutlet UILabel *tempSlideTextLabel;
 @property (weak, nonatomic) IBOutlet UIButton *selectPhotoButton;
 @property (weak, nonatomic) IBOutlet UIButton *trashButton;
 @property (weak, nonatomic) IBOutlet UILabel *storiTitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *slidePositionLabel;
+@property (weak, nonatomic) IBOutlet UIButton *editButton;
 
 @property (strong, nonatomic) LoginViewController *loginViewController;
 
