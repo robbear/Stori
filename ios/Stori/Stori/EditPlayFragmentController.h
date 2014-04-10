@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 #import "SlideJSON.h"
 #import "EditPlayController.h"
 
-@interface EditPlayFragmentController : UIViewController <UIActionSheetDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITextFieldDelegate>
+@interface EditPlayFragmentController : UIViewController
+    <UIActionSheetDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITextFieldDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *mainMenuButton;
 @property (weak, nonatomic) IBOutlet UIButton *insertBeforeButton;
@@ -22,6 +24,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *editButton;
 @property (weak, nonatomic) IBOutlet UIButton *leftArrowButton;
 @property (weak, nonatomic) IBOutlet UIButton *rightArrowButton;
+@property (weak, nonatomic) IBOutlet UIButton *recordingButton;
+@property (weak, nonatomic) IBOutlet UIButton *playStopButton;
 
 @property (strong, nonatomic) LoginViewController *loginViewController;
 

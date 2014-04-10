@@ -45,11 +45,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7mL-au-3OO">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7mL-au-3OO">
                                 <rect key="frame" x="0.0" y="0.0" width="322" height="480"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
-                            <view alpha="0.65000000000000002" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="m0F-KF-H8T">
+                            <view alpha="0.65000000000000002" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="m0F-KF-H8T">
                                 <rect key="frame" x="0.0" y="0.0" width="322" height="480"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
@@ -67,7 +67,7 @@
                                             <action selector="onSelectPhotoButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="KuT-OY-moR"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MZS-xa-Kxv">
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MZS-xa-Kxv">
                                         <rect key="frame" x="85" y="26" width="32" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <constraints>
@@ -77,8 +77,11 @@
                                         <state key="normal" image="ic_record">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <connections>
+                                            <action selector="onRecordingButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="gbj-My-qpk"/>
+                                        </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YNZ-Gf-cOJ">
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YNZ-Gf-cOJ">
                                         <rect key="frame" x="144" y="26" width="32" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <constraints>
@@ -235,6 +238,9 @@
                                         <state key="normal" image="ic_play">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <connections>
+                                            <action selector="onPlayStopButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="1r3-LS-Bge"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="klP-01-X98">
                                         <rect key="frame" x="256" y="370" width="32" height="32"/>
@@ -306,6 +312,8 @@
                         <outlet property="insertBeforeButton" destination="rvB-vG-L55" id="VAA-VY-qhi"/>
                         <outlet property="leftArrowButton" destination="bNL-lU-uBl" id="9x6-NX-Kbn"/>
                         <outlet property="mainMenuButton" destination="Ybh-f5-M4L" id="DzE-rt-WiD"/>
+                        <outlet property="playStopButton" destination="Yi0-ve-Xxi" id="8WW-qk-AMJ"/>
+                        <outlet property="recordingButton" destination="MZS-xa-Kxv" id="cKt-Gm-CYe"/>
                         <outlet property="rightArrowButton" destination="klP-01-X98" id="xC7-Xv-nTu"/>
                         <outlet property="selectPhotoButton" destination="1En-8c-QWe" id="fEP-r6-brx"/>
                         <outlet property="slidePositionLabel" destination="OT2-ax-jPm" id="igB-XU-lWi"/>
