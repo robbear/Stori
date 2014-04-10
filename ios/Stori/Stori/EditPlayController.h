@@ -34,5 +34,6 @@
 - (int)getSlidePosition:(NSString *)slideUuid;
 - (NSString *)getSlidesTitle;
 - (void)setSlideShareTitle:(NSString *)title;
+- (void)setCurrentSlidePosition:(int)position;
 
 @end

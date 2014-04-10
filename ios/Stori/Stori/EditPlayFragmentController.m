@@ -20,6 +20,7 @@
 - (void)selectImageFromGallery;
 - (void)selectImageFromCamera;
 - (void)displaySlideTitleAndPosition;
+- (void)displayNextPrevControls;
 - (void)renderImage;
 - (void)renameStori;
 - (void)alertViewForSlideText:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
@@ -43,6 +44,7 @@
     
     [self renderImage];
     [self displaySlideTitleAndPosition];
+    [self displayNextPrevControls];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -78,6 +80,7 @@
     HFLogAlert(@"EditPlayFragmentController.onEditPlayFragmentWillBeSelected");
     
     [self displaySlideTitleAndPosition];
+    [self displayNextPrevControls];
 }
 
 - (IBAction)onMainMenuButtonClicked:(id)sender {
@@ -100,6 +103,29 @@
     
     popup.tag = 1;
     [popup showInView:[UIApplication sharedApplication].keyWindow];    
+}
+
+- (IBAction)onLeftArrowButtonClicked:(id)sender {
+    int position = [self.editPlayController getSlidePosition:self.slideUuid];
+    
+    position--;
+    if (position < 0) {
+        return;
+    }
+    
+    [self.editPlayController setCurrentSlidePosition:position];
+}
+
+- (IBAction)onRightArrowButtonClicked:(id)sender {
+    int position = [self.editPlayController getSlidePosition:self.slideUuid];
+    int count = [self.editPlayController getSlideCount];
+    
+    position++;
+    if (position >= count) {
+        return;
+    }
+    
+    [self.editPlayController setCurrentSlidePosition:position];
 }
 
 - (IBAction)onInsertBeforeButtonClicked:(id)sender {
@@ -407,6 +433,18 @@
     
     self.storiTitleLabel.text = title;
     self.slidePositionLabel.text = [NSString stringWithFormat:NSLocalizedString(@"slide_position_format", nil), position + 1, count];
+}
+
+- (void)displayNextPrevControls {
+    int count = [self.editPlayController getSlideCount];
+    int position = [self.editPlayController getSlidePosition:self.slideUuid];
+
+    [self.insertBeforeButton setHidden:(count >= MAX_SLIDES_PER_STORI_FOR_FREE)];
+    [self.insertAfterButton setHidden:(count >= MAX_SLIDES_PER_STORI_FOR_FREE)];
+
+    [self.leftArrowButton setHidden:(position <= 0)];
+    [self.rightArrowButton setHidden:(position >= count - 1)];
+    
 }
 
 - (void)renderImage {

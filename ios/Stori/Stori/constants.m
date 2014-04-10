@@ -45,6 +45,12 @@ NSString *const SLIDE_COUNT_SEGMENT_STRING = @"count/";
 int const MAX_SLIDE_TEXT_CHARACTERS = 140;
 int const MAX_STORI_TITLE_CHARACTERS = 140;
 
+// Maximum published Storis for free version
+int const MAX_PUBLISHED_FOR_FREE = 20;
+
+// Maximum number of slides per Stori for free version
+int const MAX_SLIDES_PER_STORI_FOR_FREE = 5;
+
 //
 // Default web site base url
 //

@@ -47,6 +47,12 @@ extern NSString *const SLIDE_COUNT_SEGMENT_STRING;
 extern int const MAX_SLIDE_TEXT_CHARACTERS;
 extern int const MAX_STORI_TITLE_CHARACTERS;
 
+// Maximum published Storis for free version
+extern int const MAX_PUBLISHED_FOR_FREE;
+
+// Maximum number of slides per Stori for free version
+extern int const MAX_SLIDES_PER_STORI_FOR_FREE;
+
 //
 // Default web site base url
 //

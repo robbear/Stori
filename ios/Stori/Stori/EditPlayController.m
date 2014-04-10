@@ -262,6 +262,11 @@ bool _userNeedsAuthentication = TRUE;
     [self.ssj saveToFolder:self.slideShareName withFileName:SLIDESHARE_JSON_FILENAME];
 }
 
+- (void)setCurrentSlidePosition:(int)position {
+    [self setCurrentSlideIndex:position];
+    [self updatePageViewController];
+}
+
 - (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText {
     [self updateSlideShareJSON:slideUuid withImageFileName:imageFileName withAudioFileName:audioFileName withText:slideText withForcedNulls:NO];
 }

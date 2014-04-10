@@ -20,6 +20,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *storiTitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *slidePositionLabel;
 @property (weak, nonatomic) IBOutlet UIButton *editButton;
+@property (weak, nonatomic) IBOutlet UIButton *leftArrowButton;
+@property (weak, nonatomic) IBOutlet UIButton *rightArrowButton;
 
 @property (strong, nonatomic) LoginViewController *loginViewController;
 
