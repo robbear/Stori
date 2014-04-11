@@ -365,7 +365,7 @@
     
     if (!self.audioFileName) {
         [self setAudioFileName:[self getNewAudioFileName]];
-        [self.editPlayController updateSlideShareJSON:self.slideUuid withImageFileName:self.imageFileName withAudioFileName:self.audioFileName withText:self.slideUuid];
+        [self.editPlayController updateSlideShareJSON:self.slideUuid withImageFileName:self.imageFileName withAudioFileName:self.audioFileName withText:self.slideText];
     }
     
     NSDictionary *recordSettings = [[NSDictionary alloc] initWithObjectsAndKeys:
