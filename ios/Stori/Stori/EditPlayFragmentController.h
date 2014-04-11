@@ -40,5 +40,6 @@
 - (void)initializeWithSlideJSON:(SlideJSON *)sj withSlideShareName:(NSString *)slideShareName withUuid:(NSString *)slideUuid
                  fromController:(EditPlayController *)editPlayController;
 - (void)onEditPlayFragmentWillBeSelected;
+- (void)onEditPlayFragmentWillBeDeselected;
 
 @end

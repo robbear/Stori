@@ -36,9 +36,11 @@
 - (void)alertViewForOverwriteAudio:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)startRecording;
 - (void)stopRecording;
+- (void)startPlaying;
 - (void)stopPlaying;
 - (NSString *)getNewImageFileName;
 - (NSString *)getNewAudioFileName;
+- (void)enableControlsWhileRecordingOrPlaying:(BOOL)enabled;
 @end
 
 @implementation EditPlayFragmentController
@@ -108,6 +110,13 @@
     [self displayNextPrevControls];
 }
 
+- (void)onEditPlayFragmentWillBeDeselected {
+    HFLogDebug(@"EditPlayFragmentController.onEditPlayFragmentWillBeDeselected");
+    
+    [self stopPlaying];
+    [self stopRecording];
+}
+
 - (IBAction)onMainMenuButtonClicked:(id)sender {
     UIActionSheet *popup = [[UIActionSheet alloc]
                             initWithTitle:NSLocalizedString(@"menu_editplay_title", nil)
@@ -136,15 +145,7 @@
     }
     
     if (!self.isPlaying) {
-        NSURL *folderDirectory = [STOUtilities createOrGetSlideShareDirectory:self.slideSharename];
-        NSURL *fileURL = [folderDirectory URLByAppendingPathComponent:self.audioFileName];
-    
-        self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:nil];
-        self.audioPlayer.delegate = self;
-        self.isPlaying = TRUE;
-        [self.audioPlayer play];
-        
-        [self.playStopButton setImage:[UIImage imageNamed:@"ic_stopplaying.png"] forState:UIControlStateNormal];
+        [self startPlaying];
     }
     else {
         [self stopPlaying];
@@ -343,6 +344,21 @@
     return self.audioFileName != nil;
 }
 
+- (void)enableControlsWhileRecordingOrPlaying:(BOOL)enabled {
+    HFLogDebug(@"EditPlayFragmentController.enableControlsWhileRecordingOrPlaying: %d", enabled);
+
+    [self.playStopButton setEnabled:enabled];
+    [self.recordingButton setEnabled:enabled];
+    [self.selectPhotoButton setEnabled:enabled];
+    [self.mainMenuButton setEnabled:enabled];
+    [self.insertAfterButton setEnabled:enabled];
+    [self.insertBeforeButton setEnabled:enabled];
+    [self.trashButton setEnabled:enabled];
+    [self.leftArrowButton setEnabled:enabled];
+    [self.rightArrowButton setEnabled:enabled];
+    [self.editButton setEnabled:enabled];
+}
+
 - (void)startRecording {
     HFLogAlert(@"EditPlayFragmentController.startRecording");
     
@@ -369,13 +385,15 @@
     
     BOOL success = [self.audioRecorder record];
     if (success) {
+        [self enableControlsWhileRecordingOrPlaying:FALSE];
+        [self.recordingButton setEnabled:TRUE];
         [self setIsRecording:TRUE];
         [self.recordingButton setImage:[UIImage imageNamed:@"ic_stoprecording.png"] forState:UIControlStateNormal];
     }
 }
 
 - (void)stopRecording {
-    HFLogAlert(@"EditPlayFragmentController.stopRecording");
+    HFLogDebug(@"EditPlayFragmentController.stopRecording");
     
     if (self.isRecording) {
         [self.audioRecorder stop];
@@ -384,6 +402,7 @@
     
     [self.recordingButton setImage:[UIImage imageNamed:@"ic_record.png"] forState:UIControlStateNormal];
     [self displayPlayStopControl];
+    [self enableControlsWhileRecordingOrPlaying:TRUE];
 }
 
 - (NSString *)getNewImageFileName {
@@ -394,10 +413,25 @@
     return [NSString stringWithFormat:@"%@.3gp", [[NSUUID UUID] UUIDString]];
 }
 
+- (void)startPlaying {
+    NSURL *folderDirectory = [STOUtilities createOrGetSlideShareDirectory:self.slideSharename];
+    NSURL *fileURL = [folderDirectory URLByAppendingPathComponent:self.audioFileName];
+    
+    self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:nil];
+    self.audioPlayer.delegate = self;
+    self.isPlaying = TRUE;
+    [self.audioPlayer play];
+    
+    [self enableControlsWhileRecordingOrPlaying:FALSE];
+    [self.playStopButton setEnabled:TRUE];
+    [self.playStopButton setImage:[UIImage imageNamed:@"ic_stopplaying.png"] forState:UIControlStateNormal];
+}
+
 - (void)stopPlaying {
     [self.audioPlayer stop];
     self.audioPlayer = nil;
     [self.playStopButton setImage:[UIImage imageNamed:@"ic_play.png"] forState:UIControlStateNormal];
+    [self enableControlsWhileRecordingOrPlaying:TRUE];
     self.isPlaying = FALSE;
 }
 

@@ -376,6 +376,9 @@ bool _userNeedsAuthentication = TRUE;
 
     self.currentSlideIndex = self.pendingSlideIndex;
     HFLogDebug(@"EditPlayController.pageViewController:didFinishAnimating - currentSlideIndex=%d", self.currentSlideIndex);
+    
+    EditPlayFragmentController *epfc = (EditPlayFragmentController *)previousViewControllers[0];
+    [epfc onEditPlayFragmentWillBeDeselected];
 }
 
 - (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers {
