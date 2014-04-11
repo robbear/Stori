@@ -9,6 +9,9 @@
 "app_name" = "Stori";
 "default_stori_title" = "My Stori";
 "default_stori_description" = "My Stori slides";
+"editplay_createnew_dialog_title" = "Create new?";
+"editplay_createnew_dialog_message" = "If you have not yet published your previous work, it will be lost.";
+"editplay_createnew_button" = "Create new";
 "editplay_overwriteaudio_title" = "Replace audio?";
 "editplay_overwriteaudio_message" = "Do you want to replace the audio you have already recorded for this slide?";
 "editplay_slidetext_dialog_title" = "Stori text";
@@ -50,3 +53,4 @@
 "storilistcontroller_delete_message" = "This will permanently delete this Stori. Deleting cannot be undone.";
 "storilistcontroller_delete_title" = "Delete this Stori?";
 "storilistcontroller_delete_wait" = "Deleting...";
+"usedefault_button" = "Use default";

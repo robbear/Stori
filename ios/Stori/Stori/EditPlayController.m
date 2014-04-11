@@ -12,12 +12,20 @@
 #import "STOPreferences.h"
 #import "STOUtilities.h"
 
+#define ALERTVIEW_DIALOG_CREATENEW 1
+#define ALERTVIEW_DIALOG_STORITITLE 2
+
 @interface EditPlayController ()
 - (EditPlayFragmentController *)viewControllerAtIndex:(NSUInteger)index;
 - (void)initializePageView;
 - (void)initializeSlideShareJSON;
 - (void)initializeNewSlide:(int)slideIndex;
+- (void)initializeNewSlideShow;
+- (void)enterStoriTitleAndRecreate;
+- (void)finalizeNewStori:(NSString *)title;
 - (void)updatePageViewController;
+- (void)alertViewForCreateNew:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
+- (void)alertViewForStoriTitle:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 @end
 
 @implementation EditPlayController
@@ -147,6 +155,47 @@ bool _userNeedsAuthentication = TRUE;
                    }];
 }
 
+- (void)initializeNewSlideShow {
+    HFLogDebug(@"EditPlayController.initializeNewSlideShow");
+    
+    if (self.slideShareName) {
+        [STOUtilities deleteSlideShareDirectory:self.slideShareName];
+    }
+    
+    self.slideShareName = [[NSUUID UUID] UUIDString];
+    [STOPreferences saveEditPlayName:self.slideShareName];
+    [STOUtilities createOrGetSlideShareDirectory:self.slideShareName];
+    [self enterStoriTitleAndRecreate];
+}
+
+- (void)enterStoriTitleAndRecreate {
+    HFLogDebug(@"EditPlayController.enterStoriTitleAndRecreate");
+    
+    UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_storititle_dialog_title", nil)
+                                                     message:NSLocalizedString(@"editplay_storititle_dialog_message", nil)
+                                                    delegate:self
+                                           cancelButtonTitle:NSLocalizedString(@"usedefault_button", nil)
+                                           otherButtonTitles:NSLocalizedString(@"menu_ok", nil), nil];
+    dialog.alertViewStyle = UIAlertViewStylePlainTextInput;
+    dialog.tag = ALERTVIEW_DIALOG_STORITITLE;
+    UITextField *textField = [dialog textFieldAtIndex:0];
+    textField.tag = ALERTVIEW_DIALOG_STORITITLE;
+    textField.text = NSLocalizedString(@"default_stori_title", nil);
+    [textField setSelected:TRUE];
+    
+    [dialog show];
+}
+
+- (void)finalizeNewStori:(NSString *)title {
+    HFLogDebug(@"EditPlayController.finalizeNewStori");
+
+    [self initializeSlideShareJSON];
+    [self setSlideShareTitle:title];
+    
+    self.currentSlideIndex = 0;
+    [self initializeNewSlide:self.currentSlideIndex];
+}
+
 - (void)initializeNewSlide:(int)slideIndex {
     HFLogDebug(@"EditPlayController.initializeNewSlide:%d", slideIndex);
     
@@ -159,6 +208,18 @@ bool _userNeedsAuthentication = TRUE;
     
     [self updateSlideShareJSON:[[NSUUID UUID] UUIDString] withImageFileName:nil withAudioFileName:nil withText:nil];
     [self updatePageViewController];
+}
+
+- (void)createNewSlideShow {
+    HFLogDebug(@"EditPlayController.createNewSlideShow");
+
+    UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_createnew_dialog_title", nil)
+                                                     message:NSLocalizedString(@"editplay_createnew_dialog_message", nil)
+                                                    delegate:self
+                                           cancelButtonTitle:NSLocalizedString(@"menu_cancel", nil)
+                                           otherButtonTitles:NSLocalizedString(@"editplay_createnew_button", nil), nil];
+    dialog.tag = ALERTVIEW_DIALOG_CREATENEW;
+    [dialog show];
 }
 
 - (void)addSlide:(int)newIndex {
@@ -350,6 +411,10 @@ bool _userNeedsAuthentication = TRUE;
 }
 
 - (EditPlayFragmentController *)viewControllerAtIndex:(NSUInteger)index {
+    if (!self.ssj) {
+        return nil;
+    }
+    
     if (([self.ssj getSlideCount] == 0) || (index >= [self.ssj getSlideCount])) {
         HFLogDebug(@"EditPlayController.viewControllerAtIndex:%d - index out of range", index);
         
@@ -398,6 +463,10 @@ bool _userNeedsAuthentication = TRUE;
 //
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController {
+    if (!self.ssj) {
+        return nil;
+    }
+    
     int index = [self.ssj getOrderIndexForSlide:((EditPlayFragmentController *)viewController).slideUuid];
     
     HFLogDebug(@"EditPlayController.pageViewController:viewControllerBeforeViewController - index=%d", index);
@@ -412,6 +481,10 @@ bool _userNeedsAuthentication = TRUE;
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
 {
+    if (!self.ssj) {
+        return nil;
+    }
+    
     int index = [self.ssj getOrderIndexForSlide:((EditPlayFragmentController *)viewController).slideUuid];
     int slideCount = [self.ssj getSlideCount];
     
@@ -444,6 +517,44 @@ bool _userNeedsAuthentication = TRUE;
     return self.currentSlideIndex;
 }
 #endif
+
+//
+// UIAlertViewDelegate methods
+//
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    switch (alertView.tag) {
+        case ALERTVIEW_DIALOG_CREATENEW:
+            [self alertViewForCreateNew:alertView clickedButtonAtIndex:buttonIndex];
+            break;
+            
+        case ALERTVIEW_DIALOG_STORITITLE:
+            [self alertViewForStoriTitle:alertView clickedButtonAtIndex:buttonIndex];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (void)alertViewForCreateNew:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
+    if ([buttonTitle isEqualToString:NSLocalizedString(@"editplay_createnew_button", nil)]) {
+        [self initializeNewSlideShow];
+    }
+}
+
+- (void)alertViewForStoriTitle:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSString *title = NSLocalizedString(@"default_stori_title", nil);
+    NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
+    
+    if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_ok", nil)]) {
+        UITextField *textField = [alertView textFieldAtIndex:0];
+        title = textField.text;
+    }
+    
+    [self finalizeNewStori:title];
+}
 
 
 @end

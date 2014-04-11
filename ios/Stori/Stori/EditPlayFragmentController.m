@@ -607,7 +607,7 @@
         HFLogDebug(@"share...");
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_createnew", nil)]) {
-        HFLogDebug(@"create new...");
+        [self.editPlayController createNewSlideShow];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_list", nil)]) {
         HFLogDebug(@"list my storis...");

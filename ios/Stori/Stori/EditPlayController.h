@@ -13,7 +13,8 @@
 #import "LoginViewController.h"
 #import "SlideShareJSON.h"
 
-@interface EditPlayController : UIViewController <UIPageViewControllerDataSource, UIPageViewControllerDelegate, AmazonClientManagerGoogleAccountDelegate, AWSS3ProviderDelegate>
+@interface EditPlayController : UIViewController
+    <UIPageViewControllerDataSource, UIPageViewControllerDelegate, AmazonClientManagerGoogleAccountDelegate, AWSS3ProviderDelegate, UIAlertViewDelegate>
 
 @property (strong, nonatomic) UIPageViewController *pageViewController;
 @property (strong, nonatomic) SlideShareJSON *ssj;
@@ -35,5 +36,6 @@
 - (NSString *)getSlidesTitle;
 - (void)setSlideShareTitle:(NSString *)title;
 - (void)setCurrentSlidePosition:(int)position;
+- (void)createNewSlideShow;
 
 @end
