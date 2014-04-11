@@ -18,6 +18,7 @@
 @property (strong, nonatomic) AVAudioRecorder *audioRecorder;
 @property (strong, nonatomic) AVAudioPlayer *audioPlayer;
 @property (nonatomic) BOOL isRecording;
+@property (nonatomic) BOOL isPlaying;
 @property (nonatomic) UIImagePickerController *imagePickerController;
 - (void)deleteSlideData;
 - (BOOL)hasImage;
@@ -35,8 +36,10 @@
 - (void)alertViewForOverwriteAudio:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)startRecording;
 - (void)stopRecording;
+- (void)stopPlaying;
 - (NSString *)getNewImageFileName;
 - (NSString *)getNewAudioFileName;
+- (void)configureAudioSession;
 @end
 
 @implementation EditPlayFragmentController
@@ -163,12 +166,22 @@ NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
     
     [super viewDidLoad];
     
+    [self configureAudioSession];
+    
     [self setIsRecording:FALSE];
+    [self setIsPlaying:FALSE];
     
     [self renderImage];
     [self displaySlideTitleAndPosition];
     [self displayNextPrevControls];
     [self displayPlayStopControl];
+}
+
+- (void)configureAudioSession {
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+    [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+    [session setActive:TRUE error:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -230,6 +243,24 @@ NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
 }
 
 - (IBAction)onPlayStopButtonClicked:(id)sender {
+    if (![self hasAudio]) {
+        return;
+    }
+    
+    if (!self.isPlaying) {
+        NSURL *folderDirectory = [STOUtilities createOrGetSlideShareDirectory:self.slideSharename];
+        NSURL *fileURL = [folderDirectory URLByAppendingPathComponent:self.audioFileName];
+    
+        self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:nil];
+        self.audioPlayer.delegate = self;
+        self.isPlaying = TRUE;
+        [self.audioPlayer play];
+        
+        [self.playStopButton setImage:[UIImage imageNamed:@"ic_stopplaying.png"] forState:UIControlStateNormal];
+    }
+    else {
+        [self stopPlaying];
+    }
 }
 
 - (IBAction)onRecordingButtonClicked:(id)sender {
@@ -285,16 +316,6 @@ NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
     [self.editPlayController addSlide:selectedPosition + 1];
 }
      
-- (IBAction)onDeleteSlideButtonClicked:(id)sender {
-    int count = [self.editPlayController getSlideCount];
-    if (count > 1) {
-        [self.editPlayController deleteSlide:self.slideUuid withImage:self.imageFileName withAudio:self.audioFileName];
-    }
-    else {
-        [self deleteSlideData];
-    }
-}
-
 - (IBAction)onEditButtonClicked:(id)sender {
     UIActionSheet *popup = [[UIActionSheet alloc]
                             initWithTitle:NSLocalizedString(@"menu_editplay_edit_title", nil)
@@ -442,9 +463,6 @@ NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
         [self.editPlayController updateSlideShareJSON:self.slideUuid withImageFileName:self.imageFileName withAudioFileName:self.audioFileName withText:self.slideUuid];
     }
     
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
-    
     NSDictionary *recordSettings = [[NSDictionary alloc] initWithObjectsAndKeys:
                                     [NSNumber numberWithFloat: 16000], AVSampleRateKey,
                                     [NSNumber numberWithInt: kAudioFormatMPEG4AAC], AVFormatIDKey,
@@ -458,9 +476,9 @@ NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
     self.audioRecorder = [[AVAudioRecorder alloc] initWithURL:fileURL settings:recordSettings error:nil];
     self.audioRecorder.delegate = self;
     self.audioRecorder.meteringEnabled = YES;
+    [self.audioRecorder recordForDuration:MAX_RECORDING_SECONDS];
     [self.audioRecorder prepareToRecord];
     
-    [session setActive:YES error:nil];
     BOOL success = [self.audioRecorder record];
     if (success) {
         [self setIsRecording:TRUE];
@@ -476,9 +494,6 @@ NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
         [self setIsRecording:FALSE];
     }
     
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    [session setActive:NO error:nil];
-    
     [self.recordingButton setImage:[UIImage imageNamed:@"ic_record.png"] forState:UIControlStateNormal];
     [self displayPlayStopControl];
 }
@@ -488,8 +503,16 @@ NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
 }
 
 - (NSString *)getNewAudioFileName {
-    return [NSString stringWithFormat:@"%@.mp4", [[NSUUID UUID] UUIDString]];
+    return [NSString stringWithFormat:@"%@.3gp", [[NSUUID UUID] UUIDString]];
 }
+
+- (void)stopPlaying {
+    [self.audioPlayer stop];
+    self.audioPlayer = nil;
+    [self.playStopButton setImage:[UIImage imageNamed:@"ic_play.png"] forState:UIControlStateNormal];
+    self.isPlaying = FALSE;
+}
+
 
 //
 // AVAudioRecorderDelegate methods
@@ -499,6 +522,15 @@ NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
     
     [self setIsRecording:FALSE];
     [self stopRecording];
+}
+
+//
+// AVAudioPlayerDelegate methods
+//
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
+    HFLogDebug(@"EditPlayFragmentController.audioPlayerDidFinishPlaying:successfully:%d", flag);
+    
+    [self stopPlaying];
 }
 
 //
@@ -656,7 +688,13 @@ NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
         [self selectImageFromCamera];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_trash_removeslide", nil)]) {
-        [self.editPlayController deleteSlide:self.slideUuid withImage:self.imageFileName withAudio:self.audioFileName];
+        int count = [self.editPlayController getSlideCount];
+        if (count > 1) {
+            [self.editPlayController deleteSlide:self.slideUuid withImage:self.imageFileName withAudio:self.audioFileName];
+        }
+        else {
+            [self deleteSlideData];
+        }
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_trash_removeimage", nil)]) {
         [self.editPlayController deleteImage:self.slideUuid withImage:self.imageFileName];

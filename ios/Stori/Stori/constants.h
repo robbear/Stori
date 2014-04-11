@@ -53,6 +53,9 @@ extern int const MAX_PUBLISHED_FOR_FREE;
 // Maximum number of slides per Stori for free version
 extern int const MAX_SLIDES_PER_STORI_FOR_FREE;
 
+// Maximum recording seconds
+extern int const MAX_RECORDING_SECONDS;
+
 //
 // Default web site base url
 //
