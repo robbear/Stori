@@ -54,6 +54,12 @@ int const MAX_SLIDES_PER_STORI_FOR_FREE = 5;
 // Maximum recording seconds
 int const MAX_RECORDING_SECONDS = 60;
 
+// Default dimensions for ideal bitmap display/compression
+int const IMAGE_DISPLAY_WIDTH_LANDSCAPE = 1024;
+int const IMAGE_DISPLAY_HEIGHT_LANDSCAPE = 768;
+int const IMAGE_DISPLAY_WIDTH_PORTRAIT = 768;
+int const IMAGE_DISPLAY_HEIGHT_PORTRAIT = 1024;
+
 //
 // Default web site base url
 //

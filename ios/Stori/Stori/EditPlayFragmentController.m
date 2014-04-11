@@ -9,6 +9,7 @@
 #import "EditPlayFragmentController.h"
 #import "AmazonSharedPreferences.h"
 #import "STOUtilities.h"
+#import "UIImage+Resize.h"
 
 #define ALERTVIEW_DIALOG_SLIDETEXT 1
 #define ALERTVIEW_DIALOG_STORITITLE 2
@@ -463,7 +464,21 @@
     HFLogDebug(@"EditPlayFragmentController.imagePickerController:didFinishPickingMediaWithInfo");
     
     UIImage *image = [info valueForKey:UIImagePickerControllerOriginalImage];
-    //[self.imageView setImage:image];
+    
+    //
+    // Resize image if necessary
+    //
+    CGSize sz;
+    if (image.size.width > image.size.height) {
+        // Landscape
+        sz = CGSizeMake(IMAGE_DISPLAY_WIDTH_LANDSCAPE, IMAGE_DISPLAY_HEIGHT_LANDSCAPE);
+    }
+    else {
+        // Portrait
+        sz = CGSizeMake(IMAGE_DISPLAY_WIDTH_PORTRAIT, IMAGE_DISPLAY_HEIGHT_PORTRAIT);
+    }
+    UIImage *resizedImage = [image resizedImageToFitInSize:sz scaleIfSmaller:FALSE];
+    
     NSString *imageFileName = self.imageFileName;
     if (!imageFileName) {
         imageFileName = [self getNewImageFileName];
@@ -472,7 +487,7 @@
     [self dismissViewControllerAnimated:YES completion:NULL];
     self.imagePickerController = nil;
     
-    BOOL success = [STOUtilities saveImage:image inFolder:self.slideSharename withFileName:imageFileName];
+    BOOL success = [STOUtilities saveImage:resizedImage inFolder:self.slideSharename withFileName:imageFileName];
     if (success) {
         self.imageFileName = imageFileName;
         [self.editPlayController updateSlideShareJSON:self.slideUuid withImageFileName:self.imageFileName withAudioFileName:self.audioFileName withText:self.slideText];

@@ -56,6 +56,12 @@ extern int const MAX_SLIDES_PER_STORI_FOR_FREE;
 // Maximum recording seconds
 extern int const MAX_RECORDING_SECONDS;
 
+// Default dimensions for ideal bitmap display/compression
+extern int const IMAGE_DISPLAY_WIDTH_LANDSCAPE;
+extern int const IMAGE_DISPLAY_HEIGHT_LANDSCAPE;
+extern int const IMAGE_DISPLAY_WIDTH_PORTRAIT;
+extern int const IMAGE_DISPLAY_HEIGHT_PORTRAIT;
+
 //
 // Default web site base url
 //

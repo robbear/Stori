@@ -114,10 +114,17 @@
     NSURL *folderDirectory = [STOUtilities createOrGetSlideShareDirectory:folder];
     NSURL *fileURL = [folderDirectory URLByAppendingPathComponent:fileName];
     
-    // BUGBUG - TODO: Resize image before writing to file
-    
     NSData *imageData = UIImageJPEGRepresentation(image, 100.0);
-    return [imageData writeToURL:fileURL atomically:NO];
+    BOOL success = [imageData writeToURL:fileURL atomically:NO];
+    
+#if NEVER // diagnostics
+    NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:[fileURL path] error:nil];
+    NSNumber *fileSizeNumber = [fileAttributes objectForKey:NSFileSize];
+    long long fileSize = [fileSizeNumber longLongValue];
+    HFLogDebug(@"STOUtilities.saveImage: fileSize=%d", (int)fileSize);
+#endif
+    
+    return success;
 }
 
 + (NSString *)buildResourceUrlString:(NSString *)userUuid withSlideShareName:(NSString *)slideShareName withFileName:(NSString *)fileName {
