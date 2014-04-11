@@ -361,8 +361,8 @@ bool _userNeedsAuthentication = TRUE;
     //
     EditPlayFragmentController *editPlayFragmentController = [self.storyboard instantiateViewControllerWithIdentifier:@"EditPlayFragmentController"];
     
-    SlideJSON *sj = [self.ssj getSlideAtIndex:index];
-    NSString *slideUuid = [self.ssj getSlideUuidByOrderIndex:index];
+    SlideJSON *sj = [self.ssj getSlideAtIndex:(int)index];
+    NSString *slideUuid = [self.ssj getSlideUuidByOrderIndex:(int)index];
     [editPlayFragmentController initializeWithSlideJSON:sj withSlideShareName:self.slideShareName withUuid:slideUuid fromController:self];
     return editPlayFragmentController;
 }

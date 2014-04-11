@@ -39,119 +39,9 @@
 - (void)stopPlaying;
 - (NSString *)getNewImageFileName;
 - (NSString *)getNewAudioFileName;
-- (void)configureAudioSession;
 @end
 
 @implementation EditPlayFragmentController
-
-//
-// Audio hints
-//
-#if NEVER
-
-The container format is determined by the extension of the URL you specify when creating the AVAudioRecorder.
-
-NSString *tempDir = NSTemporaryDirectory ();
-NSString *soundFilePath = [tempDir stringByAppendingString: @"sound.mp4"];
-You can see here that the extension specified is mp4. Upon creating the recorder, we specify the codec format (here it is plain AAC):
-
-[[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryRecord error: nil];
-
-
-NSDictionary *recordSettings = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                [NSNumber numberWithFloat: 32000], AVSampleRateKey, // 16000?
-                                [NSNumber numberWithInt: kAudioFormatMPEG4AAC], AVFormatIDKey,
-                                [NSNumber numberWithInt: 1], AVNumberOfChannelsKey,
-                                
-                                nil];
-
-AVAudioRecorder *newRecorder = [[AVAudioRecorder alloc] initWithURL: soundFilePath settings: recordSettings error: nil];
-[recordSettings release];
-self.soundRecorder = newRecorder;
-[newRecorder release];
-
-soundRecorder.delegate = self;
-[soundRecorder prepareToRecord];
-[soundRecorder recordForDuration:60];
-The resulting file will be a AAC compressed stream within an "ISO Media, MPEG v4 system, version 2" container (as of iOS 5.0).
-
-If you specify and extension with "caf" then the container will be Core Audio Format an the codec will still be AAC.
-
-
-// Also:
-We recently completed one app with this kind of functionality recording from both and listening from both iOS and Android, below is code we used for your reference.We relied on our webservice and server for conversion to .mp3 format which can be easily played in both platform.
-
-//iPhone side code. records m4a file format (small in size)
-
-NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [NSNumber numberWithInt: kAudioFormatMPEG4AAC], AVFormatIDKey,
-                                [NSNumber numberWithFloat:16000.0], AVSampleRateKey,
-                                [NSNumber numberWithInt: 1], AVNumberOfChannelsKey,
-                                nil];
-NSError *error = nil;
-audioRecorder = [[AVAudioRecorder alloc] initWithURL:soundFileURL settings:recordSettings error:&error];
-
-if (error)
-NSLog(@"error: %@", [error localizedDescription]);
-else
-[audioRecorder prepareToRecord];
-
-
-//Android side code. (records mp4 format and it works straight away by giving mp3 extension.)
-MediaRecorder recorder = new MediaRecorder();
-recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-recorder.setAudioEncodingBitRate(256);
-recorder.setAudioChannels(1);
-recorder.setAudioSamplingRate(44100);
-recorder.setOutputFile(getFilename());
-
-try {
-    recorder.prepare();
-    recorder.start();
-    myCount=new MyCount(thirtysec, onesecond);
-    myCount.start();
-    recordingDone=true;
-    count=0;
-    handler.sendEmptyMessage(0);
-    if(progressDialog.isShowing())
-        progressDialog.dismiss();
-} catch (IllegalStateException e) {
-    e.printStackTrace();
-    StringWriter strTrace = new StringWriter();
-    e.printStackTrace(new PrintWriter(strTrace));
-    CrashReportActivity.appendLog(
-                                  "\nEXCEPTION : \n" + strTrace.toString() + "\n",
-                                  Comment.this);
-} catch (IOException e) {
-    e.printStackTrace();
-    StringWriter strTrace = new StringWriter();
-    e.printStackTrace(new PrintWriter(strTrace));
-    CrashReportActivity.appendLog(
-                                  "\nEXCEPTION : \n" + strTrace.toString() + "\n",
-                                  Comment.this);
-}
-You can find out conversion code from m4a to mp3 in .Net easily, look around by googling (lame or faad some utility like that).
-
-
-
-
-// AAC mp4
-NSString *tempDir = NSTemporaryDirectory();
-NSString *soundFilePath = [tempDir stringByAppendingPathComponent:@"sound.m4a"];
-
-NSURL *soundFileURL = [NSURL fileURLWithPath:soundFilePath];
-NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [NSNumber numberWithInt:kAudioFormatMPEG4AAC], AVFormatIDKey,
-                                [NSNumber numberWithInt:AVAudioQualityMin], AVEncoderAudioQualityKey,
-                                [NSNumber numberWithInt:16], AVEncoderBitRateKey,
-                                [NSNumber numberWithInt: 1], AVNumberOfChannelsKey,
-                                [NSNumber numberWithFloat:8000.0], AVSampleRateKey,
-                                [NSNumber numberWithInt:8], AVLinearPCMBitDepthKey,
-                                nil];
-#endif
-
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -165,8 +55,6 @@ NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
     HFLogDebug(@"EditPlayFragmentController.viewDidLoad");
     
     [super viewDidLoad];
-    
-    [self configureAudioSession];
     
     [self setIsRecording:FALSE];
     [self setIsPlaying:FALSE];

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <AVFoundation/AVFoundation.h>
 #import "SlideShareJSON.h"
 
 @interface STOUtilities : NSObject
@@ -24,5 +25,6 @@
 + (NSURLConnection *)downloadUrlAsync:(NSString *)urlString withDelegate:(id<NSURLConnectionDelegate>)delegate;
 + (BOOL)saveImage:(UIImage *)image inFolder:(NSString *)folder withFileName:(NSString *)fileName;
 + (void)printSlideShareJSON:(SlideShareJSON *)ssj;
++ (void)configureAudioSession;
 
 @end

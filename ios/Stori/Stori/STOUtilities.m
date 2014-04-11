@@ -163,6 +163,14 @@
     return [[NSURLConnection alloc] initWithRequest:request delegate:delegate startImmediately:YES];
 }
 
++ (void)configureAudioSession {
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+    [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+    [session setActive:TRUE error:nil];
+}
+
+
 + (void)printSlideShareJSON:(SlideShareJSON *)ssj {
     HFLogDebug(@"%@", [ssj toString]); 
 }

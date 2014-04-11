@@ -10,6 +10,7 @@
 #import <GooglePlus/GooglePlus.h>
 #import "SlideShareJSON.h"
 #import "STOPreferences.h"
+#import "STOUtilities.h"
 
 @implementation AppDelegate
 
@@ -19,6 +20,9 @@
     
     // Initialize user preference defaults
     [STOPreferences initializeDefaults];
+    
+    // Set up the audio session
+    [STOUtilities configureAudioSession];
     
     // Override point for customization after application launch.
     return YES;
