@@ -60,6 +60,9 @@ int const IMAGE_DISPLAY_HEIGHT_LANDSCAPE = 768;
 int const IMAGE_DISPLAY_WIDTH_PORTRAIT = 768;
 int const IMAGE_DISPLAY_HEIGHT_PORTRAIT = 1024;
 
+// Alpha value for overlay UIView in EditPlayFragmentController
+CGFloat const OVERLAY_ALPHA = 0.15;
+
 //
 // Default web site base url
 //

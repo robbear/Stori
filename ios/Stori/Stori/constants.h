@@ -62,6 +62,9 @@ extern int const IMAGE_DISPLAY_HEIGHT_LANDSCAPE;
 extern int const IMAGE_DISPLAY_WIDTH_PORTRAIT;
 extern int const IMAGE_DISPLAY_HEIGHT_PORTRAIT;
 
+// Alpha value for overlay UIView in EditPlayFragmentController
+extern CGFloat const OVERLAY_ALPHA;
+
 //
 // Default web site base url
 //

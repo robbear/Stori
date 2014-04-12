@@ -26,6 +26,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *rightArrowButton;
 @property (weak, nonatomic) IBOutlet UIButton *recordingButton;
 @property (weak, nonatomic) IBOutlet UIButton *playStopButton;
+@property (weak, nonatomic) IBOutlet UIView *overlayView;
 
 @property (strong, nonatomic) LoginViewController *loginViewController;
 

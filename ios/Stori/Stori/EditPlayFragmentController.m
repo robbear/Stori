@@ -59,6 +59,12 @@
     
     [super viewDidLoad];
     
+    //
+    // Set the overlay view's background color alpha, rather than setting the UIView's alpha directly in Storyboard.
+    // This technique allows controls layered on top of the overlay view to be fully opaque.
+    //
+    [self.overlayView setBackgroundColor:[UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:OVERLAY_ALPHA]];
+    
     [self setIsRecording:FALSE];
     [self setIsPlaying:FALSE];
     
