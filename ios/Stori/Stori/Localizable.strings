@@ -12,6 +12,11 @@
 "editplay_createnew_dialog_title" = "Create new?";
 "editplay_createnew_dialog_message" = "If you have not yet published your previous work, it will be lost.";
 "editplay_createnew_button" = "Create new";
+"editplay_maxpublishedexcceeded_dialog_title" = "Cannot publish";
+"editplay_maxpublishedexceeded_dialog_message" = "You have exceeded your allotment of %1$d published Storis. Please delete one or more in order to publish this Stori.";
+"editplay_publish_button" = "Publish";
+"editplay_publish_dialog_title" = "Publish";
+"editplay_publish_dialog_message" = "Ok to publish?";
 "editplay_overwriteaudio_title" = "Replace audio?";
 "editplay_overwriteaudio_message" = "Do you want to replace the audio you have already recorded for this slide?";
 "editplay_slidetext_dialog_title" = "Stori text";

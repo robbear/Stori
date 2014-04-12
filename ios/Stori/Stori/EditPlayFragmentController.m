@@ -607,7 +607,7 @@
         [self renameStori];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_publish", nil)]) {
-        HFLogDebug(@"publish...");
+        [self.editPlayController publishSlides];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_share", nil)]) {
         HFLogDebug(@"share...");

@@ -49,7 +49,7 @@ int const MAX_STORI_TITLE_CHARACTERS = 140;
 int const MAX_PUBLISHED_FOR_FREE = 20;
 
 // Maximum number of slides per Stori for free version
-int const MAX_SLIDES_PER_STORI_FOR_FREE = 5;
+int const MAX_SLIDES_PER_STORI_FOR_FREE = 10;
 
 // Maximum recording seconds
 int const MAX_RECORDING_SECONDS = 60;

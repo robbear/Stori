@@ -11,11 +11,15 @@
 #import "AmazonSharedPreferences.h"
 #import "STOPreferences.h"
 #import "STOUtilities.h"
+#import "StoriListItem.h"
 
 #define ALERTVIEW_DIALOG_CREATENEW 1
 #define ALERTVIEW_DIALOG_STORITITLE 2
+#define ALERTVIEW_DIALOG_PUBLISH 3
 
 @interface EditPlayController ()
+@property (strong, nonatomic) AWSS3Provider *awsS3Provider;
+
 - (EditPlayFragmentController *)viewControllerAtIndex:(NSUInteger)index;
 - (void)initializePageView;
 - (void)initializeSlideShareJSON;
@@ -26,6 +30,7 @@
 - (void)updatePageViewController;
 - (void)alertViewForCreateNew:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)alertViewForStoriTitle:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
+- (void)alertViewForPublish:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 @end
 
 @implementation EditPlayController
@@ -328,6 +333,16 @@ bool _userNeedsAuthentication = TRUE;
     [self updatePageViewController];
 }
 
+- (void)publishSlides {
+    UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_publish_dialog_title", nil)
+                                                     message:NSLocalizedString(@"editplay_publish_dialog_message", nil)
+                                                    delegate:self
+                                           cancelButtonTitle:NSLocalizedString(@"menu_cancel", nil)
+                                           otherButtonTitles:NSLocalizedString(@"editplay_publish_button", nil), nil];
+    dialog.tag = ALERTVIEW_DIALOG_PUBLISH;
+    [dialog show];
+}
+
 - (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText {
     [self updateSlideShareJSON:slideUuid withImageFileName:imageFileName withAudioFileName:audioFileName withText:slideText withForcedNulls:NO];
 }
@@ -396,18 +411,61 @@ bool _userNeedsAuthentication = TRUE;
 
 - (void)getStoriItemsComplete:(NSArray *)arrayItems {
     HFLogDebug(@"EditPlayController.getStoriItemsComplete - found %d S3 objects", [arrayItems count]);
+    
+    BOOL isEditOfPublished = FALSE;
+    if (arrayItems) {
+        for (int i = 0; i < arrayItems.count; i++) {
+            StoriListItem *sli = (StoriListItem *)[arrayItems objectAtIndex:i];
+            NSString *slideShareName = [sli slideShareName];
+            if ([slideShareName isEqualToString:self.slideShareName]) {
+                HFLogDebug(@"EditPlayController.getStoriItemsComplete - this Stori is a republish");
+                isEditOfPublished = TRUE;
+                break;
+            }
+        }
+    }
+    
+    if (!isEditOfPublished && arrayItems && arrayItems.count >= MAX_PUBLISHED_FOR_FREE) {
+        HFLogDebug(@"EditPlayController.getStoriItemsComplete - MAX_PUBLISHED_FOR_FREE is exceeded. Don't publish.");
+        
+        // if (progressDialog) {
+        //     progressDialog.dismiss();
+        //     progressDialog = nil;
+        // }
+        
+        NSString *message = [NSString stringWithFormat:NSLocalizedString(@"editplay_maxpublishedexceeded_dialog_message", nil), MAX_PUBLISHED_FOR_FREE];
+        UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_maxpublishedexcceeded_dialog_title", nil)
+                                                         message:message
+                                                        delegate:self
+                                               cancelButtonTitle:nil
+                                               otherButtonTitles:NSLocalizedString(@"menu_ok", nil), nil];
+        dialog.tag = -1;
+        [dialog show];
+        self.awsS3Provider = nil;
+        return;
+    }
+    
+    // Upload...
+    HFLogDebug(@"EditPlayController.getStoriItemsComplete - ready to upload...");
+    self.awsS3Provider = nil; // Remove this when we actually upload.
 }
 
 - (void)deleteVirtualDirectoryComplete {
     HFLogDebug(@"EditPlayController.deleteVirtualDirectoryComplete");
+
+    self.awsS3Provider = nil;
 }
 
 - (void)deleteStoriItemsAndReturnItemsComplete:(NSArray *)arrayItems {
     HFLogDebug(@"EditPlayController.deleteStoriItemsAndReturnItemsComplete");
+
+    self.awsS3Provider = nil;
 }
 
 - (void)uploadComplete:(BOOL)success {
     HFLogDebug(@"EditPlayController.uploadComplete: success=%d", success);
+    
+    self.awsS3Provider = nil;
 }
 
 - (EditPlayFragmentController *)viewControllerAtIndex:(NSUInteger)index {
@@ -532,8 +590,21 @@ bool _userNeedsAuthentication = TRUE;
             [self alertViewForStoriTitle:alertView clickedButtonAtIndex:buttonIndex];
             break;
             
+        case ALERTVIEW_DIALOG_PUBLISH:
+            [self alertViewForPublish:alertView clickedButtonAtIndex:buttonIndex];
+            break;
+            
         default:
             break;
+    }
+}
+
+- (void)alertViewForPublish:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
+    if ([buttonTitle isEqualToString:NSLocalizedString(@"editplay_publish_button", nil)]) {
+        self.awsS3Provider = [[AWSS3Provider alloc] init];
+        [self.awsS3Provider initializeProvider:[AmazonSharedPreferences userName] withDelegate:self];
+        [self.awsS3Provider getStoriItemsAsync];
     }
 }
 

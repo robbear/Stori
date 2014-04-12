@@ -37,5 +37,6 @@
 - (void)setSlideShareTitle:(NSString *)title;
 - (void)setCurrentSlidePosition:(int)position;
 - (void)createNewSlideShow;
+- (void)publishSlides;
 
 @end
