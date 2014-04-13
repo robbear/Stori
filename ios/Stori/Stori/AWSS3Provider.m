@@ -263,9 +263,6 @@ NSString *_userUuid;
     HFLogDebug(@"AWSS3Provider.uploadDirectoryEntry: response=%@", response);
 }
 
-//
-// BUGBUG - Not yet tested
-//
 + (void)uploadFile:(NSString *)userUuid withFolder:(NSString *)folder withFileName:(NSString *)fileName withContentType:(NSString *)contentType {
     HFLogDebug(@"AWSS3Provider.uploadFile: userUuid=%@, folder=%@, fileName=%@, contentType=%@", userUuid, folder, fileName, contentType);
 
@@ -282,9 +279,6 @@ NSString *_userUuid;
     HFLogDebug(@"AWSS3Provider.uploadFile: response=%@", response);
 }
 
-//
-// BUGBUG - Not yet tested
-//
 - (void)uploadAsync:(NSString *)folder {
     HFLogDebug(@"AWSS3Provider.uploadAsync: folder=%@", folder);
     

@@ -88,7 +88,7 @@
     <string name="toast_reorderslide_format">Reordered slides. Now viewing %1$d of %2$d.</string>
     <string name="upload_dialog_title">Uploading...</string>
     <string name="upload_dialog_complete_title">Upload complete</string>
-    <string name="upload_dialog_complete_message_format">Do you want to share this show?</string>
+    <string name="upload_dialog_complete_message_format">Do you want to share this Stori?</string>
     <string name="upload_dialog_failure_title">Upload unsuccessful</string>
     <string name="upload_dialog_failure_message_format">Upload failed: %s</string>
 

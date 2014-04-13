@@ -12,13 +12,16 @@
 #import "STOPreferences.h"
 #import "STOUtilities.h"
 #import "StoriListItem.h"
+#import "MBProgressHUD.h"
 
 #define ALERTVIEW_DIALOG_CREATENEW 1
 #define ALERTVIEW_DIALOG_STORITITLE 2
 #define ALERTVIEW_DIALOG_PUBLISH 3
+#define ALERTVIEW_DIALOG_SHARE 4
 
 @interface EditPlayController ()
 @property (strong, nonatomic) AWSS3Provider *awsS3Provider;
+@property (strong, nonatomic) MBProgressHUD *progressHUD;
 
 - (EditPlayFragmentController *)viewControllerAtIndex:(NSUInteger)index;
 - (void)initializePageView;
@@ -31,6 +34,7 @@
 - (void)alertViewForCreateNew:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)alertViewForStoriTitle:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)alertViewForPublish:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
+- (void)alertViewForShare:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 @end
 
 @implementation EditPlayController
@@ -333,6 +337,11 @@ bool _userNeedsAuthentication = TRUE;
     [self updatePageViewController];
 }
 
+- (void)shareSlides {
+    NSString *title = [self.ssj getTitle];
+    [STOUtilities shareShow:self withUserUuid:self.userUuid withSlideShareName:self.slideShareName withTitle:title];
+}
+
 - (void)publishSlides {
     UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_publish_dialog_title", nil)
                                                      message:NSLocalizedString(@"editplay_publish_dialog_message", nil)
@@ -428,10 +437,9 @@ bool _userNeedsAuthentication = TRUE;
     if (!isEditOfPublished && arrayItems && arrayItems.count >= MAX_PUBLISHED_FOR_FREE) {
         HFLogDebug(@"EditPlayController.getStoriItemsComplete - MAX_PUBLISHED_FOR_FREE is exceeded. Don't publish.");
         
-        // if (progressDialog) {
-        //     progressDialog.dismiss();
-        //     progressDialog = nil;
-        // }
+        [self.progressHUD hide:TRUE];
+        self.progressHUD = nil;
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         
         NSString *message = [NSString stringWithFormat:NSLocalizedString(@"editplay_maxpublishedexceeded_dialog_message", nil), MAX_PUBLISHED_FOR_FREE];
         UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_maxpublishedexcceeded_dialog_title", nil)
@@ -447,7 +455,7 @@ bool _userNeedsAuthentication = TRUE;
     
     // Upload...
     HFLogDebug(@"EditPlayController.getStoriItemsComplete - ready to upload...");
-    self.awsS3Provider = nil; // Remove this when we actually upload.
+    [self.awsS3Provider uploadAsync:self.slideShareName];
 }
 
 - (void)deleteVirtualDirectoryComplete {
@@ -466,6 +474,30 @@ bool _userNeedsAuthentication = TRUE;
     HFLogDebug(@"EditPlayController.uploadComplete: success=%d", success);
     
     self.awsS3Provider = nil;
+
+    [self.progressHUD hide:TRUE];
+    self.progressHUD = nil;
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    
+    if (success) {
+        UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_upload_dialog_complete_title", nil)
+                                                        message:NSLocalizedString(@"editplay_upload_dialog_complete_message", nil)
+                                                        delegate:self
+                                                        cancelButtonTitle:NSLocalizedString(@"menu_no", nil)
+                                                        otherButtonTitles:NSLocalizedString(@"editplay_share_button", nil), nil];
+        dialog.tag = ALERTVIEW_DIALOG_SHARE;
+        [dialog show];
+    }
+    else {
+        // BUGBUG - need failure message
+        NSString *message = [NSString stringWithFormat:NSLocalizedString(@"editplay_upload_dialog_failure_message_format", nil), "Failed"];
+        UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_upload_dialog_failure_title", nil)
+                                                         message:message
+                                                        delegate:self
+                                               cancelButtonTitle:nil
+                                               otherButtonTitles:NSLocalizedString(@"menu_ok", nil), nil];
+        [dialog show];
+    }
 }
 
 - (EditPlayFragmentController *)viewControllerAtIndex:(NSUInteger)index {
@@ -594,14 +626,32 @@ bool _userNeedsAuthentication = TRUE;
             [self alertViewForPublish:alertView clickedButtonAtIndex:buttonIndex];
             break;
             
+        case ALERTVIEW_DIALOG_SHARE:
+            [self alertViewForShare:alertView clickedButtonAtIndex:buttonIndex];
+            break;
+            
         default:
             break;
+    }
+}
+
+- (void)alertViewForShare:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
+    if ([buttonTitle isEqualToString:NSLocalizedString(@"editplay_share_button", nil)]) {
+        [self shareSlides];
     }
 }
 
 - (void)alertViewForPublish:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
     if ([buttonTitle isEqualToString:NSLocalizedString(@"editplay_publish_button", nil)]) {
+        self.progressHUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+        [self.navigationController.view addSubview:self.progressHUD];
+        self.progressHUD.labelText = NSLocalizedString(@"editplay_uploadprogress_dialog_title", nil);
+        self.progressHUD.mode = MBProgressHUDModeIndeterminate;
+        [self.progressHUD show:TRUE];
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+        
         self.awsS3Provider = [[AWSS3Provider alloc] init];
         [self.awsS3Provider initializeProvider:[AmazonSharedPreferences userName] withDelegate:self];
         [self.awsS3Provider getStoriItemsAsync];

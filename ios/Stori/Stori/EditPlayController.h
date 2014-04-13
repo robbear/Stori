@@ -38,5 +38,6 @@
 - (void)setCurrentSlidePosition:(int)position;
 - (void)createNewSlideShow;
 - (void)publishSlides;
+- (void)shareSlides;
 
 @end
