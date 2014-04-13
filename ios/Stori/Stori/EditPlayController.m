@@ -337,6 +337,10 @@ bool _userNeedsAuthentication = TRUE;
     [self updatePageViewController];
 }
 
+- (BOOL)isPublished {
+    return [self.ssj isPublished];
+}
+
 - (void)shareSlides {
     NSString *title = [self.ssj getTitle];
     [STOUtilities shareShow:self withUserUuid:self.userUuid withSlideShareName:self.slideShareName withTitle:title];
@@ -480,6 +484,12 @@ bool _userNeedsAuthentication = TRUE;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
     if (success) {
+        int curVersion = [self.ssj getVersion];
+        [self.ssj setVersion:curVersion + 1];
+        [self.ssj saveToFolder:self.slideShareName withFileName:SLIDESHARE_JSON_FILENAME];
+        HFLogDebug(@"SlideShareJSON after publish:");
+        [STOUtilities printSlideShareJSON:self.ssj];
+
         UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_upload_dialog_complete_title", nil)
                                                         message:NSLocalizedString(@"editplay_upload_dialog_complete_message", nil)
                                                         delegate:self

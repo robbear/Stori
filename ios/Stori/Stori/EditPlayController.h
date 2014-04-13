@@ -39,5 +39,6 @@
 - (void)createNewSlideShow;
 - (void)publishSlides;
 - (void)shareSlides;
+- (BOOL)isPublished;
 
 @end

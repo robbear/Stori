@@ -106,7 +106,8 @@
 }
 
 - (int)getVersion {
-    return (int)[_jsonDictionary objectForKey:KEY_VERSION];
+    NSNumber *versionNumber = [_jsonDictionary objectForKey:KEY_VERSION];
+    return [versionNumber intValue];
 }
 
 - (BOOL)isPublished {

@@ -135,7 +135,9 @@
     [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_preview", nil)];
     [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_rename", nil)];
     [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_publish", nil)];
-    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_share", nil)];
+    if ([self.editPlayController isPublished]) {
+        [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_share", nil)];
+    }
     [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_createnew", nil)];
     [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_list", nil)];
     [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_settings", nil)];
@@ -610,7 +612,7 @@
         [self.editPlayController publishSlides];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_share", nil)]) {
-        HFLogDebug(@"share...");
+        [self.editPlayController shareSlides];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_createnew", nil)]) {
         [self.editPlayController createNewSlideShow];
