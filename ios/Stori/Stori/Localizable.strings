@@ -14,6 +14,7 @@
 "editplay_createnew_button" = "Create new";
 "editplay_maxpublishedexcceeded_dialog_title" = "Cannot publish";
 "editplay_maxpublishedexceeded_dialog_message" = "You have exceeded your allotment of %1$d published Storis. Please delete one or more in order to publish this Stori.";
+"editplay_nopicture_text" = "Choose a picture!";
 "editplay_publish_button" = "Publish";
 "editplay_publish_dialog_title" = "Publish";
 "editplay_publish_dialog_message" = "Ok to publish?";

@@ -28,6 +28,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *playStopButton;
 @property (weak, nonatomic) IBOutlet UIView *overlayView;
 @property (weak, nonatomic) IBOutlet UILabel *slideTextLabel;
+@property (weak, nonatomic) IBOutlet UIButton *choosePictureLabel;
+@property (weak, nonatomic) IBOutlet UIButton *selectPhotoSecondaryButton;
 
 @property (strong, nonatomic) LoginViewController *loginViewController;
 

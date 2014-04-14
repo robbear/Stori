@@ -31,6 +31,7 @@
 - (void)displayNextPrevControls;
 - (void)displayPlayStopControl;
 - (void)displaySlideTextControl;
+- (void)displayChoosePictureControls;
 - (void)renderImage;
 - (void)renameStori;
 - (void)alertViewForSlideText:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
@@ -60,6 +61,8 @@
     
     [super viewDidLoad];
     
+    [self.choosePictureLabel setTitle:NSLocalizedString(@"editplay_nopicture_text", nil) forState:UIControlStateNormal];
+    
     //
     // Set the overlay view's background color alpha, rather than setting the UIView's alpha directly in Storyboard.
     // This technique allows controls layered on top of the overlay view to be fully opaque.
@@ -74,6 +77,7 @@
     [self displayNextPrevControls];
     [self displayPlayStopControl];
     [self displaySlideTextControl];
+    [self displayChoosePictureControls];
 }
 
 - (void)configureAudioSession {
@@ -272,6 +276,7 @@
     [self displayPlayStopControl];
     [self displaySlideTitleAndPosition];
     [self displaySlideTextControl];
+    [self displayChoosePictureControls];
     [self renderImage];
 }
 
@@ -511,6 +516,7 @@
         HFLogDebug(@"EditPlayFragmentController.imagePickerController:didFinishPickingMediaWithInfo - failed. Bailing");
     }
     
+    [self displayChoosePictureControls];
     [self renderImage];
 }
 
@@ -651,6 +657,7 @@
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_trash_removeimage", nil)]) {
         [self.editPlayController deleteImage:self.slideUuid withImage:self.imageFileName];
         self.imageFileName = nil;
+        [self displayChoosePictureControls];
         [self renderImage];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_trash_removeaudio", nil)]) {
@@ -664,6 +671,11 @@
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_edit_reorder", nil)]) {
         HFLogAlert(@"Reorder...");
     }
+}
+
+- (void)displayChoosePictureControls {
+    [self.choosePictureLabel setHidden:self.hasImage];
+    [self.selectPhotoSecondaryButton setHidden:self.hasImage];
 }
 
 - (void)displaySlideTextControl {
