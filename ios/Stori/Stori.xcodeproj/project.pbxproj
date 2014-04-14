@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5027FB1C18FC94F4007C2A41 /* iToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 5027FB1B18FC94F4007C2A41 /* iToast.m */; };
 		503655CB18D8AF290014E574 /* StoriListItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655CA18D8AF290014E574 /* StoriListItem.m */; };
 		503655CE18D8B8020014E574 /* NSString+STONSString.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655CD18D8B8020014E574 /* NSString+STONSString.m */; };
 		503655E318DB50240014E574 /* StoriListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655E218DB50240014E574 /* StoriListController.m */; };
@@ -68,6 +69,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5027FB1A18FC94F4007C2A41 /* iToast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iToast.h; sourceTree = "<group>"; };
+		5027FB1B18FC94F4007C2A41 /* iToast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iToast.m; sourceTree = "<group>"; };
 		503655C918D8AF290014E574 /* StoriListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoriListItem.h; sourceTree = "<group>"; };
 		503655CA18D8AF290014E574 /* StoriListItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoriListItem.m; sourceTree = "<group>"; };
 		503655CC18D8B8020014E574 /* NSString+STONSString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+STONSString.h"; sourceTree = "<group>"; };
@@ -242,6 +245,8 @@
 				504ECC9318C24EF000507582 /* HFLogging.h */,
 				504ECC9418C24EF000507582 /* HFLogging.m */,
 				504ECC7618C245B900507582 /* Images.xcassets */,
+				5027FB1A18FC94F4007C2A41 /* iToast.h */,
+				5027FB1B18FC94F4007C2A41 /* iToast.m */,
 				504ECC9918C632D100507582 /* Localizable.strings */,
 				504ECCE518D0C6F800507582 /* LoginViewController.h */,
 				504ECCE618D0C6F800507582 /* LoginViewController.m */,
@@ -266,10 +271,10 @@
 				504ECCA818C8F70D00507582 /* STOUtilities.h */,
 				504ECCA918C8F70D00507582 /* STOUtilities.m */,
 				504ECC6518C245B900507582 /* Supporting Files */,
-				504ECC7318C245B900507582 /* ViewController.h */,
-				504ECC7418C245B900507582 /* ViewController.m */,
 				50BDE68218F8523600827141 /* UIImage+Resize.h */,
 				50BDE68318F8523600827141 /* UIImage+Resize.m */,
+				504ECC7318C245B900507582 /* ViewController.h */,
+				504ECC7418C245B900507582 /* ViewController.m */,
 			);
 			path = Stori;
 			sourceTree = "<group>";
@@ -425,6 +430,7 @@
 				503655E918DF3DDB0014E574 /* StoriListTableViewCell.m in Sources */,
 				504ECCAA18C8F70D00507582 /* STOUtilities.m in Sources */,
 				504ECC9518C24EF000507582 /* HFLogging.m in Sources */,
+				5027FB1C18FC94F4007C2A41 /* iToast.m in Sources */,
 				504ECC9818C4F0AE00507582 /* SlideShareJSON.m in Sources */,
 				50BDE68418F8523600827141 /* UIImage+Resize.m in Sources */,
 			);

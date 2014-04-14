@@ -67,4 +67,7 @@
 "storilistcontroller_delete_message" = "This will permanently delete this Stori. Deleting cannot be undone.";
 "storilistcontroller_delete_title" = "Delete this Stori?";
 "storilistcontroller_delete_wait" = "Deleting...";
+"toast_addslide_format" = "Added slide. Now viewing %1$d of %2$d.";
+"toast_deleteslide_format" = "Removed slide. Now viewing %1$d of %2$d.";
+"toast_reorderslides_format" = "Reordered slides. Now viewing %1$d of %2$d.";
 "usedefault_button" = "Use default";

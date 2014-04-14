@@ -13,6 +13,7 @@
 #import "STOUtilities.h"
 #import "StoriListItem.h"
 #import "MBProgressHUD.h"
+#import "iToast.h"
 
 #define ALERTVIEW_DIALOG_CREATENEW 1
 #define ALERTVIEW_DIALOG_STORITITLE 2
@@ -35,6 +36,7 @@
 - (void)alertViewForStoriTitle:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)alertViewForPublish:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)alertViewForShare:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
+- (void)showToast:(NSString *)toastString;
 @end
 
 @implementation EditPlayController
@@ -219,6 +221,10 @@ bool _userNeedsAuthentication = TRUE;
     [self updatePageViewController];
 }
 
+- (void)showToast:(NSString *)toastString {
+    [[[[iToast makeText:toastString] setGravity:iToastGravityCenter offsetLeft:0 offsetTop:-60] setDuration:iToastDurationNormal] show];
+}
+
 - (void)createNewSlideShow {
     HFLogDebug(@"EditPlayController.createNewSlideShow");
 
@@ -236,10 +242,9 @@ bool _userNeedsAuthentication = TRUE;
     
     [self initializeNewSlide:newIndex];
     
-#if TOAST_IMPLEMENTED
     int count = [self.ssj getSlideCount];
-    ...
-#endif
+    NSString *toast = [NSString stringWithFormat:NSLocalizedString(@"toast_addslide_format", nil), self.currentSlideIndex + 1, count];
+    [self showToast:toast];
 }
 
 - (void)deleteSlide:(NSString *)slideUuid withImage:(NSString *)imageFileName withAudio:audioFileName {
@@ -270,10 +275,8 @@ bool _userNeedsAuthentication = TRUE;
     
     [self updatePageViewController];
 
-#if TOAST_IMPLEMENTED
-    int count = [self.ssj getSlideCount];
-    ...
-#endif
+    NSString *toast = [NSString stringWithFormat:NSLocalizedString(@"toast_deleteslide_format", nil), self.currentSlideIndex + 1, count];
+    [self showToast:toast];
 }
 
 - (void)deleteImage:(NSString *)slideUuid withImage:(NSString *)imageFileName {
@@ -366,6 +369,10 @@ bool _userNeedsAuthentication = TRUE;
     
     self.currentSlideIndex = slideIndex;
     [self updatePageViewController];
+
+    int count = [self.ssj getSlideCount];
+    NSString *toast = [NSString stringWithFormat:NSLocalizedString(@"toast_reorderslides_format", nil), self.currentSlideIndex + 1, count];
+    [self showToast:toast];
 }
 
 - (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText {
