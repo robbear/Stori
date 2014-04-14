@@ -64,6 +64,7 @@ extern int const IMAGE_DISPLAY_HEIGHT_PORTRAIT;
 
 // Alpha value for overlay UIView in EditPlayFragmentController
 extern CGFloat const OVERLAY_ALPHA;
+extern CGFloat const SLIDETEXT_ALPHA;
 
 //
 // Default web site base url

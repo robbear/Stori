@@ -24,6 +24,7 @@
 - (void)deleteSlideData;
 - (BOOL)hasImage;
 - (BOOL)hasAudio;
+- (BOOL)hasText;
 - (void)selectImageFromGallery;
 - (void)selectImageFromCamera;
 - (void)displaySlideTitleAndPosition;
@@ -72,6 +73,7 @@
     [self displaySlideTitleAndPosition];
     [self displayNextPrevControls];
     [self displayPlayStopControl];
+    [self displaySlideTextControl];
 }
 
 - (void)configureAudioSession {
@@ -115,6 +117,7 @@
     
     [self displaySlideTitleAndPosition];
     [self displayNextPrevControls];
+    [self displaySlideTextControl];
 }
 
 - (void)onEditPlayFragmentWillBeDeselected {
@@ -353,6 +356,10 @@
     return self.audioFileName != nil;
 }
 
+- (BOOL)hasText {
+    return (self.slideText != nil && ([self.slideText length] > 0));
+}
+
 - (void)enableControlsWhileRecordingOrPlaying:(BOOL)enabled {
     HFLogDebug(@"EditPlayFragmentController.enableControlsWhileRecordingOrPlaying: %d", enabled);
 
@@ -578,7 +585,7 @@
         [self.editPlayController updateSlideShareJSON:self.slideUuid withImageFileName:nil withAudioFileName:nil withText:text];
         self.slideText = [self.editPlayController getSlideText:self.slideUuid];
         
-        [self renderImage];
+        [self displaySlideTextControl];
     }
 }
 
@@ -660,7 +667,12 @@
 }
 
 - (void)displaySlideTextControl {
-    // BUGBUG TODO
+    [self.slideTextLabel setBackgroundColor:[UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:SLIDETEXT_ALPHA]];
+    self.slideTextLabel.layer.cornerRadius = 5;
+    self.slideTextLabel.layer.masksToBounds = TRUE;
+    [self.slideTextLabel setText:self.slideText];
+    [self.slideTextLabel sizeToFit];    
+    [self.slideTextLabel setHidden:![self hasText]];
 }
 
 - (void)displayPlayStopControl {
