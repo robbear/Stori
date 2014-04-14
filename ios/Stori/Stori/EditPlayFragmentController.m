@@ -15,6 +15,8 @@
 #define ALERTVIEW_DIALOG_STORITITLE 2
 #define ALERTVIEW_DIALOG_OVERWRITE_AUDIO 3
 
+#define ACTIONSHEET_REORDER 2
+
 @interface EditPlayFragmentController ()
 @property (strong, nonatomic) AVAudioRecorder *audioRecorder;
 @property (strong, nonatomic) AVAudioPlayer *audioPlayer;
@@ -37,6 +39,7 @@
 - (void)alertViewForSlideText:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)alertViewForStoriTitle:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)alertViewForOverwriteAudio:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
+- (void)actionSheetForReorder:(UIActionSheet *)popup clickedButtonAtIndex:(NSInteger)index;
 - (void)startRecording;
 - (void)stopRecording;
 - (void)startPlaying;
@@ -44,6 +47,7 @@
 - (NSString *)getNewImageFileName;
 - (NSString *)getNewAudioFileName;
 - (void)enableControlsWhileRecordingOrPlaying:(BOOL)enabled;
+- (void)initiateReorder;
 @end
 
 @implementation EditPlayFragmentController
@@ -380,6 +384,27 @@
     [self.editButton setEnabled:enabled];
 }
 
+- (void)initiateReorder {
+    NSString *title = [NSString stringWithFormat:NSLocalizedString(@"editplay_reorder_title_format", nil), [self.editPlayController currentSlideIndex] + 1];
+    UIActionSheet *popup = [[UIActionSheet alloc]
+                            initWithTitle:title
+                            delegate:self
+                            cancelButtonTitle:nil
+                            destructiveButtonTitle:nil
+                            otherButtonTitles:nil];
+    
+    int count = [self.editPlayController getSlideCount];
+    for (int i = 1; i <= count; i++) {
+        [popup addButtonWithTitle:[NSString stringWithFormat:@"%d", i]];
+    }
+    
+    [popup addButtonWithTitle:NSLocalizedString(@"menu_cancel", nil)];
+    popup.cancelButtonIndex = popup.numberOfButtons - 1;
+    
+    popup.tag = ACTIONSHEET_REORDER;
+    [popup showInView:[UIApplication sharedApplication].keyWindow];
+}
+
 - (void)startRecording {
     HFLogAlert(@"EditPlayFragmentController.startRecording");
     
@@ -611,6 +636,12 @@
 //
 
 - (void)actionSheet:(UIActionSheet *)popup clickedButtonAtIndex:(NSInteger)index {
+    
+    if (popup.tag == ACTIONSHEET_REORDER) {
+        [self actionSheetForReorder:popup clickedButtonAtIndex:index];
+        return;
+    }
+    
     HFLogDebug(@"EditPlayFragmentController.actionSheet:clickedButtonAtIndex %d, menutitle=%@", index, [popup buttonTitleAtIndex:index]);
     
     NSString *buttonTitle = [popup buttonTitleAtIndex:index];
@@ -669,8 +700,18 @@
         [self enterSlideText];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_edit_reorder", nil)]) {
-        HFLogAlert(@"Reorder...");
+        [self initiateReorder];
     }
+}
+
+- (void)actionSheetForReorder:(UIActionSheet *)popup clickedButtonAtIndex:(NSInteger)index {
+    NSString *buttonTitle = [popup buttonTitleAtIndex:index];
+    if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_cancel", nil)]) {
+        return;
+    }
+    
+    int slideIndex = buttonTitle.intValue - 1;
+    [self.editPlayController reorderCurrentSlideTo:slideIndex];
 }
 
 - (void)displayChoosePictureControls {

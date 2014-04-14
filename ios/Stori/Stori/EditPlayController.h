@@ -40,5 +40,6 @@
 - (void)publishSlides;
 - (void)shareSlides;
 - (BOOL)isPublished;
+- (void)reorderCurrentSlideTo:(int)slideIndex;
 
 @end

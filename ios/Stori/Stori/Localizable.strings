@@ -21,6 +21,7 @@
 "editplay_overwriteaudio_title" = "Replace audio?";
 "editplay_overwriteaudio_message" = "Do you want to replace the audio you have already recorded for this slide?";
 "editplay_share_button" = "Share";
+"editplay_reorder_title_format" = "Set the position of slide %1$d to:";
 "editplay_slidetext_dialog_title" = "Stori text";
 "editplay_slidetext_dialog_message" = "Enter text for this slide";
 "editplay_storititle_dialog_title" = "Stori title";

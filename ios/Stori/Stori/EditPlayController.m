@@ -356,6 +356,18 @@ bool _userNeedsAuthentication = TRUE;
     [dialog show];
 }
 
+- (void)reorderCurrentSlideTo:(int)slideIndex {
+    if (self.currentSlideIndex == slideIndex) {
+        return;
+    }
+    
+    [self.ssj reorderWithCurrentPosition:self.currentSlideIndex atNewPosition:slideIndex];
+    [self.ssj saveToFolder:self.slideShareName withFileName:SLIDESHARE_JSON_FILENAME];
+    
+    self.currentSlideIndex = slideIndex;
+    [self updatePageViewController];
+}
+
 - (void)updateSlideShareJSON:(NSString *)slideUuid withImageFileName:(NSString *)imageFileName withAudioFileName:(NSString *)audioFileName withText:(NSString *)slideText {
     [self updateSlideShareJSON:slideUuid withImageFileName:imageFileName withAudioFileName:audioFileName withText:slideText withForcedNulls:NO];
 }
