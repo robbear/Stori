@@ -435,7 +435,7 @@ public class DownloadActivity extends FragmentActivity {
             m_urlsToDownload.remove(0);
 
             if(D)Log.d(TAG, String.format(
-                    "DownloadActivity.DownloadTask.onPostExecute: m_numberOfResources=%d, m_currentResourceDownloadIndex=%d, downloading %s, m_",
+                    "DownloadActivity.DownloadTask.onPostExecute: m_numberOfResources=%d, m_currentResourceDownloadIndex=%d, downloading %s",
                     m_numberOfResources, m_numberOfResources - m_urlsToDownload.size(), nextUrl));
             m_downloadTask = new DownloadTask(DownloadActivity.this);
 

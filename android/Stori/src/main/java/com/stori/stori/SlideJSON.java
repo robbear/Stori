@@ -45,8 +45,11 @@ public class SlideJSON extends JSONObject {
 
     public String getImageUrlString() throws JSONException {
         String s = null;
-        if (has(SlideShareJSON.KEY_IMAGE)) {
+        if (has(SlideShareJSON.KEY_IMAGE) && !isNull(SlideShareJSON.KEY_IMAGE)) {
             s = getString(SlideShareJSON.KEY_IMAGE);
+            if (s.equalsIgnoreCase("null")) {
+                s = null;
+            }
         }
         if(D)Log.d(TAG, String.format("SlideJSON.getImageUrlString returns %s", s));
         return s;
@@ -54,8 +57,12 @@ public class SlideJSON extends JSONObject {
 
     public String getImageFilename() throws JSONException, MalformedURLException {
         String fileName = null;
-        if (has(SlideShareJSON.KEY_IMAGE)) {
+        if (has(SlideShareJSON.KEY_IMAGE) && !isNull(SlideShareJSON.KEY_IMAGE)) {
             String s = getImageUrlString();
+            if (s == null || s.equalsIgnoreCase("null")) {
+                if(D)Log.d(TAG, String.format("SlideJSON.getAudioFilename returns %s", fileName));
+                return fileName;
+            }
             Uri uri = Uri.parse(s);
             fileName = uri.getLastPathSegment();
         }
@@ -65,8 +72,11 @@ public class SlideJSON extends JSONObject {
 
     public String getAudioUrlString() throws JSONException {
         String s = null;
-        if (has(SlideShareJSON.KEY_AUDIO)) {
+        if (has(SlideShareJSON.KEY_AUDIO) && !isNull(SlideShareJSON.KEY_AUDIO)) {
             s = getString(SlideShareJSON.KEY_AUDIO);
+            if (s.equalsIgnoreCase("null")) {
+                s = null;
+            }
         }
         if(D)Log.d(TAG, String.format("SlideJSON.getAudioUrlString returns %s", s));
         return s;
@@ -74,8 +84,12 @@ public class SlideJSON extends JSONObject {
 
     public String getAudioFilename() throws JSONException, MalformedURLException {
         String fileName = null;
-        if (has(SlideShareJSON.KEY_AUDIO)) {
+        if (has(SlideShareJSON.KEY_AUDIO) && !isNull(SlideShareJSON.KEY_AUDIO)) {
             String s = getAudioUrlString();
+            if (s == null || s.equalsIgnoreCase("null")) {
+                if(D)Log.d(TAG, String.format("SlideJSON.getAudioFilename returns %s", fileName));
+                return fileName;
+            }
             Uri uri = Uri.parse(s);
             fileName = uri.getLastPathSegment();
         }
@@ -85,8 +99,11 @@ public class SlideJSON extends JSONObject {
 
     public String getText() throws JSONException {
         String s = null;
-        if (has(SlideShareJSON.KEY_TEXT)) {
+        if (has(SlideShareJSON.KEY_TEXT) && !isNull(SlideShareJSON.KEY_TEXT)) {
             s = getString(SlideShareJSON.KEY_TEXT);
+            if (s.equalsIgnoreCase("null")) {
+                s = null;
+            }
         }
         if(D)Log.d(TAG, String.format("SlideJSON.getText returns %s", s));
         return s;
