@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5027FB1C18FC94F4007C2A41 /* iToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 5027FB1B18FC94F4007C2A41 /* iToast.m */; };
+		5027FB1F18FDEEDB007C2A41 /* STONavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5027FB1E18FDEEDB007C2A41 /* STONavigationController.m */; };
 		503655CB18D8AF290014E574 /* StoriListItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655CA18D8AF290014E574 /* StoriListItem.m */; };
 		503655CE18D8B8020014E574 /* NSString+STONSString.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655CD18D8B8020014E574 /* NSString+STONSString.m */; };
 		503655E318DB50240014E574 /* StoriListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655E218DB50240014E574 /* StoriListController.m */; };
@@ -71,6 +72,8 @@
 /* Begin PBXFileReference section */
 		5027FB1A18FC94F4007C2A41 /* iToast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iToast.h; sourceTree = "<group>"; };
 		5027FB1B18FC94F4007C2A41 /* iToast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iToast.m; sourceTree = "<group>"; };
+		5027FB1D18FDEEDB007C2A41 /* STONavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STONavigationController.h; sourceTree = "<group>"; };
+		5027FB1E18FDEEDB007C2A41 /* STONavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STONavigationController.m; sourceTree = "<group>"; };
 		503655C918D8AF290014E574 /* StoriListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoriListItem.h; sourceTree = "<group>"; };
 		503655CA18D8AF290014E574 /* StoriListItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoriListItem.m; sourceTree = "<group>"; };
 		503655CC18D8B8020014E574 /* NSString+STONSString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+STONSString.h"; sourceTree = "<group>"; };
@@ -260,6 +263,8 @@
 				504ECC9C18C645FE00507582 /* SlideJSON.m */,
 				504ECC9618C4F0AE00507582 /* SlideShareJSON.h */,
 				504ECC9718C4F0AE00507582 /* SlideShareJSON.m */,
+				5027FB1D18FDEEDB007C2A41 /* STONavigationController.h */,
+				5027FB1E18FDEEDB007C2A41 /* STONavigationController.m */,
 				504ECCA118C8DA8700507582 /* STOPreferences.h */,
 				504ECCA218C8DA8700507582 /* STOPreferences.m */,
 				503655E118DB50240014E574 /* StoriListController.h */,
@@ -426,6 +431,7 @@
 				504ECCED18D3620200507582 /* AWSS3Provider.m in Sources */,
 				503655CB18D8AF290014E574 /* StoriListItem.m in Sources */,
 				50AA647718EB256A00C079F9 /* EditPlayController.m in Sources */,
+				5027FB1F18FDEEDB007C2A41 /* STONavigationController.m in Sources */,
 				503655EC18E080AF0014E574 /* MBProgressHUD.m in Sources */,
 				503655E918DF3DDB0014E574 /* StoriListTableViewCell.m in Sources */,
 				504ECCAA18C8F70D00507582 /* STOUtilities.m in Sources */,

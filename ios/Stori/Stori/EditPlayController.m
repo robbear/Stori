@@ -21,6 +21,8 @@
 #define ALERTVIEW_DIALOG_SHARE 4
 
 @interface EditPlayController ()
+@property (nonatomic) BOOL forceToPortrait;
+@property (nonatomic) BOOL viewAppeared;
 @property (strong, nonatomic) AWSS3Provider *awsS3Provider;
 @property (strong, nonatomic) MBProgressHUD *progressHUD;
 
@@ -57,6 +59,8 @@ bool _userNeedsAuthentication = TRUE;
     [super viewDidLoad];
     
     self.currentSlideIndex = 0;
+    self.forceToPortrait = YES;
+    self.viewAppeared = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -76,6 +80,8 @@ bool _userNeedsAuthentication = TRUE;
     
     [super viewDidAppear:animated];
     
+    self.viewAppeared = YES;
+    
     if (_userNeedsAuthentication) {
         //
         // Remember: Use the shared instance versions of AmazonClientManager and
@@ -87,6 +93,30 @@ bool _userNeedsAuthentication = TRUE;
             [self googleSignInComplete:FALSE];
         }
     }
+}
+
+- (BOOL)shouldAutorotate {
+    HFLogDebug(@"EditPlayController.shouldAutorotate: %d", [UIDevice currentDevice].orientation);
+    
+    // Addresses issue #72. We force no rotate from Portrait until the first view is displayed
+    // and properly sized. Once the view has appeared and the forceToPortrait flag is set to NO,
+    // we allow all rotations. This means Stori will always first appear in Portrait mode.
+    
+    if (!self.viewAppeared) {
+        return NO;
+    }
+    
+    if (!self.forceToPortrait) {
+        return YES;
+    }
+    
+    if (!UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation)) {
+        return NO;
+    }
+    else {
+        self.forceToPortrait = NO;
+        return YES;
+    }    
 }
 
 - (void)didReceiveMemoryWarning {
