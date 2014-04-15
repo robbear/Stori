@@ -334,8 +334,6 @@
     imagePickerController.delegate = self;
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
     
-    // BUGBUG: What, if any, settings allow the saving of the image to the system picture folder?
-    
     self.imagePickerController = imagePickerController;
     [self presentViewController:imagePickerController animated:YES completion:nil];
 }
@@ -509,6 +507,12 @@
     HFLogDebug(@"EditPlayFragmentController.imagePickerController:didFinishPickingMediaWithInfo");
     
     UIImage *image = [info valueForKey:UIImagePickerControllerOriginalImage];
+
+    if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+        // Save to the camera roll before we do anything else
+        HFLogDebug(@"EditPlayFragmentController.imagePickerController:didFinishPickingMediaWithInfo - saving to camera roll");
+        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+    }
     
     //
     // Resize image if necessary
