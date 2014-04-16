@@ -101,28 +101,16 @@ bool _userNeedsAuthentication = TRUE;
     }
 }
 
-- (BOOL)shouldAutorotate {
-    HFLogDebug(@"EditPlayController.shouldAutorotate: %d", [UIDevice currentDevice].orientation);
+- (void)viewWillLayoutSubviews {
+    HFLogDebug(@"EditPlayController.viewWillLayoutSubviews");
     
-    // Addresses issue #72. We force no rotate from Portrait until the first view is displayed
-    // and properly sized. Once the view has appeared and the forceToPortrait flag is set to NO,
-    // we allow all rotations. This means Stori will always first appear in Portrait mode.
+    CGRect screenFrame = [[UIScreen mainScreen] applicationFrame];
     
-    if (!self.viewAppeared) {
-        return NO;
+    if (UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation])) {
+        screenFrame = CGRectMake(0, 0, screenFrame.size.height, screenFrame.size.width);
     }
     
-    if (!self.forceToPortrait) {
-        return YES;
-    }
-    
-    if (!UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation)) {
-        return NO;
-    }
-    else {
-        self.forceToPortrait = NO;
-        return YES;
-    }    
+    self.pageViewController.view.frame = screenFrame;
 }
 
 - (void)didReceiveMemoryWarning {
