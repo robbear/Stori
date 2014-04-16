@@ -210,6 +210,7 @@
         return;
     }
     
+    [self stopPlaying];
     [self.editPlayController setCurrentSlidePosition:position];
 }
 
@@ -222,6 +223,7 @@
         return;
     }
     
+    [self stopPlaying];
     [self.editPlayController setCurrentSlidePosition:position];
 }
 
@@ -330,7 +332,6 @@
         [popup showInView:[UIApplication sharedApplication].keyWindow];
     }
     else {
-        HFLogDebug(@"***** should exit here *****");
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
@@ -393,8 +394,12 @@
     [self.insertAfterButton setEnabled:enabled];
     [self.insertBeforeButton setEnabled:enabled];
     [self.trashButton setEnabled:enabled];
-    [self.leftArrowButton setEnabled:enabled];
-    [self.rightArrowButton setEnabled:enabled];
+    
+    if (!self.isPlaying && !enabled) {
+        [self.leftArrowButton setEnabled:enabled];
+        [self.rightArrowButton setEnabled:enabled];
+    }
+    
     [self.editButton setEnabled:enabled];
 }
 
