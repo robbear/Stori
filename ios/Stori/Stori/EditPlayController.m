@@ -59,7 +59,7 @@ bool _userNeedsAuthentication = TRUE;
     [super viewDidLoad];
     
     self.currentSlideIndex = 0;
-    self.forceToPortrait = YES;
+    self.forceToPortrait = (self.editPlayMode != editPlayModePreview);
     self.viewAppeared = NO;
 }
 
@@ -79,8 +79,14 @@ bool _userNeedsAuthentication = TRUE;
     HFLogDebug(@"EditPlayController.viewDidAppear");
     
     [super viewDidAppear:animated];
-    
+
     self.viewAppeared = YES;
+    
+    if (self.editPlayMode == editPlayModePreview) {
+        HFLogDebug(@"EditPlayController.viewDidAppear - in editPlayModePreview - skipping authentication");
+        [self initializePageView];
+        return;
+    }
     
     if (_userNeedsAuthentication) {
         //

@@ -13,9 +13,16 @@
 #import "LoginViewController.h"
 #import "SlideShareJSON.h"
 
+typedef enum EditPlayMode {
+    editPlayModeEdit = 0,
+    editPlayModePlay = 1,
+    editPlayModePreview = 2
+} EditPlayMode;
+
 @interface EditPlayController : UIViewController
     <UIPageViewControllerDataSource, UIPageViewControllerDelegate, AmazonClientManagerGoogleAccountDelegate, AWSS3ProviderDelegate, UIAlertViewDelegate>
 
+@property (nonatomic) EditPlayMode editPlayMode;
 @property (strong, nonatomic) UIPageViewController *pageViewController;
 @property (strong, nonatomic) SlideShareJSON *ssj;
 @property (strong, nonatomic) NSString *slideShareName;

@@ -368,6 +368,7 @@
                         <outlet property="storiTitleLabel" destination="Lsc-ki-lJH" id="wHM-aE-ezp"/>
                         <outlet property="trashButton" destination="qeU-Ov-Sq8" id="ZBu-Cq-zsA"/>
                         <segue destination="feS-YX-Ecz" kind="push" identifier="SegueToStoriListController" id="rO1-fg-aet"/>
+                        <segue destination="qrv-TH-V2k" kind="push" identifier="SegueToEditPlayController" id="cPp-tX-X5H"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c48-tl-Ldi" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -649,6 +650,7 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="cPp-tX-X5H"/>
         <segue reference="rO1-fg-aet"/>
     </inferredMetricsTieBreakers>
 </document>

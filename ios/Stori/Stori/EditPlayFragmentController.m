@@ -76,6 +76,15 @@
     [self setIsRecording:FALSE];
     [self setIsPlaying:FALSE];
     
+    if (self.editPlayController.editPlayMode != editPlayModeEdit) {
+        [self.selectPhotoButton setImage:[UIImage imageNamed:@"ic_back.png"] forState:UIControlStateNormal];
+        [self.recordingButton setHidden:YES];
+        [self.editButton setHidden:YES];
+        [self.trashButton setHidden:YES];
+        [self.insertAfterButton setHidden:YES];
+        [self.insertBeforeButton setHidden:YES];
+    }
+    
     [self renderImage];
     [self displaySlideTitleAndPosition];
     [self displayNextPrevControls];
@@ -98,15 +107,16 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    HFLogDebug(@"EditPlayFragmentController.prepareForSegue: segue=%@", segue.identifier);
+    
+    if([segue.identifier isEqualToString:@"SegueToEditPlayController"]) {
+        EditPlayController *epc = (EditPlayController *)segue.destinationViewController;
+        epc.editPlayMode = editPlayModePreview;
+    }
 }
-*/
 
 - (void)initializeWithSlideJSON:(SlideJSON *)sj withSlideShareName:(NSString *)slideShareName
                        withUuid:(NSString *)slideUuid fromController:(EditPlayController *)editPlayController {
@@ -303,20 +313,26 @@
 }
 
 - (IBAction)onSelectPhotoButtonClicked:(id)sender {
-    UIActionSheet *popup = [[UIActionSheet alloc]
-                            initWithTitle:NSLocalizedString(@"menu_editplay_image_title", nil)
-                            delegate:self
-                            cancelButtonTitle:nil
-                            destructiveButtonTitle:nil
-                            otherButtonTitles:nil];
-    
-    [popup addButtonWithTitle:[self hasImage] ? NSLocalizedString(@"menu_editplay_image_replacepicture", nil) : NSLocalizedString(@"menu_editplay_image_choosepicture", nil)];
-    [popup addButtonWithTitle:[self hasImage] ? NSLocalizedString(@"menu_editplay_image_replacecamera", nil) : NSLocalizedString(@"menu_editplay_image_usecamera", nil)];
-    [popup addButtonWithTitle:NSLocalizedString(@"menu_cancel", nil)];
-    popup.cancelButtonIndex = popup.numberOfButtons - 1;
-    
-    popup.tag = 1;
-    [popup showInView:[UIApplication sharedApplication].keyWindow];
+    if (self.editPlayController.editPlayMode == editPlayModeEdit) {
+        UIActionSheet *popup = [[UIActionSheet alloc]
+                                initWithTitle:NSLocalizedString(@"menu_editplay_image_title", nil)
+                                delegate:self
+                                cancelButtonTitle:nil
+                                destructiveButtonTitle:nil
+                                otherButtonTitles:nil];
+        
+        [popup addButtonWithTitle:[self hasImage] ? NSLocalizedString(@"menu_editplay_image_replacepicture", nil) : NSLocalizedString(@"menu_editplay_image_choosepicture", nil)];
+        [popup addButtonWithTitle:[self hasImage] ? NSLocalizedString(@"menu_editplay_image_replacecamera", nil) : NSLocalizedString(@"menu_editplay_image_usecamera", nil)];
+        [popup addButtonWithTitle:NSLocalizedString(@"menu_cancel", nil)];
+        popup.cancelButtonIndex = popup.numberOfButtons - 1;
+        
+        popup.tag = 1;
+        [popup showInView:[UIApplication sharedApplication].keyWindow];
+    }
+    else {
+        HFLogDebug(@"***** should exit here *****");
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 - (void)selectImageFromGallery {
@@ -651,6 +667,7 @@
     NSString *buttonTitle = [popup buttonTitleAtIndex:index];
     if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_preview", nil)]) {
         HFLogDebug(@"preview...");
+        [self performSegueWithIdentifier:@"SegueToEditPlayController" sender:nil];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_rename", nil)]) {
         HFLogDebug(@"rename...");
@@ -666,7 +683,6 @@
         [self.editPlayController createNewSlideShow];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_list", nil)]) {
-        HFLogDebug(@"list my storis...");
        [self performSegueWithIdentifier: @"SegueToStoriListController" sender: self];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_settings", nil)]) {
@@ -719,8 +735,13 @@
 }
 
 - (void)displayChoosePictureControls {
-    [self.choosePictureLabel setHidden:self.hasImage];
-    [self.selectPhotoSecondaryButton setHidden:self.hasImage];
+    BOOL hidden = self.hasImage;
+    if (self.editPlayController.editPlayMode != editPlayModeEdit) {
+        hidden = TRUE;
+    }
+    
+    [self.choosePictureLabel setHidden:hidden];
+    [self.selectPhotoSecondaryButton setHidden:hidden];
 }
 
 - (void)displaySlideTextControl {
@@ -749,8 +770,10 @@
     int count = [self.editPlayController getSlideCount];
     int position = [self.editPlayController getSlidePosition:self.slideUuid];
 
-    [self.insertBeforeButton setHidden:(count >= MAX_SLIDES_PER_STORI_FOR_FREE)];
-    [self.insertAfterButton setHidden:(count >= MAX_SLIDES_PER_STORI_FOR_FREE)];
+    if (self.editPlayController.editPlayMode == editPlayModeEdit) {
+        [self.insertBeforeButton setHidden:(count >= MAX_SLIDES_PER_STORI_FOR_FREE)];
+        [self.insertAfterButton setHidden:(count >= MAX_SLIDES_PER_STORI_FOR_FREE)];
+    }
 
     [self.leftArrowButton setHidden:(position <= 0)];
     [self.rightArrowButton setHidden:(position >= count - 1)];
