@@ -90,6 +90,11 @@ bool _userNeedsAuthentication = TRUE;
     }
     
     if (_userNeedsAuthentication) {
+        self.progressHUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+        [self.navigationController.view addSubview:self.progressHUD];
+        self.progressHUD.mode = MBProgressHUDModeIndeterminate;
+        [self.progressHUD show:TRUE];
+        
         //
         // Remember: Use the shared instance versions of AmazonClientManager and
         // GPPSignIn for the user-interactive sign in flow. See also LoginViewController.
@@ -446,6 +451,9 @@ bool _userNeedsAuthentication = TRUE;
 
 - (void)googleSignInComplete:(BOOL)success {
     HFLogDebug(@"EditPlayController.googleSignInComplete: success=%d", success);
+    
+    [self.progressHUD setHidden:TRUE];
+    self.progressHUD = nil;
     
     _userNeedsAuthentication = !success;
     
