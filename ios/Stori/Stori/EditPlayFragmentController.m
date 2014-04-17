@@ -36,6 +36,7 @@
 - (void)displayPlayStopControl;
 - (void)displaySlideTextControl;
 - (void)displayChoosePictureControls;
+- (void)displayOverlay;
 - (void)renderImage;
 - (void)renameStori;
 - (void)alertViewForSlideText:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
@@ -51,6 +52,8 @@
 - (void)enableControlsWhileRecordingOrPlaying:(BOOL)enabled;
 - (void)initiateReorder;
 - (void)asyncAutoPlay;
+- (void)imageTapDetected;
+- (void)overlayTapDetected;
 @end
 
 @implementation EditPlayFragmentController
@@ -67,6 +70,15 @@
     HFLogDebug(@"EditPlayFragmentController.viewDidLoad");
     
     [super viewDidLoad];
+    
+    UITapGestureRecognizer *singleTapImage = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapDetected)];
+    singleTapImage.numberOfTapsRequired = 1;
+    self.imageView.userInteractionEnabled = YES;
+    [self.imageView addGestureRecognizer:singleTapImage];
+    
+    UITapGestureRecognizer *singleTapOverlay = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(overlayTapDetected)];
+    self.overlayView.userInteractionEnabled = YES;
+    [self.overlayView addGestureRecognizer:singleTapOverlay];
     
     [self.choosePictureLabel setTitle:NSLocalizedString(@"editplay_nopicture_text", nil) forState:UIControlStateNormal];
     
@@ -95,6 +107,7 @@
     [self displayPlayStopControl];
     [self displaySlideTextControl];
     [self displayChoosePictureControls];
+    [self displayOverlay];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -158,6 +171,7 @@
     [self displaySlideTitleAndPosition];
     [self displayNextPrevControls];
     [self displaySlideTextControl];
+    [self displayOverlay];
     
     self.cancelAsyncPlay = FALSE;
     [self asyncAutoPlay];
@@ -169,6 +183,28 @@
     self.cancelAsyncPlay = TRUE;
     [self stopPlaying];
     [self stopRecording];
+}
+
+- (void)imageTapDetected {
+    HFLogDebug(@"EditPlayFragmentController.imageTapDetected");
+
+    if (self.editPlayController.editPlayMode == editPlayModeEdit) {
+        return;
+    }
+    
+    self.editPlayController.shouldDisplayOverlay = TRUE;
+    [self displayOverlay];
+}
+
+- (void)overlayTapDetected {
+    HFLogDebug(@"EditPlayFragmentController.overlayTapDetected");
+    
+    if (self.editPlayController.editPlayMode == editPlayModeEdit) {
+        return;
+    }
+
+    self.editPlayController.shouldDisplayOverlay = FALSE;
+    [self displayOverlay];
 }
 
 - (IBAction)onMainMenuButtonClicked:(id)sender {
@@ -787,6 +823,10 @@
     
     int slideIndex = buttonTitle.intValue - 1;
     [self.editPlayController reorderCurrentSlideTo:slideIndex];
+}
+
+- (void)displayOverlay {
+    [self.overlayView setHidden:!self.editPlayController.shouldDisplayOverlay];
 }
 
 - (void)displayChoosePictureControls {

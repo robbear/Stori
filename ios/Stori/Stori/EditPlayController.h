@@ -29,6 +29,7 @@ typedef enum EditPlayMode {
 @property (strong, nonatomic) NSString *userUuid;
 @property (nonatomic) int currentSlideIndex;
 @property (nonatomic) int pendingSlideIndex;
+@property (nonatomic) BOOL shouldDisplayOverlay;
 @property (strong, nonatomic) LoginViewController *loginViewController;
 
 - (void)addSlide:(int)newIndex;

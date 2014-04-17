@@ -61,6 +61,7 @@ bool _userNeedsAuthentication = TRUE;
     self.currentSlideIndex = 0;
     self.forceToPortrait = (self.editPlayMode != editPlayModePreview);
     self.viewAppeared = NO;
+    self.shouldDisplayOverlay = TRUE;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
