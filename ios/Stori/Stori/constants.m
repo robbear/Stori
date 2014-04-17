@@ -64,6 +64,9 @@ int const IMAGE_DISPLAY_HEIGHT_PORTRAIT = 1024;
 CGFloat const OVERLAY_ALPHA = 0.15;
 CGFloat const SLIDETEXT_ALPHA = 0.3;
 
+// Delay in milliseconds before slide audio starts playing
+int const AUDIO_DELAY_MILLIS = 1000;
+
 //
 // Default web site base url
 //

@@ -9,6 +9,7 @@
 #import "EditPlayFragmentController.h"
 #import "AmazonSharedPreferences.h"
 #import "STOUtilities.h"
+#import "STOPreferences.h"
 #import "UIImage+Resize.h"
 
 #define ALERTVIEW_DIALOG_SLIDETEXT 1
@@ -22,6 +23,7 @@
 @property (strong, nonatomic) AVAudioPlayer *audioPlayer;
 @property (nonatomic) BOOL isRecording;
 @property (nonatomic) BOOL isPlaying;
+@property (nonatomic) BOOL cancelAsyncPlay;
 @property (nonatomic) UIImagePickerController *imagePickerController;
 - (void)deleteSlideData;
 - (BOOL)hasImage;
@@ -48,6 +50,7 @@
 - (NSString *)getNewAudioFileName;
 - (void)enableControlsWhileRecordingOrPlaying:(BOOL)enabled;
 - (void)initiateReorder;
+- (void)asyncAutoPlay;
 @end
 
 @implementation EditPlayFragmentController
@@ -75,6 +78,7 @@
     
     [self setIsRecording:FALSE];
     [self setIsPlaying:FALSE];
+    [self setCancelAsyncPlay:FALSE];
     
     if (self.editPlayController.editPlayMode != editPlayModeEdit) {
         [self.selectPhotoButton setImage:[UIImage imageNamed:@"ic_back.png"] forState:UIControlStateNormal];
@@ -91,6 +95,15 @@
     [self displayPlayStopControl];
     [self displaySlideTextControl];
     [self displayChoosePictureControls];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    if (self.editPlayController.editPlayMode != editPlayModeEdit) {
+        int slideIndex = [self.editPlayController getSlidePosition:self.slideUuid];
+        if (slideIndex == self.editPlayController.currentSlideIndex) {
+            [self asyncAutoPlay];
+        }
+    }
 }
 
 - (void)configureAudioSession {
@@ -130,17 +143,30 @@
     self.slideText = [sj getText];
 }
 
+- (void)asyncAutoPlay {
+    BOOL autoAudio = [STOPreferences getPlaySlidesAutoAudio];
+    if (autoAudio && self.editPlayController.editPlayMode != editPlayModeEdit && self.hasAudio) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, AUDIO_DELAY_MILLIS * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            [self startPlaying];
+        });
+    }
+}
+
 - (void)onEditPlayFragmentWillBeSelected {
     HFLogAlert(@"EditPlayFragmentController.onEditPlayFragmentWillBeSelected");
     
     [self displaySlideTitleAndPosition];
     [self displayNextPrevControls];
     [self displaySlideTextControl];
+    
+    self.cancelAsyncPlay = FALSE;
+    [self asyncAutoPlay];
 }
 
 - (void)onEditPlayFragmentWillBeDeselected {
     HFLogDebug(@"EditPlayFragmentController.onEditPlayFragmentWillBeDeselected");
     
+    self.cancelAsyncPlay = TRUE;
     [self stopPlaying];
     [self stopRecording];
 }
@@ -210,6 +236,7 @@
         return;
     }
     
+    self.cancelAsyncPlay = TRUE;
     [self stopPlaying];
     [self.editPlayController setCurrentSlidePosition:position];
 }
@@ -223,6 +250,7 @@
         return;
     }
     
+    self.cancelAsyncPlay = TRUE;
     [self stopPlaying];
     [self.editPlayController setCurrentSlidePosition:position];
 }
@@ -332,6 +360,8 @@
         [popup showInView:[UIApplication sharedApplication].keyWindow];
     }
     else {
+        self.cancelAsyncPlay = TRUE;
+        [self stopPlaying];
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
@@ -394,13 +424,15 @@
     [self.insertAfterButton setEnabled:enabled];
     [self.insertBeforeButton setEnabled:enabled];
     [self.trashButton setEnabled:enabled];
+    [self.editButton setEnabled:enabled];
     
     if (!self.isPlaying && !enabled) {
         [self.leftArrowButton setEnabled:enabled];
         [self.rightArrowButton setEnabled:enabled];
     }
-    
-    [self.editButton setEnabled:enabled];
+    if (self.isPlaying && (self.editPlayController.editPlayMode != editPlayModeEdit)) {
+        [self.selectPhotoButton setEnabled:TRUE];
+    }
 }
 
 - (void)initiateReorder {
@@ -479,6 +511,12 @@
 }
 
 - (void)startPlaying {
+    if (self.cancelAsyncPlay) {
+        HFLogDebug(@"EditPlayFragmentController.startPlaying - cancelAsyncPlay is TRUE, so bailing");
+        self.cancelAsyncPlay = FALSE;
+        return;
+    }
+    
     NSURL *folderDirectory = [STOUtilities createOrGetSlideShareDirectory:self.slideSharename];
     NSURL *fileURL = [folderDirectory URLByAppendingPathComponent:self.audioFileName];
     
