@@ -48,6 +48,8 @@
 "menu_editplay_preview" = "Preview";
 "menu_editplay_publish" = "Publish";
 "menu_editplay_rename" = "Rename";
+"menu_editplay_saveallphotos" = "Save all photos";
+"menu_editplay_savethisphoto" = "Save this photo";
 "menu_editplay_share" = "Share";
 "menu_editplay_settings" = "Settings";
 "menu_editplay_title" = "Stori actions";

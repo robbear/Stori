@@ -82,7 +82,7 @@ bool _userNeedsAuthentication = TRUE;
 
     self.viewAppeared = YES;
     
-    if (self.editPlayMode == editPlayModePreview) {
+    if (self.editPlayMode != editPlayModeEdit) {
         HFLogDebug(@"EditPlayController.viewDidAppear - in editPlayModePreview - skipping authentication");
         [self initializePageView];
         return;

@@ -178,15 +178,21 @@
                             cancelButtonTitle:nil
                             destructiveButtonTitle:nil
                             otherButtonTitles:nil];
-    
-    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_preview", nil)];
-    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_rename", nil)];
-    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_publish", nil)];
-    if ([self.editPlayController isPublished]) {
-        [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_share", nil)];
+
+    if (self.editPlayController.editPlayMode == editPlayModeEdit) {
+        [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_preview", nil)];
+        [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_rename", nil)];
+        [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_publish", nil)];
+        if ([self.editPlayController isPublished]) {
+            [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_share", nil)];
+        }
+        [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_createnew", nil)];
+        [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_list", nil)];
     }
-    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_createnew", nil)];
-    [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_list", nil)];
+    if (self.editPlayController.editPlayMode == editPlayModePlay) {
+        [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_savethisphoto", nil)];
+        [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_saveallphotos", nil)];
+    }
     [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_settings", nil)];
     [popup addButtonWithTitle:NSLocalizedString(@"menu_cancel", nil)];
     popup.cancelButtonIndex = popup.numberOfButtons - 1;
@@ -730,6 +736,12 @@
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_settings", nil)]) {
         HFLogDebug(@"settings...");
+    }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_savethisphoto", nil)]) {
+        HFLogDebug(@"Save this photo...");
+    }
+    else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_saveallphotos", nil)]) {
+        HFLogDebug(@"Save all photos");
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_image_choosepicture", nil)] ||
              [buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_image_replacepicture", nil)]) {
