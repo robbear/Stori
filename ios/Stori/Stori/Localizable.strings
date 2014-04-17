@@ -42,7 +42,7 @@
 "menu_editplay_image_choosepicture" = "Choose picture";
 "menu_editplay_image_replacecamera" = "Replace with camera";
 "menu_editplay_image_replacepicture" = "Replace picture";
-"menu_editplay_image_title" = "Pictures";
+"menu_editplay_image_title" = "";
 "menu_editplay_image_usecamera" = "Use camera";
 "menu_editplay_list" = "List my Storis";
 "menu_editplay_preview" = "Preview";
@@ -52,7 +52,7 @@
 "menu_editplay_savethisphoto" = "Save this photo";
 "menu_editplay_share" = "Share";
 "menu_editplay_settings" = "Settings";
-"menu_editplay_title" = "Stori actions";
+"menu_editplay_title" = "";
 "menu_editplay_trash_removeaudio" = "Remove audio";
 "menu_editplay_trash_removeimage" = "Remove image";
 "menu_editplay_trash_removeslide" = "Remove slide";
