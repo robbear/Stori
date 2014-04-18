@@ -34,6 +34,7 @@
 "google_play_market_link" = "https://play.google.com/store/apps/details?id=com.stori.stori";
 "login_dialog_title" = "Welcome!";
 "login_dialog_message" = "Stori requires a Google account. Continue by signing in with Google. If you do not have a Google account, you will have an opportunity to create one.";
+"login_dialog_error_message" = "There was a problem signing in with Google. Please try again.";
 "login_dialog_continue_button" = "Sign in with Google";
 "menu_cancel" = "Cancel";
 "menu_no" = "No";

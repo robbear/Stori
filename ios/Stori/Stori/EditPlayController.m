@@ -8,6 +8,7 @@
 
 #import "EditPlayController.h"
 #import "EditPlayFragmentController.h"
+#import "AmazonClientManager.h"
 #import "AmazonSharedPreferences.h"
 #import "STOPreferences.h"
 #import "STOUtilities.h"
@@ -41,6 +42,7 @@
 - (void)alertViewForShare:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)alertViewForSignIn:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)showToast:(NSString *)toastString;
+- (void)editPlayImageTapDetected;
 @end
 
 @implementation EditPlayController
@@ -64,6 +66,15 @@ bool _userNeedsAuthentication = TRUE;
     self.forceToPortrait = (self.editPlayMode != editPlayModePreview);
     self.viewAppeared = NO;
     self.shouldDisplayOverlay = TRUE;
+
+    UITapGestureRecognizer *singleTapImage = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(editPlayImageTapDetected)];
+    singleTapImage.numberOfTapsRequired = 1;
+    self.editPlayImageView.userInteractionEnabled = YES;
+    [self.editPlayImageView addGestureRecognizer:singleTapImage];
+
+    if ([[AmazonClientManager sharedInstance] isLoggedIn]) {
+        [self.editPlayImageView setHidden:YES];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -104,7 +115,7 @@ bool _userNeedsAuthentication = TRUE;
         [AmazonClientManager sharedInstance].amazonClientManagerGoogleAccountDelegate = self;
         if (![[AmazonClientManager sharedInstance] silentSharedGPlusLogin]) {
             HFLogDebug(@"EditPlayController.viewDidAppear: silentSharedGPlusLogin failed");
-            [self googleSignInComplete:FALSE];
+            [self googleSignInComplete:FALSE withError:nil];
         }
     }
 }
@@ -126,6 +137,13 @@ bool _userNeedsAuthentication = TRUE;
     
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)editPlayImageTapDetected {
+    HFLogDebug(@"EditPlayController.editPlayImageTapDetected");
+    
+    // Regenerate the OOBE
+    [self googleSignInComplete:FALSE withError:nil];
 }
 
 - (void)initializePageView {
@@ -451,7 +469,7 @@ bool _userNeedsAuthentication = TRUE;
 }
 */
 
-- (void)googleSignInComplete:(BOOL)success {
+- (void)googleSignInComplete:(BOOL)success withError:(NSError *)error {
     HFLogDebug(@"EditPlayController.googleSignInComplete: success=%d", success);
     
     [self.progressHUD setHidden:TRUE];
@@ -461,12 +479,13 @@ bool _userNeedsAuthentication = TRUE;
     
     if (_userNeedsAuthentication) {
         HFLogDebug(@"EditPlayController.googleSignInComplete - _userNeedsAuthentication is still TRUE, so that means login UI is needed");
+
+        NSString *message = NSLocalizedString(@"login_dialog_message", nil);
+        if (error) {
+            HFLogError(@"EditPlayController.googleSignInComplete: error: %%", error.description);
+            message = NSLocalizedString(@"login_dialog_error_message", nil);
+        }
         
-#if NEVER
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        LoginViewController *loginViewController = (LoginViewController *)[storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
-        [self presentViewController:loginViewController animated:YES completion:nil];
-#else
         UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"login_dialog_title", nil)
                                                          message:NSLocalizedString(@"login_dialog_message", nil)
                                                         delegate:self
@@ -474,16 +493,8 @@ bool _userNeedsAuthentication = TRUE;
                                                otherButtonTitles:NSLocalizedString(@"login_dialog_continue_button", nil), nil];
         dialog.tag = ALERTVIEW_DIALOG_SIGNIN;
         [dialog show];
-#endif
     }
     else {
-#if NEVER
-        if (self.loginViewController) {
-            [self.loginViewController dismissViewControllerAnimated:NO completion:nil];
-            self.loginViewController = nil;
-        }
-#endif
-        
         [self initializePageView];
     }
 }

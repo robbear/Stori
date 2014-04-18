@@ -41,6 +41,6 @@
 @end
 
 @protocol AmazonClientManagerGoogleAccountDelegate <NSObject>
-- (void)googleSignInComplete:(BOOL)success;
+- (void)googleSignInComplete:(BOOL)success withError:(NSError *)error;
 - (void)googleDisconnectComplete:(BOOL)success;
 @end

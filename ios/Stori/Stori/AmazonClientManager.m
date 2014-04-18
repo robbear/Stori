@@ -117,6 +117,11 @@ static GTMOAuth2Authentication  *_auth;
                          if (error == nil) {
                              [self completeGLogin];
                          }
+                         else {
+                             if ([self.amazonClientManagerGoogleAccountDelegate respondsToSelector:@selector(googleSignInComplete:withError:)]) {
+                                 [self.amazonClientManagerGoogleAccountDelegate googleSignInComplete:FALSE withError:error];
+                             }
+                         }
                      }];
 }
 
@@ -126,7 +131,9 @@ static GTMOAuth2Authentication  *_auth;
     _auth = auth;
     
     if (error != nil) {
-        [[Constants errorAlert:[NSString stringWithFormat:@"Error logging in with Google: %@", error.description]] show];
+        if ([self.amazonClientManagerGoogleAccountDelegate respondsToSelector:@selector(googleSignInComplete:withError:)]) {
+            [self.amazonClientManagerGoogleAccountDelegate googleSignInComplete:FALSE withError:error];
+        }
     }
     else {
         if (_auth.accessToken == nil) {
@@ -147,7 +154,7 @@ static GTMOAuth2Authentication  *_auth;
                                           andWebIdentityToken:idToken
                                                  fromProvider:nil];
     
-    // if we have an id, we are logged in
+    // If we have an id, we are logged in
     if (_wif.subjectFromWIF != nil) {
         [AmazonSharedPreferences storeUserName:_wif.subjectFromWIF];
         [AmazonSharedPreferences storeUserEmail:_signIn ? _signIn.userEmail : [GPPSignIn sharedInstance].userEmail];
@@ -156,15 +163,14 @@ static GTMOAuth2Authentication  *_auth;
         
         [self initClients];
         
-        if ([self.amazonClientManagerGoogleAccountDelegate respondsToSelector:@selector(googleSignInComplete:)]) {
-            [self.amazonClientManagerGoogleAccountDelegate googleSignInComplete:TRUE];
+        if ([self.amazonClientManagerGoogleAccountDelegate respondsToSelector:@selector(googleSignInComplete:withError:)]) {
+            [self.amazonClientManagerGoogleAccountDelegate googleSignInComplete:TRUE withError:nil];
         }
     }
     else {
-        [[Constants errorAlert:@"Unable to assume role, please check logs for error"] show];
-
-        if ([self.amazonClientManagerGoogleAccountDelegate respondsToSelector:@selector(googleSignInComplete:)]) {
-            [self.amazonClientManagerGoogleAccountDelegate googleSignInComplete:FALSE];
+        if ([self.amazonClientManagerGoogleAccountDelegate respondsToSelector:@selector(googleSignInComplete:withError:)]) {
+            NSError *error = [[NSError alloc] initWithDomain:@"stori" code:-1 userInfo:@{@"description": @"Unable to assume role. Please check logs for error"}];
+            [self.amazonClientManagerGoogleAccountDelegate googleSignInComplete:FALSE withError:error];
         }
     }
 }

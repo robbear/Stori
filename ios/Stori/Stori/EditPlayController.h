@@ -21,6 +21,7 @@ typedef enum EditPlayMode {
 @interface EditPlayController : UIViewController
     <UIPageViewControllerDataSource, UIPageViewControllerDelegate, AmazonClientManagerGoogleAccountDelegate, AWSS3ProviderDelegate, UIAlertViewDelegate>
 
+@property (weak, nonatomic) IBOutlet UIImageView *editPlayImageView;
 @property (nonatomic) EditPlayMode editPlayMode;
 @property (strong, nonatomic) UIPageViewController *pageViewController;
 @property (strong, nonatomic) SlideShareJSON *ssj;

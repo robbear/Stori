@@ -31,7 +31,8 @@ NSString *_userUuid;
     _amazonClientManager.amazonClientManagerGoogleAccountDelegate = self;
     if (![_amazonClientManager silentGPlusLogin]) {
         HFLogDebug(@"AWSS3Provider.slientLogin silentGPlusLogin failed");
-        [self googleSignInComplete:FALSE];
+        NSError *error = [[NSError alloc] initWithDomain:@"stori" code:-1 userInfo:@{@"description": @"Failed to sign in to Google"}];
+        [self googleSignInComplete:FALSE withError:error];
     }
 }
 
@@ -327,9 +328,10 @@ NSString *_userUuid;
     [self silentLogin];
 }
 
-- (void)googleSignInComplete:(BOOL)success {
+- (void)googleSignInComplete:(BOOL)success withError:(NSError *)error {
     HFLogDebug(@"AWSS3Provider.googleSignInComplete: success=%d", success);
     
+    // We ignore the error and let the AWS call fail and report
     [self executeAWSS3ProviderBlock];
  }
 
