@@ -31,8 +31,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *choosePictureLabel;
 @property (weak, nonatomic) IBOutlet UIButton *selectPhotoSecondaryButton;
 
-@property (strong, nonatomic) LoginViewController *loginViewController;
-
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (strong, nonatomic) NSString *imageFileName;
 @property (strong, nonatomic) NSString *audioFileName;

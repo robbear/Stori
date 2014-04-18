@@ -10,7 +10,6 @@
 #import <GooglePlus/GooglePlus.h>
 #import "AmazonClientManager.h"
 #import "AWSS3Provider.h"
-#import "LoginViewController.h"
 #import "SlideShareJSON.h"
 
 typedef enum EditPlayMode {
@@ -30,7 +29,6 @@ typedef enum EditPlayMode {
 @property (nonatomic) int currentSlideIndex;
 @property (nonatomic) int pendingSlideIndex;
 @property (nonatomic) BOOL shouldDisplayOverlay;
-@property (strong, nonatomic) LoginViewController *loginViewController;
 
 - (void)addSlide:(int)newIndex;
 - (void)deleteSlide:(NSString *)slideUuid withImage:(NSString *)imageFileName withAudio:audioFileName;

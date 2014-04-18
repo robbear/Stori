@@ -8,6 +8,7 @@
 
 #import "EditPlayController.h"
 #import "EditPlayFragmentController.h"
+#import "LoginViewController.h"
 #import "AmazonSharedPreferences.h"
 #import "STOPreferences.h"
 #import "STOUtilities.h"
@@ -19,6 +20,7 @@
 #define ALERTVIEW_DIALOG_STORITITLE 2
 #define ALERTVIEW_DIALOG_PUBLISH 3
 #define ALERTVIEW_DIALOG_SHARE 4
+#define ALERTVIEW_DIALOG_SIGNIN 5
 
 @interface EditPlayController ()
 @property (nonatomic) BOOL forceToPortrait;
@@ -38,6 +40,7 @@
 - (void)alertViewForStoriTitle:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)alertViewForPublish:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)alertViewForShare:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
+- (void)alertViewForSignIn:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)showToast:(NSString *)toastString;
 @end
 
@@ -460,15 +463,27 @@ bool _userNeedsAuthentication = TRUE;
     if (_userNeedsAuthentication) {
         HFLogDebug(@"EditPlayController.googleSignInComplete - _userNeedsAuthentication is still TRUE, so that means login UI is needed");
         
+#if NEVER
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        self.loginViewController = (LoginViewController *)[storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
-        [self presentViewController:self.loginViewController animated:YES completion:nil];
+        LoginViewController *loginViewController = (LoginViewController *)[storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+        [self presentViewController:loginViewController animated:YES completion:nil];
+#else
+        UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"login_dialog_title", nil)
+                                                         message:NSLocalizedString(@"login_dialog_message", nil)
+                                                        delegate:self
+                                               cancelButtonTitle:nil
+                                               otherButtonTitles:NSLocalizedString(@"login_dialog_continue_button", nil), nil];
+        dialog.tag = ALERTVIEW_DIALOG_SIGNIN;
+        [dialog show];
+#endif
     }
     else {
+#if NEVER
         if (self.loginViewController) {
             [self.loginViewController dismissViewControllerAnimated:NO completion:nil];
             self.loginViewController = nil;
         }
+#endif
         
         [self initializePageView];
     }
@@ -696,6 +711,10 @@ bool _userNeedsAuthentication = TRUE;
             [self alertViewForShare:alertView clickedButtonAtIndex:buttonIndex];
             break;
             
+        case ALERTVIEW_DIALOG_SIGNIN:
+            [self alertViewForSignIn:alertView clickedButtonAtIndex:buttonIndex];
+            break;
+            
         default:
             break;
     }
@@ -743,5 +762,12 @@ bool _userNeedsAuthentication = TRUE;
     [self finalizeNewStori:title];
 }
 
+- (void)alertViewForSignIn:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
+    if ([buttonTitle isEqualToString:NSLocalizedString(@"login_dialog_continue_button", nil)]) {
+        [[AmazonClientManager sharedInstance] initSharedGPlusLogin];
+        [[GPPSignIn sharedInstance] authenticate];
+    }
+}
 
 @end

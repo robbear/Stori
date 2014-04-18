@@ -51,6 +51,8 @@
     //
     [[AmazonClientManager sharedInstance] initSharedGPlusLogin];
     [[GPPSignIn sharedInstance] authenticate];
+    
+    [[self parentViewController] dismissViewControllerAnimated:NO completion:nil];
 }
 
 @end
