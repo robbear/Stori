@@ -20,7 +20,6 @@
 		504ECC6B18C245B900507582 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECC6A18C245B900507582 /* main.m */; };
 		504ECC6F18C245B900507582 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECC6E18C245B900507582 /* AppDelegate.m */; };
 		504ECC7218C245B900507582 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504ECC7018C245B900507582 /* Main.storyboard */; };
-		504ECC7518C245B900507582 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECC7418C245B900507582 /* ViewController.m */; };
 		504ECC7718C245B900507582 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504ECC7618C245B900507582 /* Images.xcassets */; };
 		504ECC7E18C245B900507582 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECC7D18C245B900507582 /* XCTest.framework */; };
 		504ECC7F18C245B900507582 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECC5E18C245B900507582 /* Foundation.framework */; };
@@ -51,7 +50,6 @@
 		504ECCCC18CE67B400507582 /* AWSSecurityTokenService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECCC918CE67B400507582 /* AWSSecurityTokenService.framework */; };
 		504ECCE018D0B88A00507582 /* AmazonClientManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCDD18D0B88A00507582 /* AmazonClientManager.m */; };
 		504ECCE418D0BEC600507582 /* AmazonSharedPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCE318D0BEC600507582 /* AmazonSharedPreferences.m */; };
-		504ECCE718D0C6F800507582 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCE618D0C6F800507582 /* LoginViewController.m */; };
 		504ECCED18D3620200507582 /* AWSS3Provider.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCEC18D3620200507582 /* AWSS3Provider.m */; };
 		50AA647418EB23B500C079F9 /* EditPlayFragmentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA647318EB23B500C079F9 /* EditPlayFragmentController.m */; };
 		50AA647718EB256A00C079F9 /* EditPlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA647618EB256A00C079F9 /* EditPlayController.m */; };
@@ -92,8 +90,6 @@
 		504ECC6D18C245B900507582 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		504ECC6E18C245B900507582 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		504ECC7118C245B900507582 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		504ECC7318C245B900507582 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		504ECC7418C245B900507582 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		504ECC7618C245B900507582 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		504ECC7C18C245B900507582 /* StoriTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StoriTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		504ECC7D18C245B900507582 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -132,8 +128,6 @@
 		504ECCDD18D0B88A00507582 /* AmazonClientManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmazonClientManager.m; sourceTree = "<group>"; };
 		504ECCE218D0BEC600507582 /* AmazonSharedPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmazonSharedPreferences.h; sourceTree = "<group>"; };
 		504ECCE318D0BEC600507582 /* AmazonSharedPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmazonSharedPreferences.m; sourceTree = "<group>"; };
-		504ECCE518D0C6F800507582 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
-		504ECCE618D0C6F800507582 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		504ECCEB18D3620200507582 /* AWSS3Provider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AWSS3Provider.h; sourceTree = "<group>"; };
 		504ECCEC18D3620200507582 /* AWSS3Provider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AWSS3Provider.m; sourceTree = "<group>"; };
 		50AA647218EB23B500C079F9 /* EditPlayFragmentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditPlayFragmentController.h; sourceTree = "<group>"; };
@@ -248,8 +242,6 @@
 				5027FB1A18FC94F4007C2A41 /* iToast.h */,
 				5027FB1B18FC94F4007C2A41 /* iToast.m */,
 				504ECC9918C632D100507582 /* Localizable.strings */,
-				504ECCE518D0C6F800507582 /* LoginViewController.h */,
-				504ECCE618D0C6F800507582 /* LoginViewController.m */,
 				504ECC7018C245B900507582 /* Main.storyboard */,
 				503655EA18E080AF0014E574 /* MBProgressHUD.h */,
 				503655EB18E080AF0014E574 /* MBProgressHUD.m */,
@@ -273,8 +265,6 @@
 				504ECC6518C245B900507582 /* Supporting Files */,
 				50BDE68218F8523600827141 /* UIImage+Resize.h */,
 				50BDE68318F8523600827141 /* UIImage+Resize.m */,
-				504ECC7318C245B900507582 /* ViewController.h */,
-				504ECC7418C245B900507582 /* ViewController.m */,
 			);
 			path = Stori;
 			sourceTree = "<group>";
@@ -411,7 +401,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				504ECC7518C245B900507582 /* ViewController.m in Sources */,
 				504ECC6F18C245B900507582 /* AppDelegate.m in Sources */,
 				503655CE18D8B8020014E574 /* NSString+STONSString.m in Sources */,
 				504ECC6B18C245B900507582 /* main.m in Sources */,
@@ -422,7 +411,6 @@
 				504ECCA018C64EEF00507582 /* constants.m in Sources */,
 				503655E318DB50240014E574 /* StoriListController.m in Sources */,
 				504ECC9D18C645FE00507582 /* SlideJSON.m in Sources */,
-				504ECCE718D0C6F800507582 /* LoginViewController.m in Sources */,
 				504ECCED18D3620200507582 /* AWSS3Provider.m in Sources */,
 				503655CB18D8AF290014E574 /* StoriListItem.m in Sources */,
 				50AA647718EB256A00C079F9 /* EditPlayController.m in Sources */,
