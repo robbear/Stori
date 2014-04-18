@@ -495,6 +495,7 @@ bool _userNeedsAuthentication = TRUE;
         [dialog show];
     }
     else {
+        [self.editPlayImageView setHidden:YES];
         [self initializePageView];
     }
 }
