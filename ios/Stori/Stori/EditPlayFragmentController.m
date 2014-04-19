@@ -138,7 +138,7 @@
     // Pass the selected object to the new view controller.
     HFLogDebug(@"EditPlayFragmentController.prepareForSegue: segue=%@", segue.identifier);
     
-    if([segue.identifier isEqualToString:@"SegueToEditPlayController"]) {
+    if ([segue.identifier isEqualToString:@"SegueToEditPlayController"]) {
         EditPlayController *epc = (EditPlayController *)segue.destinationViewController;
         epc.editPlayMode = editPlayModePreview;
     }
@@ -751,11 +751,9 @@
     
     NSString *buttonTitle = [popup buttonTitleAtIndex:index];
     if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_preview", nil)]) {
-        HFLogDebug(@"preview...");
         [self performSegueWithIdentifier:@"SegueToEditPlayController" sender:nil];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_rename", nil)]) {
-        HFLogDebug(@"rename...");
         [self renameStori];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_publish", nil)]) {
@@ -771,7 +769,7 @@
        [self performSegueWithIdentifier: @"SegueToStoriListController" sender: self];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_settings", nil)]) {
-        HFLogDebug(@"settings...");
+        [self performSegueWithIdentifier:@"SegueToSettingsController" sender:nil];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_savethisphoto", nil)]) {
         HFLogDebug(@"Save this photo...");

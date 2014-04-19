@@ -81,6 +81,9 @@ long long _expectedBytes;
     HFLogDebug(@"StoriListController.viewDidAppear");
     
     [super viewDidAppear:animated];
+    
+    self.navigationController.navigationBar.backItem.title = NSLocalizedString(@"storilist_navbutton_title", nil);
+
     if (!self.tableView) {
         HFLogDebug(@"StoriListController.viewDidAppear - tableView is nil");
     }

@@ -13,6 +13,7 @@
 		503655E318DB50240014E574 /* StoriListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655E218DB50240014E574 /* StoriListController.m */; };
 		503655E918DF3DDB0014E574 /* StoriListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655E818DF3DDB0014E574 /* StoriListTableViewCell.m */; };
 		503655EC18E080AF0014E574 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 503655EB18E080AF0014E574 /* MBProgressHUD.m */; };
+		5048AB1A1902E292007F3167 /* STOSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5048AB191902E292007F3167 /* STOSettingsController.m */; };
 		504ECC5F18C245B900507582 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECC5E18C245B900507582 /* Foundation.framework */; };
 		504ECC6118C245B900507582 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECC6018C245B900507582 /* CoreGraphics.framework */; };
 		504ECC6318C245B900507582 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504ECC6218C245B900507582 /* UIKit.framework */; };
@@ -79,6 +80,8 @@
 		503655E818DF3DDB0014E574 /* StoriListTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoriListTableViewCell.m; sourceTree = "<group>"; };
 		503655EA18E080AF0014E574 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		503655EB18E080AF0014E574 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
+		5048AB181902E292007F3167 /* STOSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STOSettingsController.h; sourceTree = "<group>"; };
+		5048AB191902E292007F3167 /* STOSettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STOSettingsController.m; sourceTree = "<group>"; };
 		504ECC5B18C245B900507582 /* Stori.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stori.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		504ECC5E18C245B900507582 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		504ECC6018C245B900507582 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -260,6 +263,8 @@
 				503655CA18D8AF290014E574 /* StoriListItem.m */,
 				503655E718DF3DDB0014E574 /* StoriListTableViewCell.h */,
 				503655E818DF3DDB0014E574 /* StoriListTableViewCell.m */,
+				5048AB181902E292007F3167 /* STOSettingsController.h */,
+				5048AB191902E292007F3167 /* STOSettingsController.m */,
 				504ECCA818C8F70D00507582 /* STOUtilities.h */,
 				504ECCA918C8F70D00507582 /* STOUtilities.m */,
 				504ECC6518C245B900507582 /* Supporting Files */,
@@ -421,6 +426,7 @@
 				5027FB1C18FC94F4007C2A41 /* iToast.m in Sources */,
 				504ECC9818C4F0AE00507582 /* SlideShareJSON.m in Sources */,
 				50BDE68418F8523600827141 /* UIImage+Resize.m in Sources */,
+				5048AB1A1902E292007F3167 /* STOSettingsController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
