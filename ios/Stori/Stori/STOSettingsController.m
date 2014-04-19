@@ -8,6 +8,7 @@
 
 #import "STOSettingsController.h"
 #import "STOPreferences.h"
+#import "AmazonSharedPreferences.h"
 
 @interface STOSettingsController ()
 
@@ -31,12 +32,16 @@
     [self.autoPlayTitleLabel setText:NSLocalizedString(@"settings_autoplay_title", nil)];
     [self.autoPlaySubtitleLabel setText:NSLocalizedString(@"settings_autoplay_subtitle", nil)];
     [self.disconnectTitleLabel setText:NSLocalizedString(@"settings_disconnect_title", nil)];
-    [self.disconnectSubtitleLabel setText:NSLocalizedString(@"settings_disconnect_subtitle", nil)];
+    [self.disconnectButton setTitle:NSLocalizedString(@"settings_disconnect_button", nil) forState:UIControlStateNormal];
     [self.aboutTitleLable setText:NSLocalizedString(@"settings_about_title", nil)];
     
     NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
     NSString *buildText = [NSString stringWithFormat:NSLocalizedString(@"settings_about_subtitle_format", nil), version];
     [self.aboutSubtitleLabel setText:buildText];
+    
+    NSString *email = [AmazonSharedPreferences userEmail];
+    NSString *accountString = [NSString stringWithFormat:NSLocalizedString(@"settings_disconnect_account_format", nil), email];
+    [self.currentAccountLabel setText:accountString];
     
     BOOL usingAutoPlay = [STOPreferences getPlaySlidesAutoAudio];
     [self.autoPlaySwitch setOn:usingAutoPlay];
@@ -70,6 +75,23 @@
     
     BOOL usingAutoPlay = self.autoPlaySwitch.on;
     [STOPreferences savePlaySlidesAutoAudio:usingAutoPlay];
+}
+
+- (IBAction)onDisconnectButtonClicked:(id)sender {
+    UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"settings_disconnect_dialog_title", nil)
+                                                     message:NSLocalizedString(@"settings_disconnect_dialog_message", nil)
+                                                    delegate:self
+                                           cancelButtonTitle:NSLocalizedString(@"menu_cancel", nil)
+                                           otherButtonTitles:NSLocalizedString(@"settings_disconnect_button", nil), nil];
+    dialog.tag = 1;
+    [dialog show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
+    if ([buttonTitle isEqualToString:NSLocalizedString(@"settings_disconnect_button", nil)]) {
+        HFLogDebug(@"Disconnect from Google...");
+    }
 }
 
 @end
