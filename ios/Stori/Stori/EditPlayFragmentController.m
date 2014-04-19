@@ -25,6 +25,8 @@
 @property (nonatomic) BOOL isPlaying;
 @property (nonatomic) BOOL cancelAsyncPlay;
 @property (nonatomic) UIImagePickerController *imagePickerController;
+@property (strong, nonatomic) UITapGestureRecognizer *imageTapRecognizer;
+@property (strong, nonatomic) UITapGestureRecognizer *overlayTapRecognizer;
 - (void)deleteSlideData;
 - (BOOL)hasImage;
 - (BOOL)hasAudio;
@@ -71,14 +73,14 @@
     
     [super viewDidLoad];
     
-    UITapGestureRecognizer *singleTapImage = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapDetected)];
-    singleTapImage.numberOfTapsRequired = 1;
+    self.imageTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapDetected)];
+    self.imageTapRecognizer.numberOfTapsRequired = 1;
     self.imageView.userInteractionEnabled = YES;
-    [self.imageView addGestureRecognizer:singleTapImage];
+    [self.imageView addGestureRecognizer:self.imageTapRecognizer];
     
-    UITapGestureRecognizer *singleTapOverlay = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(overlayTapDetected)];
+    self.overlayTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(overlayTapDetected)];
     self.overlayView.userInteractionEnabled = YES;
-    [self.overlayView addGestureRecognizer:singleTapOverlay];
+    [self.overlayView addGestureRecognizer:self.overlayTapRecognizer];
     
     [self.choosePictureLabel setTitle:NSLocalizedString(@"editplay_nopicture_text", nil) forState:UIControlStateNormal];
     
@@ -192,6 +194,14 @@
         return;
     }
     
+    CGPoint point = [self.overlayTapRecognizer locationInView:self.imageView];
+    
+    // Ignore taps in critical areas.
+    // BUGBUG - need better layout reads rather than using hardcoded values.
+    if (point.y <= 40) {
+        return;
+    }
+    
     self.editPlayController.shouldDisplayOverlay = TRUE;
     [self displayOverlay];
 }
@@ -203,6 +213,14 @@
         return;
     }
 
+    CGPoint point = [self.overlayTapRecognizer locationInView:self.overlayView];
+    
+    // Ignore taps in critical areas.
+    // BUGBUG - need better layout reads rather than using hardcoded values.
+    if (point.y <= 40) {
+        return;
+    }
+    
     self.editPlayController.shouldDisplayOverlay = FALSE;
     [self displayOverlay];
 }
