@@ -8,6 +8,7 @@
 
 #import "EditPlayFragmentController.h"
 #import "AmazonSharedPreferences.h"
+#import "STOSettingsController.h"
 #import "STOUtilities.h"
 #import "STOPreferences.h"
 #import "UIImage+Resize.h"
@@ -143,6 +144,10 @@
     if ([segue.identifier isEqualToString:@"SegueToEditPlayController"]) {
         EditPlayController *epc = (EditPlayController *)segue.destinationViewController;
         epc.editPlayMode = editPlayModePreview;
+    }
+    else if ([segue.identifier isEqualToString:@"SegueToSettingsController"]) {
+        STOSettingsController *ssc = (STOSettingsController *)segue.destinationViewController;
+        ssc.editPlayController = self.editPlayController;
     }
 }
 

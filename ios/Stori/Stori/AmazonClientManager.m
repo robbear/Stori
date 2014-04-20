@@ -184,16 +184,6 @@ static GTMOAuth2Authentication  *_auth;
 - (void)didDisconnectWithError:(NSError *)error {
     HFLogDebug(@"AmazonClientManager.didDisconnectWithError: error=%@", error);
     
-    if (error) {
-        // TODO
-    }
-    else {
-        // The user is signed out and disconnected
-        // Clean up user data as specified by the Google+ terms
-        
-        [self wipeAllCredentials];
-    }
-    
     if ([self.amazonClientManagerGoogleAccountDelegate respondsToSelector:@selector(googleDisconnectComplete:)]) {
         [self.amazonClientManagerGoogleAccountDelegate googleDisconnectComplete:(error == nil)];
     }

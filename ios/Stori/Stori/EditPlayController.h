@@ -48,5 +48,6 @@ typedef enum EditPlayMode {
 - (void)shareSlides;
 - (BOOL)isPublished;
 - (void)reorderCurrentSlideTo:(int)slideIndex;
+- (void)disconnectFromGoogle;
 
 @end

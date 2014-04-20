@@ -90,7 +90,8 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
     if ([buttonTitle isEqualToString:NSLocalizedString(@"settings_disconnect_button", nil)]) {
-        HFLogDebug(@"Disconnect from Google...");
+        [self.navigationController popViewControllerAnimated:YES];        
+        [self.editPlayController disconnectFromGoogle];
     }
 }
 

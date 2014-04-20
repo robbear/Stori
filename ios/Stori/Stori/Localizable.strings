@@ -12,6 +12,8 @@
 "editplay_createnew_dialog_title" = "Create new?";
 "editplay_createnew_dialog_message" = "If you have not yet published your previous work, it will be lost.";
 "editplay_createnew_button" = "Create new";
+"editplay_disconnect_failure_dialog_title" = "Problem disconnecting";
+"editplay_disconnect_failure_dialog_message" = "There was a problem disassociating the Stori application from your Google account. Check your Internet connectivity and try again.";
 "editplay_maxpublishedexcceeded_dialog_title" = "Cannot publish";
 "editplay_maxpublishedexceeded_dialog_message" = "You have exceeded your allotment of %1$d published Storis. Please delete one or more in order to publish this Stori.";
 "editplay_nopicture_text" = "Choose a picture!";

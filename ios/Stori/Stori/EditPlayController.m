@@ -24,9 +24,9 @@
 
 @interface EditPlayController ()
 @property (nonatomic) BOOL forceToPortrait;
-@property (nonatomic) BOOL viewAppeared;
 @property (strong, nonatomic) AWSS3Provider *awsS3Provider;
 @property (strong, nonatomic) MBProgressHUD *progressHUD;
+@property (nonatomic) BOOL disconnectInProgress;
 
 - (EditPlayFragmentController *)viewControllerAtIndex:(NSUInteger)index;
 - (void)initializePageView;
@@ -64,8 +64,8 @@ bool _userNeedsAuthentication = TRUE;
     
     self.currentSlideIndex = 0;
     self.forceToPortrait = (self.editPlayMode != editPlayModePreview);
-    self.viewAppeared = NO;
     self.shouldDisplayOverlay = TRUE;
+    self.disconnectInProgress = FALSE;
 
     UITapGestureRecognizer *singleTapImage = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(editPlayImageTapDetected)];
     singleTapImage.numberOfTapsRequired = 1;
@@ -94,15 +94,13 @@ bool _userNeedsAuthentication = TRUE;
     
     [super viewDidAppear:animated];
 
-    self.viewAppeared = YES;
-    
     if (self.editPlayMode != editPlayModeEdit) {
         HFLogDebug(@"EditPlayController.viewDidAppear - in editPlayModePreview - skipping authentication");
         [self initializePageView];
         return;
     }
     
-    if (_userNeedsAuthentication) {
+    if (_userNeedsAuthentication && !self.disconnectInProgress) {
         self.progressHUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
         [self.navigationController.view addSubview:self.progressHUD];
         self.progressHUD.mode = MBProgressHUDModeIndeterminate;
@@ -172,7 +170,14 @@ bool _userNeedsAuthentication = TRUE;
         HFLogDebug(@"EditPlayController.initializePageView - OOBE case. Create first slide");
         [self initializeNewSlide:self.currentSlideIndex];
     }
-        
+    
+    // Remove any previous UIPageViewController from the view tree
+    for (UIView *subview in self.view.subviews) {
+        if ([subview isKindOfClass:[self.pageViewController.view class]]) {
+            [subview removeFromSuperview];
+        }
+    }
+    
     // Create page view controller
     self.pageViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"EditPlayPageViewController"];
     self.pageViewController.dataSource = self;
@@ -458,6 +463,24 @@ bool _userNeedsAuthentication = TRUE;
     [STOUtilities printSlideShareJSON:self.ssj];
 }
 
+- (void)disconnectFromGoogle {
+    HFLogDebug(@"EditPlayController.disconnectFromGoogle");
+    
+    self.progressHUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+    [self.navigationController.view addSubview:self.progressHUD];
+    self.progressHUD.mode = MBProgressHUDModeIndeterminate;
+    [self.progressHUD show:TRUE];
+    
+    self.disconnectInProgress = TRUE;
+    
+    //
+    // Remember: Use the shared instance versions of
+    // AmazonClientManager and GPSignIn for the user-interactive
+    // sign in and sign out flows.
+    //
+    [[AmazonClientManager sharedInstance] disconnectFromSharedGoogle];
+}
+
 /*
 #pragma mark - Navigation
 
@@ -476,6 +499,9 @@ bool _userNeedsAuthentication = TRUE;
     self.progressHUD = nil;
     
     _userNeedsAuthentication = !success;
+    if (success) {
+        self.disconnectInProgress = FALSE;
+    }
     
     if (_userNeedsAuthentication) {
         HFLogDebug(@"EditPlayController.googleSignInComplete - _userNeedsAuthentication is still TRUE, so that means login UI is needed");
@@ -495,13 +521,40 @@ bool _userNeedsAuthentication = TRUE;
         [dialog show];
     }
     else {
+        // Hide the EditPlayController's icon image view, letting the background go fully to black
         [self.editPlayImageView setHidden:YES];
+        
         [self initializePageView];
     }
 }
 
 - (void) googleDisconnectComplete:(BOOL)success {
     HFLogDebug(@"EditPlayController.googleDisconnectComplete: success=%d", success);
+    
+    [self.progressHUD hide:TRUE];
+    self.progressHUD = nil;
+    
+    if (success) {
+        [STOUtilities deleteSlideShareDirectory:self.slideShareName];
+        self.slideShareName = nil;
+        [STOPreferences saveEditPlayName:nil];
+
+        [[AmazonClientManager sharedInstance] wipeAllCredentials];
+
+        // Clear the view
+        self.currentSlideIndex = 0;
+        [self initializePageView];
+
+        [self googleSignInComplete:FALSE withError:nil];
+    }
+    else {
+        UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_disconnect_failure_dialog_title", nil)
+                                                         message:NSLocalizedString(@"editplay_disconnect_failure_dialog_message", nil)
+                                                        delegate:nil
+                                               cancelButtonTitle:nil
+                                               otherButtonTitles:NSLocalizedString(@"menu_ok", nil), nil];
+        [dialog show];
+    }
 }
 
 - (void)getStoriItemsComplete:(NSArray *)arrayItems {

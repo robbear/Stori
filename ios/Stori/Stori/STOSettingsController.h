@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "EditPlayController.h"
 
 @interface STOSettingsController : UIViewController <UIAlertViewDelegate>
+@property (weak, nonatomic) EditPlayController *editPlayController;
 @property (weak, nonatomic) IBOutlet UILabel *autoPlayTitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *autoPlaySubtitleLabel;
 @property (weak, nonatomic) IBOutlet UISwitch *autoPlaySwitch;
