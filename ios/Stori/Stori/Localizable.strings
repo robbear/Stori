@@ -90,3 +90,9 @@
 "toast_deleteslide_format" = "Removed slide. Now viewing %1$d of %2$d.";
 "toast_reorderslides_format" = "Reordered slides. Now viewing %1$d of %2$d.";
 "usedefault_button" = "Use default";
+
+//
+// TCBlobDownloader
+//
+"Not enough free disk space" = "Not enough free disk space to download %@";
+
