@@ -29,6 +29,7 @@
 @property (nonatomic) BOOL disconnectInProgress;
 
 - (EditPlayFragmentController *)viewControllerAtIndex:(NSUInteger)index;
+- (void)initiateGoogleSignIn:(BOOL)useErrorMessage;
 - (void)initializePageView;
 - (void)initializeSlideShareJSON;
 - (void)initializeNewSlide:(int)slideIndex;
@@ -113,7 +114,7 @@ bool _userNeedsAuthentication = TRUE;
         [AmazonClientManager sharedInstance].amazonClientManagerGoogleAccountDelegate = self;
         if (![[AmazonClientManager sharedInstance] silentSharedGPlusLogin]) {
             HFLogDebug(@"EditPlayController.viewDidAppear: silentSharedGPlusLogin failed");
-            [self googleSignInComplete:FALSE withError:nil];
+            [self initiateGoogleSignIn:FALSE];
         }
     }
 }
@@ -141,7 +142,7 @@ bool _userNeedsAuthentication = TRUE;
     HFLogDebug(@"EditPlayController.editPlayImageTapDetected");
     
     // Regenerate the OOBE
-    [self googleSignInComplete:FALSE withError:nil];
+    [self initiateGoogleSignIn:FALSE];
 }
 
 - (void)initializePageView {
@@ -492,8 +493,25 @@ bool _userNeedsAuthentication = TRUE;
 }
 */
 
+- (void)initiateGoogleSignIn:(BOOL)useErrorMessage {
+    HFLogDebug(@"EditPlayController.initiateGoogleSignIn");
+
+    NSString *message = NSLocalizedString(@"login_dialog_message", nil);
+    if (useErrorMessage) {
+        message = NSLocalizedString(@"login_dialog_error_message", nil);
+    }
+    
+    UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"login_dialog_title", nil)
+                                                     message:message
+                                                    delegate:self
+                                           cancelButtonTitle:nil
+                                           otherButtonTitles:NSLocalizedString(@"login_dialog_continue_button", nil), nil];
+    dialog.tag = ALERTVIEW_DIALOG_SIGNIN;
+    [dialog show];
+}
+
 - (void)googleSignInComplete:(BOOL)success withError:(NSError *)error {
-    HFLogDebug(@"EditPlayController.googleSignInComplete: success=%d", success);
+    HFLogDebug(@"EditPlayController.googleSignInComplete: success=%d, error=%@", success, error == nil ? @"nil" : error.description);
     
     [self.progressHUD setHidden:TRUE];
     self.progressHUD = nil;
@@ -505,20 +523,8 @@ bool _userNeedsAuthentication = TRUE;
     
     if (_userNeedsAuthentication) {
         HFLogDebug(@"EditPlayController.googleSignInComplete - _userNeedsAuthentication is still TRUE, so that means login UI is needed");
-
-        NSString *message = NSLocalizedString(@"login_dialog_message", nil);
-        if (error) {
-            HFLogError(@"EditPlayController.googleSignInComplete: error: %%", error.description);
-            message = NSLocalizedString(@"login_dialog_error_message", nil);
-        }
         
-        UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"login_dialog_title", nil)
-                                                         message:NSLocalizedString(@"login_dialog_message", nil)
-                                                        delegate:self
-                                               cancelButtonTitle:nil
-                                               otherButtonTitles:NSLocalizedString(@"login_dialog_continue_button", nil), nil];
-        dialog.tag = ALERTVIEW_DIALOG_SIGNIN;
-        [dialog show];
+        [self initiateGoogleSignIn:(error != nil)];
     }
     else {
         // Hide the EditPlayController's icon image view, letting the background go fully to black
@@ -545,7 +551,7 @@ bool _userNeedsAuthentication = TRUE;
         self.currentSlideIndex = 0;
         [self initializePageView];
 
-        [self googleSignInComplete:FALSE withError:nil];
+        [self initiateGoogleSignIn:FALSE];
     }
     else {
         UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_disconnect_failure_dialog_title", nil)
