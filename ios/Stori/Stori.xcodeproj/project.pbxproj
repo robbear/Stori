@@ -278,15 +278,15 @@
 				504ECCA818C8F70D00507582 /* STOUtilities.h */,
 				504ECCA918C8F70D00507582 /* STOUtilities.m */,
 				504ECC6518C245B900507582 /* Supporting Files */,
-				50BDE68218F8523600827141 /* UIImage+Resize.h */,
-				50BDE68318F8523600827141 /* UIImage+Resize.m */,
-				5048AB1E1905C856007F3167 /* UIDevice+Hardware.h */,
-				5048AB1F1905C856007F3167 /* UIDevice+Hardware.m */,
 				5048AB211905C8E7007F3167 /* TCBlobDownload.h */,
-				5048AB221905C926007F3167 /* TCBlobDownloadManager.h */,
-				5048AB231905C926007F3167 /* TCBlobDownloadManager.m */,
 				5048AB251905C9AA007F3167 /* TCBlobDownloader.h */,
 				5048AB261905C9AA007F3167 /* TCBlobDownloader.m */,
+				5048AB221905C926007F3167 /* TCBlobDownloadManager.h */,
+				5048AB231905C926007F3167 /* TCBlobDownloadManager.m */,
+				5048AB1E1905C856007F3167 /* UIDevice+Hardware.h */,
+				5048AB1F1905C856007F3167 /* UIDevice+Hardware.m */,
+				50BDE68218F8523600827141 /* UIImage+Resize.h */,
+				50BDE68318F8523600827141 /* UIImage+Resize.m */,
 			);
 			path = Stori;
 			sourceTree = "<group>";
