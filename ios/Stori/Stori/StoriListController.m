@@ -15,6 +15,9 @@
 #import "AWSS3Provider.h"
 #import "MBProgressHUD.h"
 
+#define ALERTVIEW_DIALOG_DELETE    1
+#define ALERTVIEW_DIALOG_EDIT      2
+
 @interface StoriListController ()
 
 @property (strong, nonatomic) MBProgressHUD *progressHUD;
@@ -22,6 +25,8 @@
 @property (strong, nonatomic) NSMutableData *receivedData;
 
 - (void)handleStoriItemDelete:(StoriListItem *)sli;
+- (void)alertViewForDelete:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex;
+- (void)alertViewForEdit:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex;
 
 @end
 
@@ -221,14 +226,37 @@ long long _expectedBytes;
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     HFLogDebug(@"StoriListController.alertView:%d didDismissWithButtonIndex:%d", alertView.tag, buttonIndex);
     
-    // BUGBUG - use enum
-    if (alertView.tag == 1) {
-        NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
-        
-        if ([buttonTitle isEqualToString:NSLocalizedString(@"storilistcontroller_delete_button", nil)]) {
-            [self handleStoriItemDelete:_selectedStoriListItem];
-        }
+    switch (alertView.tag) {
+        case ALERTVIEW_DIALOG_DELETE:
+            [self alertViewForDelete:alertView didDismissWithButtonIndex:buttonIndex];
+            break;
+            
+        case ALERTVIEW_DIALOG_EDIT:
+            [self alertViewForEdit:alertView didDismissWithButtonIndex:buttonIndex];
+            break;
+            
+        default:
+            break;
     }
+}
+
+- (void)alertViewForDelete:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
+    
+    if ([buttonTitle isEqualToString:NSLocalizedString(@"storilistcontroller_delete_button", nil)]) {
+        [self handleStoriItemDelete:_selectedStoriListItem];
+    }
+}
+
+- (void)alertViewForEdit:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
+    
+    if (![buttonTitle isEqualToString:NSLocalizedString(@"menu_ok", nil)]) {
+        return;
+    }
+    
+    [self.editPlayController notifyForDownloadRequest:YES withUserUuid:nil withName:_selectedStoriListItem.slideShareName];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 //
@@ -243,13 +271,17 @@ long long _expectedBytes;
     NSString *buttonTitle = [popup buttonTitleAtIndex:index];
     if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_play", nil)]) {
         HFLogDebug(@"Play clicked for %@", _selectedStoriListItem.title);
-        
-        self.receivedData = [[NSMutableData alloc] init];
-        NSString *urlString = [NSString stringWithFormat:@"%@%@/%@/%@", [Constants baseAWSStorageURL], userUuid, _selectedStoriListItem.slideShareName, SLIDESHARE_JSON_FILENAME];
-        [STOUtilities downloadUrlAsync:urlString withDelegate:self];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_edit", nil)]) {
         HFLogDebug(@"Edit clicked for %@", _selectedStoriListItem.title);
+
+        UIAlertView *alert = [[UIAlertView alloc]
+                              initWithTitle:NSLocalizedString(@"storilistcontroller_edit_title", nil)
+                              message:NSLocalizedString(@"storilistcontroller_edit_message", nil)
+                              delegate:self cancelButtonTitle:NSLocalizedString(@"menu_cancel", nil)
+                              otherButtonTitles:NSLocalizedString(@"menu_ok", nil), nil];
+        alert.tag = ALERTVIEW_DIALOG_EDIT;
+        [alert show];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_share", nil)]) {
         HFLogDebug(@"Share clicked for %@", _selectedStoriListItem.title);
@@ -264,60 +296,9 @@ long long _expectedBytes;
                               message:NSLocalizedString(@"storilistcontroller_delete_message", nil)
                               delegate:self cancelButtonTitle:NSLocalizedString(@"menu_cancel", nil)
                               otherButtonTitles:NSLocalizedString(@"storilistcontroller_delete_button", nil), nil];
-        alert.tag = 1; // BUGBUG - need file-static enum
+        alert.tag = ALERTVIEW_DIALOG_DELETE;
         [alert show];
     }
-}
-
-//
-// NSURLConnectionDelegate methods
-//
-// NOTE: These methods will be implemented in the DownloadViewController class. We will
-// be following the lead of the Android client, having a special controller/view for
-// downloads that can be invoked either from StoriListController or via a click on
-// a Stori URL.
-//
-// Putting aside for now to work on EditPlayViewController and PlayViewController.
-//
-
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-    HFLogDebug(@"StoriListController.connection: didReceiveResponse");
-    
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    self.progressHUD.labelText = @"Downloading n of m";
-    self.progressHUD.mode = MBProgressHUDModeDeterminateHorizontalBar;
-    [self.progressHUD show:TRUE];
-    [self.receivedData setLength:0];
-    
-    _expectedBytes = [response expectedContentLength];
-}
-
-- (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-    [self.receivedData appendData:data];
-    float progressive = (float)[self.receivedData length] / (float)_expectedBytes;
-    
-    self.progressHUD.progress = progressive;
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    HFLogDebug(@"StoriListController.connectionDidFinishLoading");
-
-    // BUGBUG: TODO: Write self.receivedData to file
-    
-    [self.progressHUD hide:YES];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-}
-
-- (void) connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    HFLogDebug(@"StoriListController.connection:didFailWithError:%@", error);
-    
-    // BUGBUG - post error
-}
-
-- (NSCachedURLResponse *) connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse {
-    HFLogDebug(@"StoriListController.connection:willCacheResponse");
-    
-    return nil;
 }
 
 

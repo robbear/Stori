@@ -312,8 +312,8 @@ NSString * const TCHTTPStatusCode = @"httpStatus";
         if (self.completeBlock) {
             self.completeBlock(success, pathToFile);
         }
-        if ([self.delegate respondsToSelector:@selector(download:didFinishWithSucces:atPath:)]) {
-            [self.delegate download:self didFinishWithSucces:success atPath:pathToFile];
+        if ([self.delegate respondsToSelector:@selector(download:didFinishWithSuccess:atPath:)]) {
+            [self.delegate download:self didFinishWithSuccess:success atPath:pathToFile];
         }
         
         // Let's finish the operation once and for all

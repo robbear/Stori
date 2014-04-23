@@ -9,6 +9,7 @@
 #import "EditPlayFragmentController.h"
 #import "AmazonSharedPreferences.h"
 #import "STOSettingsController.h"
+#import "StoriListController.h"
 #import "STOUtilities.h"
 #import "STOPreferences.h"
 #import "UIImage+Resize.h"
@@ -148,6 +149,10 @@
     else if ([segue.identifier isEqualToString:@"SegueToSettingsController"]) {
         STOSettingsController *ssc = (STOSettingsController *)segue.destinationViewController;
         ssc.editPlayController = self.editPlayController;
+    }
+    else if ([segue.identifier isEqualToString:@"SegueToStoriListController"]) {
+        StoriListController *slc = (StoriListController *)segue.destinationViewController;
+        slc.editPlayController = self.editPlayController;
     }
 }
 

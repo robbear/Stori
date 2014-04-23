@@ -54,9 +54,19 @@
         
         _jsonDictionary = [[NSMutableDictionary alloc] init];
         
-        [_jsonDictionary setObject:[slide objectForKey:KEY_IMAGE] forKey:KEY_IMAGE];
-        [_jsonDictionary setObject:[slide objectForKey:KEY_AUDIO] forKey:KEY_AUDIO];
-        [_jsonDictionary setObject:[slide objectForKey:KEY_TEXT] forKey:KEY_TEXT];
+        NSString *imageVal = [slide objectForKey:KEY_IMAGE];
+        NSString *audioVal = [slide objectForKey:KEY_AUDIO];
+        NSString *textVal = [slide objectForKey:KEY_TEXT];
+        
+        if (imageVal) {
+            [_jsonDictionary setObject:imageVal forKey:KEY_IMAGE];
+        }
+        if (audioVal) {
+            [_jsonDictionary setObject:audioVal forKey:KEY_AUDIO];
+        }
+        if (textVal) {
+            [_jsonDictionary setObject:textVal forKey:KEY_TEXT];
+        }
     }
     
     return self;

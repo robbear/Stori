@@ -161,15 +161,6 @@
     [viewController presentViewController:shareController animated:TRUE completion:nil];
 }
 
-+ (NSURLConnection *)downloadUrlAsync:(NSString *)urlString withDelegate:(id<NSURLConnectionDelegate>)delegate {
-    HFLogDebug(@"STOUtilities.downloadUrl:%@", urlString);
-    
-    NSURL *url = [NSURL URLWithString:urlString];
-    NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:60];
-    
-    return [[NSURLConnection alloc] initWithRequest:request delegate:delegate startImmediately:YES];
-}
-
 + (void)configureAudioSession {
     AVAudioSession *session = [AVAudioSession sharedInstance];
     [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];

@@ -11,6 +11,7 @@
 #import "AmazonClientManager.h"
 #import "AWSS3Provider.h"
 #import "SlideShareJSON.h"
+#import "StoriDownload.h"
 
 typedef enum EditPlayMode {
     editPlayModeEdit = 0,
@@ -19,7 +20,7 @@ typedef enum EditPlayMode {
 } EditPlayMode;
 
 @interface EditPlayController : UIViewController
-    <UIPageViewControllerDataSource, UIPageViewControllerDelegate, AmazonClientManagerGoogleAccountDelegate, AWSS3ProviderDelegate, UIAlertViewDelegate>
+    <UIPageViewControllerDataSource, UIPageViewControllerDelegate, AmazonClientManagerGoogleAccountDelegate, AWSS3ProviderDelegate, UIAlertViewDelegate, StoriDownloadDelegate>
 
 @property (weak, nonatomic) IBOutlet UIImageView *editPlayImageView;
 @property (nonatomic) EditPlayMode editPlayMode;
@@ -49,5 +50,7 @@ typedef enum EditPlayMode {
 - (BOOL)isPublished;
 - (void)reorderCurrentSlideTo:(int)slideIndex;
 - (void)disconnectFromGoogle;
+- (void)notifyForDownloadRequest:(BOOL)downloadIsForEdit withUserUuid:(NSString *)userUuid withName:(NSString *)slideShareName;
+- (void)download:(BOOL)downloadIsForEdit withUserUuid:(NSString *)userUuid withName:(NSString *)slideShareName;
 
 @end

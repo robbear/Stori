@@ -27,6 +27,10 @@
 @property (strong, nonatomic) AWSS3Provider *awsS3Provider;
 @property (strong, nonatomic) MBProgressHUD *progressHUD;
 @property (nonatomic) BOOL disconnectInProgress;
+@property (strong, nonatomic) NSString *downloadSlideShareName;
+@property (strong, nonatomic) NSString *downloadUserUuid;
+@property (nonatomic) BOOL downloadIsForEdit;
+@property (strong, nonatomic) StoriDownload *storiDownload;
 
 - (EditPlayFragmentController *)viewControllerAtIndex:(NSUInteger)index;
 - (void)initiateGoogleSignIn:(BOOL)useErrorMessage;
@@ -62,11 +66,13 @@ bool _userNeedsAuthentication = TRUE;
     HFLogDebug(@"EditPlayController.viewDidLoad");
     
     [super viewDidLoad];
-    
+
     self.currentSlideIndex = 0;
     self.forceToPortrait = (self.editPlayMode != editPlayModePreview);
     self.shouldDisplayOverlay = TRUE;
     self.disconnectInProgress = FALSE;
+    self.downloadSlideShareName = nil;
+    self.downloadUserUuid = nil;
 
     UITapGestureRecognizer *singleTapImage = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(editPlayImageTapDetected)];
     singleTapImage.numberOfTapsRequired = 1;
@@ -86,7 +92,7 @@ bool _userNeedsAuthentication = TRUE;
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    
+
     [self.navigationController.navigationBar setHidden:NO];
 }
 
@@ -95,6 +101,10 @@ bool _userNeedsAuthentication = TRUE;
     
     [super viewDidAppear:animated];
 
+    // BUGBUG - probably wrong! See issue #78
+    self.progressHUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+    [self.navigationController.view addSubview:self.progressHUD];
+    
     if (self.editPlayMode != editPlayModeEdit) {
         HFLogDebug(@"EditPlayController.viewDidAppear - in editPlayModePreview - skipping authentication");
         [self initializePageView];
@@ -102,9 +112,8 @@ bool _userNeedsAuthentication = TRUE;
     }
     
     if (_userNeedsAuthentication && !self.disconnectInProgress) {
-        self.progressHUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-        [self.navigationController.view addSubview:self.progressHUD];
         self.progressHUD.mode = MBProgressHUDModeIndeterminate;
+        self.progressHUD.labelText = nil;
         [self.progressHUD show:TRUE];
         
         //
@@ -116,6 +125,15 @@ bool _userNeedsAuthentication = TRUE;
             HFLogDebug(@"EditPlayController.viewDidAppear: silentSharedGPlusLogin failed");
             [self initiateGoogleSignIn:FALSE];
         }
+    }
+    else if (self.downloadUserUuid && self.downloadSlideShareName) {
+        NSString *userUuid = self.downloadUserUuid;
+        NSString *slideShareName = self.downloadSlideShareName;
+        
+        self.downloadUserUuid = nil;
+        self.downloadSlideShareName = nil;
+        
+        [self download:self.downloadIsForEdit withUserUuid:userUuid withName:slideShareName];
     }
 }
 
@@ -224,6 +242,41 @@ bool _userNeedsAuthentication = TRUE;
                                            animated:NO completion:nil];
                        });
                    }];
+}
+
+- (void)notifyForDownloadRequest:(BOOL)downloadIsForEdit withUserUuid:(NSString *)userUuid withName:(NSString *)slideShareName {
+    self.downloadIsForEdit = downloadIsForEdit;
+    self.downloadUserUuid = userUuid == nil ? self.userUuid : userUuid;
+    self.downloadSlideShareName = slideShareName;
+}
+
+- (void)download:(BOOL)downloadIsForEdit withUserUuid:(NSString *)userUuid withName:(NSString *)slideShareName {
+    HFLogDebug(@"EditPlayController.download: downloadIsForEdit:%d, userUuid=%@, name=%@", downloadIsForEdit, userUuid, slideShareName);
+    
+    if (!userUuid || !slideShareName) {
+        HFLogDebug(@"EditPlayController.download - invalid userUuid or slideShareName. Bailing");
+        return;
+    }
+    
+    NSString *slideShareNameToDelete = downloadIsForEdit ? [STOPreferences getEditPlayName] : [STOPreferences getPlaySlidesName];
+    [STOUtilities deleteSlideShareDirectory:slideShareNameToDelete];
+    
+    self.progressHUD.mode = MBProgressHUDModeIndeterminate;
+    self.progressHUD.labelText = nil;
+    [self.progressHUD show:TRUE];
+
+    if (downloadIsForEdit) {
+        [STOPreferences saveEditPlayName:slideShareName];
+    }
+    else {
+        [STOPreferences savePlaySlidesName:slideShareName];
+    }
+    
+    if (!self.storiDownload) {
+        self.storiDownload = [[StoriDownload alloc] initWithDelegate:self];
+    }
+
+    [self.storiDownload startDownload:userUuid withName:slideShareName downloadIsForEdit:downloadIsForEdit];
 }
 
 - (void)initializeNewSlideShow {
@@ -467,9 +520,8 @@ bool _userNeedsAuthentication = TRUE;
 - (void)disconnectFromGoogle {
     HFLogDebug(@"EditPlayController.disconnectFromGoogle");
     
-    self.progressHUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-    [self.navigationController.view addSubview:self.progressHUD];
     self.progressHUD.mode = MBProgressHUDModeIndeterminate;
+    self.progressHUD.labelText = nil;
     [self.progressHUD show:TRUE];
     
     self.disconnectInProgress = TRUE;
@@ -514,7 +566,6 @@ bool _userNeedsAuthentication = TRUE;
     HFLogDebug(@"EditPlayController.googleSignInComplete: success=%d, error=%@", success, error == nil ? @"nil" : error.description);
     
     [self.progressHUD setHidden:TRUE];
-    self.progressHUD = nil;
     
     _userNeedsAuthentication = !success;
     if (success) {
@@ -538,7 +589,6 @@ bool _userNeedsAuthentication = TRUE;
     HFLogDebug(@"EditPlayController.googleDisconnectComplete: success=%d", success);
     
     [self.progressHUD hide:TRUE];
-    self.progressHUD = nil;
     
     if (success) {
         [STOUtilities deleteSlideShareDirectory:self.slideShareName];
@@ -583,7 +633,6 @@ bool _userNeedsAuthentication = TRUE;
         HFLogDebug(@"EditPlayController.getStoriItemsComplete - MAX_PUBLISHED_FOR_FREE is exceeded. Don't publish.");
         
         [self.progressHUD hide:TRUE];
-        self.progressHUD = nil;
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         
         NSString *message = [NSString stringWithFormat:NSLocalizedString(@"editplay_maxpublishedexceeded_dialog_message", nil), MAX_PUBLISHED_FOR_FREE];
@@ -621,7 +670,6 @@ bool _userNeedsAuthentication = TRUE;
     self.awsS3Provider = nil;
 
     [self.progressHUD hide:TRUE];
-    self.progressHUD = nil;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
     if (success) {
@@ -800,8 +848,6 @@ bool _userNeedsAuthentication = TRUE;
 - (void)alertViewForPublish:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
     if ([buttonTitle isEqualToString:NSLocalizedString(@"editplay_publish_button", nil)]) {
-        self.progressHUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-        [self.navigationController.view addSubview:self.progressHUD];
         self.progressHUD.labelText = NSLocalizedString(@"editplay_uploadprogress_dialog_title", nil);
         self.progressHUD.mode = MBProgressHUDModeIndeterminate;
         [self.progressHUD show:TRUE];
@@ -838,6 +884,40 @@ bool _userNeedsAuthentication = TRUE;
         [[AmazonClientManager sharedInstance] initSharedGPlusLogin];
         [[GPPSignIn sharedInstance] authenticate];
     }
+}
+
+//
+// StoriDownloadDelegate methods
+//
+- (void)download:(NSString *)urlString didStopWithError:(NSError *)error {
+    HFLogDebug(@"EditPlayController.download:%@ didStopWithError:%@", urlString, error.description);
+    [self.progressHUD hide:TRUE];
+    
+    if (self.downloadIsForEdit) {
+        [STOPreferences saveEditPlayName:nil];
+    }
+    else {
+        [STOPreferences savePlaySlidesName:nil];
+    }
+    
+    self.currentSlideIndex = 0;
+    [self initializePageView];
+    
+    UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"download_errordialog_title", nil)
+                                                     message:NSLocalizedString(@"download_errordialog_message", nil)
+                                                    delegate:self
+                                           cancelButtonTitle:nil
+                                           otherButtonTitles:NSLocalizedString(@"menu_ok", nil), nil];
+    dialog.tag = -1;
+    [dialog show];
+}
+
+- (void)didFinishWithSuccess:(BOOL)success {
+    HFLogDebug(@"EditPlayController.didFinishWithSuccess - download returns success=%d", success);
+    [self.progressHUD hide:TRUE];
+    
+    self.currentSlideIndex = 0;
+    [self initializePageView];
 }
 
 @end

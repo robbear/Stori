@@ -9,6 +9,8 @@
 "app_name" = "Stori";
 "default_stori_title" = "My Stori";
 "default_stori_description" = "My Stori slides";
+"download_errordialog_title" = "Download failed";
+"download_errordialog_message" = "Failed to download the files necessary for viewing this Stori";
 "editplay_createnew_dialog_title" = "Create new?";
 "editplay_createnew_dialog_message" = "If you have not yet published your previous work, it will be lost.";
 "editplay_createnew_button" = "Create new";
@@ -86,6 +88,8 @@
 "storilistcontroller_delete_message" = "This will permanently delete this Stori. Deleting cannot be undone.";
 "storilistcontroller_delete_title" = "Delete this Stori?";
 "storilistcontroller_delete_wait" = "Deleting...";
+"storilistcontroller_edit_title" = "Download for edit";
+"storilistcontroller_edit_message" = "If you have not yet published your previous work, it will be lost.";
 "toast_addslide_format" = "Added slide. Now viewing %1$d of %2$d.";
 "toast_deleteslide_format" = "Removed slide. Now viewing %1$d of %2$d.";
 "toast_reorderslides_format" = "Reordered slides. Now viewing %1$d of %2$d.";

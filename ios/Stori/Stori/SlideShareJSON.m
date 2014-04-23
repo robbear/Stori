@@ -63,6 +63,7 @@
                                                           options:NSJSONReadingMutableContainers error:&err];
         if (err) {
             HFLogDebug(@"SlideShareJSON.initWithString: error=%@", err);
+            return [self init];
         }
         
         _jsonDictionary = [dict mutableCopy];
@@ -318,7 +319,7 @@
     HFLogDebug(@"SlideShareJSON.loadFromFolder:%@ withFileName:%@", folder, fileName);
     
     NSString *ssjString = [STOUtilities loadStringFromFolder:folder withFile:fileName];
-    if (!ssjString) {
+    if (!ssjString || ([ssjString length] <= 0)) {
         return nil;
     }
     
