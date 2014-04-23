@@ -54,7 +54,10 @@
 
     // Delete the current slide share directory
     NSString *slideShareNameToDelete = downloadIsForEdit ? [STOPreferences getEditPlayName] : [STOPreferences getPlaySlidesName];
-    [STOUtilities deleteSlideShareDirectory:slideShareNameToDelete];    
+    [STOUtilities deleteSlideShareDirectory:slideShareNameToDelete];
+    
+    // Delete the newly proposed directory, in case it's still in place
+    [STOUtilities deleteSlideShareDirectory:slideShareName];
     
     //
     // Initialize instance variables

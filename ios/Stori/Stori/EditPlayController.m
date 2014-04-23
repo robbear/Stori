@@ -66,6 +66,10 @@ bool _userNeedsAuthentication = TRUE;
     HFLogDebug(@"EditPlayController.viewDidLoad");
     
     [super viewDidLoad];
+    
+    // At startup, take the opportunity to clean up our data folder
+    // in case we've erred our way to leaving junk directories around.
+    [STOUtilities deleteUnusedDirectories];
 
     self.currentSlideIndex = 0;
     self.forceToPortrait = (self.editPlayMode != editPlayModePreview);
@@ -909,7 +913,8 @@ bool _userNeedsAuthentication = TRUE;
     
     if (self.downloadIsForEdit) {
         if (success) {
-            [STOPreferences saveEditPlayName:self.downloadSlideShareName];
+            [STOPreferences saveEditPlayName:slideShareName];
+            self.slideShareName = slideShareName;
         }
         self.currentSlideIndex = 0;
         [self initializePageView];

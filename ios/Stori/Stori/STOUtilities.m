@@ -7,6 +7,7 @@
 //
 
 #import "STOUtilities.h"
+#import "STOPreferences.h"
 
 @implementation STOUtilities
 
@@ -53,6 +54,31 @@
     return slideShareDirectory;
 }
 
++ (void)deleteUnusedDirectories {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSURL *rootDir = [STOUtilities getRootFilesDirectory];
+    
+    NSString *editDir = [STOPreferences getEditPlayName];
+    NSString *playDir = [STOPreferences getPlaySlidesName];
+    
+    NSError *error;
+    NSArray *dirs = [fm contentsOfDirectoryAtPath:[rootDir path] error:&error];
+    
+    for (int i = 0; i < [dirs count]; i++) {
+        NSString *val = (NSString *)[dirs objectAtIndex:i];
+        if (val && ([val isEqualToString:editDir])) {
+            continue;
+        }
+        if (val && ([val isEqualToString:playDir])) {
+            continue;
+        }
+        if (val) {
+            HFLogDebug(@"STOUtilities.deleteUnusedDirectories: deleting %@", val);
+            [STOUtilities deleteSlideShareDirectory:val];
+        }
+    }
+}
+
 + (BOOL)deleteSlideShareDirectory:(NSString *)slideShareName {
     if (!slideShareName) {
         return TRUE;
@@ -61,6 +87,12 @@
     NSFileManager *fm = [NSFileManager defaultManager];
     NSURL *rootDir = [STOUtilities getRootFilesDirectory];
     NSURL *slideShareDirectory = [rootDir URLByAppendingPathComponent:slideShareName];
+    
+    BOOL isDir = FALSE;
+    if (![fm fileExistsAtPath:[slideShareDirectory path] isDirectory:&isDir]) {
+        HFLogDebug(@"STOUtilities.deleteSlideShareDirectory - no directory exists, so bailing");
+        return TRUE;
+    }
 
     NSError *err;
     BOOL retVal = [fm removeItemAtURL:slideShareDirectory error:&err];

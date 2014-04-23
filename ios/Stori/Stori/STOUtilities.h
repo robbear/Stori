@@ -15,6 +15,7 @@
 + (NSURL *)getRootFilesDirectory;
 + (NSURL *)getAbsoluteFilePathWithFolder:(NSString *)folder withFileName:(NSString *)fileName;
 + (NSURL *)createOrGetSlideShareDirectory:(NSString *)slideShareName;
++ (void)deleteUnusedDirectories;
 + (BOOL)deleteSlideShareDirectory:(NSString *)slideShareName;
 + (BOOL)deleteFileAtFolder:(NSString *)folder withFileName:(NSString *)fileName;
 + (BOOL)saveStringToFile:(NSString *)stringData withFolder:(NSString *)folder withFileName:(NSString *)fileName;
