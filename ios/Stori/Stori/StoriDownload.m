@@ -10,6 +10,7 @@
 #import "SlideShareJSON.h"
 #import "SlideJSON.h"
 #import "STOUtilities.h"
+#import "STOPreferences.h"
 
 @interface StoriDownload ()
 @property (strong, nonatomic) NSString *slideShareName;
@@ -34,6 +35,27 @@
 }
 
 - (void)startDownload:(NSString *)userUuid withName:(NSString *)slideShareName downloadIsForEdit:(BOOL)downloadIsForEdit {
+    //
+    // First, check to see if we've already got this Stori ready for play in the case that downloadIsForEdit is false.
+    //
+    if (!downloadIsForEdit) {
+        NSString *playVal = [STOPreferences getPlaySlidesName];
+        if (playVal && [playVal isEqualToString:slideShareName]) {
+            HFLogDebug(@"StoriDownload.startDownload - we already have this Stori, ready to play. Notifying the delegate.");
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([self.delegate respondsToSelector:@selector(didFinishWithSuccess:withName:)]) {
+                    [self.delegate didFinishWithSuccess:TRUE withName:slideShareName];
+                }
+            });
+            
+            return;
+        }
+    }
+
+    // Delete the current slide share directory
+    NSString *slideShareNameToDelete = downloadIsForEdit ? [STOPreferences getEditPlayName] : [STOPreferences getPlaySlidesName];
+    [STOUtilities deleteSlideShareDirectory:slideShareNameToDelete];    
+    
     //
     // Initialize instance variables
     //
@@ -99,8 +121,8 @@
 
     if (self.ssj && (self.resourcesDownloaded == self.resourcesToDownload)) {
         HFLogDebug(@"StoriDownload.download:didFinishWithSuccess - all done!");
-        if ([self.delegate respondsToSelector:@selector(didFinishWithSuccess:)]) {
-            [self.delegate didFinishWithSuccess:downloadFinished];
+        if ([self.delegate respondsToSelector:@selector(didFinishWithSuccess:withName:)]) {
+            [self.delegate didFinishWithSuccess:downloadFinished withName:self.slideShareName];
         }
         
         return;

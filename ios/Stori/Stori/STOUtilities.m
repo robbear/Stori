@@ -54,6 +54,10 @@
 }
 
 + (BOOL)deleteSlideShareDirectory:(NSString *)slideShareName {
+    if (!slideShareName) {
+        return TRUE;
+    }
+    
     NSFileManager *fm = [NSFileManager defaultManager];
     NSURL *rootDir = [STOUtilities getRootFilesDirectory];
     NSURL *slideShareDirectory = [rootDir URLByAppendingPathComponent:slideShareName];

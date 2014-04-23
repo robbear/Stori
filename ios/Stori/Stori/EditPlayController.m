@@ -167,7 +167,12 @@ bool _userNeedsAuthentication = TRUE;
     HFLogDebug(@"EditPlayController.initializePageView");
     
     self.userUuid = [AmazonSharedPreferences userName];
-    self.slideShareName = [STOPreferences getEditPlayName];
+    if (self.editPlayMode == editPlayModePlay) {
+        self.slideShareName = [STOPreferences getPlaySlidesName];
+    }
+    else {
+        self.slideShareName = [STOPreferences getEditPlayName];
+    }
     
     if (!self.slideShareName) {
         self.slideShareName = [[NSUUID UUID] UUIDString];
@@ -257,21 +262,11 @@ bool _userNeedsAuthentication = TRUE;
         HFLogDebug(@"EditPlayController.download - invalid userUuid or slideShareName. Bailing");
         return;
     }
-    
-    NSString *slideShareNameToDelete = downloadIsForEdit ? [STOPreferences getEditPlayName] : [STOPreferences getPlaySlidesName];
-    [STOUtilities deleteSlideShareDirectory:slideShareNameToDelete];
-    
+
     self.progressHUD.mode = MBProgressHUDModeIndeterminate;
     self.progressHUD.labelText = nil;
     [self.progressHUD show:TRUE];
 
-    if (downloadIsForEdit) {
-        [STOPreferences saveEditPlayName:slideShareName];
-    }
-    else {
-        [STOPreferences savePlaySlidesName:slideShareName];
-    }
-    
     if (!self.storiDownload) {
         self.storiDownload = [[StoriDownload alloc] initWithDelegate:self];
     }
@@ -534,16 +529,12 @@ bool _userNeedsAuthentication = TRUE;
     [[AmazonClientManager sharedInstance] disconnectFromSharedGoogle];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"SegueToEditPlayController"]) {
+        EditPlayController *epc = (EditPlayController *)segue.destinationViewController;
+        epc.editPlayMode = editPlayModePlay;
+    }
 }
-*/
 
 - (void)initiateGoogleSignIn:(BOOL)useErrorMessage {
     HFLogDebug(@"EditPlayController.initiateGoogleSignIn");
@@ -912,12 +903,24 @@ bool _userNeedsAuthentication = TRUE;
     [dialog show];
 }
 
-- (void)didFinishWithSuccess:(BOOL)success {
-    HFLogDebug(@"EditPlayController.didFinishWithSuccess - download returns success=%d", success);
+- (void)didFinishWithSuccess:(BOOL)success withName:(NSString *)slideShareName {
+    HFLogDebug(@"EditPlayController.didFinishWithSuccess - download returns success=%d for %@", success, slideShareName);
     [self.progressHUD hide:TRUE];
     
-    self.currentSlideIndex = 0;
-    [self initializePageView];
+    if (self.downloadIsForEdit) {
+        if (success) {
+            [STOPreferences saveEditPlayName:self.downloadSlideShareName];
+        }
+        self.currentSlideIndex = 0;
+        [self initializePageView];
+    }
+    else if (success) {
+        [STOPreferences savePlaySlidesName:slideShareName];
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle: nil];
+        EditPlayController *epc = [storyboard instantiateViewControllerWithIdentifier:@"EditPlayController"];
+        epc.editPlayMode = editPlayModePlay;
+        [self.navigationController pushViewController:epc animated:YES];
+    }
 }
 
 @end

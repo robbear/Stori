@@ -11,7 +11,7 @@
 
 @protocol StoriDownloadDelegate <NSObject>
 - (void)download:(NSString *)urlString didStopWithError:(NSError *)error;
-- (void)didFinishWithSuccess:(BOOL)success;
+- (void)didFinishWithSuccess:(BOOL)success withName:(NSString *)slideShareName;
 @end
 
 @interface StoriDownload : NSObject <TCBlobDownloaderDelegate>

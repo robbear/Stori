@@ -158,7 +158,7 @@ long long _expectedBytes;
     
     NSString *currentEditSlideShareName = [STOPreferences getEditPlayName];
 
-    // Don't allow download and playof current edit item
+    // Don't allow download and play of current edit item
     if (![currentEditSlideShareName isEqualToString:_selectedStoriListItem.slideShareName]) {
         [popup addButtonWithTitle:NSLocalizedString(@"menu_storilistitem_play", nil)];
     }
@@ -271,6 +271,9 @@ long long _expectedBytes;
     NSString *buttonTitle = [popup buttonTitleAtIndex:index];
     if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_play", nil)]) {
         HFLogDebug(@"Play clicked for %@", _selectedStoriListItem.title);
+        
+        [self.editPlayController notifyForDownloadRequest:FALSE withUserUuid:userUuid withName:_selectedStoriListItem.slideShareName];
+        [self.navigationController popViewControllerAnimated:YES];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_storilistitem_edit", nil)]) {
         HFLogDebug(@"Edit clicked for %@", _selectedStoriListItem.title);
