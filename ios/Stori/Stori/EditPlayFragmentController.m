@@ -204,14 +204,6 @@
         return;
     }
     
-    CGPoint point = [self.overlayTapRecognizer locationInView:self.imageView];
-    
-    // Ignore taps in critical areas.
-    // BUGBUG - need better layout reads rather than using hardcoded values.
-    if (point.y <= 40) {
-        return;
-    }
-    
     self.editPlayController.shouldDisplayOverlay = TRUE;
     [self displayOverlay];
 }
