@@ -67,6 +67,8 @@ bool _userNeedsAuthentication = TRUE;
     
     [super viewDidLoad];
     
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    
     // At startup, take the opportunity to clean up our data folder
     // in case we've erred our way to leaving junk directories around.
     [STOUtilities deleteUnusedDirectories];
