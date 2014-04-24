@@ -858,12 +858,12 @@
 }
 
 - (void)displaySlideTextControl {
-    [self.slideTextLabel setBackgroundColor:[UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:SLIDETEXT_ALPHA]];
-    self.slideTextLabel.layer.cornerRadius = 5;
-    self.slideTextLabel.layer.masksToBounds = TRUE;
-    [self.slideTextLabel setText:self.slideText];
-    [self.slideTextLabel sizeToFit];    
-    [self.slideTextLabel setHidden:![self hasText]];
+    [self.slideTextView setBackgroundColor:[UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:SLIDETEXT_ALPHA]];
+    self.slideTextView.layer.cornerRadius = 5;
+    self.slideTextView.layer.masksToBounds = TRUE;
+    [self.slideTextView setText:self.slideText];
+    [self.slideTextView sizeToFit];
+    [self.slideTextView setHidden:![self hasText]];
 }
 
 - (void)displayPlayStopControl {
