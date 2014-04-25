@@ -21,6 +21,7 @@ var slideShow = (function() {
     var m_audioPlaying = false;
     var m_supportsTouch = false;
     var m_isInternetExplorer = false;
+    var m_isIPhone = false;
     var m_navControlClicked = false;
     var m_autoAudioCB = $('#autoplayaudio');
     var m_autoPlayAudio = true;
@@ -35,6 +36,11 @@ var slideShow = (function() {
         return (index >= 0);
     }
 
+    function isIPhone() {
+        var index = navigator.userAgent.indexOf("iPhone");
+        return (index >= 0);
+    }
+
     function supportsTouch() {
         return Modernizr.touch;
     }
@@ -43,14 +49,56 @@ var slideShow = (function() {
         return (m_currentSlideIndex + 1) + " of " + m_slideCount;
     }
 
-    function _initializePage(ssjUrl) {
+    function rerouteToIPhoneApp() {
+        var httpLocation = document.location.href;
+        var newLocation = httpLocation.replace("http", "stori-app");
+
+        var nowTime = new Date().getTime();
+        document.location = newLocation;
+
+        setTimeout(function() {
+            var currentTime = new Date().getTime();
+
+            // Test:
+            //alert('currentTime = ' + currentTime + '\nnowTime = ' + nowTime + '\ncurrentTime - nowTime = ' + (currentTime - nowTime));
+
+            if ((currentTime - nowTime) < 1100) {
+                var message = "For the best experience, install the Stori application.\n\nYou can view this Stori in your browser by canceling this dialog and any other warning dialogs.\n\nDo you want to download Stori now?";
+                if (confirm(message)) {
+                    // BUGBUG - replace with iTunes store link
+                    document.location = 'http://stori-app.com';
+                }
+                else {
+                    _initializePage();
+                }
+            }
+            else {
+                _initializePage();
+            }
+        }, 1000);
+    }
+
+    function _initializeForIPhone() {
+        var currentLocation = document.location.href;
+        hFLog.log("currentLocation gives " + currentLocation);
+        var index = currentLocation.indexOf("stori-app:");
+        var isAppUrl = (index == 0);
+        if (!isAppUrl) {
+            rerouteToIPhoneApp();
+        }
+    }
+
+    function _initializePage() {
+        $("#opening-dialog").show();
+
         m_supportsTouch = supportsTouch();
         hFLog.log("m_supportsTouch is " + m_supportsTouch);
 
         m_isInternetExplorer = isInternetExplorer();
         hFLog.log("m_isInternetExplorer is " + m_isInternetExplorer);
 
-        m_ssjUrl = ssjUrl;
+        m_isIPhone = isIPhone();
+        hFLog.log("m_isIPhone is " + m_isIPhone);
 
         m_slidesjsDiv.on('click', _onImageClicked);
         m_playStopControl.on('click', _onPlayStopClicked);
@@ -397,7 +445,14 @@ var slideShow = (function() {
     // Public methods
     return {
         initializePage: function(ssjUrl) {
-            _initializePage(ssjUrl);
+            m_ssjUrl = ssjUrl;
+
+            if (isIPhone()) {
+                _initializeForIPhone();
+            }
+            else {
+                _initializePage();
+            }
         },
         setSSJUrl: function(url) {
             m_ssjUrl = url;
