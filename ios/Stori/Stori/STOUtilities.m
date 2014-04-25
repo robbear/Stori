@@ -204,6 +204,24 @@
     [session setActive:TRUE error:nil];
 }
 
++ (BOOL)parseSharedStoriUrl:(NSURL *)url returningUserId:(NSString **)userUuid returningStori:(NSString **)slideShareName {
+    HFLogDebug(@"STOUtilities.parseSharedStoriUrl: %@", [url absoluteString]);
+    
+    if (!url) {
+        return FALSE;
+    }
+    
+    NSArray *pathComponents = [url pathComponents];
+    // Remember that the initial "/" is the first path component, "slides" is the second
+    if (!pathComponents || ([pathComponents count] != 4)) {
+        return FALSE;
+    }
+    
+    *userUuid = (NSString *)[pathComponents objectAtIndex:2];
+    *slideShareName = (NSString *)[pathComponents objectAtIndex:3];
+    
+    return TRUE;
+}
 
 + (void)printSlideShareJSON:(SlideShareJSON *)ssj {
     HFLogDebug(@"%@", [ssj toString]); 

@@ -11,6 +11,7 @@
 #import "SlideShareJSON.h"
 #import "STOPreferences.h"
 #import "STOUtilities.h"
+#import "PlayStoriNotifier.h"
 
 @implementation AppDelegate
 
@@ -66,7 +67,24 @@
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-    HFLogDebug(@"AppDelegate.application:openURL:sourceApplication:annotation");
+    HFLogDebug(@"AppDelegate.application:openURL:%@ sourceApplication:%@ annotation", [url absoluteString], sourceApplication);
+
+    if ([[url scheme] isEqualToString:@"stori-app"]) {
+        HFLogDebug(@"-- handling url scheme: %@", [url scheme]);
+        
+        NSString *userUuid = nil;
+        NSString *slideShareName = nil;
+        
+        BOOL success = [STOUtilities parseSharedStoriUrl:url returningUserId:&userUuid returningStori:&slideShareName];
+        if (!success) {
+            return FALSE;
+        }
+        
+        HFLogDebug(@"-- got userUuid=%@ and slideShareName=%@", userUuid, slideShareName);
+        [[PlayStoriNotifier sharedInstance] notifyPlayRequestForUserId:userUuid withStori:slideShareName];
+        
+        return TRUE;
+    }
     
     return [GPPURLHandler handleURL:url sourceApplication:sourceApplication annotation:annotation];
 }

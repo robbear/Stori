@@ -12,6 +12,7 @@
 #import "AWSS3Provider.h"
 #import "SlideShareJSON.h"
 #import "StoriDownload.h"
+#import "PlayStoriNotifier.h"
 
 typedef enum EditPlayMode {
     editPlayModeEdit = 0,
@@ -20,7 +21,7 @@ typedef enum EditPlayMode {
 } EditPlayMode;
 
 @interface EditPlayController : UIViewController
-    <UIPageViewControllerDataSource, UIPageViewControllerDelegate, AmazonClientManagerGoogleAccountDelegate, AWSS3ProviderDelegate, UIAlertViewDelegate, StoriDownloadDelegate>
+    <UIPageViewControllerDataSource, UIPageViewControllerDelegate, AmazonClientManagerGoogleAccountDelegate, AWSS3ProviderDelegate, UIAlertViewDelegate, StoriDownloadDelegate, PlayStoriNotifierDelegate>
 
 @property (weak, nonatomic) IBOutlet UIImageView *editPlayImageView;
 @property (nonatomic) EditPlayMode editPlayMode;

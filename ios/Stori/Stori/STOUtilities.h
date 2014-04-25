@@ -26,5 +26,6 @@
 + (BOOL)saveImage:(UIImage *)image inFolder:(NSString *)folder withFileName:(NSString *)fileName;
 + (void)printSlideShareJSON:(SlideShareJSON *)ssj;
 + (void)configureAudioSession;
++ (BOOL)parseSharedStoriUrl:(NSURL *)url returningUserId:(NSString **)userUuid returningStori:(NSString **)slideShareName;
 
 @end

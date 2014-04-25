@@ -62,6 +62,15 @@ bool _userNeedsAuthentication = TRUE;
     return self;
 }
 
+- (void)onPlayRequestedForUserId:(NSString *)userUuid withStori:(NSString *)slideShareName {
+    HFLogDebug(@"EditPlayController.onPlayRequestedForUserId:%@ withStori:%@", userUuid, slideShareName);
+
+    [[PlayStoriNotifier sharedInstance] reset];
+
+    self.downloadIsForEdit = FALSE;
+    [self download:FALSE withUserUuid:userUuid withName:slideShareName];
+}
+
 - (void)viewDidLoad {
     HFLogDebug(@"EditPlayController.viewDidLoad");
     
@@ -72,6 +81,11 @@ bool _userNeedsAuthentication = TRUE;
     // At startup, take the opportunity to clean up our data folder
     // in case we've erred our way to leaving junk directories around.
     [STOUtilities deleteUnusedDirectories];
+    
+    if (self.editPlayMode == editPlayModeEdit) {
+        // Register our PlayStoriNotifierDelegate
+        [PlayStoriNotifier sharedInstance].delegate = self;
+    }
 
     self.currentSlideIndex = 0;
     self.forceToPortrait = (self.editPlayMode != editPlayModePreview);
@@ -579,10 +593,19 @@ bool _userNeedsAuthentication = TRUE;
         [self.editPlayImageView setHidden:YES];
         
         [self initializePageView];
+ 
+        //
+        // Check if we have a pending play notification.
+        //
+        PlayStoriNotifier *psn = [PlayStoriNotifier sharedInstance];
+        if ([psn hasPendingRequest]) {
+            HFLogDebug(@"EditPlayController.googleSignInComplete - have pending play request. Executing it.");
+            [self onPlayRequestedForUserId:psn.userUuid withStori:psn.slideShareName];
+        }
     }
 }
 
-- (void) googleDisconnectComplete:(BOOL)success {
+- (void)googleDisconnectComplete:(BOOL)success {
     HFLogDebug(@"EditPlayController.googleDisconnectComplete: success=%d", success);
     
     [self.progressHUD hide:TRUE];

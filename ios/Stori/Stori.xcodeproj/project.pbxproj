@@ -56,6 +56,7 @@
 		504ECCE418D0BEC600507582 /* AmazonSharedPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCE318D0BEC600507582 /* AmazonSharedPreferences.m */; };
 		504ECCED18D3620200507582 /* AWSS3Provider.m in Sources */ = {isa = PBXBuildFile; fileRef = 504ECCEC18D3620200507582 /* AWSS3Provider.m */; };
 		505CBC141906F66700343E03 /* StoriDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = 505CBC131906F66700343E03 /* StoriDownload.m */; };
+		505CBC17190AAB9300343E03 /* PlayStoriNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 505CBC16190AAB9300343E03 /* PlayStoriNotifier.m */; };
 		50AA647418EB23B500C079F9 /* EditPlayFragmentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA647318EB23B500C079F9 /* EditPlayFragmentController.m */; };
 		50AA647718EB256A00C079F9 /* EditPlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA647618EB256A00C079F9 /* EditPlayController.m */; };
 		50BDE68418F8523600827141 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 50BDE68318F8523600827141 /* UIImage+Resize.m */; };
@@ -146,6 +147,8 @@
 		504ECCEC18D3620200507582 /* AWSS3Provider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AWSS3Provider.m; sourceTree = "<group>"; };
 		505CBC121906F66700343E03 /* StoriDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoriDownload.h; sourceTree = "<group>"; };
 		505CBC131906F66700343E03 /* StoriDownload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoriDownload.m; sourceTree = "<group>"; };
+		505CBC15190AAB9300343E03 /* PlayStoriNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayStoriNotifier.h; sourceTree = "<group>"; };
+		505CBC16190AAB9300343E03 /* PlayStoriNotifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayStoriNotifier.m; sourceTree = "<group>"; };
 		50AA647218EB23B500C079F9 /* EditPlayFragmentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditPlayFragmentController.h; sourceTree = "<group>"; };
 		50AA647318EB23B500C079F9 /* EditPlayFragmentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditPlayFragmentController.m; sourceTree = "<group>"; };
 		50AA647518EB256A00C079F9 /* EditPlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditPlayController.h; sourceTree = "<group>"; };
@@ -263,6 +266,8 @@
 				503655EB18E080AF0014E574 /* MBProgressHUD.m */,
 				503655CC18D8B8020014E574 /* NSString+STONSString.h */,
 				503655CD18D8B8020014E574 /* NSString+STONSString.m */,
+				505CBC15190AAB9300343E03 /* PlayStoriNotifier.h */,
+				505CBC16190AAB9300343E03 /* PlayStoriNotifier.m */,
 				504ECCA618C8ECFB00507582 /* PrefsDefaults.plist */,
 				504ECC9B18C645FE00507582 /* SlideJSON.h */,
 				504ECC9C18C645FE00507582 /* SlideJSON.m */,
@@ -451,6 +456,7 @@
 				504ECC9518C24EF000507582 /* HFLogging.m in Sources */,
 				5027FB1C18FC94F4007C2A41 /* iToast.m in Sources */,
 				504ECC9818C4F0AE00507582 /* SlideShareJSON.m in Sources */,
+				505CBC17190AAB9300343E03 /* PlayStoriNotifier.m in Sources */,
 				50BDE68418F8523600827141 /* UIImage+Resize.m in Sources */,
 				5048AB1A1902E292007F3167 /* STOSettingsController.m in Sources */,
 			);
