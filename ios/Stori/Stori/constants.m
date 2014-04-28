@@ -46,13 +46,13 @@ int const MAX_SLIDE_TEXT_CHARACTERS = 140;
 int const MAX_STORI_TITLE_CHARACTERS = 140;
 
 // Maximum published Storis for free version
-int const MAX_PUBLISHED_FOR_FREE = 20;
+int const MAX_PUBLISHED_FOR_FREE = 1000;
 
 // Maximum number of slides per Stori for free version
-int const MAX_SLIDES_PER_STORI_FOR_FREE = 10;
+int const MAX_SLIDES_PER_STORI_FOR_FREE = 100;
 
 // Maximum recording seconds
-int const MAX_RECORDING_SECONDS = 60;
+int const MAX_RECORDING_SECONDS = 120;
 
 // Default dimensions for ideal bitmap display/compression
 int const IMAGE_DISPLAY_WIDTH_LANDSCAPE = 1024;
