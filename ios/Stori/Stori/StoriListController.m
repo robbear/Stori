@@ -13,14 +13,14 @@
 #import "STOUtilities.h"
 #import "AmazonSharedPreferences.h"
 #import "AWSS3Provider.h"
-#import "MBProgressHUD.h"
+#import "HFProgressHUD.h"
 
 #define ALERTVIEW_DIALOG_DELETE    1
 #define ALERTVIEW_DIALOG_EDIT      2
 
 @interface StoriListController ()
 
-@property (strong, nonatomic) MBProgressHUD *progressHUD;
+@property (strong, nonatomic) HFProgressHUD *progressHUD;
 @property (strong, nonatomic) AWSS3Provider *awsS3Provider;
 @property (strong, nonatomic) NSMutableData *receivedData;
 
@@ -52,9 +52,7 @@ long long _expectedBytes;
     
     [super viewDidLoad];
     
-    self.progressHUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-    [self.navigationController.view addSubview:self.progressHUD];
-    self.progressHUD.labelText = nil;
+    self.progressHUD = [[HFProgressHUD alloc] initWithView:self.navigationController.view];
     self.progressHUD.mode = MBProgressHUDModeIndeterminate;
     [self.progressHUD show:TRUE];
     
@@ -112,6 +110,7 @@ long long _expectedBytes;
 - (void)handleStoriItemDelete:(StoriListItem *)sli {
     HFLogDebug(@"StoriListController.handleStoriItemDelete");
     
+    self.progressHUD = [[HFProgressHUD alloc] initWithView:self.navigationController.view];
     self.progressHUD.labelText = NSLocalizedString(@"storilistcontroller_delete_wait", nil);
     self.progressHUD.mode = MBProgressHUDModeIndeterminate;
     [self.progressHUD show:TRUE];
@@ -315,6 +314,7 @@ long long _expectedBytes;
     [self updateWithNewStoriItemList:arrayItems];
     
     [self.progressHUD hide:TRUE];
+    self.progressHUD = nil;
     self.awsS3Provider = nil;
 }
 
@@ -328,6 +328,7 @@ long long _expectedBytes;
     [self updateWithNewStoriItemList:arrayItems];
 
     [self.progressHUD hide:TRUE];
+    self.progressHUD = nil;
     self.awsS3Provider = nil;
 }
 

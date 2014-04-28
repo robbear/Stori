@@ -58,6 +58,7 @@
 		505CBC141906F66700343E03 /* StoriDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = 505CBC131906F66700343E03 /* StoriDownload.m */; };
 		505CBC17190AAB9300343E03 /* PlayStoriNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 505CBC16190AAB9300343E03 /* PlayStoriNotifier.m */; };
 		5077AE13190EB476009DD2D1 /* AsyncImageCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5077AE12190EB476009DD2D1 /* AsyncImageCopy.m */; };
+		5077AE16190EF9F0009DD2D1 /* HFProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 5077AE15190EF9F0009DD2D1 /* HFProgressHUD.m */; };
 		50AA647418EB23B500C079F9 /* EditPlayFragmentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA647318EB23B500C079F9 /* EditPlayFragmentController.m */; };
 		50AA647718EB256A00C079F9 /* EditPlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA647618EB256A00C079F9 /* EditPlayController.m */; };
 		50BDE68418F8523600827141 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 50BDE68318F8523600827141 /* UIImage+Resize.m */; };
@@ -152,6 +153,8 @@
 		505CBC16190AAB9300343E03 /* PlayStoriNotifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayStoriNotifier.m; sourceTree = "<group>"; };
 		5077AE11190EB476009DD2D1 /* AsyncImageCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncImageCopy.h; sourceTree = "<group>"; };
 		5077AE12190EB476009DD2D1 /* AsyncImageCopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncImageCopy.m; sourceTree = "<group>"; };
+		5077AE14190EF9F0009DD2D1 /* HFProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFProgressHUD.h; sourceTree = "<group>"; };
+		5077AE15190EF9F0009DD2D1 /* HFProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFProgressHUD.m; sourceTree = "<group>"; };
 		50AA647218EB23B500C079F9 /* EditPlayFragmentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditPlayFragmentController.h; sourceTree = "<group>"; };
 		50AA647318EB23B500C079F9 /* EditPlayFragmentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditPlayFragmentController.m; sourceTree = "<group>"; };
 		50AA647518EB256A00C079F9 /* EditPlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditPlayController.h; sourceTree = "<group>"; };
@@ -262,6 +265,8 @@
 				50AA647318EB23B500C079F9 /* EditPlayFragmentController.m */,
 				504ECC9318C24EF000507582 /* HFLogging.h */,
 				504ECC9418C24EF000507582 /* HFLogging.m */,
+				5077AE14190EF9F0009DD2D1 /* HFProgressHUD.h */,
+				5077AE15190EF9F0009DD2D1 /* HFProgressHUD.m */,
 				504ECC7618C245B900507582 /* Images.xcassets */,
 				5027FB1A18FC94F4007C2A41 /* iToast.h */,
 				5027FB1B18FC94F4007C2A41 /* iToast.m */,
@@ -456,6 +461,7 @@
 				503655CB18D8AF290014E574 /* StoriListItem.m in Sources */,
 				5077AE13190EB476009DD2D1 /* AsyncImageCopy.m in Sources */,
 				50AA647718EB256A00C079F9 /* EditPlayController.m in Sources */,
+				5077AE16190EF9F0009DD2D1 /* HFProgressHUD.m in Sources */,
 				503655EC18E080AF0014E574 /* MBProgressHUD.m in Sources */,
 				503655E918DF3DDB0014E574 /* StoriListTableViewCell.m in Sources */,
 				504ECCAA18C8F70D00507582 /* STOUtilities.m in Sources */,

@@ -13,7 +13,7 @@
 #import "STOPreferences.h"
 #import "STOUtilities.h"
 #import "StoriListItem.h"
-#import "MBProgressHUD.h"
+#import "HFProgressHUD.h"
 #import "iToast.h"
 
 #define ALERTVIEW_DIALOG_CREATENEW 1
@@ -25,7 +25,7 @@
 @interface EditPlayController ()
 @property (nonatomic) BOOL forceToPortrait;
 @property (strong, nonatomic) AWSS3Provider *awsS3Provider;
-@property (strong, nonatomic) MBProgressHUD *progressHUD;
+@property (strong, nonatomic) HFProgressHUD *progressHUD;
 @property (nonatomic) BOOL disconnectInProgress;
 @property (strong, nonatomic) NSString *downloadSlideShareName;
 @property (strong, nonatomic) NSString *downloadUserUuid;
@@ -122,10 +122,6 @@ bool _userNeedsAuthentication = TRUE;
     
     [super viewDidAppear:animated];
 
-    // BUGBUG - probably wrong! See issue #78
-    self.progressHUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-    [self.navigationController.view addSubview:self.progressHUD];
-    
     if (self.editPlayMode != editPlayModeEdit) {
         HFLogDebug(@"EditPlayController.viewDidAppear - in editPlayModePreview - skipping authentication");
         [self initializePageView];
@@ -133,8 +129,8 @@ bool _userNeedsAuthentication = TRUE;
     }
     
     if (_userNeedsAuthentication && !self.disconnectInProgress) {
+        self.progressHUD = [[HFProgressHUD alloc] initWithView:self.navigationController.view];
         self.progressHUD.mode = MBProgressHUDModeIndeterminate;
-        self.progressHUD.labelText = nil;
         [self.progressHUD show:TRUE];
         
         //
@@ -284,8 +280,8 @@ bool _userNeedsAuthentication = TRUE;
         return;
     }
 
+    self.progressHUD = [[HFProgressHUD alloc] initWithView:self.navigationController.view];
     self.progressHUD.mode = MBProgressHUDModeIndeterminate;
-    self.progressHUD.labelText = nil;
     [self.progressHUD show:TRUE];
 
     if (!self.storiDownload) {
@@ -409,8 +405,8 @@ bool _userNeedsAuthentication = TRUE;
 }
 
 - (void)copyImageFilesToPhotosFolder:(NSString *)slideUuid {
+    self.progressHUD = [[HFProgressHUD alloc] initWithView:self.navigationController.view];
     self.progressHUD.mode = MBProgressHUDModeIndeterminate;
-    self.progressHUD.labelText = nil;
     [self.progressHUD show:TRUE];
     
     NSMutableArray *arrayImageFileNames = [[NSMutableArray alloc] init];
@@ -432,6 +428,7 @@ bool _userNeedsAuthentication = TRUE;
     
     self.asyncImageCopy = nil;
     [self.progressHUD hide:TRUE];
+    self.progressHUD = nil;
     
     if (!success) {
         UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"copy_images_error_dialog_title", nil)
@@ -572,8 +569,8 @@ bool _userNeedsAuthentication = TRUE;
 - (void)disconnectFromGoogle {
     HFLogDebug(@"EditPlayController.disconnectFromGoogle");
     
+    self.progressHUD = [[HFProgressHUD alloc] initWithView:self.navigationController.view];
     self.progressHUD.mode = MBProgressHUDModeIndeterminate;
-    self.progressHUD.labelText = nil;
     [self.progressHUD show:TRUE];
     
     self.disconnectInProgress = TRUE;
@@ -613,7 +610,8 @@ bool _userNeedsAuthentication = TRUE;
 - (void)googleSignInComplete:(BOOL)success withError:(NSError *)error {
     HFLogDebug(@"EditPlayController.googleSignInComplete: success=%d, error=%@", success, error == nil ? @"nil" : error.description);
     
-    [self.progressHUD setHidden:TRUE];
+    [self.progressHUD hide:TRUE];
+    self.progressHUD = nil;
     
     _userNeedsAuthentication = !success;
     if (success) {
@@ -646,6 +644,7 @@ bool _userNeedsAuthentication = TRUE;
     HFLogDebug(@"EditPlayController.googleDisconnectComplete: success=%d", success);
     
     [self.progressHUD hide:TRUE];
+    self.progressHUD = nil;
     
     if (success) {
         [STOUtilities deleteSlideShareDirectory:self.slideShareName];
@@ -690,6 +689,7 @@ bool _userNeedsAuthentication = TRUE;
         HFLogDebug(@"EditPlayController.getStoriItemsComplete - MAX_PUBLISHED_FOR_FREE is exceeded. Don't publish.");
         
         [self.progressHUD hide:TRUE];
+        self.progressHUD = nil;
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         
         NSString *message = [NSString stringWithFormat:NSLocalizedString(@"editplay_maxpublishedexceeded_dialog_message", nil), MAX_PUBLISHED_FOR_FREE];
@@ -727,6 +727,7 @@ bool _userNeedsAuthentication = TRUE;
     self.awsS3Provider = nil;
 
     [self.progressHUD hide:TRUE];
+    self.progressHUD = nil;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
     if (success) {
@@ -905,6 +906,7 @@ bool _userNeedsAuthentication = TRUE;
 - (void)alertViewForPublish:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
     if ([buttonTitle isEqualToString:NSLocalizedString(@"editplay_publish_button", nil)]) {
+        self.progressHUD = [[HFProgressHUD alloc] initWithView:self.navigationController.view];
         self.progressHUD.labelText = NSLocalizedString(@"editplay_uploadprogress_dialog_title", nil);
         self.progressHUD.mode = MBProgressHUDModeIndeterminate;
         [self.progressHUD show:TRUE];
@@ -949,6 +951,7 @@ bool _userNeedsAuthentication = TRUE;
 - (void)download:(NSString *)urlString didStopWithError:(NSError *)error {
     HFLogDebug(@"EditPlayController.download:%@ didStopWithError:%@", urlString, error.description);
     [self.progressHUD hide:TRUE];
+    self.progressHUD = nil;
     
     if (self.downloadIsForEdit) {
         [STOPreferences saveEditPlayName:nil];
@@ -972,6 +975,7 @@ bool _userNeedsAuthentication = TRUE;
 - (void)didFinishWithSuccess:(BOOL)success withName:(NSString *)slideShareName {
     HFLogDebug(@"EditPlayController.didFinishWithSuccess - download returns success=%d for %@", success, slideShareName);
     [self.progressHUD hide:TRUE];
+    self.progressHUD = nil;
     
     if (self.downloadIsForEdit) {
         if (success) {
