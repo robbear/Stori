@@ -7,6 +7,8 @@
 */
 
 "app_name" = "Stori";
+"copy_images_error_dialog_title" = "Save failed";
+"copy_images_error_dialog_message" = "Failed to save one or more images.";
 "default_stori_title" = "My Stori";
 "default_stori_description" = "My Stori slides";
 "download_errordialog_title" = "Download failed";

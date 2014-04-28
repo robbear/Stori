@@ -31,6 +31,7 @@
 @property (strong, nonatomic) NSString *downloadUserUuid;
 @property (nonatomic) BOOL downloadIsForEdit;
 @property (strong, nonatomic) StoriDownload *storiDownload;
+@property (strong, nonatomic) AsyncImageCopy *asyncImageCopy;
 
 - (EditPlayFragmentController *)viewControllerAtIndex:(NSUInteger)index;
 - (void)initiateGoogleSignIn:(BOOL)useErrorMessage;
@@ -405,6 +406,42 @@ bool _userNeedsAuthentication = TRUE;
 
     NSString *toast = [NSString stringWithFormat:NSLocalizedString(@"toast_deleteslide_format", nil), self.currentSlideIndex + 1, count];
     [self showToast:toast];
+}
+
+- (void)copyImageFilesToPhotosFolder:(NSString *)slideUuid {
+    self.progressHUD.mode = MBProgressHUDModeIndeterminate;
+    self.progressHUD.labelText = nil;
+    [self.progressHUD show:TRUE];
+    
+    NSMutableArray *arrayImageFileNames = [[NSMutableArray alloc] init];
+    
+    if (slideUuid) {
+        SlideJSON *sj = [self.ssj getSlideBySlideId:slideUuid];
+        [arrayImageFileNames addObject:sj.getImageFilename];
+    }
+    else {
+        [arrayImageFileNames addObjectsFromArray:[self.ssj getImageFileNames]];
+    }
+    
+    self.asyncImageCopy = [[AsyncImageCopy alloc] initWithDelegate:self];
+    [self.asyncImageCopy copyImageFiles:arrayImageFileNames atFolder:self.slideShareName];
+}
+
+- (void)onAsyncImageCopyComplete:(BOOL)success {
+    HFLogDebug(@"EditPlayController.onAsyncImageCopyComplete: success=%d", success);
+    
+    self.asyncImageCopy = nil;
+    [self.progressHUD hide:TRUE];
+    
+    if (!success) {
+        UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"copy_images_error_dialog_title", nil)
+                                                         message:NSLocalizedString(@"copy_images_error_dialog_message", nil)
+                                                        delegate:self
+                                               cancelButtonTitle:nil
+                                               otherButtonTitles:NSLocalizedString(@"menu_ok", nil), nil];
+        dialog.tag = -1;
+        [dialog show];
+    }
 }
 
 - (void)deleteImage:(NSString *)slideUuid withImage:(NSString *)imageFileName {

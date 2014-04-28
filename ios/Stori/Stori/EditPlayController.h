@@ -13,6 +13,7 @@
 #import "SlideShareJSON.h"
 #import "StoriDownload.h"
 #import "PlayStoriNotifier.h"
+#import "AsyncImageCopy.h"
 
 typedef enum EditPlayMode {
     editPlayModeEdit = 0,
@@ -21,7 +22,7 @@ typedef enum EditPlayMode {
 } EditPlayMode;
 
 @interface EditPlayController : UIViewController
-    <UIPageViewControllerDataSource, UIPageViewControllerDelegate, AmazonClientManagerGoogleAccountDelegate, AWSS3ProviderDelegate, UIAlertViewDelegate, StoriDownloadDelegate, PlayStoriNotifierDelegate>
+    <UIPageViewControllerDataSource, UIPageViewControllerDelegate, AmazonClientManagerGoogleAccountDelegate, AWSS3ProviderDelegate, UIAlertViewDelegate, StoriDownloadDelegate, PlayStoriNotifierDelegate, AsyncImageCopyDelegate>
 
 @property (weak, nonatomic) IBOutlet UIImageView *editPlayImageView;
 @property (nonatomic) EditPlayMode editPlayMode;
@@ -53,5 +54,6 @@ typedef enum EditPlayMode {
 - (void)disconnectFromGoogle;
 - (void)notifyForDownloadRequest:(BOOL)downloadIsForEdit withUserUuid:(NSString *)userUuid withName:(NSString *)slideShareName;
 - (void)download:(BOOL)downloadIsForEdit withUserUuid:(NSString *)userUuid withName:(NSString *)slideShareName;
+- (void)copyImageFilesToPhotosFolder:(NSString *)slideUuid;
 
 @end

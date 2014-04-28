@@ -793,9 +793,11 @@
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_savethisphoto", nil)]) {
         HFLogDebug(@"Save this photo...");
+        [self.editPlayController copyImageFilesToPhotosFolder:self.slideUuid];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_saveallphotos", nil)]) {
         HFLogDebug(@"Save all photos");
+        [self.editPlayController copyImageFilesToPhotosFolder:nil];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_image_choosepicture", nil)] ||
              [buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_image_replacepicture", nil)]) {
