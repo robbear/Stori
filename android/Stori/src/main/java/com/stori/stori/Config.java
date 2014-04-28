@@ -42,7 +42,7 @@ public class Config
     // Recording time limits - recordingTimeSegmentMillis * numRecordingSegments = 1 minute
     // Note that recordingTimeSegmeentMillis indicates the resolution with which check for cancel.
     public static final int recordingTimeSegmentMillis = 500;
-    public static final int numRecordingSegments = 120;
+    public static final int numRecordingSegments = 240;
 
     // Recording timeout vibrate duration
     public static final int recordingTimeoutVibrateMillis = 500;
@@ -105,10 +105,10 @@ public class Config
     public static final int audioDelayMillis = 1000;
 
     // Maximum published Storis for free version
-    public static final int maxPublishedForFree = 20;
+    public static final int maxPublishedForFree = 1000;
 
     // Maximum number of slides per Stori for free version
-    public static final int maxSlidesPerStoriForFree = 10;
+    public static final int maxSlidesPerStoriForFree = 100;
 
     // Download buffer size in bytes
     public static final int downloadBufferSize = 8*1024;
