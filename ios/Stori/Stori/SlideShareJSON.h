@@ -40,5 +40,6 @@
 - (NSString *)toString;
 
 + (SlideShareJSON *)loadFromFolder:(NSString *)folder withFileName:(NSString *)fileName;
++ (NSString *)getStoriTitle:(NSString *)folder;
 
 @end

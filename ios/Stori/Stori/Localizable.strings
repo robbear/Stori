@@ -55,6 +55,7 @@
 "menu_editplay_image_title" = "";
 "menu_editplay_image_usecamera" = "Use camera";
 "menu_editplay_list" = "List my Storis";
+"menu_editplay_play_format" = "View %1$@";
 "menu_editplay_preview" = "Preview";
 "menu_editplay_publish" = "Publish";
 "menu_editplay_rename" = "Rename";

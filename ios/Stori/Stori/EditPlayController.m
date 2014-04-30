@@ -779,6 +779,13 @@ bool _userNeedsAuthentication = TRUE;
     return editPlayFragmentController;
 }
 
+- (void)playCurrentPlayStori {
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle: nil];
+    EditPlayController *epc = [storyboard instantiateViewControllerWithIdentifier:@"EditPlayController"];
+    epc.editPlayMode = editPlayModePlay;
+    [self.navigationController pushViewController:epc animated:YES];
+}
+
 //
 // UIPageViewControllerDelegate methods
 //
@@ -987,10 +994,7 @@ bool _userNeedsAuthentication = TRUE;
     }
     else if (success) {
         [STOPreferences savePlaySlidesName:slideShareName];
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle: nil];
-        EditPlayController *epc = [storyboard instantiateViewControllerWithIdentifier:@"EditPlayController"];
-        epc.editPlayMode = editPlayModePlay;
-        [self.navigationController pushViewController:epc animated:YES];
+        [self playCurrentPlayStori];
     }
 }
 

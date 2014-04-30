@@ -223,6 +223,18 @@
     return TRUE;
 }
 
++ (NSString *)limitStringWithEllipses:(NSString *)string toNumChars:(int)numChars {
+    if (!string) {
+        return nil;
+    }
+    
+    if (string && ([string length] <= numChars)) {
+        return string;
+    }
+    
+    return [NSString stringWithFormat:@"%@...", [string substringToIndex:numChars]];
+}
+
 + (void)printSlideShareJSON:(SlideShareJSON *)ssj {
     HFLogDebug(@"%@", [ssj toString]); 
 }

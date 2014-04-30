@@ -55,5 +55,6 @@ typedef enum EditPlayMode {
 - (void)notifyForDownloadRequest:(BOOL)downloadIsForEdit withUserUuid:(NSString *)userUuid withName:(NSString *)slideShareName;
 - (void)download:(BOOL)downloadIsForEdit withUserUuid:(NSString *)userUuid withName:(NSString *)slideShareName;
 - (void)copyImageFilesToPhotosFolder:(NSString *)slideUuid;
+- (void)playCurrentPlayStori;
 
 @end

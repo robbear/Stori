@@ -243,6 +243,16 @@
             [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_share", nil)];
         }
         [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_createnew", nil)];
+        
+        NSString *playTitle = nil;
+        NSString *playSlideShareName = [STOPreferences getPlaySlidesName];
+        if (playSlideShareName) {
+            playTitle = [STOUtilities limitStringWithEllipses:[SlideShareJSON getStoriTitle:playSlideShareName] toNumChars:20];
+        }
+        if (playTitle && ([playTitle length] > 0)) {
+            NSString *item = [NSString stringWithFormat:NSLocalizedString(@"menu_editplay_play_format", nil), playTitle];
+            [popup addButtonWithTitle:item];
+        }
         [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_list", nil)];
     }
     if (self.editPlayController.editPlayMode == editPlayModePlay) {
@@ -769,6 +779,12 @@
     
     HFLogDebug(@"EditPlayFragmentController.actionSheet:clickedButtonAtIndex %d, menutitle=%@", index, [popup buttonTitleAtIndex:index]);
     
+    NSString *playSlideShareName = [STOPreferences getPlaySlidesName];
+    NSString *playTitle = nil;
+    if (playSlideShareName) {
+        playTitle = [STOUtilities limitStringWithEllipses:[SlideShareJSON getStoriTitle:playSlideShareName] toNumChars:20];
+    }
+    
     NSString *buttonTitle = [popup buttonTitleAtIndex:index];
     if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_preview", nil)]) {
         [self performSegueWithIdentifier:@"SegueToEditPlayController" sender:nil];
@@ -784,6 +800,9 @@
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_createnew", nil)]) {
         [self.editPlayController createNewSlideShow];
+    }
+    else if ([buttonTitle isEqualToString:[NSString stringWithFormat:NSLocalizedString(@"menu_editplay_play_format", nil), playTitle]]) {
+        [self.editPlayController playCurrentPlayStori];
     }
     else if ([buttonTitle isEqualToString:NSLocalizedString(@"menu_editplay_list", nil)]) {
        [self performSegueWithIdentifier: @"SegueToStoriListController" sender: self];

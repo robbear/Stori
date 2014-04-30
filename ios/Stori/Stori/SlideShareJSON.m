@@ -328,4 +328,14 @@
     return ssj;
 }
 
++ (NSString *)getStoriTitle:(NSString *)folder {
+    SlideShareJSON *ssj = [self loadFromFolder:folder withFileName:SLIDESHARE_JSON_FILENAME];
+    
+    if (!ssj) {
+        return nil;
+    }
+    
+    return [ssj getTitle];
+}
+
 @end

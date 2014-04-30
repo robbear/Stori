@@ -27,5 +27,6 @@
 + (void)printSlideShareJSON:(SlideShareJSON *)ssj;
 + (void)configureAudioSession;
 + (BOOL)parseSharedStoriUrl:(NSURL *)url returningUserId:(NSString **)userUuid returningStori:(NSString **)slideShareName;
++ (NSString *)limitStringWithEllipses:(NSString *)string toNumChars:(int)numChars;
 
 @end
