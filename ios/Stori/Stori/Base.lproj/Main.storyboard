@@ -132,7 +132,7 @@
                                             <constraint firstAttribute="width" constant="32" id="AAU-Vz-SmE"/>
                                             <constraint firstAttribute="height" constant="32" id="IHS-gy-63e"/>
                                         </constraints>
-                                        <state key="normal" image="stack_menu">
+                                        <state key="normal" image="ic_stackmenu">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
@@ -690,8 +690,8 @@
         <image name="ic_plus" width="43" height="43"/>
         <image name="ic_record" width="48" height="48"/>
         <image name="ic_selectimage" width="48" height="48"/>
+        <image name="ic_stackmenu" width="48" height="48"/>
         <image name="ic_trash" width="48" height="48"/>
-        <image name="stack_menu" width="48" height="48"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
