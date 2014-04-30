@@ -97,7 +97,7 @@
     [self setCancelAsyncPlay:FALSE];
     
     if (self.editPlayController.editPlayMode != editPlayModeEdit) {
-        [self.selectPhotoButton setImage:[UIImage imageNamed:@"ic_back.png"] forState:UIControlStateNormal];
+        [self.selectPhotoButton setImage:[UIImage imageNamed:@"ic_stackback.png"] forState:UIControlStateNormal];
         [self.recordingButton setHidden:YES];
         [self.editButton setHidden:YES];
         [self.trashButton setHidden:YES];
