@@ -37,6 +37,7 @@
     <string name="main_publish_button_format">Publish %1$s</string>
     <string name="main_share_button_format">Share %1$s</string>
     <string name="menu_editplayactivity_createnew">Create new</string>
+    <string name="menu_editplayactivity_play_format">View %1$s</string>
     <string name="menu_editplayactivity_preview">Preview</string>
     <string name="menu_editplayactivity_publish">Publish</string>
     <string name="menu_editplayactivity_rename">Rename</string>

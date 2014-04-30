@@ -114,11 +114,11 @@ public class Config
     public static final int downloadBufferSize = 8*1024;
 
 	// Error logs - ship with this set to false
-	public static final boolean E = true;
+	public static final boolean E = false;
 	
 	// Debug logs - ship with this set to false
-	public static final boolean D = true;
+	public static final boolean D = false;
 	
 	// Verbose logs - ship with this set to false
-	public static final boolean V = true;
+	public static final boolean V = false;
 }

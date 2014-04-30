@@ -414,6 +414,16 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
         return view;
     }
 
+    public void playStori(String slideShareName) {
+        if(D)Log.d(TAG, "EditPlayActivity.playStori");
+
+        Intent intent = new Intent(this, PlaySlidesActivity.class);
+        intent.putExtra(PlaySlidesActivity.EXTRA_FROMURL, true);
+        intent.putExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, true);
+
+        startActivity(intent);
+    }
+
     public void previewSlides() {
         if(D)Log.d(TAG, "EditPlayActivity.previewSlides");
 
@@ -558,6 +568,12 @@ public class EditPlayActivity extends FragmentActivity implements ViewSwitcher.V
 
         m_restartingEditPlayActivity = true;
         finish();
+    }
+
+    public String getCurrentPlaySlideShareName() {
+        if(D)Log.d(TAG, "EditPlayActivity.getCurrentPlaySlideShareName");
+
+        return m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(this), null);
     }
 
     public void launchStoriListActivity() {

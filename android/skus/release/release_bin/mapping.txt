@@ -106,7 +106,7 @@ android.support.v4.app.Fragment -> android.support.v4.app.Fragment:
     boolean mCheckedForLoaderManager -> O
     android.support.v4.app.Fragment instantiate(android.content.Context,java.lang.String) -> a
     android.support.v4.app.Fragment instantiate(android.content.Context,java.lang.String,android.os.Bundle) -> a
-    void restoreViewState$79e5e33f() -> a_
+    void restoreViewState$79e5e33f() -> b_
     void setIndex(int,android.support.v4.app.Fragment) -> a
     boolean isInBackStack() -> b
     boolean equals(java.lang.Object) -> equals
@@ -45904,7 +45904,7 @@ com.stori.stori.AsyncTaskTimer$AsyncTaskTimerParams -> com.stori.stori.g:
     boolean m_isCancelled -> d
     com.stori.stori.AsyncTaskTimer$IAsyncTaskTimerCallback m_callback -> e
 com.stori.stori.AsyncTaskTimer$IAsyncTaskTimerCallback -> com.stori.stori.h:
-    void onAsyncTaskTimerComplete(long) -> a
+    void onAsyncTaskTimerComplete$1349ef() -> a
 com.stori.stori.CloudStore -> com.stori.stori.i:
     com.stori.stori.Config$CloudStorageProviders m_cloudProvider -> a
     android.content.Context m_context -> b
@@ -45970,10 +45970,10 @@ com.stori.stori.DownloadActivity -> com.stori.stori.DownloadActivity:
     boolean access$700(com.stori.stori.DownloadActivity) -> h
     android.content.SharedPreferences access$800(com.stori.stori.DownloadActivity) -> i
     boolean access$900(com.stori.stori.DownloadActivity) -> j
-    int access$1000(com.stori.stori.DownloadActivity) -> k
     com.stori.stori.DownloadActivity$DownloadTask access$002(com.stori.stori.DownloadActivity,com.stori.stori.DownloadActivity$DownloadTask) -> a
+    int access$1000(com.stori.stori.DownloadActivity) -> k
     int access$1100(com.stori.stori.DownloadActivity) -> l
-    int access$1108(com.stori.stori.DownloadActivity) -> m
+    int access$1008(com.stori.stori.DownloadActivity) -> m
 com.stori.stori.DownloadActivity$1 -> com.stori.stori.q:
     com.stori.stori.DownloadActivity this$0 -> a
     void onCancel(android.content.DialogInterface) -> onCancel
@@ -46012,7 +46012,7 @@ com.stori.stori.EditPlayActivity -> com.stori.stori.EditPlayActivity:
     void setEditPlayMode(com.stori.stori.EditPlayActivity$EditPlayMode) -> a
     void onCreate(android.os.Bundle) -> onCreate
     java.lang.String getSlidesTitle() -> f
-    void initializeViewPager() -> s
+    void initializeViewPager() -> u
     void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
     void onDestroy() -> onDestroy
     void onStart() -> onStart
@@ -46021,23 +46021,25 @@ com.stori.stori.EditPlayActivity -> com.stori.stori.EditPlayActivity:
     void onAttachFragment$65850823() -> c
     void onActivityResult(int,int,android.content.Intent) -> onActivityResult
     android.view.View makeView() -> makeView
-    void previewSlides() -> g
-    boolean isPublished() -> h
-    void reorder() -> i
-    void shareSlides() -> j
-    void launchStoriListActivity() -> k
-    void launchSettingsActivity() -> l
+    void playStori$552c4e01() -> g
+    void previewSlides() -> h
+    boolean isPublished() -> i
+    void reorder() -> j
+    void shareSlides() -> k
+    java.lang.String getCurrentPlaySlideShareName() -> l
+    void launchStoriListActivity() -> m
+    void launchSettingsActivity() -> n
     void setSlideShareTitle(java.lang.String) -> e
-    void initializeSlideShareJSON() -> t
-    void initializeNewSlideShow() -> u
-    void renameStori() -> m
-    int getSlideCount() -> n
-    void createNewSlideShow() -> o
+    void initializeSlideShareJSON() -> v
+    void initializeNewSlideShow() -> w
+    void renameStori() -> o
+    int getSlideCount() -> p
+    void createNewSlideShow() -> q
     java.lang.String getSlideText(java.lang.String) -> c
     void deleteAudio(java.lang.String,java.lang.String) -> a
     void deleteImage(java.lang.String,java.lang.String) -> b
     void deleteSlide(java.lang.String,java.lang.String,java.lang.String) -> a
-    void publishSlides() -> p
+    void publishSlides() -> r
     void showToast(java.lang.String) -> f
     void addSlide(int) -> a
     void initializeNewSlide(int) -> c
@@ -46045,8 +46047,8 @@ com.stori.stori.EditPlayActivity -> com.stori.stori.EditPlayActivity:
     void updateSlideShareJSON(java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
     void updateSlideShareJSON(java.lang.String,java.lang.String,java.lang.String,java.lang.String,boolean) -> a
     int getSlidePosition(java.lang.String) -> d
-    int getCurrentTabPosition() -> q
-    boolean getOrientationChangedFlag() -> r
+    int getCurrentTabPosition() -> s
+    boolean getOrientationChangedFlag() -> t
     void setCurrentTabPosition(int) -> b
     void onReadStoriItemsComplete(java.util.ArrayList) -> a
     void registerStoriServiceConnectionListener(com.stori.stori.StoriService$StoriServiceConnectionListener) -> a
@@ -46272,6 +46274,7 @@ com.stori.stori.SlideShareJSON -> com.stori.stori.ay:
     java.lang.String[] getAudioFileNames() -> f
     boolean save(android.content.Context,java.lang.String,java.lang.String) -> a
     com.stori.stori.SlideShareJSON load(android.content.Context,java.lang.String,java.lang.String) -> b
+    java.lang.String getSlideShareTitle(android.content.Context,java.lang.String) -> a
 com.stori.stori.SlideShareJSON$TransitionEffects -> com.stori.stori.az:
     com.stori.stori.SlideShareJSON$TransitionEffects None -> a
     com.stori.stori.SlideShareJSON$TransitionEffects[] $VALUES -> b
@@ -46363,7 +46366,7 @@ com.stori.stori.StoriService -> com.stori.stori.StoriService:
     void onDestroy() -> onDestroy
     void registerPlaybackStateListener(com.stori.stori.StoriService$PlaybackStateListener) -> a
     void unregisterPlaybackStateListener(com.stori.stori.StoriService$PlaybackStateListener) -> b
-    void onAudioPlaybackComplete$4ce696ce() -> a
+    void onAudioPlaybackComplete$4ce696ce() -> b
     com.stori.stori.StoriService$PlaybackState getAudioPlaybackState(java.lang.String) -> a
     void startAudio(java.lang.String,java.lang.String) -> a
     void stopAudio(java.lang.String) -> b
@@ -46371,9 +46374,9 @@ com.stori.stori.StoriService -> com.stori.stori.StoriService:
     void unregisterRecordingStateListener(com.stori.stori.StoriService$RecordingStateListener) -> b
     boolean startRecording(java.lang.String,java.lang.String) -> b
     boolean stopRecording(java.lang.String) -> c
-    void onAsyncTaskTimerComplete(long) -> a
+    void onAsyncTaskTimerComplete$1349ef() -> a
     boolean isRecording(java.lang.String) -> d
-    java.util.ArrayList getStoriListItems() -> b
+    java.util.ArrayList getStoriListItems() -> c
     void registerReadStoriItemsStateListener(com.stori.stori.StoriService$ReadStoriItemsStateListener) -> a
     void unregisterReadStoriItemsStateListener(com.stori.stori.StoriService$ReadStoriItemsStateListener) -> b
     void readStoriItemsAsync(android.content.Context,java.lang.String) -> a
@@ -46415,7 +46418,7 @@ com.stori.stori.StoriService$StoriServiceBinder -> com.stori.stori.bq:
     com.stori.stori.StoriService getService() -> a
 com.stori.stori.StoriService$StoriServiceConnectionListener -> com.stori.stori.br:
     void onServiceConnected(com.stori.stori.StoriService) -> a
-    void onServiceDisconnected() -> a
+    void onServiceDisconnected() -> a_
 com.stori.stori.Utilities -> com.stori.stori.bs:
     java.io.File createOrGetSlideShareDirectory(android.content.Context,java.lang.String) -> a
     void recursiveDelete(java.io.File) -> a
@@ -46426,7 +46429,6 @@ com.stori.stori.Utilities -> com.stori.stori.bs:
     boolean saveStringToFile(android.content.Context,java.lang.String,java.lang.String,java.lang.String) -> a
     java.lang.String loadStringFromFile(android.content.Context,java.lang.String,java.lang.String) -> b
     java.lang.String getAbsoluteFilePath(android.content.Context,java.lang.String,java.lang.String) -> c
-    java.io.File getRootFilesDirectory(android.content.Context) -> a
     int calculateInSampleSize(int,int,int,int) -> a
     android.graphics.Bitmap rotateBitmap(java.lang.String,android.graphics.Bitmap) -> a
     android.graphics.Bitmap getConstrainedBitmap(java.lang.String) -> a
@@ -46435,11 +46437,9 @@ com.stori.stori.Utilities -> com.stori.stori.bs:
     int getJpgCompressionValueFromFileSize(int) -> a
     boolean copyGalleryImageToJPG(android.content.Context,java.lang.String,java.lang.String,android.net.Uri) -> a
     boolean copyFile(java.io.File,java.io.File) -> a
-    void printSlideShareJSON(java.lang.String,com.stori.stori.SlideShareJSON) -> a
     void shareShow(android.content.Context,java.lang.String,java.lang.String,java.lang.String) -> c
-    boolean deviceHasHardwareKeyboard(android.content.Context) -> b
+    boolean deviceHasHardwareKeyboard(android.content.Context) -> a
     void freezeActivityOrientation(android.app.Activity) -> a
-    void unfreezeOrientation(android.app.Activity) -> b
     java.lang.String buildResourceUrlString(java.lang.String,java.lang.String,java.lang.String) -> a
     java.lang.String buildShowWebPageUrlString(java.lang.String,java.lang.String) -> a
 com.stori.stori.adapters.EditPlayPagerAdapter -> com.stori.stori.a.a:
@@ -46519,13 +46519,11 @@ com.stori.stori.cloudproviders.AmazonClientManager -> com.stori.stori.cloudprovi
     com.amazonaws.auth.WebIdentityFederationSessionCredentialsProvider m_wif -> b
     com.stori.stori.cloudproviders.WIFIdentityProvider m_idp -> c
     android.content.SharedPreferences m_sharedPreferences -> d
-    java.lang.String m_bucketName -> e
-    java.lang.String m_fbRoleARN -> f
-    java.lang.String m_googleRoleARN -> g
-    java.lang.String m_amazonRoleARN -> h
-    java.lang.String m_googleClientID -> i
-    java.lang.String getGoogleRoleARN() -> a
-    java.lang.String getGoogleClientID() -> b
+    java.lang.String m_bucketName -> g
+    java.lang.String m_fbRoleARN -> h
+    java.lang.String m_googleRoleARN -> e
+    java.lang.String m_amazonRoleARN -> i
+    java.lang.String m_googleClientID -> f
 com.stori.stori.cloudproviders.AmazonClientManager$1 -> com.stori.stori.cloudproviders.g:
     com.stori.stori.cloudproviders.AlertActivity val$activity -> a
     com.stori.stori.cloudproviders.AmazonClientManager this$0 -> b
@@ -46618,31 +46616,30 @@ com.stori.stori.fragments.EditPlayFragment -> com.stori.stori.b.a:
     android.view.View onCreateView$469ccb8a(android.view.LayoutInflater,android.view.ViewGroup) -> a
     void onActivityCreated(android.os.Bundle) -> b
     void onActivityResult(int,int,android.content.Intent) -> a
-    com.stori.stori.EditPlayActivity$EditPlayMode getActivityEditPlayMode() -> C
     void onTitleUpdated() -> A
     void onTabPageSelected(int) -> b
-    void onAsyncTaskTimerComplete(long) -> a
-    void updateOverlay() -> D
-    void renderImage() -> E
+    void onAsyncTaskTimerComplete$1349ef() -> a
+    void updateOverlay() -> C
+    void renderImage() -> D
     void selectImageFromCamera() -> B
-    void stopRecording() -> F
+    void stopRecording() -> E
     void onRecordingTimeLimit(boolean,java.lang.String) -> a
-    void displaySlideTextControl() -> G
-    void displayPlayStopControl() -> H
-    void displayNextPrevControls() -> I
-    void displaySlideTitleAndPosition() -> J
-    void startPlaying() -> K
-    void stopPlaying() -> L
+    void displaySlideTextControl() -> F
+    void displayPlayStopControl() -> G
+    void displayNextPrevControls() -> H
+    void displaySlideTitleAndPosition() -> I
+    void startPlaying() -> J
+    void stopPlaying() -> K
     void enableControlsWhileRecording(boolean) -> c
-    boolean hasAudio() -> M
-    boolean hasImage() -> N
-    java.lang.String getNewImageFileName() -> O
+    boolean hasAudio() -> L
+    boolean hasImage() -> M
+    java.lang.String getNewImageFileName() -> N
     void onAudioStopped(java.lang.String) -> a
     void onAudioPaused(java.lang.String) -> b
     void onAudioPlaying(java.lang.String) -> c
     void onCopyComplete(boolean,java.lang.String[],java.lang.String) -> a
     void onServiceConnected(com.stori.stori.StoriService) -> a
-    void onServiceDisconnected() -> a
+    void onServiceDisconnected() -> a_
     void access$000(com.stori.stori.fragments.EditPlayFragment,android.view.View) -> a
     java.lang.String access$100(com.stori.stori.fragments.EditPlayFragment) -> a
     com.stori.stori.EditPlayActivity access$200(com.stori.stori.fragments.EditPlayFragment) -> b
@@ -46724,7 +46721,8 @@ com.stori.stori.fragments.EditPlayFragment$4$4 -> com.stori.stori.b.s:
     com.stori.stori.fragments.EditPlayFragment$4 this$1 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
 com.stori.stori.fragments.EditPlayFragment$4$5 -> com.stori.stori.b.t:
-    com.stori.stori.fragments.EditPlayFragment$4 this$1 -> a
+    java.lang.String val$playSlideShareName -> a
+    com.stori.stori.fragments.EditPlayFragment$4 this$1 -> b
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
 com.stori.stori.fragments.EditPlayFragment$4$6 -> com.stori.stori.b.u:
     com.stori.stori.fragments.EditPlayFragment$4 this$1 -> a
@@ -46732,43 +46730,46 @@ com.stori.stori.fragments.EditPlayFragment$4$6 -> com.stori.stori.b.u:
 com.stori.stori.fragments.EditPlayFragment$4$7 -> com.stori.stori.b.v:
     com.stori.stori.fragments.EditPlayFragment$4 this$1 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.stori.stori.fragments.EditPlayFragment$5 -> com.stori.stori.b.w:
+com.stori.stori.fragments.EditPlayFragment$4$8 -> com.stori.stori.b.w:
+    com.stori.stori.fragments.EditPlayFragment$4 this$1 -> a
+    boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
+com.stori.stori.fragments.EditPlayFragment$5 -> com.stori.stori.b.x:
     com.stori.stori.fragments.EditPlayFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.stori.stori.fragments.EditPlayFragment$5$1 -> com.stori.stori.b.x:
+com.stori.stori.fragments.EditPlayFragment$5$1 -> com.stori.stori.b.y:
     com.stori.stori.fragments.EditPlayFragment$5 this$1 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.stori.stori.fragments.EditPlayFragment$5$2 -> com.stori.stori.b.y:
+com.stori.stori.fragments.EditPlayFragment$5$2 -> com.stori.stori.b.z:
     com.stori.stori.fragments.EditPlayFragment$5 this$1 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.stori.stori.fragments.EditPlayFragment$5$3 -> com.stori.stori.b.z:
+com.stori.stori.fragments.EditPlayFragment$5$3 -> com.stori.stori.b.aa:
     com.stori.stori.fragments.EditPlayFragment$5 this$1 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.stori.stori.fragments.EditPlayFragment$6 -> com.stori.stori.b.aa:
+com.stori.stori.fragments.EditPlayFragment$6 -> com.stori.stori.b.ab:
     com.stori.stori.fragments.EditPlayFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.stori.stori.fragments.EditPlayFragment$7 -> com.stori.stori.b.ab:
+com.stori.stori.fragments.EditPlayFragment$7 -> com.stori.stori.b.ac:
     com.stori.stori.fragments.EditPlayFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.stori.stori.fragments.EditPlayFragment$7$1 -> com.stori.stori.b.ac:
+com.stori.stori.fragments.EditPlayFragment$7$1 -> com.stori.stori.b.ad:
     com.stori.stori.fragments.EditPlayFragment$7 this$1 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.stori.stori.fragments.EditPlayFragment$7$2 -> com.stori.stori.b.ad:
+com.stori.stori.fragments.EditPlayFragment$7$2 -> com.stori.stori.b.ae:
     com.stori.stori.fragments.EditPlayFragment$7 this$1 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.stori.stori.fragments.EditPlayFragment$8 -> com.stori.stori.b.ae:
+com.stori.stori.fragments.EditPlayFragment$8 -> com.stori.stori.b.af:
     com.stori.stori.fragments.EditPlayFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.stori.stori.fragments.EditPlayFragment$8$1 -> com.stori.stori.b.af:
+com.stori.stori.fragments.EditPlayFragment$8$1 -> com.stori.stori.b.ag:
     com.stori.stori.fragments.EditPlayFragment$8 this$1 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.fragments.EditPlayFragment$8$2 -> com.stori.stori.b.ag:
+com.stori.stori.fragments.EditPlayFragment$8$2 -> com.stori.stori.b.ah:
     com.stori.stori.fragments.EditPlayFragment$8 this$1 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.fragments.EditPlayFragment$9 -> com.stori.stori.b.ah:
+com.stori.stori.fragments.EditPlayFragment$9 -> com.stori.stori.b.ai:
     com.stori.stori.fragments.EditPlayFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.stori.stori.fragments.PlaySlidesFragment -> com.stori.stori.b.ai:
+com.stori.stori.fragments.PlaySlidesFragment -> com.stori.stori.b.aj:
     com.stori.stori.PlaySlidesActivity m_playSlidesActivity -> P
     java.lang.String m_slideShareName -> Q
     java.lang.String m_slideUuid -> R
@@ -46800,7 +46801,7 @@ com.stori.stori.fragments.PlaySlidesFragment -> com.stori.stori.b.ai:
     android.view.View onCreateView$469ccb8a(android.view.LayoutInflater,android.view.ViewGroup) -> a
     void onActivityCreated(android.os.Bundle) -> b
     void onTabPageSelected(int) -> b
-    void onAsyncTaskTimerComplete(long) -> a
+    void onAsyncTaskTimerComplete$1349ef() -> a
     void updateOverlay() -> A
     void displaySlideTextControl() -> B
     void displayNextPrevControls() -> C
@@ -46812,7 +46813,7 @@ com.stori.stori.fragments.PlaySlidesFragment -> com.stori.stori.b.ai:
     void onAudioPaused(java.lang.String) -> b
     void onAudioPlaying(java.lang.String) -> c
     void onServiceConnected(com.stori.stori.StoriService) -> a
-    void onServiceDisconnected() -> a
+    void onServiceDisconnected() -> a_
     com.stori.stori.PlaySlidesActivity access$000(com.stori.stori.fragments.PlaySlidesFragment) -> a
     java.lang.String access$100(com.stori.stori.fragments.PlaySlidesFragment) -> b
     void access$200(com.stori.stori.fragments.PlaySlidesFragment,java.lang.String[]) -> a
@@ -46823,34 +46824,34 @@ com.stori.stori.fragments.PlaySlidesFragment -> com.stori.stori.b.ai:
     boolean access$702(com.stori.stori.fragments.PlaySlidesFragment,boolean) -> a
     boolean access$700(com.stori.stori.fragments.PlaySlidesFragment) -> g
     void access$800(com.stori.stori.fragments.PlaySlidesFragment) -> h
-com.stori.stori.fragments.PlaySlidesFragment$1 -> com.stori.stori.b.aj:
+com.stori.stori.fragments.PlaySlidesFragment$1 -> com.stori.stori.b.ak:
     com.stori.stori.fragments.PlaySlidesFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.stori.stori.fragments.PlaySlidesFragment$2 -> com.stori.stori.b.ak:
+com.stori.stori.fragments.PlaySlidesFragment$2 -> com.stori.stori.b.al:
     com.stori.stori.fragments.PlaySlidesFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.stori.stori.fragments.PlaySlidesFragment$3 -> com.stori.stori.b.al:
+com.stori.stori.fragments.PlaySlidesFragment$3 -> com.stori.stori.b.am:
     com.stori.stori.fragments.PlaySlidesFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.stori.stori.fragments.PlaySlidesFragment$4 -> com.stori.stori.b.am:
+com.stori.stori.fragments.PlaySlidesFragment$4 -> com.stori.stori.b.an:
     com.stori.stori.fragments.PlaySlidesFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.stori.stori.fragments.PlaySlidesFragment$4$1 -> com.stori.stori.b.an:
+com.stori.stori.fragments.PlaySlidesFragment$4$1 -> com.stori.stori.b.ao:
     com.stori.stori.fragments.PlaySlidesFragment$4 this$1 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.stori.stori.fragments.PlaySlidesFragment$4$2 -> com.stori.stori.b.ao:
+com.stori.stori.fragments.PlaySlidesFragment$4$2 -> com.stori.stori.b.ap:
     com.stori.stori.fragments.PlaySlidesFragment$4 this$1 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.stori.stori.fragments.PlaySlidesFragment$4$3 -> com.stori.stori.b.ap:
+com.stori.stori.fragments.PlaySlidesFragment$4$3 -> com.stori.stori.b.aq:
     com.stori.stori.fragments.PlaySlidesFragment$4 this$1 -> a
     boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
-com.stori.stori.fragments.PlaySlidesFragment$5 -> com.stori.stori.b.aq:
+com.stori.stori.fragments.PlaySlidesFragment$5 -> com.stori.stori.b.ar:
     com.stori.stori.fragments.PlaySlidesFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.stori.stori.fragments.PlaySlidesFragment$6 -> com.stori.stori.b.ar:
+com.stori.stori.fragments.PlaySlidesFragment$6 -> com.stori.stori.b.as:
     com.stori.stori.fragments.PlaySlidesFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.stori.stori.fragments.PlaySlidesFragment$7 -> com.stori.stori.b.as:
+com.stori.stori.fragments.PlaySlidesFragment$7 -> com.stori.stori.b.at:
     com.stori.stori.fragments.PlaySlidesFragment this$0 -> a
     void onScanCompleted(java.lang.String,android.net.Uri) -> onScanCompleted
 org.apache.commons.codec.BinaryDecoder -> org.apache.commons.codec.BinaryDecoder:

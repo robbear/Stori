@@ -17,6 +17,9 @@
         android:id="@+id/menu_editplayactivity_createnew"
         android:title="@string/menu_editplayactivity_createnew" />
     <item
+        android:id="@+id/menu_editplayactivity_play"
+        android:title="@string/menu_editplayactivity_play_format" />
+    <item
         android:id="@+id/menu_editplayactivity_viewpublished"
         android:title="@string/menu_editplayactivity_viewpublished" />
     <item

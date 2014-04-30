@@ -38,6 +38,7 @@ import com.stori.stori.AsyncCopyFileTask;
 import com.stori.stori.AsyncTaskTimer;
 import com.stori.stori.Config;
 import com.stori.stori.EditPlayActivity;
+import com.stori.stori.SlideShareJSON;
 import com.stori.stori.StoriService;
 import com.stori.stori.R;
 import com.stori.stori.SlideJSON;
@@ -334,6 +335,23 @@ public class EditPlayFragment extends Fragment implements
                 }
                 else {
                     menu.removeItem(R.id.menu_editplayactivity_share);
+                }
+
+                final String playSlideShareName = m_editPlayActivity.getCurrentPlaySlideShareName();
+                if (playSlideShareName != null && (playSlideShareName.length() > 0)) {
+                    String title = SlideShareJSON.getSlideShareTitle(m_editPlayActivity, playSlideShareName);
+                    MenuItem play = menu.findItem(R.id.menu_editplayactivity_play);
+                    play.setTitle(String.format(getString(R.string.menu_editplayactivity_play_format), title == null ? "" : title));
+                    play.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            m_editPlayActivity.playStori(playSlideShareName);
+                            return true;
+                        }
+                    });
+                }
+                else {
+                    menu.removeItem(R.id.menu_editplayactivity_play);
                 }
 
                 MenuItem viewPublished = menu.findItem(R.id.menu_editplayactivity_viewpublished);
