@@ -67,11 +67,15 @@ long long _expectedBytes;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+#if NEVER
     [self.navigationController.navigationBar setHidden:NO];
+#endif
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+#if NEVER
     [self.navigationController.navigationBar setHidden:YES];
+#endif
 }
 
 - (void)didReceiveMemoryWarning
