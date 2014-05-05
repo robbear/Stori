@@ -108,13 +108,17 @@ bool _userNeedsAuthentication = TRUE;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+#if NEVER
     [self.navigationController.navigationBar setHidden:YES];
+#endif
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 
+#if NEVER
     [self.navigationController.navigationBar setHidden:NO];
+#endif
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -755,6 +759,26 @@ bool _userNeedsAuthentication = TRUE;
                                                otherButtonTitles:NSLocalizedString(@"menu_ok", nil), nil];
         [dialog show];
     }
+}
+
+- (IBAction)onSelectPhotoButtonClicked:(id)sender {
+    HFLogDebug(@"EditPlayController.onSelectPhotoButtonClicked");
+}
+
+- (IBAction)onRecordButtonClicked:(id)sender {
+    HFLogDebug(@"EditPlayController.onRecordButtonClicked");
+}
+
+- (IBAction)onEditButtonClicked:(id)sender {
+    HFLogDebug(@"EditPlayController.onEditButtonClicked");
+}
+
+- (IBAction)onTrashButtonClicked:(id)sender {
+    HFLogDebug(@"EditPlayController.onTrashButtonClicked");
+}
+
+- (IBAction)onMainMenuButtonClicked:(id)sender {
+    HFLogDebug(@"EditPlayController.onMainMenuButtonClicked");
 }
 
 - (EditPlayFragmentController *)viewControllerAtIndex:(NSUInteger)index {

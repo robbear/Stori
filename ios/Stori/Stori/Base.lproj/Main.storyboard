@@ -13,11 +13,11 @@
                         <viewControllerLayoutGuide type="bottom" id="3aR-A3-BJ8"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="S2I-Dq-Efn" userLabel="RootView">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="editplaycontroller" translatesAutoresizingMaskIntoConstraints="NO" id="OFb-tI-0CN" userLabel="StoriLoadImage">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
                         </subviews>
@@ -29,9 +29,126 @@
                             <constraint firstItem="OFb-tI-0CN" firstAttribute="top" secondItem="S2I-Dq-Efn" secondAttribute="top" id="wHn-Fb-4bz"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="fic-Nx-mLV"/>
+                    <navigationItem key="navigationItem" id="fic-Nx-mLV">
+                        <nil key="title"/>
+                        <barButtonItem key="leftBarButtonItem" image="ic_selectimage" id="T3d-64-Kpw" userLabel="NavBarLeftButton">
+                            <inset key="imageInsets" minX="8" minY="8" maxX="8" maxY="8"/>
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <action selector="onSelectPhotoButtonClicked:" destination="qrv-TH-V2k" id="LcH-w0-Lyr"/>
+                            </connections>
+                        </barButtonItem>
+                        <view key="titleView" contentMode="scaleToFill" id="S07-3s-zxy" userLabel="NavBarMiddleView">
+                            <rect key="frame" x="82" y="6" width="172" height="33"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GOV-IZ-UeM" userLabel="SpacerView1">
+                                    <rect key="frame" x="0.0" y="0.0" width="19" height="33"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="1" id="Mql-q0-75z"/>
+                                    </constraints>
+                                </view>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2nr-55-aPq" userLabel="RecordButton">
+                                    <rect key="frame" x="19" y="0.0" width="32" height="32"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="32" id="dBP-Am-QpS"/>
+                                        <constraint firstAttribute="width" constant="32" id="tuD-Bg-qCo"/>
+                                    </constraints>
+                                    <state key="normal" image="ic_record">
+                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="onRecordButtonClicked:" destination="qrv-TH-V2k" eventType="touchUpInside" id="g11-e4-KgT"/>
+                                    </connections>
+                                </button>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B6z-UV-lPH" userLabel="SpacerView2">
+                                    <rect key="frame" x="51" y="0.0" width="19" height="33"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m9c-9e-7eb" userLabel="EditButton">
+                                    <rect key="frame" x="70" y="0.0" width="32" height="32"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="32" id="it4-fl-YV6"/>
+                                        <constraint firstAttribute="height" constant="32" id="uJU-CM-TRi"/>
+                                    </constraints>
+                                    <state key="normal" image="ic_edit">
+                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="onEditButtonClicked:" destination="qrv-TH-V2k" eventType="touchUpInside" id="Lma-Jb-irx"/>
+                                    </connections>
+                                </button>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fGo-9j-qHO" userLabel="SpacerView3">
+                                    <rect key="frame" x="102" y="0.0" width="19" height="33"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m8E-13-Aso" userLabel="TrashButton">
+                                    <rect key="frame" x="121" y="0.0" width="32" height="32"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="32" id="8Ab-rt-1Nq"/>
+                                        <constraint firstAttribute="height" constant="32" id="NB5-WO-Ewg"/>
+                                    </constraints>
+                                    <state key="normal" image="ic_trash">
+                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="onTrashButtonClicked:" destination="qrv-TH-V2k" eventType="touchUpInside" id="vR1-Mf-Ou2"/>
+                                    </connections>
+                                </button>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5qC-xl-NCh" userLabel="SpacerView4">
+                                    <rect key="frame" x="153" y="0.0" width="19" height="33"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                            </subviews>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstItem="5qC-xl-NCh" firstAttribute="top" secondItem="GOV-IZ-UeM" secondAttribute="top" id="5MT-t0-bgU"/>
+                                <constraint firstItem="5qC-xl-NCh" firstAttribute="width" secondItem="GOV-IZ-UeM" secondAttribute="width" id="5d2-0M-AtO"/>
+                                <constraint firstItem="fGo-9j-qHO" firstAttribute="leading" secondItem="m9c-9e-7eb" secondAttribute="trailing" priority="999" id="8wP-qt-ylg"/>
+                                <constraint firstItem="m8E-13-Aso" firstAttribute="top" secondItem="GOV-IZ-UeM" secondAttribute="top" id="9JN-ad-bdz"/>
+                                <constraint firstAttribute="trailing" secondItem="5qC-xl-NCh" secondAttribute="trailing" id="EFI-4M-5eX"/>
+                                <constraint firstAttribute="bottom" secondItem="5qC-xl-NCh" secondAttribute="bottom" id="Fso-G2-nuG"/>
+                                <constraint firstItem="m9c-9e-7eb" firstAttribute="top" secondItem="GOV-IZ-UeM" secondAttribute="top" id="JR2-rN-2gJ"/>
+                                <constraint firstAttribute="bottom" secondItem="fGo-9j-qHO" secondAttribute="bottom" id="RCV-Ro-lLD"/>
+                                <constraint firstItem="GOV-IZ-UeM" firstAttribute="width" secondItem="fGo-9j-qHO" secondAttribute="width" priority="999" id="SLh-tZ-IhR"/>
+                                <constraint firstItem="GOV-IZ-UeM" firstAttribute="top" secondItem="fGo-9j-qHO" secondAttribute="top" id="SXZ-SA-nKd"/>
+                                <constraint firstAttribute="leading" secondItem="GOV-IZ-UeM" secondAttribute="leading" id="U7N-Ud-KPI"/>
+                                <constraint firstItem="2nr-55-aPq" firstAttribute="leading" secondItem="GOV-IZ-UeM" secondAttribute="trailing" id="W0x-9x-Hw0"/>
+                                <constraint firstItem="m8E-13-Aso" firstAttribute="trailing" secondItem="5qC-xl-NCh" secondAttribute="leading" id="XzL-ct-bkL"/>
+                                <constraint firstItem="m8E-13-Aso" firstAttribute="leading" secondItem="fGo-9j-qHO" secondAttribute="trailing" priority="999" id="fiR-ac-CiN"/>
+                                <constraint firstItem="GOV-IZ-UeM" firstAttribute="top" secondItem="S07-3s-zxy" secondAttribute="top" id="gXY-Zh-tix"/>
+                                <constraint firstAttribute="bottom" secondItem="B6z-UV-lPH" secondAttribute="bottom" id="j8h-i5-a7B"/>
+                                <constraint firstItem="B6z-UV-lPH" firstAttribute="leading" secondItem="2nr-55-aPq" secondAttribute="trailing" priority="999" id="jQ5-4j-mvZ"/>
+                                <constraint firstAttribute="bottom" secondItem="GOV-IZ-UeM" secondAttribute="bottom" id="kod-Lk-hrb"/>
+                                <constraint firstItem="2nr-55-aPq" firstAttribute="top" secondItem="GOV-IZ-UeM" secondAttribute="top" id="nZj-Eg-JM0"/>
+                                <constraint firstItem="GOV-IZ-UeM" firstAttribute="top" secondItem="B6z-UV-lPH" secondAttribute="top" id="nj3-gT-3fs"/>
+                                <constraint firstItem="GOV-IZ-UeM" firstAttribute="width" secondItem="B6z-UV-lPH" secondAttribute="width" priority="999" id="oNq-Dj-VEv"/>
+                                <constraint firstItem="m9c-9e-7eb" firstAttribute="leading" secondItem="B6z-UV-lPH" secondAttribute="trailing" priority="999" id="xJL-hH-SN6"/>
+                            </constraints>
+                        </view>
+                        <barButtonItem key="rightBarButtonItem" image="ic_stackmenu" id="8i7-Ms-Svx" userLabel="NavBarRightButton">
+                            <inset key="imageInsets" minX="8" minY="8" maxX="8" maxY="8"/>
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <action selector="onMainMenuButtonClicked:" destination="qrv-TH-V2k" id="AQg-Pa-m2u"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="editButton" destination="m9c-9e-7eb" id="A3z-js-DGZ"/>
                         <outlet property="editPlayImageView" destination="OFb-tI-0CN" id="XVJ-fR-dd6"/>
+                        <outlet property="mainMenuButton" destination="8i7-Ms-Svx" id="dyv-Xs-aQg"/>
+                        <outlet property="recordButton" destination="2nr-55-aPq" id="ZnL-14-aFj"/>
+                        <outlet property="selectPhotoButton" destination="T3d-64-Kpw" id="r8u-Mt-7b7"/>
+                        <outlet property="trashButton" destination="m8E-13-Aso" id="KTT-5A-2JP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dxr-h9-d3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -60,12 +177,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7mL-au-3OO">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7mL-au-3OO">
                                 <rect key="frame" x="0.0" y="20" width="322" height="460"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </imageView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="m0F-KF-H8T" userLabel="OverlayView">
+                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="m0F-KF-H8T" userLabel="OverlayView">
                                 <rect key="frame" x="0.0" y="20" width="322" height="460"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
@@ -83,7 +200,7 @@
                                             <action selector="onSelectPhotoButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="KuT-OY-moR"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MZS-xa-Kxv" userLabel="MicrophoneButton">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MZS-xa-Kxv" userLabel="MicrophoneButton">
                                         <rect key="frame" x="86" y="15" width="32" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <constraints>
@@ -97,7 +214,7 @@
                                             <action selector="onRecordingButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="gbj-My-qpk"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YNZ-Gf-cOJ" userLabel="EditButton">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YNZ-Gf-cOJ" userLabel="EditButton">
                                         <rect key="frame" x="145" y="15" width="32" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <constraints>
@@ -125,7 +242,7 @@
                                             <action selector="onTrashButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="LSI-GP-aOm"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ybh-f5-M4L" userLabel="MenuButton">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ybh-f5-M4L" userLabel="MenuButton">
                                         <rect key="frame" x="263" y="15" width="32" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <constraints>
@@ -148,7 +265,7 @@
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="5" id="Y2F-GO-VPE"/>
                                         </constraints>
                                     </view>
-                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="b3E-q7-4fu" userLabel="Spacer2View">
+                                    <view hidden="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="b3E-q7-4fu" userLabel="Spacer2View">
                                         <rect key="frame" x="59" y="15" width="27" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -156,7 +273,7 @@
                                             <constraint firstAttribute="height" constant="32" id="RfM-EO-wpV"/>
                                         </constraints>
                                     </view>
-                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CNl-wi-Mec" userLabel="Spacer3View">
+                                    <view hidden="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CNl-wi-Mec" userLabel="Spacer3View">
                                         <rect key="frame" x="118" y="15" width="27" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -164,7 +281,7 @@
                                             <constraint firstAttribute="height" constant="32" id="RMC-IH-KNL"/>
                                         </constraints>
                                     </view>
-                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hs6-Aj-W1X" userLabel="Spacer4View">
+                                    <view hidden="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hs6-Aj-W1X" userLabel="Spacer4View">
                                         <rect key="frame" x="177" y="15" width="27" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -172,7 +289,7 @@
                                             <constraint firstAttribute="height" constant="32" id="INH-YF-FLu"/>
                                         </constraints>
                                     </view>
-                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aEk-fD-tD2" userLabel="Spacer5View">
+                                    <view hidden="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aEk-fD-tD2" userLabel="Spacer5View">
                                         <rect key="frame" x="236" y="15" width="27" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -180,7 +297,7 @@
                                             <constraint firstAttribute="height" constant="32" id="xde-kV-NGT"/>
                                         </constraints>
                                     </view>
-                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="12S-bF-hNd" userLabel="Spacer6View">
+                                    <view hidden="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="12S-bF-hNd" userLabel="Spacer6View">
                                         <rect key="frame" x="295" y="15" width="27" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -188,7 +305,7 @@
                                             <constraint firstAttribute="height" constant="32" id="ldz-D2-lPq"/>
                                         </constraints>
                                     </view>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ukn-gB-P9w" userLabel="InsertAfterButton">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ukn-gB-P9w" userLabel="InsertAfterButton">
                                         <rect key="frame" x="270" y="214" width="32" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <constraints>
@@ -216,21 +333,21 @@
                                             <action selector="onInsertBeforeButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="ojN-DD-vsJ"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="My Stori" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lsc-ki-lJH" userLabel="StoriTitleLabel">
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="My Stori" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lsc-ki-lJH" userLabel="StoriTitleLabel">
                                         <rect key="frame" x="20" y="423" width="282" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 of 1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OT2-ax-jPm" userLabel="SlideCountLabel">
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="1 of 1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OT2-ax-jPm" userLabel="SlideCountLabel">
                                         <rect key="frame" x="20" y="398" width="282" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bNL-lU-uBl" userLabel="PrevButton">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bNL-lU-uBl" userLabel="PrevButton">
                                         <rect key="frame" x="53" y="358" width="32" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <constraints>
@@ -244,7 +361,7 @@
                                             <action selector="onLeftArrowButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="hyj-cV-6Yg"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yi0-ve-Xxi" userLabel="PlayStopButton">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yi0-ve-Xxi" userLabel="PlayStopButton">
                                         <rect key="frame" x="145" y="358" width="32" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <constraints>
@@ -258,7 +375,7 @@
                                             <action selector="onPlayStopButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="1r3-LS-Bge"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="klP-01-X98" userLabel="NextButton">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="klP-01-X98" userLabel="NextButton">
                                         <rect key="frame" x="237" y="358" width="32" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <constraints>
@@ -272,7 +389,7 @@
                                             <action selector="onRightArrowButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="gPC-s8-R3x"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Dc-kE-Obg" userLabel="SecondarySelectPictureButton">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Dc-kE-Obg" userLabel="SecondarySelectPictureButton">
                                         <rect key="frame" x="145" y="182" width="32" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <constraints>
@@ -286,7 +403,7 @@
                                             <action selector="onSelectPhotoButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="I2Z-c3-hbx"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="llb-dk-Fgi" userLabel="ChooseAPictureButton">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="llb-dk-Fgi" userLabel="ChooseAPictureButton">
                                         <rect key="frame" x="104" y="216" width="114" height="29"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -298,7 +415,7 @@
                                             <action selector="onSelectPhotoButtonClicked:" destination="jBC-Ce-q1M" eventType="touchUpInside" id="A2n-Sy-fru"/>
                                         </connections>
                                     </button>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="st0-jY-kyp" userLabel="SlideTextView">
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="st0-jY-kyp" userLabel="SlideTextView">
                                         <rect key="frame" x="57" y="67" width="208" height="33"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -667,7 +784,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ulo-VH-njV" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="a75-AO-iU2">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" translucent="NO" id="a75-AO-iU2">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -699,6 +816,6 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="cPp-tX-X5H"/>
+        <segue reference="xVj-Ah-sJp"/>
     </inferredMetricsTieBreakers>
 </document>
