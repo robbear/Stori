@@ -97,10 +97,10 @@
     [self setCancelAsyncPlay:FALSE];
     
     if (self.editPlayController.editPlayMode != editPlayModeEdit) {
-        [self.selectPhotoButton setImage:[UIImage imageNamed:@"ic_stackback.png"] forState:UIControlStateNormal];
-        [self.recordingButton setHidden:YES];
-        [self.editButton setHidden:YES];
-        [self.trashButton setHidden:YES];
+        [self.editPlayController.selectPhotoButton setImage:[UIImage imageNamed:@"ic_stackback.png"]];
+        [self.editPlayController.recordButton setHidden:YES];
+        [self.editPlayController.editButton setHidden:YES];
+        [self.editPlayController.trashButton setHidden:YES];
         [self.insertAfterButton setHidden:YES];
         [self.insertBeforeButton setHidden:YES];
     }
@@ -115,12 +115,16 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated {
+    HFLogDebug(@"EditPlayControllerFragment.viewDidAppear");
+    
     if (self.editPlayController.editPlayMode != editPlayModeEdit) {
         int slideIndex = [self.editPlayController getSlidePosition:self.slideUuid];
         if (slideIndex == self.editPlayController.currentSlideIndex) {
             [self asyncAutoPlay];
         }
     }
+    
+    self.editPlayController.editPlayNavBarButtonDelegate = self;
 }
 
 - (void)configureAudioSession {
@@ -204,6 +208,8 @@
         return;
     }
     
+    self.editPlayController.navigationController.navigationBar.hidden = FALSE;
+    [[UIApplication sharedApplication] setStatusBarHidden:FALSE];
     self.editPlayController.shouldDisplayOverlay = TRUE;
     [self displayOverlay];
 }
@@ -215,26 +221,24 @@
         return;
     }
 
-    CGPoint point = [self.overlayTapRecognizer locationInView:self.overlayView];
-    
-    // Ignore taps in critical areas.
-    // BUGBUG - need better layout reads rather than using hardcoded values.
-    if (point.y <= 40) {
-        return;
-    }
-    
+    self.editPlayController.navigationController.navigationBar.hidden = TRUE;
+    [[UIApplication sharedApplication] setStatusBarHidden:TRUE];
     self.editPlayController.shouldDisplayOverlay = FALSE;
     [self displayOverlay];
 }
 
-- (IBAction)onMainMenuButtonClicked:(id)sender {
+- (IBAction)onSelectPhotoSecondaryButtonClicked:(id)sender {
+    [self onNavBarSelectPhotoButtonClicked];
+}
+
+- (void)onNavBarMainMenuButtonClicked {
     UIActionSheet *popup = [[UIActionSheet alloc]
                             initWithTitle:NSLocalizedString(@"menu_editplay_title", nil)
                             delegate:self
                             cancelButtonTitle:nil
                             destructiveButtonTitle:nil
                             otherButtonTitles:nil];
-
+    
     if (self.editPlayController.editPlayMode == editPlayModeEdit) {
         [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_preview", nil)];
         [popup addButtonWithTitle:NSLocalizedString(@"menu_editplay_rename", nil)];
@@ -264,7 +268,7 @@
     popup.cancelButtonIndex = popup.numberOfButtons - 1;
     
     popup.tag = 1;
-    [popup showInView:[UIApplication sharedApplication].keyWindow];    
+    [popup showInView:[UIApplication sharedApplication].keyWindow];
 }
 
 - (IBAction)onPlayStopButtonClicked:(id)sender {
@@ -280,17 +284,17 @@
     }
 }
 
-- (IBAction)onRecordingButtonClicked:(id)sender {
+- (void)onNavBarRecordingButtonClicked {
     if (self.isRecording) {
         [self stopRecording];
     }
     else {
         if (self.hasAudio) {
             UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_overwriteaudio_title", nil)
-                                                        message:NSLocalizedString(@"editplay_overwriteaudio_message", nil)
-                                                        delegate:self
-                                                        cancelButtonTitle:NSLocalizedString(@"menu_cancel", nil)
-                                                        otherButtonTitles:NSLocalizedString(@"menu_ok", nil), nil];
+                                                             message:NSLocalizedString(@"editplay_overwriteaudio_message", nil)
+                                                            delegate:self
+                                                   cancelButtonTitle:NSLocalizedString(@"menu_cancel", nil)
+                                                   otherButtonTitles:NSLocalizedString(@"menu_ok", nil), nil];
             dialog.tag = ALERTVIEW_DIALOG_OVERWRITE_AUDIO;
             [dialog show];
         }
@@ -337,7 +341,7 @@
     [self.editPlayController addSlide:selectedPosition + 1];
 }
      
-- (IBAction)onEditButtonClicked:(id)sender {
+- (void)onNavBarEditButtonClicked {
     UIActionSheet *popup = [[UIActionSheet alloc]
                             initWithTitle:NSLocalizedString(@"menu_editplay_edit_title", nil)
                             delegate:self
@@ -356,7 +360,7 @@
     [popup showInView:[UIApplication sharedApplication].keyWindow];
 }
 
-- (IBAction)onTrashButtonClicked:(id)sender {
+- (void)onNavBarTrashButtonClicked {
     UIActionSheet *popup = [[UIActionSheet alloc]
                             initWithTitle:NSLocalizedString(@"menu_editplay_trash_title", nil)
                             delegate:self
@@ -414,7 +418,7 @@
     [dialog show];
 }
 
-- (IBAction)onSelectPhotoButtonClicked:(id)sender {
+- (void)onNavBarSelectPhotoButtonClicked {
     if (self.editPlayController.editPlayMode == editPlayModeEdit) {
         UIActionSheet *popup = [[UIActionSheet alloc]
                                 initWithTitle:NSLocalizedString(@"menu_editplay_image_title", nil)
@@ -490,20 +494,20 @@
     HFLogDebug(@"EditPlayFragmentController.enableControlsWhileRecordingOrPlaying: %d", enabled);
 
     [self.playStopButton setEnabled:enabled];
-    [self.recordingButton setEnabled:enabled];
-    [self.selectPhotoButton setEnabled:enabled];
-    [self.mainMenuButton setEnabled:enabled];
+    [self.editPlayController.recordButton setEnabled:enabled];
+    [self.editPlayController.selectPhotoButton setEnabled:enabled];
+    [self.editPlayController.mainMenuButton setEnabled:enabled];
     [self.insertAfterButton setEnabled:enabled];
     [self.insertBeforeButton setEnabled:enabled];
-    [self.trashButton setEnabled:enabled];
-    [self.editButton setEnabled:enabled];
+    [self.editPlayController.trashButton setEnabled:enabled];
+    [self.editPlayController.editButton setEnabled:enabled];
     
     if (!self.isPlaying && !enabled) {
         [self.leftArrowButton setEnabled:enabled];
         [self.rightArrowButton setEnabled:enabled];
     }
     if (self.isPlaying && (self.editPlayController.editPlayMode != editPlayModeEdit)) {
-        [self.selectPhotoButton setEnabled:TRUE];
+        [self.editPlayController.selectPhotoButton setEnabled:TRUE];
     }
 }
 
@@ -555,9 +559,9 @@
     BOOL success = [self.audioRecorder record];
     if (success) {
         [self enableControlsWhileRecordingOrPlaying:FALSE];
-        [self.recordingButton setEnabled:TRUE];
+        [self.editPlayController.recordButton setEnabled:TRUE];
         [self setIsRecording:TRUE];
-        [self.recordingButton setImage:[UIImage imageNamed:@"ic_stoprecording.png"] forState:UIControlStateNormal];
+        [self.editPlayController.recordButton setImage:[UIImage imageNamed:@"ic_stoprecording.png"] forState:UIControlStateNormal];
     }
 }
 
@@ -569,7 +573,7 @@
         [self setIsRecording:FALSE];
     }
     
-    [self.recordingButton setImage:[UIImage imageNamed:@"ic_record.png"] forState:UIControlStateNormal];
+    [self.editPlayController.recordButton setImage:[UIImage imageNamed:@"ic_record.png"] forState:UIControlStateNormal];
     [self displayPlayStopControl];
     [self enableControlsWhileRecordingOrPlaying:TRUE];
 }

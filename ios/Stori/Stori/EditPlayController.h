@@ -15,6 +15,14 @@
 #import "PlayStoriNotifier.h"
 #import "AsyncImageCopy.h"
 
+@protocol EditPlayControllerNavBarButtonDelegate <NSObject>
+- (void)onNavBarEditButtonClicked;
+- (void)onNavBarTrashButtonClicked;
+- (void)onNavBarSelectPhotoButtonClicked;
+- (void)onNavBarMainMenuButtonClicked;
+- (void)onNavBarRecordingButtonClicked;
+@end
+
 typedef enum EditPlayMode {
     editPlayModeEdit = 0,
     editPlayModePlay = 1,
@@ -24,6 +32,7 @@ typedef enum EditPlayMode {
 @interface EditPlayController : UIViewController
     <UIPageViewControllerDataSource, UIPageViewControllerDelegate, AmazonClientManagerGoogleAccountDelegate, AWSS3ProviderDelegate, UIAlertViewDelegate, StoriDownloadDelegate, PlayStoriNotifierDelegate, AsyncImageCopyDelegate>
 
+@property (weak, nonatomic) id<EditPlayControllerNavBarButtonDelegate> editPlayNavBarButtonDelegate;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *selectPhotoButton;
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *editButton;

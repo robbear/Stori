@@ -77,6 +77,8 @@ bool _userNeedsAuthentication = TRUE;
     
     [super viewDidLoad];
     
+    self.extendedLayoutIncludesOpaqueBars = TRUE;
+    
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     
     // At startup, take the opportunity to clean up our data folder
@@ -763,22 +765,52 @@ bool _userNeedsAuthentication = TRUE;
 
 - (IBAction)onSelectPhotoButtonClicked:(id)sender {
     HFLogDebug(@"EditPlayController.onSelectPhotoButtonClicked");
+
+    if (self.editPlayNavBarButtonDelegate) {
+        if ([self.editPlayNavBarButtonDelegate respondsToSelector:@selector(onNavBarSelectPhotoButtonClicked)]) {
+            [self.editPlayNavBarButtonDelegate onNavBarSelectPhotoButtonClicked];
+        }
+    }
 }
 
 - (IBAction)onRecordButtonClicked:(id)sender {
     HFLogDebug(@"EditPlayController.onRecordButtonClicked");
+
+    if (self.editPlayNavBarButtonDelegate) {
+        if ([self.editPlayNavBarButtonDelegate respondsToSelector:@selector(onNavBarRecordingButtonClicked)]) {
+            [self.editPlayNavBarButtonDelegate onNavBarRecordingButtonClicked];
+        }
+    }
 }
 
 - (IBAction)onEditButtonClicked:(id)sender {
     HFLogDebug(@"EditPlayController.onEditButtonClicked");
+
+    if (self.editPlayNavBarButtonDelegate) {
+        if ([self.editPlayNavBarButtonDelegate respondsToSelector:@selector(onNavBarEditButtonClicked)]) {
+            [self.editPlayNavBarButtonDelegate onNavBarEditButtonClicked];
+        }
+    }
 }
 
 - (IBAction)onTrashButtonClicked:(id)sender {
     HFLogDebug(@"EditPlayController.onTrashButtonClicked");
+    
+    if (self.editPlayNavBarButtonDelegate) {
+        if ([self.editPlayNavBarButtonDelegate respondsToSelector:@selector(onNavBarTrashButtonClicked)]) {
+            [self.editPlayNavBarButtonDelegate onNavBarTrashButtonClicked];
+        }
+    }
 }
 
 - (IBAction)onMainMenuButtonClicked:(id)sender {
     HFLogDebug(@"EditPlayController.onMainMenuButtonClicked");
+    
+    if (self.editPlayNavBarButtonDelegate) {
+        if ([self.editPlayNavBarButtonDelegate respondsToSelector:@selector(onNavBarMainMenuButtonClicked)]) {
+            [self.editPlayNavBarButtonDelegate onNavBarMainMenuButtonClicked];
+        }
+    }
 }
 
 - (EditPlayFragmentController *)viewControllerAtIndex:(NSUInteger)index {

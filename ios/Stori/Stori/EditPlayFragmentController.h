@@ -12,19 +12,14 @@
 #import "EditPlayController.h"
 
 @interface EditPlayFragmentController : UIViewController
-    <UIActionSheetDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITextFieldDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate>
+    <UIActionSheetDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITextFieldDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate, EditPlayControllerNavBarButtonDelegate>
 
-@property (weak, nonatomic) IBOutlet UIButton *mainMenuButton;
 @property (weak, nonatomic) IBOutlet UIButton *insertBeforeButton;
 @property (weak, nonatomic) IBOutlet UIButton *insertAfterButton;
-@property (weak, nonatomic) IBOutlet UIButton *selectPhotoButton;
-@property (weak, nonatomic) IBOutlet UIButton *trashButton;
 @property (weak, nonatomic) IBOutlet UILabel *storiTitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *slidePositionLabel;
-@property (weak, nonatomic) IBOutlet UIButton *editButton;
 @property (weak, nonatomic) IBOutlet UIButton *leftArrowButton;
 @property (weak, nonatomic) IBOutlet UIButton *rightArrowButton;
-@property (weak, nonatomic) IBOutlet UIButton *recordingButton;
 @property (weak, nonatomic) IBOutlet UIButton *playStopButton;
 @property (weak, nonatomic) IBOutlet UIView *overlayView;
 @property (weak, nonatomic) IBOutlet UITextView *slideTextView;
