@@ -90,7 +90,7 @@ bool _userNeedsAuthentication = TRUE;
         [PlayStoriNotifier sharedInstance].delegate = self;
     }
     else {
-        [self.selectPhotoButton setImage:[UIImage imageNamed:@"ic_stackback.png"]];
+        self.navigationItem.leftBarButtonItem = nil;
         [self.recordButton setHidden:YES];
         [self.editButton setHidden:YES];
         [self.trashButton setHidden:YES];
