@@ -29,6 +29,8 @@
     
     [super viewDidLoad];
     
+    self.navigationItem.title = NSLocalizedString(@"settings_navbutton_title", nil);
+    
     [self.autoPlayTitleLabel setText:NSLocalizedString(@"settings_autoplay_title", nil)];
     [self.autoPlaySubtitleLabel setText:NSLocalizedString(@"settings_autoplay_subtitle", nil)];
     [self.disconnectTitleLabel setText:NSLocalizedString(@"settings_disconnect_title", nil)];
@@ -50,7 +52,7 @@
 - (void)viewDidAppear:(BOOL)animated {
     HFLogDebug(@"STOSettingsController.viewDidAppear");
     
-    self.navigationController.navigationBar.backItem.title = NSLocalizedString(@"settings_navbutton_title", nil);
+    [super viewDidAppear:animated];
 }
 
 - (void)didReceiveMemoryWarning {

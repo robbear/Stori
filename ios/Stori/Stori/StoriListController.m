@@ -52,6 +52,8 @@ long long _expectedBytes;
     
     [super viewDidLoad];
     
+    self.navigationItem.title = NSLocalizedString(@"storilist_navbutton_title", nil);
+    
     self.progressHUD = [[HFProgressHUD alloc] initWithView:self.navigationController.view];
     self.progressHUD.mode = MBProgressHUDModeIndeterminate;
     [self.progressHUD show:TRUE];
@@ -67,15 +69,9 @@ long long _expectedBytes;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-#if NEVER
-    [self.navigationController.navigationBar setHidden:NO];
-#endif
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-#if NEVER
-    [self.navigationController.navigationBar setHidden:YES];
-#endif
 }
 
 - (void)didReceiveMemoryWarning
@@ -89,8 +85,6 @@ long long _expectedBytes;
     
     [super viewDidAppear:animated];
     
-    self.navigationController.navigationBar.backItem.title = NSLocalizedString(@"storilist_navbutton_title", nil);
-
     if (!self.tableView) {
         HFLogDebug(@"StoriListController.viewDidAppear - tableView is nil");
     }
