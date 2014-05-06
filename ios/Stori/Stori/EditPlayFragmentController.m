@@ -97,10 +97,6 @@
     [self setCancelAsyncPlay:FALSE];
     
     if (self.editPlayController.editPlayMode != editPlayModeEdit) {
-        [self.editPlayController.selectPhotoButton setImage:[UIImage imageNamed:@"ic_stackback.png"]];
-        [self.editPlayController.recordButton setHidden:YES];
-        [self.editPlayController.editButton setHidden:YES];
-        [self.editPlayController.trashButton setHidden:YES];
         [self.insertAfterButton setHidden:YES];
         [self.insertBeforeButton setHidden:YES];
     }
@@ -208,7 +204,7 @@
         return;
     }
     
-    self.editPlayController.navigationController.navigationBar.hidden = FALSE;
+    [self.navigationController setNavigationBarHidden:FALSE animated:TRUE];
     [[UIApplication sharedApplication] setStatusBarHidden:FALSE];
     self.editPlayController.shouldDisplayOverlay = TRUE;
     [self displayOverlay];
@@ -221,7 +217,7 @@
         return;
     }
 
-    self.editPlayController.navigationController.navigationBar.hidden = TRUE;
+    [self.navigationController setNavigationBarHidden:TRUE animated:TRUE];
     [[UIApplication sharedApplication] setStatusBarHidden:TRUE];
     self.editPlayController.shouldDisplayOverlay = FALSE;
     [self displayOverlay];

@@ -89,6 +89,12 @@ bool _userNeedsAuthentication = TRUE;
         // Register our PlayStoriNotifierDelegate
         [PlayStoriNotifier sharedInstance].delegate = self;
     }
+    else {
+        [self.selectPhotoButton setImage:[UIImage imageNamed:@"ic_stackback.png"]];
+        [self.recordButton setHidden:YES];
+        [self.editButton setHidden:YES];
+        [self.trashButton setHidden:YES];
+    }
 
     self.currentSlideIndex = 0;
     self.forceToPortrait = (self.editPlayMode != editPlayModePreview);
@@ -132,6 +138,9 @@ bool _userNeedsAuthentication = TRUE;
         HFLogDebug(@"EditPlayController.viewDidAppear - in editPlayModePreview - skipping authentication");
         [self initializePageView];
         return;
+    }
+    else {
+        [self.selectPhotoButton setImage:[UIImage imageNamed:@"ic_selectimage.png"]];
     }
     
     if (_userNeedsAuthentication && !self.disconnectInProgress) {
