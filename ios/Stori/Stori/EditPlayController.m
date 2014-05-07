@@ -175,7 +175,7 @@ bool _userNeedsAuthentication = TRUE;
 - (void)viewWillLayoutSubviews {
     HFLogDebug(@"EditPlayController.viewWillLayoutSubviews");
     
-    CGRect screenFrame = [[UIScreen mainScreen] applicationFrame];
+    CGRect screenFrame = [[UIScreen mainScreen] bounds];
     
     if (UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation])) {
         screenFrame = CGRectMake(0, 0, screenFrame.size.height, screenFrame.size.width);

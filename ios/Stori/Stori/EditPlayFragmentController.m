@@ -205,7 +205,7 @@
     }
     
     [self.navigationController setNavigationBarHidden:FALSE animated:TRUE];
-    [[UIApplication sharedApplication] setStatusBarHidden:FALSE];
+    [[UIApplication sharedApplication] setStatusBarHidden:FALSE withAnimation:UIStatusBarAnimationSlide];
     self.editPlayController.shouldDisplayOverlay = TRUE;
     [self displayOverlay];
 }
@@ -218,7 +218,7 @@
     }
 
     [self.navigationController setNavigationBarHidden:TRUE animated:TRUE];
-    [[UIApplication sharedApplication] setStatusBarHidden:TRUE];
+    [[UIApplication sharedApplication] setStatusBarHidden:TRUE withAnimation:UIStatusBarAnimationSlide];
     self.editPlayController.shouldDisplayOverlay = FALSE;
     [self displayOverlay];
 }
