@@ -115,24 +115,27 @@ bool _userNeedsAuthentication = TRUE;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
-#if NEVER
-    [self.navigationController.navigationBar setHidden:YES];
-#endif
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-
-#if NEVER
-    [self.navigationController.navigationBar setHidden:NO];
-#endif
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     HFLogDebug(@"EditPlayController.viewDidAppear");
     
     [super viewDidAppear:animated];
+    
+#if NEVER // test
+    UIBarButtonItem *itemLeft = self.navigationItem.leftBarButtonItem;
+    UIView *viewLeft = [itemLeft valueForKey:@"view"];
+    // REM: handle case if view is nil, in case valueForKey fails in future versions
+    CGRect rectLeftItem = viewLeft.frame;
+    
+    UIBarButtonItem *itemRight = self.navigationItem.rightBarButtonItem;
+    UIView *viewRight = [itemRight valueForKeyPath:@"view"];
+    CGRect rectRightItem = viewRight.frame;
+#endif
 
     if (self.editPlayMode != editPlayModeEdit) {
         HFLogDebug(@"EditPlayController.viewDidAppear - in editPlayModePreview - skipping authentication");
