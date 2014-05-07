@@ -31,124 +31,9 @@
                     </view>
                     <navigationItem key="navigationItem" id="fic-Nx-mLV">
                         <nil key="title"/>
-                        <barButtonItem key="leftBarButtonItem" image="ic_selectimage" id="T3d-64-Kpw" userLabel="NavBarLeftButton">
-                            <inset key="imageInsets" minX="8" minY="8" maxX="8" maxY="8"/>
-                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            <connections>
-                                <action selector="onSelectPhotoButtonClicked:" destination="qrv-TH-V2k" id="LcH-w0-Lyr"/>
-                            </connections>
-                        </barButtonItem>
-                        <view key="titleView" contentMode="scaleToFill" id="S07-3s-zxy" userLabel="NavBarMiddleView">
-                            <rect key="frame" x="82" y="6" width="172" height="33"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <subviews>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GOV-IZ-UeM" userLabel="SpacerView1">
-                                    <rect key="frame" x="0.0" y="0.0" width="19" height="33"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                    <constraints>
-                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="1" id="Mql-q0-75z"/>
-                                    </constraints>
-                                </view>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2nr-55-aPq" userLabel="RecordButton">
-                                    <rect key="frame" x="19" y="0.0" width="32" height="32"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <constraints>
-                                        <constraint firstAttribute="height" constant="32" id="dBP-Am-QpS"/>
-                                        <constraint firstAttribute="width" constant="32" id="tuD-Bg-qCo"/>
-                                    </constraints>
-                                    <state key="normal" image="ic_record">
-                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                    </state>
-                                    <connections>
-                                        <action selector="onRecordButtonClicked:" destination="qrv-TH-V2k" eventType="touchUpInside" id="g11-e4-KgT"/>
-                                    </connections>
-                                </button>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B6z-UV-lPH" userLabel="SpacerView2">
-                                    <rect key="frame" x="51" y="0.0" width="19" height="33"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </view>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m9c-9e-7eb" userLabel="EditButton">
-                                    <rect key="frame" x="70" y="0.0" width="32" height="32"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <constraints>
-                                        <constraint firstAttribute="width" constant="32" id="it4-fl-YV6"/>
-                                        <constraint firstAttribute="height" constant="32" id="uJU-CM-TRi"/>
-                                    </constraints>
-                                    <state key="normal" image="ic_edit">
-                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                    </state>
-                                    <connections>
-                                        <action selector="onEditButtonClicked:" destination="qrv-TH-V2k" eventType="touchUpInside" id="Lma-Jb-irx"/>
-                                    </connections>
-                                </button>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fGo-9j-qHO" userLabel="SpacerView3">
-                                    <rect key="frame" x="102" y="0.0" width="19" height="33"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </view>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m8E-13-Aso" userLabel="TrashButton">
-                                    <rect key="frame" x="121" y="0.0" width="32" height="32"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <constraints>
-                                        <constraint firstAttribute="width" constant="32" id="8Ab-rt-1Nq"/>
-                                        <constraint firstAttribute="height" constant="32" id="NB5-WO-Ewg"/>
-                                    </constraints>
-                                    <state key="normal" image="ic_trash">
-                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                    </state>
-                                    <connections>
-                                        <action selector="onTrashButtonClicked:" destination="qrv-TH-V2k" eventType="touchUpInside" id="vR1-Mf-Ou2"/>
-                                    </connections>
-                                </button>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5qC-xl-NCh" userLabel="SpacerView4">
-                                    <rect key="frame" x="153" y="0.0" width="19" height="33"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </view>
-                            </subviews>
-                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            <constraints>
-                                <constraint firstItem="5qC-xl-NCh" firstAttribute="top" secondItem="GOV-IZ-UeM" secondAttribute="top" id="5MT-t0-bgU"/>
-                                <constraint firstItem="5qC-xl-NCh" firstAttribute="width" secondItem="GOV-IZ-UeM" secondAttribute="width" id="5d2-0M-AtO"/>
-                                <constraint firstItem="fGo-9j-qHO" firstAttribute="leading" secondItem="m9c-9e-7eb" secondAttribute="trailing" priority="999" id="8wP-qt-ylg"/>
-                                <constraint firstItem="m8E-13-Aso" firstAttribute="top" secondItem="GOV-IZ-UeM" secondAttribute="top" id="9JN-ad-bdz"/>
-                                <constraint firstAttribute="trailing" secondItem="5qC-xl-NCh" secondAttribute="trailing" id="EFI-4M-5eX"/>
-                                <constraint firstAttribute="bottom" secondItem="5qC-xl-NCh" secondAttribute="bottom" id="Fso-G2-nuG"/>
-                                <constraint firstItem="m9c-9e-7eb" firstAttribute="top" secondItem="GOV-IZ-UeM" secondAttribute="top" id="JR2-rN-2gJ"/>
-                                <constraint firstAttribute="bottom" secondItem="fGo-9j-qHO" secondAttribute="bottom" id="RCV-Ro-lLD"/>
-                                <constraint firstItem="GOV-IZ-UeM" firstAttribute="width" secondItem="fGo-9j-qHO" secondAttribute="width" priority="999" id="SLh-tZ-IhR"/>
-                                <constraint firstItem="GOV-IZ-UeM" firstAttribute="top" secondItem="fGo-9j-qHO" secondAttribute="top" id="SXZ-SA-nKd"/>
-                                <constraint firstAttribute="leading" secondItem="GOV-IZ-UeM" secondAttribute="leading" id="U7N-Ud-KPI"/>
-                                <constraint firstItem="2nr-55-aPq" firstAttribute="leading" secondItem="GOV-IZ-UeM" secondAttribute="trailing" id="W0x-9x-Hw0"/>
-                                <constraint firstItem="m8E-13-Aso" firstAttribute="trailing" secondItem="5qC-xl-NCh" secondAttribute="leading" id="XzL-ct-bkL"/>
-                                <constraint firstItem="m8E-13-Aso" firstAttribute="leading" secondItem="fGo-9j-qHO" secondAttribute="trailing" priority="999" id="fiR-ac-CiN"/>
-                                <constraint firstItem="GOV-IZ-UeM" firstAttribute="top" secondItem="S07-3s-zxy" secondAttribute="top" id="gXY-Zh-tix"/>
-                                <constraint firstAttribute="bottom" secondItem="B6z-UV-lPH" secondAttribute="bottom" id="j8h-i5-a7B"/>
-                                <constraint firstItem="B6z-UV-lPH" firstAttribute="leading" secondItem="2nr-55-aPq" secondAttribute="trailing" priority="999" id="jQ5-4j-mvZ"/>
-                                <constraint firstAttribute="bottom" secondItem="GOV-IZ-UeM" secondAttribute="bottom" id="kod-Lk-hrb"/>
-                                <constraint firstItem="2nr-55-aPq" firstAttribute="top" secondItem="GOV-IZ-UeM" secondAttribute="top" id="nZj-Eg-JM0"/>
-                                <constraint firstItem="GOV-IZ-UeM" firstAttribute="top" secondItem="B6z-UV-lPH" secondAttribute="top" id="nj3-gT-3fs"/>
-                                <constraint firstItem="GOV-IZ-UeM" firstAttribute="width" secondItem="B6z-UV-lPH" secondAttribute="width" priority="999" id="oNq-Dj-VEv"/>
-                                <constraint firstItem="m9c-9e-7eb" firstAttribute="leading" secondItem="B6z-UV-lPH" secondAttribute="trailing" priority="999" id="xJL-hH-SN6"/>
-                            </constraints>
-                        </view>
-                        <barButtonItem key="rightBarButtonItem" image="ic_stackmenu" id="8i7-Ms-Svx" userLabel="NavBarRightButton">
-                            <inset key="imageInsets" minX="8" minY="8" maxX="8" maxY="8"/>
-                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            <connections>
-                                <action selector="onMainMenuButtonClicked:" destination="qrv-TH-V2k" id="AQg-Pa-m2u"/>
-                            </connections>
-                        </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="editButton" destination="m9c-9e-7eb" id="A3z-js-DGZ"/>
                         <outlet property="editPlayImageView" destination="OFb-tI-0CN" id="XVJ-fR-dd6"/>
-                        <outlet property="mainMenuButton" destination="8i7-Ms-Svx" id="dyv-Xs-aQg"/>
-                        <outlet property="recordButton" destination="2nr-55-aPq" id="ZnL-14-aFj"/>
-                        <outlet property="selectPhotoButton" destination="T3d-64-Kpw" id="r8u-Mt-7b7"/>
-                        <outlet property="trashButton" destination="m8E-13-Aso" id="KTT-5A-2JP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dxr-h9-d3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -651,13 +536,9 @@
         <image name="editplaycontroller" width="512" height="512"/>
         <image name="ic_arrow_left" width="48" height="48"/>
         <image name="ic_arrow_right" width="48" height="48"/>
-        <image name="ic_edit" width="48" height="48"/>
         <image name="ic_play" width="48" height="48"/>
         <image name="ic_plus" width="43" height="43"/>
-        <image name="ic_record" width="48" height="48"/>
         <image name="ic_selectimage" width="48" height="48"/>
-        <image name="ic_stackmenu" width="48" height="48"/>
-        <image name="ic_trash" width="48" height="48"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

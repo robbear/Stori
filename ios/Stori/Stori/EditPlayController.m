@@ -77,6 +77,41 @@ bool _userNeedsAuthentication = TRUE;
     
     [super viewDidLoad];
     
+    // Create NavBar buttons
+    UIButton *button1 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 48.0, 48.0)];
+    [button1 setImage:[UIImage imageNamed:@"ic_stackmenu.png"] forState:UIControlStateNormal];
+    [button1 addTarget:self action:@selector(onMainMenuButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [button1 setImageEdgeInsets:UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)];
+    self.mainMenuButton = [[UIBarButtonItem alloc] initWithCustomView:button1];
+    
+    UIButton *button2 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 48.0, 48.0)];
+    [button2 setImage:[UIImage imageNamed:@"ic_trash.png"] forState:UIControlStateNormal];
+    [button2 addTarget:self action:@selector(onTrashButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [button2 setImageEdgeInsets:UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)];
+    self.trashButton = [[UIBarButtonItem alloc] initWithCustomView:button2];
+    
+    UIButton *button3 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 48.0, 48.0)];
+    [button3 setImage:[UIImage imageNamed:@"ic_edit.png"] forState:UIControlStateNormal];
+    [button3 addTarget:self action:@selector(onEditButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [button3 setImageEdgeInsets:UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)];
+    self.editButton = [[UIBarButtonItem alloc] initWithCustomView:button3];
+    
+    UIButton *button4 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 48.0, 48.0)];
+    [button4 setImage:[UIImage imageNamed:@"ic_record.png"] forState:UIControlStateNormal];
+    [button4 addTarget:self action:@selector(onRecordButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [button4 setImageEdgeInsets:UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)];
+    self.recordButton = [[UIBarButtonItem alloc] initWithCustomView:button4];
+    
+    UIButton *button5 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 48.0, 48.0)];
+    [button5 setImage:[UIImage imageNamed:@"ic_selectimage.png"] forState:UIControlStateNormal];
+    [button5 addTarget:self action:@selector(onSelectPhotoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [button5 setImageEdgeInsets:UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)];
+    self.selectPhotoButton = [[UIBarButtonItem alloc] initWithCustomView:button5];
+    
+    NSArray *actionButtonItems = @[self.mainMenuButton, self.trashButton, self.editButton, self.recordButton, self.selectPhotoButton];
+    self.navigationItem.rightBarButtonItems = actionButtonItems;
+    // End create NavBar buttons
+    
     self.extendedLayoutIncludesOpaqueBars = TRUE;
     
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
@@ -91,9 +126,11 @@ bool _userNeedsAuthentication = TRUE;
     }
     else {
         self.navigationItem.leftBarButtonItem = nil;
+#if NEVER
         [self.recordButton setHidden:YES];
         [self.editButton setHidden:YES];
         [self.trashButton setHidden:YES];
+#endif
     }
 
     self.currentSlideIndex = 0;
