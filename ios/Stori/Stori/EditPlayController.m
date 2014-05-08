@@ -78,34 +78,38 @@ bool _userNeedsAuthentication = TRUE;
     [super viewDidLoad];
     
     // Create NavBar buttons
-    UIButton *button1 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 48.0, 48.0)];
+    int numButtons = 6;
+    float targetWidth = [[UIScreen mainScreen] bounds].size.width / numButtons;
+    float insetVal = targetWidth / (numButtons - 1);
+    
+    UIButton *button1 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, targetWidth, 32.0)];
     [button1 setImage:[UIImage imageNamed:@"ic_stackmenu.png"] forState:UIControlStateNormal];
     [button1 addTarget:self action:@selector(onMainMenuButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    [button1 setImageEdgeInsets:UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)];
+    [button1 setImageEdgeInsets:UIEdgeInsetsMake(0.0, insetVal, 0.0, insetVal)];
     self.mainMenuButton = [[UIBarButtonItem alloc] initWithCustomView:button1];
     
-    UIButton *button2 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 48.0, 48.0)];
+    UIButton *button2 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, targetWidth, 32.0)];
     [button2 setImage:[UIImage imageNamed:@"ic_trash.png"] forState:UIControlStateNormal];
     [button2 addTarget:self action:@selector(onTrashButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    [button2 setImageEdgeInsets:UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)];
+    [button2 setImageEdgeInsets:UIEdgeInsetsMake(0.0, insetVal, 0.0, insetVal)];
     self.trashButton = [[UIBarButtonItem alloc] initWithCustomView:button2];
     
-    UIButton *button3 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 48.0, 48.0)];
+    UIButton *button3 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, targetWidth, 32.0)];
     [button3 setImage:[UIImage imageNamed:@"ic_edit.png"] forState:UIControlStateNormal];
     [button3 addTarget:self action:@selector(onEditButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    [button3 setImageEdgeInsets:UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)];
+    [button3 setImageEdgeInsets:UIEdgeInsetsMake(0.0, insetVal, 0.0, insetVal)];
     self.editButton = [[UIBarButtonItem alloc] initWithCustomView:button3];
     
-    UIButton *button4 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 48.0, 48.0)];
+    UIButton *button4 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, targetWidth, 32.0)];
     [button4 setImage:[UIImage imageNamed:@"ic_record.png"] forState:UIControlStateNormal];
     [button4 addTarget:self action:@selector(onRecordButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    [button4 setImageEdgeInsets:UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)];
+    [button4 setImageEdgeInsets:UIEdgeInsetsMake(0.0, insetVal, 0.0, insetVal)];
     self.recordButton = [[UIBarButtonItem alloc] initWithCustomView:button4];
     
-    UIButton *button5 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 48.0, 48.0)];
+    UIButton *button5 = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, targetWidth, 32.0)];
     [button5 setImage:[UIImage imageNamed:@"ic_selectimage.png"] forState:UIControlStateNormal];
     [button5 addTarget:self action:@selector(onSelectPhotoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    [button5 setImageEdgeInsets:UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)];
+    [button5 setImageEdgeInsets:UIEdgeInsetsMake(0.0, insetVal, 0.0, insetVal)];
     self.selectPhotoButton = [[UIBarButtonItem alloc] initWithCustomView:button5];
     
     NSArray *actionButtonItems = @[self.mainMenuButton, self.trashButton, self.editButton, self.recordButton, self.selectPhotoButton];
