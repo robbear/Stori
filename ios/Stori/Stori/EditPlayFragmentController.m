@@ -557,9 +557,7 @@
         [self enableControlsWhileRecordingOrPlaying:FALSE];
         [self.editPlayController.recordButton setEnabled:TRUE];
         [self setIsRecording:TRUE];
-#if NEVER
         [self.editPlayController.recordButton setImage:[UIImage imageNamed:@"ic_stoprecording.png"] forState:UIControlStateNormal];
-#endif
     }
 }
 
@@ -571,9 +569,7 @@
         [self setIsRecording:FALSE];
     }
     
-#if NEVER
     [self.editPlayController.recordButton setImage:[UIImage imageNamed:@"ic_record.png"] forState:UIControlStateNormal];
-#endif
     [self displayPlayStopControl];
     [self enableControlsWhileRecordingOrPlaying:TRUE];
 }

@@ -33,12 +33,12 @@ typedef enum EditPlayMode {
     <UIPageViewControllerDataSource, UIPageViewControllerDelegate, AmazonClientManagerGoogleAccountDelegate, AWSS3ProviderDelegate, UIAlertViewDelegate, StoriDownloadDelegate, PlayStoriNotifierDelegate, AsyncImageCopyDelegate>
 
 @property (strong, nonatomic) id<EditPlayControllerNavBarButtonDelegate> editPlayNavBarButtonDelegate;
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *selectPhotoButton;
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *recordButton;
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *editButton;
+@property (strong, nonatomic) IBOutlet UIButton *selectPhotoButton;
+@property (strong, nonatomic) IBOutlet UIButton *recordButton;
+@property (strong, nonatomic) IBOutlet UIButton *editButton;
+@property (strong, nonatomic) IBOutlet UIButton *mainMenuButton;
+@property (strong, nonatomic) IBOutlet UIButton *trashButton;
 @property (strong, nonatomic) IBOutlet UIImageView *editPlayImageView;
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *mainMenuButton;
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *trashButton;
 @property (nonatomic) EditPlayMode editPlayMode;
 @property (strong, nonatomic) UIPageViewController *pageViewController;
 @property (strong, nonatomic) SlideShareJSON *ssj;
