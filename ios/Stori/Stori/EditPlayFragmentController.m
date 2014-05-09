@@ -53,7 +53,6 @@
 - (void)stopPlaying;
 - (NSString *)getNewImageFileName;
 - (NSString *)getNewAudioFileName;
-- (void)enableControlsWhileRecordingOrPlaying:(BOOL)enabled;
 - (void)initiateReorder;
 - (void)asyncAutoPlay;
 - (void)imageTapDetected;
@@ -228,6 +227,9 @@
 }
 
 - (void)onNavBarMainMenuButtonClicked {
+    [self stopPlaying];
+    [self stopRecording];
+    
     UIActionSheet *popup = [[UIActionSheet alloc]
                             initWithTitle:NSLocalizedString(@"menu_editplay_title", nil)
                             delegate:self
@@ -268,6 +270,8 @@
 }
 
 - (IBAction)onPlayStopButtonClicked:(id)sender {
+    [self stopRecording];
+    
     if (![self hasAudio]) {
         return;
     }
@@ -281,6 +285,8 @@
 }
 
 - (void)onNavBarRecordingButtonClicked {
+    [self stopPlaying];
+    
     if (self.isRecording) {
         [self stopRecording];
     }
@@ -301,6 +307,8 @@
 }
 
 - (IBAction)onLeftArrowButtonClicked:(id)sender {
+    [self stopRecording];
+    
     int position = [self.editPlayController getSlidePosition:self.slideUuid];
     
     position--;
@@ -314,6 +322,8 @@
 }
 
 - (IBAction)onRightArrowButtonClicked:(id)sender {
+    [self stopRecording];
+    
     int position = [self.editPlayController getSlidePosition:self.slideUuid];
     int count = [self.editPlayController getSlideCount];
     
@@ -328,16 +338,25 @@
 }
 
 - (IBAction)onInsertBeforeButtonClicked:(id)sender {
+    [self stopRecording];
+    [self stopPlaying];
+    
     int selectedPosition = self.editPlayController.currentSlideIndex;
     [self.editPlayController addSlide:selectedPosition];
 }
      
 - (IBAction)onInsertAfterButtonClicked:(id)sender {
+    [self stopRecording];
+    [self stopPlaying];
+    
     int selectedPosition = self.editPlayController.currentSlideIndex;
     [self.editPlayController addSlide:selectedPosition + 1];
 }
      
 - (void)onNavBarEditButtonClicked {
+    [self stopRecording];
+    [self stopPlaying];
+    
     UIActionSheet *popup = [[UIActionSheet alloc]
                             initWithTitle:NSLocalizedString(@"menu_editplay_edit_title", nil)
                             delegate:self
@@ -357,6 +376,9 @@
 }
 
 - (void)onNavBarTrashButtonClicked {
+    [self stopRecording];
+    [self stopPlaying];
+    
     UIActionSheet *popup = [[UIActionSheet alloc]
                             initWithTitle:NSLocalizedString(@"menu_editplay_trash_title", nil)
                             delegate:self
@@ -415,6 +437,9 @@
 }
 
 - (void)onNavBarSelectPhotoButtonClicked {
+    [self stopRecording];
+    [self stopPlaying];
+    
     if (self.editPlayController.editPlayMode == editPlayModeEdit) {
         UIActionSheet *popup = [[UIActionSheet alloc]
                                 initWithTitle:NSLocalizedString(@"menu_editplay_image_title", nil)
@@ -486,27 +511,6 @@
     return (self.slideText != nil && ([self.slideText length] > 0));
 }
 
-- (void)enableControlsWhileRecordingOrPlaying:(BOOL)enabled {
-    HFLogDebug(@"EditPlayFragmentController.enableControlsWhileRecordingOrPlaying: %d", enabled);
-
-    [self.playStopButton setEnabled:enabled];
-    [self.editPlayController.recordButton setEnabled:enabled];
-    [self.editPlayController.selectPhotoButton setEnabled:enabled];
-    [self.editPlayController.mainMenuButton setEnabled:enabled];
-    [self.insertAfterButton setEnabled:enabled];
-    [self.insertBeforeButton setEnabled:enabled];
-    [self.editPlayController.trashButton setEnabled:enabled];
-    [self.editPlayController.editButton setEnabled:enabled];
-    
-    if (!self.isPlaying && !enabled) {
-        [self.leftArrowButton setEnabled:enabled];
-        [self.rightArrowButton setEnabled:enabled];
-    }
-    if (self.isPlaying && (self.editPlayController.editPlayMode != editPlayModeEdit)) {
-        [self.editPlayController.selectPhotoButton setEnabled:TRUE];
-    }
-}
-
 - (void)initiateReorder {
     NSString *title = [NSString stringWithFormat:NSLocalizedString(@"editplay_reorder_title_format", nil), [self.editPlayController currentSlideIndex] + 1];
     UIActionSheet *popup = [[UIActionSheet alloc]
@@ -554,8 +558,6 @@
     
     BOOL success = [self.audioRecorder record];
     if (success) {
-        [self enableControlsWhileRecordingOrPlaying:FALSE];
-        [self.editPlayController.recordButton setEnabled:TRUE];
         [self setIsRecording:TRUE];
         [self.editPlayController.recordButton setImage:[UIImage imageNamed:@"ic_stoprecording.png"] forState:UIControlStateNormal];
     }
@@ -571,7 +573,6 @@
     
     [self.editPlayController.recordButton setImage:[UIImage imageNamed:@"ic_record.png"] forState:UIControlStateNormal];
     [self displayPlayStopControl];
-    [self enableControlsWhileRecordingOrPlaying:TRUE];
 }
 
 - (NSString *)getNewImageFileName {
@@ -597,8 +598,6 @@
     self.isPlaying = TRUE;
     [self.audioPlayer play];
     
-    [self enableControlsWhileRecordingOrPlaying:FALSE];
-    [self.playStopButton setEnabled:TRUE];
     [self.playStopButton setImage:[UIImage imageNamed:@"ic_stopplaying.png"] forState:UIControlStateNormal];
 }
 
@@ -606,7 +605,6 @@
     [self.audioPlayer stop];
     self.audioPlayer = nil;
     [self.playStopButton setImage:[UIImage imageNamed:@"ic_play.png"] forState:UIControlStateNormal];
-    [self enableControlsWhileRecordingOrPlaying:TRUE];
     self.isPlaying = FALSE;
 }
 
