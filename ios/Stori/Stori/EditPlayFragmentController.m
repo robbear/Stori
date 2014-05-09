@@ -14,6 +14,8 @@
 #import "STOPreferences.h"
 #import "UIImage+Resize.h"
 
+#define HIDE_LEFTRIGHTARROW_BUTTONS
+
 #define ALERTVIEW_DIALOG_SLIDETEXT 1
 #define ALERTVIEW_DIALOG_STORITITLE 2
 #define ALERTVIEW_DIALOG_OVERWRITE_AUDIO 3
@@ -73,6 +75,13 @@
     HFLogDebug(@"EditPlayFragmentController.viewDidLoad");
     
     [super viewDidLoad];
+    
+#ifdef HIDE_LEFTRIGHTARROW_BUTTONS
+    // BUGBUG - May eliminate left/right arrow navigation altogether.
+    // Hide them for now, to temporarily remove them from user access.
+    self.leftArrowButton.hidden = YES;
+    self.rightArrowButton.hidden = YES;
+#endif
     
     self.imageTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapDetected)];
     self.imageTapRecognizer.numberOfTapsRequired = 1;
@@ -900,16 +909,19 @@
 
 - (void)displayNextPrevControls {
     int count = [self.editPlayController getSlideCount];
+#ifndef HIDE_LEFTRIGHTARROW_BUTTONS
     int position = [self.editPlayController getSlidePosition:self.slideUuid];
+#endif
 
     if (self.editPlayController.editPlayMode == editPlayModeEdit) {
         [self.insertBeforeButton setHidden:(count >= MAX_SLIDES_PER_STORI_FOR_FREE)];
         [self.insertAfterButton setHidden:(count >= MAX_SLIDES_PER_STORI_FOR_FREE)];
     }
 
+#ifndef HIDE_LEFTRIGHTARROW_BUTTONS
     [self.leftArrowButton setHidden:(position <= 0)];
     [self.rightArrowButton setHidden:(position >= count - 1)];
-    
+#endif
 }
 
 - (void)renderImage {
