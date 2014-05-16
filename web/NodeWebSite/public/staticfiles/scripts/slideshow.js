@@ -65,8 +65,7 @@ var slideShow = (function() {
             if ((currentTime - nowTime) < 1100) {
                 var message = "For the best experience, install the Stori application.\n\nYou can view this Stori in your browser by canceling this dialog and any other warning dialogs.\n\nDo you want to download Stori now?";
                 if (confirm(message)) {
-                    // BUGBUG - replace with iTunes store link
-                    document.location = 'http://stori-app.com';
+                    document.location = 'https://itunes.apple.com/us/app/stori-for-ios/id871325281';
                 }
                 else {
                     _initializePage();
