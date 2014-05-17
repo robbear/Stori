@@ -83,7 +83,7 @@
 "settings_about_subtitle_format" = "Build: %1$@";
 "settings_navbutton_title" = "Settings";
 "share_dialog_title" = "Share this Stori";
-"share_email_body_format" = "I want to share a %1$@ with you! To view \"%2$@\", click on %3$@ or paste the address into your browser.\n\n\"Every Stori tells a picture!\"\n\nStori for Android: %4$@";
+"share_email_body_format" = "I want to share a %1$@ with you! To view \"%2$@\", click on %3$@ or paste the address into your browser.\n\n\"Every Stori tells a picture!\"\n\nGet the Stori app at http://stori-app.com";
 "share_email_subject_format" = "You have a new %1$@ to view: \"%2$@\"";
 "slide_position_format" = "%1$d of %2$d";
 "storilist_navbutton_title" = "My Storis";

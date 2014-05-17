@@ -71,7 +71,7 @@
     <string name="settings_switchaccount">Switch account</string>
     <string name="settings_currentaccount_format">Current: %1$s</string>
     <string name="share_dialog_title">Share this show</string>
-    <string name="share_email_body_format">I want to share a %1$s with you! To view \"%2$s\", click on %3$s or paste the address into your browser.\n\n\"Every Stori tells a picture!\"\n\nStori for Android: %4$s</string>
+    <string name="share_email_body_format">I want to share a %1$s with you! To view \"%2$s\", click on %3$s or paste the address into your browser.\n\n\"Every Stori tells a picture!\"\n\nGet the Stori app at http://stori-app.com</string>
     <string name="share_email_subject_format">You have a new %1$s to view: \"%2$s\"</string>
     <string name="slide_position_format">%1$d of %2$d</string>
     <string name="storilistactivity_actionbar">My Storis</string>

@@ -188,8 +188,7 @@
     
     NSString *appName = NSLocalizedString(@"app_name", nil);
     NSString *urlString = [STOUtilities buildShowWebPageUrlString:userUuid withSlideShareName:slideShareName];
-    NSString *marketUrl = NSLocalizedString(@"google_play_market_link", nil);
-    NSString *message = [NSString stringWithFormat:NSLocalizedString(@"share_email_body_format", nil), appName, title, urlString, marketUrl];
+    NSString *message = [NSString stringWithFormat:NSLocalizedString(@"share_email_body_format", nil), appName, title, urlString];
     NSString *subject = [NSString stringWithFormat:NSLocalizedString(@"share_email_subject_format", nil), appName, title];
     
     UIActivityViewController *shareController = [[UIActivityViewController alloc] initWithActivityItems:@[message] applicationActivities:nil];
