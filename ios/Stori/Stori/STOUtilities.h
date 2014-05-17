@@ -11,7 +11,6 @@
 #import "SlideShareJSON.h"
 
 @interface STOUtilities : NSObject
-
 + (NSURL *)getRootFilesDirectory;
 + (NSURL *)getAbsoluteFilePathWithFolder:(NSString *)folder withFileName:(NSString *)fileName;
 + (NSURL *)createOrGetSlideShareDirectory:(NSString *)slideShareName;
@@ -28,5 +27,5 @@
 + (void)configureAudioSession;
 + (BOOL)parseSharedStoriUrl:(NSURL *)url returningUserId:(NSString **)userUuid returningStori:(NSString **)slideShareName;
 + (NSString *)limitStringWithEllipses:(NSString *)string toNumChars:(int)numChars;
-
++ (BOOL)isHeadsetPluggedIn;
 @end

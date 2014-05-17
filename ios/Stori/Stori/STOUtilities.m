@@ -196,10 +196,23 @@
     [viewController presentViewController:shareController animated:TRUE completion:nil];
 }
 
++ (BOOL)isHeadsetPluggedIn {
+    AVAudioSessionRouteDescription *route = [[AVAudioSession sharedInstance] currentRoute];
+    for (AVAudioSessionPortDescription *desc in [route outputs]) {
+        if ([[desc portType] isEqualToString:AVAudioSessionPortHeadphones]) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
 + (void)configureAudioSession {
     AVAudioSession *session = [AVAudioSession sharedInstance];
     [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
-    [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+    if (![STOUtilities isHeadsetPluggedIn]) {
+        [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+    }
     [session setActive:TRUE error:nil];
 }
 

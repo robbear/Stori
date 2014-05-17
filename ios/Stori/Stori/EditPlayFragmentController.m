@@ -131,13 +131,6 @@
     self.editPlayController.editPlayNavBarButtonDelegate = self;
 }
 
-- (void)configureAudioSession {
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
-    [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
-    [session setActive:TRUE error:nil];
-}
-
 - (void)didReceiveMemoryWarning {
     HFLogDebug(@"EditPlayFragmentController.didReceiveMemoryWarning");
     
@@ -602,6 +595,7 @@
     NSURL *folderDirectory = [STOUtilities createOrGetSlideShareDirectory:self.slideSharename];
     NSURL *fileURL = [folderDirectory URLByAppendingPathComponent:self.audioFileName];
     
+    [STOUtilities configureAudioSession];
     self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:nil];
     self.audioPlayer.delegate = self;
     self.isPlaying = TRUE;
@@ -628,6 +622,18 @@
     [self stopRecording];
 }
 
+- (void)audioRecorderBeginInterruption:(AVAudioRecorder *)recorder {
+    HFLogDebug(@"EditPlayFragmentController.audioRecorderBeginInterruption");
+    
+    [self setIsRecording:FALSE];
+    [self stopRecording];
+}
+
+- (void)audioRecorderEndInterruption:(AVAudioRecorder *)recorder withOptions:(NSUInteger)flags {
+    HFLogDebug(@"EditPlayFragmentController.audioRecorderEndInterruption");
+}
+
+
 //
 // AVAudioPlayerDelegate methods
 //
@@ -635,6 +641,16 @@
     HFLogDebug(@"EditPlayFragmentController.audioPlayerDidFinishPlaying:successfully:%d", flag);
     
     [self stopPlaying];
+}
+
+- (void)audioPlayerBeginInterruption:(AVAudioPlayer *)player {
+    HFLogDebug(@"EditPlayFragmentController.audioPlayerBeginInterruption");
+    
+    [self stopPlaying];
+}
+
+- (void)audioPlayerEndInterruption:(AVAudioPlayer *)player {
+    HFLogDebug(@"EditPlayFragmentController.audioPlayerEndInterruption");
 }
 
 //

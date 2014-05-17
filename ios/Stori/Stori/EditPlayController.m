@@ -142,7 +142,7 @@ bool _userNeedsAuthentication = TRUE;
     HFLogDebug(@"EditPlayController.viewDidLoad");
     
     [super viewDidLoad];
-    
+
     // Create NavBar buttons
     [self constructNavBarView];
     // End create NavBar buttons

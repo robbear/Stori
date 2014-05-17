@@ -22,9 +22,6 @@
     // Initialize user preference defaults
     [STOPreferences initializeDefaults];
     
-    // Set up the audio session
-    [STOUtilities configureAudioSession];
-    
     // Override point for customization after application launch.
     return YES;
 }
@@ -58,6 +55,9 @@
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     
     HFLogDebug(@"AppDelegate.applicationDidBecomeActive");
+
+    // Set up the audio session
+    [STOUtilities configureAudioSession];    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
