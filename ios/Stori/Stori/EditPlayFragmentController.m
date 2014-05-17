@@ -59,6 +59,7 @@
 - (void)asyncAutoPlay;
 - (void)imageTapDetected;
 - (void)overlayTapDetected;
+- (void)showNavAndStatusBar:(BOOL)show;
 @end
 
 @implementation EditPlayFragmentController
@@ -198,6 +199,11 @@
     [self stopRecording];
 }
 
+- (void)showNavAndStatusBar:(BOOL)show {
+    [self.navigationController setNavigationBarHidden:!show animated:TRUE];
+    [[UIApplication sharedApplication] setStatusBarHidden:!show withAnimation:UIStatusBarAnimationSlide];
+}
+
 - (void)imageTapDetected {
     HFLogDebug(@"EditPlayFragmentController.imageTapDetected");
 
@@ -205,8 +211,7 @@
         return;
     }
     
-    [self.navigationController setNavigationBarHidden:FALSE animated:TRUE];
-    [[UIApplication sharedApplication] setStatusBarHidden:FALSE withAnimation:UIStatusBarAnimationSlide];
+    [self showNavAndStatusBar:TRUE];
     self.editPlayController.shouldDisplayOverlay = TRUE;
     [self displayOverlay];
 }
@@ -218,8 +223,7 @@
         return;
     }
 
-    [self.navigationController setNavigationBarHidden:TRUE animated:TRUE];
-    [[UIApplication sharedApplication] setStatusBarHidden:TRUE withAnimation:UIStatusBarAnimationSlide];
+    [self showNavAndStatusBar:FALSE];
     self.editPlayController.shouldDisplayOverlay = FALSE;
     [self displayOverlay];
 }

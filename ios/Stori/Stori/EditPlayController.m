@@ -149,8 +149,6 @@ bool _userNeedsAuthentication = TRUE;
     
     self.extendedLayoutIncludesOpaqueBars = TRUE;
     
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    
     // At startup, take the opportunity to clean up our data folder
     // in case we've erred our way to leaving junk directories around.
     [STOUtilities deleteUnusedDirectories];
@@ -199,6 +197,7 @@ bool _userNeedsAuthentication = TRUE;
     [super viewDidAppear:animated];
     
     // Ensure NavBar and Status Bar are showing
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     [self.navigationController setNavigationBarHidden:FALSE animated:TRUE];
     [[UIApplication sharedApplication] setStatusBarHidden:FALSE withAnimation:UIStatusBarAnimationSlide];
     
