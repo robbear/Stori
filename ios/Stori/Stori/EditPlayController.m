@@ -198,6 +198,10 @@ bool _userNeedsAuthentication = TRUE;
     
     [super viewDidAppear:animated];
     
+    // Ensure NavBar and Status Bar are showing
+    [self.navigationController setNavigationBarHidden:FALSE animated:TRUE];
+    [[UIApplication sharedApplication] setStatusBarHidden:FALSE withAnimation:UIStatusBarAnimationSlide];
+    
     if (self.editPlayMode != editPlayModeEdit) {
         HFLogDebug(@"EditPlayController.viewDidAppear - in editPlayModePreview - skipping authentication");
         [self initializePageView];
