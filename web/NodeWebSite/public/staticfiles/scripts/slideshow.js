@@ -21,7 +21,7 @@ var slideShow = (function() {
     var m_audioPlaying = false;
     var m_supportsTouch = false;
     var m_isInternetExplorer = false;
-    var m_isIPhone = false;
+    var m_isIOS = false;
     var m_navControlClicked = false;
     var m_autoAudioCB = $('#autoplayaudio');
     var m_autoPlayAudio = true;
@@ -36,9 +36,23 @@ var slideShow = (function() {
         return (index >= 0);
     }
 
-    function isIPhone() {
+    function isIOS() {
         var index = navigator.userAgent.indexOf("iPhone");
-        return (index >= 0);
+        if (index >= 0) {
+            return true;
+        }
+
+        index = navigator.userAgent.indexOf("iPad");
+        if (index >= 0) {
+            return true;
+        }
+
+        index = navigator.userAgent.indexOf("iPod");
+        if (index >= 0) {
+            return true;
+        }
+
+        return false;
     }
 
     function supportsTouch() {
@@ -49,7 +63,7 @@ var slideShow = (function() {
         return (m_currentSlideIndex + 1) + " of " + m_slideCount;
     }
 
-    function rerouteToIPhoneApp() {
+    function rerouteToIOSApp() {
         var httpLocation = document.location.href;
         var newLocation = httpLocation.replace("http", "stori-app");
 
@@ -57,33 +71,17 @@ var slideShow = (function() {
         document.location = newLocation;
 
         setTimeout(function() {
-            var currentTime = new Date().getTime();
-
-            // Test:
-            //alert('currentTime = ' + currentTime + '\nnowTime = ' + nowTime + '\ncurrentTime - nowTime = ' + (currentTime - nowTime));
-
-            if ((currentTime - nowTime) < 1100) {
-                var message = "For the best experience, install the Stori application.\n\nYou can view this Stori in your browser by canceling this dialog and any other warning dialogs.\n\nDo you want to download Stori now?";
-                if (confirm(message)) {
-                    document.location = 'https://itunes.apple.com/us/app/stori-for-ios/id871325281';
-                }
-                else {
-                    _initializePage();
-                }
-            }
-            else {
-                _initializePage();
-            }
+            _initializePage();
         }, 1000);
     }
 
-    function _initializeForIPhone() {
+    function _initializeForIOS() {
         var currentLocation = document.location.href;
         hFLog.log("currentLocation gives " + currentLocation);
         var index = currentLocation.indexOf("stori-app:");
         var isAppUrl = (index == 0);
         if (!isAppUrl) {
-            rerouteToIPhoneApp();
+            rerouteToIOSApp();
         }
     }
 
@@ -96,8 +94,8 @@ var slideShow = (function() {
         m_isInternetExplorer = isInternetExplorer();
         hFLog.log("m_isInternetExplorer is " + m_isInternetExplorer);
 
-        m_isIPhone = isIPhone();
-        hFLog.log("m_isIPhone is " + m_isIPhone);
+        m_isIOS = isIOS();
+        hFLog.log("m_isIOS is " + m_isIOS);
 
         m_slidesjsDiv.on('click', _onImageClicked);
         m_playStopControl.on('click', _onPlayStopClicked);
@@ -446,8 +444,8 @@ var slideShow = (function() {
         initializePage: function(ssjUrl) {
             m_ssjUrl = ssjUrl;
 
-            if (isIPhone()) {
-                _initializeForIPhone();
+            if (isIOS()) {
+                _initializeForIOS();
             }
             else {
                 _initializePage();

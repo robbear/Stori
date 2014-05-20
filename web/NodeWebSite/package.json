@@ -12,7 +12,7 @@
 	"node-uuid": "1.4.0"
     },
     "engines": {
-	"node": "0.8.x"
+	"node": "0.10.x"
     },
     "scripts": {
 	"start": "node server.js"
