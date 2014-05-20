@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13C1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="ulo-VH-njV">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="ulo-VH-njV">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
@@ -20,10 +20,17 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="vcA-Mq-uX9">
+                                <rect key="frame" x="142" y="190" width="37" height="37"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="OFb-tI-0CN" firstAttribute="leading" secondItem="S2I-Dq-Efn" secondAttribute="leading" id="L4c-lL-HzJ"/>
+                            <constraint firstAttribute="centerY" secondItem="vcA-Mq-uX9" secondAttribute="centerY" id="lMO-wD-WLM"/>
+                            <constraint firstAttribute="centerX" secondItem="vcA-Mq-uX9" secondAttribute="centerX" id="pZG-7H-Dwi"/>
                             <constraint firstItem="3aR-A3-BJ8" firstAttribute="top" secondItem="OFb-tI-0CN" secondAttribute="bottom" id="qD9-5O-oJP"/>
                             <constraint firstAttribute="trailing" secondItem="OFb-tI-0CN" secondAttribute="trailing" id="vla-EX-arI"/>
                             <constraint firstItem="OFb-tI-0CN" firstAttribute="top" secondItem="S2I-Dq-Efn" secondAttribute="top" id="wHn-Fb-4bz"/>

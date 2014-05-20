@@ -67,7 +67,7 @@ bool _userNeedsAuthentication = TRUE;
 
 - (void)onPlayRequestedForUserId:(NSString *)userUuid withStori:(NSString *)slideShareName {
     HFLogDebug(@"EditPlayController.onPlayRequestedForUserId:%@ withStori:%@", userUuid, slideShareName);
-
+    
     [[PlayStoriNotifier sharedInstance] reset];
 
     self.downloadIsForEdit = FALSE;
@@ -159,11 +159,6 @@ bool _userNeedsAuthentication = TRUE;
     }
     else {
         self.navigationItem.leftBarButtonItem = nil;
-#if NEVER
-        [self.recordButton setHidden:YES];
-        [self.editButton setHidden:YES];
-        [self.trashButton setHidden:YES];
-#endif
     }
 
     self.currentSlideIndex = 0;
@@ -211,10 +206,6 @@ bool _userNeedsAuthentication = TRUE;
     }
     
     if (_userNeedsAuthentication && !self.disconnectInProgress) {
-        self.progressHUD = [[HFProgressHUD alloc] initWithView:self.navigationController.view];
-        self.progressHUD.mode = MBProgressHUDModeIndeterminate;
-        [self.progressHUD show:TRUE];
-        
         //
         // Remember: Use the shared instance versions of AmazonClientManager and
         // GPPSignIn for the user-interactive sign in flow. See also LoginViewController.
@@ -693,9 +684,6 @@ bool _userNeedsAuthentication = TRUE;
 
 - (void)googleSignInComplete:(BOOL)success withError:(NSError *)error {
     HFLogDebug(@"EditPlayController.googleSignInComplete: success=%d, error=%@", success, error == nil ? @"nil" : error.description);
-    
-    [self.progressHUD hide:TRUE];
-    self.progressHUD = nil;
     
     _userNeedsAuthentication = !success;
     if (success) {
