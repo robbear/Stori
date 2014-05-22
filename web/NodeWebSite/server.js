@@ -13,6 +13,7 @@ var express = require('express'),
 // Routes
 var routes = [
     './controllers/index',      // /
+    './controllers/tips',       // /tips
     './controllers/slides',     // /:user/:slidesharename
     './controllers/version',    // /version
     './controllers/notfound',   // /notfound

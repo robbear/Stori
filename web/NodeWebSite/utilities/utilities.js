@@ -12,6 +12,10 @@ exports.initTemplates = function() {
     fs.readFile('views/layout.html', 'utf-8', function(err, layoutString) {
         exports.appTemplates.wrapper = hogan.compile(layoutString.toString('utf-8'));
     });
+
+    fs.readFile('views/slides_layout.html', 'utf-8', function(err, layoutString) {
+        exports.appTemplates.slides_wrapper = hogan.compile(layoutString.toString('utf-8'));
+    });
 };
 
 exports.sendResponse = function(res, data) {
@@ -27,6 +31,9 @@ exports.sendOutputHtml = function(master, req, res, headerContentPath, bodyConte
     var templateWrapper;
     if (!master || master == "root") {
         templateWrapper = exports.appTemplates.wrapper;
+    }
+    else if (master == "slides") {
+        templateWrapper = exports.appTemplates.slides_wrapper;
     }
 
     res.setHeader('Cache-Control', 'public,max-age=' + exports.cacheSeconds);

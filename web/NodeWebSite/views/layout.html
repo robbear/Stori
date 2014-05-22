@@ -1,32 +1,35 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/html">
 <head>
-    <meta name='viewport' content='width=device-width; initial-scale=1.0; maximum-scale=1.0;' />
-    <link media="screen and (min-width:600px)" href="/{{StaticFiles}}/styles/styles.css" rel="stylesheet" type="text/css" />
-    <link media='handheld, screen and (max-width:600px), screen and (max-device-width:600px)' href='/{{StaticFiles}}/styles/styles_small.css' rel='stylesheet' type='text/css' />
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 
     <title>{{PageTitle}}</title>
-
-    <script type="text/javascript" src="/{{StaticFiles}}/lib/modernizr/modernizr.custom.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="/{{StaticFiles}}/lib/jquery.slides.mod.js"></script>
-    <script type="text/javascript" src="/{{StaticFiles}}/lib/jQuery.jPlayer.2.4.0/jquery.jplayer.min.js"></script>
-    <script type="text/javascript" src="/{{StaticFiles}}/lib/URI.js"></script>
-    <script type="text/javascript" src="/{{StaticFiles}}/scripts/hflog.js"></script>
-    <script type="text/javascript" src="/{{StaticFiles}}/scripts/utilities.js"></script>
-
-    <script type="text/javascript">
-        hfUtilities.setVersionString("{{VersionString}}");
-    </script>
-
     {{> HeaderContent}}
 </head>
 <body>
     <div>
         {{> BodyContent}}
     </div>
+
+    <script type="text/javascript" src="/{{StaticFiles}}/lib/modernizr/modernizr.custom.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/{{StaticFiles}}/scripts/hflog.js"></script>
+    <script type="text/javascript" src="/{{StaticFiles}}/scripts/utilities.js"></script>
+
+    <script type="text/javascript">
+        hfUtilities.setVersionString("{{VersionString}}");
+    </script>
 
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
