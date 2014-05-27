@@ -62,6 +62,7 @@
 		50AA647418EB23B500C079F9 /* EditPlayFragmentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA647318EB23B500C079F9 /* EditPlayFragmentController.m */; };
 		50AA647718EB256A00C079F9 /* EditPlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA647618EB256A00C079F9 /* EditPlayController.m */; };
 		50BDE68418F8523600827141 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 50BDE68318F8523600827141 /* UIImage+Resize.m */; };
+		50CFE9851934F5BC000173C2 /* TapDetectingImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 50CFE9841934F5BC000173C2 /* TapDetectingImageView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -161,6 +162,8 @@
 		50AA647618EB256A00C079F9 /* EditPlayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditPlayController.m; sourceTree = "<group>"; };
 		50BDE68218F8523600827141 /* UIImage+Resize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Resize.h"; sourceTree = "<group>"; };
 		50BDE68318F8523600827141 /* UIImage+Resize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Resize.m"; sourceTree = "<group>"; };
+		50CFE9831934F5BC000173C2 /* TapDetectingImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TapDetectingImageView.h; sourceTree = "<group>"; };
+		50CFE9841934F5BC000173C2 /* TapDetectingImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TapDetectingImageView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -298,6 +301,8 @@
 				504ECCA818C8F70D00507582 /* STOUtilities.h */,
 				504ECCA918C8F70D00507582 /* STOUtilities.m */,
 				504ECC6518C245B900507582 /* Supporting Files */,
+				50CFE9831934F5BC000173C2 /* TapDetectingImageView.h */,
+				50CFE9841934F5BC000173C2 /* TapDetectingImageView.m */,
 				5048AB211905C8E7007F3167 /* TCBlobDownload.h */,
 				5048AB251905C9AA007F3167 /* TCBlobDownloader.h */,
 				5048AB261905C9AA007F3167 /* TCBlobDownloader.m */,
@@ -445,6 +450,7 @@
 			files = (
 				504ECC6F18C245B900507582 /* AppDelegate.m in Sources */,
 				503655CE18D8B8020014E574 /* NSString+STONSString.m in Sources */,
+				50CFE9851934F5BC000173C2 /* TapDetectingImageView.m in Sources */,
 				504ECC6B18C245B900507582 /* main.m in Sources */,
 				5048AB241905C926007F3167 /* TCBlobDownloadManager.m in Sources */,
 				504ECCE418D0BEC600507582 /* AmazonSharedPreferences.m in Sources */,
