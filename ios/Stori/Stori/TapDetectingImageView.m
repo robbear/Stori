@@ -28,11 +28,12 @@ CGPoint midpointBetweenPoints(CGPoint a, CGPoint b);
         self.twoFingerTapIsPossible = YES;
         self.multipleTouches = NO;
     }
-    
     return self;
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    HFLogDebug(@"TapDetectingImageView.touchesBegan");
+    
     // Cancel any pending handleSingleTap messages
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(handleSingleTap) object:nil];
     
@@ -46,6 +47,8 @@ CGPoint midpointBetweenPoints(CGPoint a, CGPoint b);
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    HFLogDebug(@"TapDetectingImageView.touchesEnded");
+
     BOOL allTouchesEnded = ([touches count] == [[event touchesForView:self] count]);
     
     // First check for plain single/double tap, which is possible only if we haven't seen multiple touches
@@ -111,23 +114,31 @@ CGPoint midpointBetweenPoints(CGPoint a, CGPoint b);
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+    HFLogDebug(@"TapDetectingImageView.touchesCancelled");
+
     self.twoFingerTapIsPossible = YES;
     self.multipleTouches = NO;
 }
 
 - (void)handleSingleTap {
+    HFLogDebug(@"TapDetectingImageView.handleSingleTap");
+
     if ([self.delegate respondsToSelector:@selector(tapDetectingImageView:gotSingleTapAtPoint:)]) {
         [self.delegate tapDetectingImageView:self gotSingleTapAtPoint:self.tapLocation];
     }
 }
 
 - (void)handleDoubleTap {
+    HFLogDebug(@"TapDetectingImageView.handleDoubleTap");
+    
     if ([self.delegate respondsToSelector:@selector(tapDetectingImageView:gotDoubleTapAtPoint:)]) {
         [self.delegate tapDetectingImageView:self gotDoubleTapAtPoint:self.tapLocation];
     }
 }
 
 - (void)handleTwoFingerTap {
+    HFLogDebug(@"TapDetectingImageView.handleTwoFingerTap");
+    
     if ([self.delegate respondsToSelector:@selector(tapDetectingImageView:gotTwoFingerTapAtPoint:)]) {
         [self.delegate tapDetectingImageView:self gotTwoFingerTapAtPoint:self.tapLocation];
     }

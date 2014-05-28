@@ -13,15 +13,15 @@
                         <viewControllerLayoutGuide type="bottom" id="3aR-A3-BJ8"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="S2I-Dq-Efn" userLabel="RootView">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="editplaycontroller" translatesAutoresizingMaskIntoConstraints="NO" id="OFb-tI-0CN" userLabel="StoriLoadImage">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="vcA-Mq-uX9">
-                                <rect key="frame" x="142" y="190" width="37" height="37"/>
+                                <rect key="frame" x="142" y="222" width="37" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </activityIndicatorView>
@@ -69,11 +69,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7mL-au-3OO">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rSO-0F-PXT">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                            </imageView>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </scrollView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="m0F-KF-H8T" userLabel="OverlayView">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -228,26 +227,26 @@
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstAttribute="width" secondItem="rSO-0F-PXT" secondAttribute="width" id="5ag-cw-Ph4"/>
                             <constraint firstAttribute="centerY" secondItem="m0F-KF-H8T" secondAttribute="centerY" id="955-ME-oWM"/>
-                            <constraint firstAttribute="width" secondItem="7mL-au-3OO" secondAttribute="width" id="DV7-Xb-l1d"/>
-                            <constraint firstAttribute="centerY" secondItem="7mL-au-3OO" secondAttribute="centerY" id="EAq-3Q-rrB"/>
+                            <constraint firstAttribute="height" secondItem="rSO-0F-PXT" secondAttribute="height" id="BEE-D9-Jrg"/>
+                            <constraint firstAttribute="centerX" secondItem="rSO-0F-PXT" secondAttribute="centerX" id="G6e-YA-WbP"/>
                             <constraint firstItem="m0F-KF-H8T" firstAttribute="height" secondItem="jDA-vX-wwQ" secondAttribute="height" id="KA2-ez-umt"/>
-                            <constraint firstAttribute="centerX" secondItem="7mL-au-3OO" secondAttribute="centerX" id="YUN-GP-1iy"/>
+                            <constraint firstAttribute="centerY" secondItem="rSO-0F-PXT" secondAttribute="centerY" id="YCd-0s-eh6"/>
                             <constraint firstAttribute="centerX" secondItem="m0F-KF-H8T" secondAttribute="centerX" id="mry-iJ-McM"/>
-                            <constraint firstAttribute="height" secondItem="7mL-au-3OO" secondAttribute="height" id="tGy-TZ-Kbc"/>
                             <constraint firstItem="m0F-KF-H8T" firstAttribute="width" secondItem="jDA-vX-wwQ" secondAttribute="width" id="xIm-U3-tPt"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="pig-gS-d4A"/>
                     <connections>
                         <outlet property="choosePictureLabel" destination="llb-dk-Fgi" id="Uad-hi-WWa"/>
-                        <outlet property="imageView" destination="7mL-au-3OO" id="oKT-Yg-t0d"/>
                         <outlet property="insertAfterButton" destination="Ukn-gB-P9w" id="Ftk-S8-iA1"/>
                         <outlet property="insertBeforeButton" destination="rvB-vG-L55" id="VAA-VY-qhi"/>
                         <outlet property="leftArrowButton" destination="bNL-lU-uBl" id="9x6-NX-Kbn"/>
                         <outlet property="overlayView" destination="m0F-KF-H8T" id="rlg-7s-zmk"/>
                         <outlet property="playStopButton" destination="Yi0-ve-Xxi" id="8WW-qk-AMJ"/>
                         <outlet property="rightArrowButton" destination="klP-01-X98" id="xC7-Xv-nTu"/>
+                        <outlet property="scrollView" destination="rSO-0F-PXT" id="Q6W-1R-r3h"/>
                         <outlet property="selectPhotoSecondaryButton" destination="1Dc-kE-Obg" id="pkI-Cf-q2l"/>
                         <outlet property="slidePositionLabel" destination="OT2-ax-jPm" id="igB-XU-lWi"/>
                         <outlet property="slideTextView" destination="st0-jY-kyp" id="ta7-U7-2er"/>
@@ -553,6 +552,6 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="xVj-Ah-sJp"/>
+        <segue reference="cPp-tX-X5H"/>
     </inferredMetricsTieBreakers>
 </document>

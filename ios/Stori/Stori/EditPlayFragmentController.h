@@ -10,9 +10,10 @@
 #import <AVFoundation/AVFoundation.h>
 #import "SlideJSON.h"
 #import "EditPlayController.h"
+#import "TapDetectingImageView.h"
 
 @interface EditPlayFragmentController : UIViewController
-    <UIActionSheetDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITextFieldDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate, EditPlayControllerNavBarButtonDelegate>
+    <UIActionSheetDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITextFieldDelegate, AVAudioRecorderDelegate, AVAudioPlayerDelegate, EditPlayControllerNavBarButtonDelegate, UIScrollViewDelegate, TapDetectingImageViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *insertBeforeButton;
 @property (weak, nonatomic) IBOutlet UIButton *insertAfterButton;
@@ -26,7 +27,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *choosePictureLabel;
 @property (weak, nonatomic) IBOutlet UIButton *selectPhotoSecondaryButton;
 
-@property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (strong, nonatomic) TapDetectingImageView *imageView;
 @property (strong, nonatomic) NSString *imageFileName;
 @property (strong, nonatomic) NSString *audioFileName;
 @property (strong, nonatomic) NSString *slideText;

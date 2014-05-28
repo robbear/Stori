@@ -16,6 +16,9 @@
 
 #define HIDE_LEFTRIGHTARROW_BUTTONS
 
+#define ZOOM_VIEW_TAG 100
+#define ZOOM_STEP 1.5
+
 #define ALERTVIEW_DIALOG_SLIDETEXT 1
 #define ALERTVIEW_DIALOG_STORITITLE 2
 #define ALERTVIEW_DIALOG_OVERWRITE_AUDIO 3
@@ -29,8 +32,8 @@
 @property (nonatomic) BOOL isPlaying;
 @property (nonatomic) BOOL cancelAsyncPlay;
 @property (nonatomic) UIImagePickerController *imagePickerController;
-@property (strong, nonatomic) UITapGestureRecognizer *imageTapRecognizer;
 @property (strong, nonatomic) UITapGestureRecognizer *overlayTapRecognizer;
+- (CGRect)zoomRectForScale:(float)scale withCenter:(CGPoint)center;
 - (void)deleteSlideData;
 - (BOOL)hasImage;
 - (BOOL)hasAudio;
@@ -84,10 +87,8 @@
     self.rightArrowButton.hidden = YES;
 #endif
     
-    self.imageTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapDetected)];
-    self.imageTapRecognizer.numberOfTapsRequired = 1;
-    self.imageView.userInteractionEnabled = YES;
-    [self.imageView addGestureRecognizer:self.imageTapRecognizer];
+    self.scrollView.delegate = self;
+    self.scrollView.bouncesZoom = YES;
     
     self.overlayTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(overlayTapDetected)];
     self.overlayView.userInteractionEnabled = YES;
@@ -130,6 +131,12 @@
     }
     
     self.editPlayController.editPlayNavBarButtonDelegate = self;
+}
+
+- (void)viewWillLayoutSubviews {
+    HFLogDebug(@"EditPlayFragmentController.viewWillLayoutSubviews");
+    
+    [self renderImage];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -891,6 +898,68 @@
     [self.editPlayController reorderCurrentSlideTo:slideIndex];
 }
 
+
+//
+// UIScrollViewDelegate methods
+//
+
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
+    //HFLogDebug(@"EditPlayFragmentController.viewForZoomingInScrollView");
+    
+    return [self.scrollView viewWithTag:ZOOM_VIEW_TAG];
+}
+
+- (void)scrollViewDidZoom:(UIScrollView *)scrollView {
+    // Center the image as it becomes smaller than the size of the screen
+    CGSize boundsSize = scrollView.bounds.size;
+    CGRect frameToCenter = self.imageView.frame;
+    
+    // Center horizontally
+    if (frameToCenter.size.width < boundsSize.width) {
+        frameToCenter.origin.x = (boundsSize.width - frameToCenter.size.width) / 2;
+    }
+    else {
+        frameToCenter.origin.x = 0;
+    }
+    
+    // Center vertically
+    if (frameToCenter.size.height < boundsSize.height) {
+        frameToCenter.origin.y = (boundsSize.height - frameToCenter.size.height) / 2;
+    }
+    else {
+        frameToCenter.origin.y = 0;
+    }
+    
+    self.imageView.frame = frameToCenter;
+}
+
+//
+// TabDetectingImageViewDelegate methods
+//
+
+- (void)tapDetectingImageView:(TapDetectingImageView *)view gotSingleTapAtPoint:(CGPoint)tapPoint {
+    HFLogDebug(@"EditPlayFragmentController.tapDetectingImageView:gotSingleTap");
+    [self imageTapDetected];
+}
+
+- (void)tapDetectingImageView:(TapDetectingImageView *)view gotDoubleTapAtPoint:(CGPoint)tapPoint {
+    HFLogDebug(@"EditPlayFragmentController.tapDetectingImageView:gotDoubleTap");
+
+    // Double tap zooms in
+    float newScale = [self.scrollView zoomScale] * ZOOM_STEP;
+    CGRect zoomRect = [self zoomRectForScale:newScale withCenter:tapPoint];
+    [self.scrollView zoomToRect:zoomRect animated:YES];
+}
+
+- (void)tapDetectingImageView:(TapDetectingImageView *)view gotTwoFingerTapAtPoint:(CGPoint)tapPoint {
+    HFLogDebug(@"EditPlayFragmentController.tapDetectingImageView:gotTwoFingerTap");
+
+    // Two-finger tap zooms out
+    float newScale = [self.scrollView zoomScale] / ZOOM_STEP;
+    CGRect zoomRect = [self zoomRectForScale:newScale withCenter:tapPoint];
+    [self.scrollView zoomToRect:zoomRect animated:YES];
+}
+
 - (void)displayOverlay {
     [self.overlayView setHidden:!self.editPlayController.shouldDisplayOverlay];
 }
@@ -947,7 +1016,41 @@
 - (void)renderImage {
     NSURL *fileURL = [STOUtilities getAbsoluteFilePathWithFolder:self.slideSharename withFileName:self.imageFileName];
     UIImage *image = [UIImage imageWithContentsOfFile:[fileURL path]];
-    [self.imageView setImage:image];
+    
+    if (self.imageView) {
+        [self.imageView removeFromSuperview];
+        self.imageView = nil;
+    }
+    
+    self.imageView = [[TapDetectingImageView alloc] initWithImage:image];
+    self.imageView.delegate = self;
+    self.imageView.tag = ZOOM_VIEW_TAG;
+    [self.scrollView setContentSize:[self.imageView frame].size];
+    [self.scrollView addSubview:self.imageView];
+    
+    // Calculate minimum scale to perfectly fit image width, and begin at that scale
+    float minimumScale = [self.scrollView frame].size.width / [self.imageView frame].size.width;
+    
+    [self.scrollView setMinimumZoomScale:minimumScale];
+    [self.scrollView setZoomScale:minimumScale];
+    
+    [self scrollViewDidZoom:self.scrollView];
+}
+
+- (CGRect)zoomRectForScale:(float)scale withCenter:(CGPoint)center {
+    CGRect zoomRect;
+    
+    // The zoom rect is in the content view's coordinates.
+    // At a zoom scale of 1.0, it would be the size of the scrollView's bounds.
+    // As the zoom scale decreases, so more content is visible, the size of the rect grows.
+    zoomRect.size.height = [self.scrollView frame].size.height / scale;
+    zoomRect.size.width = [self.scrollView frame].size.width / scale;
+    
+    // Choose an origin so as to get the right center
+    zoomRect.origin.x = center.x - (zoomRect.size.width / 2.0);
+    zoomRect.origin.y = center.y - (zoomRect.size.height / 2.0);
+    
+    return zoomRect;
 }
 
 @end
