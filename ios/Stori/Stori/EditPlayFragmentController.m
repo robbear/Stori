@@ -33,6 +33,7 @@
 @property (nonatomic) BOOL cancelAsyncPlay;
 @property (nonatomic) UIImagePickerController *imagePickerController;
 @property (strong, nonatomic) UITapGestureRecognizer *overlayTapRecognizer;
+@property (nonatomic) float currentZoomScale;
 - (CGRect)zoomRectForScale:(float)scale withCenter:(CGPoint)center;
 - (void)deleteSlideData;
 - (BOOL)hasImage;
@@ -63,6 +64,8 @@
 - (void)imageTapDetected;
 - (void)overlayTapDetected;
 - (void)showNavAndStatusBar:(BOOL)show;
+- (void)centerScaledImageInScrollView:(UIScrollView *)scrollView;
+- (void)adjustScrollViewFrame;
 @end
 
 @implementation EditPlayFragmentController
@@ -79,6 +82,8 @@
     HFLogDebug(@"EditPlayFragmentController.viewDidLoad");
     
     [super viewDidLoad];
+    
+    self.currentZoomScale = -1.0;
     
 #ifdef HIDE_LEFTRIGHTARROW_BUTTONS
     // BUGBUG - May eliminate left/right arrow navigation altogether.
@@ -136,6 +141,7 @@
 - (void)viewWillLayoutSubviews {
     HFLogDebug(@"EditPlayFragmentController.viewWillLayoutSubviews");
     
+    [self adjustScrollViewFrame];
     [self renderImage];
 }
 
@@ -144,6 +150,14 @@
     
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    HFLogDebug(@"EditPlayFragmentController.viewWillDisappear");
+    
+    [super viewWillDisappear:animated];
+    
+    [self stopPlaying];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -204,6 +218,7 @@
     self.cancelAsyncPlay = TRUE;
     [self stopPlaying];
     [self stopRecording];
+    self.currentZoomScale = -1.0;
 }
 
 - (void)showNavAndStatusBar:(BOOL)show {
@@ -597,6 +612,8 @@
 }
 
 - (void)startPlaying {
+    HFLogDebug(@"EditPlayFragmentController.startPlaying");
+    
     if (self.cancelAsyncPlay) {
         HFLogDebug(@"EditPlayFragmentController.startPlaying - cancelAsyncPlay is TRUE, so bailing");
         self.cancelAsyncPlay = FALSE;
@@ -616,6 +633,7 @@
 }
 
 - (void)stopPlaying {
+    HFLogDebug(@"EditPlayFragmentController.stopPlaying");
     [self.audioPlayer stop];
     self.audioPlayer = nil;
     [self.playStopButton setImage:[UIImage imageNamed:@"ic_play.png"] forState:UIControlStateNormal];
@@ -905,11 +923,19 @@
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     //HFLogDebug(@"EditPlayFragmentController.viewForZoomingInScrollView");
-    
+
     return [self.scrollView viewWithTag:ZOOM_VIEW_TAG];
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView {
+    //HFLogDebug(@"EditPlayFragmentController.scrollViewDidZoom");
+    
+    self.currentZoomScale = scrollView.zoomScale;
+    
+    [self centerScaledImageInScrollView:scrollView];
+}
+
+- (void)centerScaledImageInScrollView:(UIScrollView *)scrollView {
     // Center the image as it becomes smaller than the size of the screen
     CGSize boundsSize = scrollView.bounds.size;
     CGRect frameToCenter = self.imageView.frame;
@@ -943,16 +969,24 @@
 }
 
 - (void)tapDetectingImageView:(TapDetectingImageView *)view gotDoubleTapAtPoint:(CGPoint)tapPoint {
-    HFLogDebug(@"EditPlayFragmentController.tapDetectingImageView:gotDoubleTap");
+    HFLogDebug(@"EditPlayFragmentController.tapDetectingImageView:gotDoubleTap: zoomScale=%f", [self.scrollView zoomScale]);
 
-    // Double tap zooms in
-    float newScale = [self.scrollView zoomScale] * ZOOM_STEP;
-    CGRect zoomRect = [self zoomRectForScale:newScale withCenter:tapPoint];
+    CGRect zoomRect;
+    if (self.scrollView.zoomScale == 1.0) {
+        zoomRect = [self zoomRectForScale:self.scrollView.minimumZoomScale withCenter:tapPoint];
+    }
+    else {
+        zoomRect = [self zoomRectForScale:1.0 withCenter:tapPoint];
+    }
+
     [self.scrollView zoomToRect:zoomRect animated:YES];
 }
 
 - (void)tapDetectingImageView:(TapDetectingImageView *)view gotTwoFingerTapAtPoint:(CGPoint)tapPoint {
     HFLogDebug(@"EditPlayFragmentController.tapDetectingImageView:gotTwoFingerTap");
+    
+    // Do nothing
+    return;
 
     // Two-finger tap zooms out
     float newScale = [self.scrollView zoomScale] / ZOOM_STEP;
@@ -1013,28 +1047,59 @@
 #endif
 }
 
+- (void)adjustScrollViewFrame {
+    CGRect frame = [[UIScreen mainScreen] applicationFrame];
+    frame.size.width = frame.origin.x + frame.size.width;
+    frame.size.height = frame.origin.y + frame.size.height;
+    frame.origin.x = 0.0;
+    frame.origin.y = 0.0;
+    if (UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation])) {
+        frame = CGRectMake(0, 0, frame.size.height, frame.size.width);
+    }
+    self.scrollView.frame = frame;
+}
+
 - (void)renderImage {
+    HFLogDebug(@"EditPlayFragmentController.renderImage");
+    
+    [self.imageView removeFromSuperview];
+    self.imageView.delegate = nil;
+    self.imageView = nil;
+    
     NSURL *fileURL = [STOUtilities getAbsoluteFilePathWithFolder:self.slideSharename withFileName:self.imageFileName];
     UIImage *image = [UIImage imageWithContentsOfFile:[fileURL path]];
     
-    if (self.imageView) {
-        [self.imageView removeFromSuperview];
-        self.imageView = nil;
+    if (!image) {
+        return;
     }
     
+    [self adjustScrollViewFrame];
+        
     self.imageView = [[TapDetectingImageView alloc] initWithImage:image];
     self.imageView.delegate = self;
     self.imageView.tag = ZOOM_VIEW_TAG;
     [self.scrollView setContentSize:[self.imageView frame].size];
     [self.scrollView addSubview:self.imageView];
-    
+
     // Calculate minimum scale to perfectly fit image width, and begin at that scale
-    float minimumScale = [self.scrollView frame].size.width / [self.imageView frame].size.width;
+    float minimumZoomScale;
     
-    [self.scrollView setMinimumZoomScale:minimumScale];
-    [self.scrollView setZoomScale:minimumScale];
+    if (UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation])) {
+        minimumZoomScale = [self.scrollView frame].size.height / [self.imageView frame].size.height;
+    }
+    else {
+        minimumZoomScale = [self.scrollView frame].size.width / [self.imageView frame].size.width;
+    }
+    if (self.currentZoomScale < 0.0) {
+        self.currentZoomScale = minimumZoomScale;
+    }
     
-    [self scrollViewDidZoom:self.scrollView];
+    [self.scrollView setMinimumZoomScale:minimumZoomScale];
+    [self.scrollView setZoomScale:self.currentZoomScale];
+    
+    if (minimumZoomScale == self.currentZoomScale) {
+        [self centerScaledImageInScrollView:self.scrollView];
+    }
 }
 
 - (CGRect)zoomRectForScale:(float)scale withCenter:(CGPoint)center {
