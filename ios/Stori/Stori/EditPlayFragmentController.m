@@ -125,7 +125,7 @@
     
     if (self.editPlayController.editPlayMode != editPlayModeEdit) {
         int slideIndex = [self.editPlayController getSlidePosition:self.slideUuid];
-        if (slideIndex == self.editPlayController.currentSlideIndex) {
+        if (slideIndex == self.editPlayController.currentSlideIndex && !self.isPlaying) {
             [self asyncAutoPlay];
         }
     }
@@ -186,8 +186,8 @@
     }
 }
 
-- (void)onEditPlayFragmentWillBeSelected {
-    HFLogAlert(@"EditPlayFragmentController.onEditPlayFragmentWillBeSelected");
+- (void)onEditPlayFragmentSelected {
+    HFLogAlert(@"EditPlayFragmentController.onEditPlayFragmentSelected");
     
     [self displaySlideTitleAndPosition];
     [self displayNextPrevControls];
@@ -198,8 +198,8 @@
     [self asyncAutoPlay];
 }
 
-- (void)onEditPlayFragmentWillBeDeselected {
-    HFLogDebug(@"EditPlayFragmentController.onEditPlayFragmentWillBeDeselected");
+- (void)onEditPlayFragmentDeselected {
+    HFLogDebug(@"EditPlayFragmentController.onEditPlayFragmentDeselected");
     
     self.cancelAsyncPlay = TRUE;
     [self stopPlaying];

@@ -32,6 +32,7 @@
 @property (nonatomic) BOOL downloadIsForEdit;
 @property (strong, nonatomic) StoriDownload *storiDownload;
 @property (strong, nonatomic) AsyncImageCopy *asyncImageCopy;
+@property (strong, nonatomic) EditPlayFragmentController *editPlayFragmentControllerToBeSelected;
 
 - (EditPlayFragmentController *)viewControllerAtIndex:(NSUInteger)index;
 - (void)initiateGoogleSignIn:(BOOL)useErrorMessage;
@@ -914,22 +915,31 @@ bool _userNeedsAuthentication = TRUE;
 
 - (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed {
     HFLogDebug(@"EditPlayController:pageViewController:didFinishAnimating:transitionCompleted:%d", completed);
+    
+    if (!completed) {
+        return;
+    }
 
     self.currentSlideIndex = self.pendingSlideIndex;
     HFLogDebug(@"EditPlayController.pageViewController:didFinishAnimating - currentSlideIndex=%d", self.currentSlideIndex);
     
     EditPlayFragmentController *epfc = (EditPlayFragmentController *)previousViewControllers[0];
-    [epfc onEditPlayFragmentWillBeDeselected];
+    [epfc onEditPlayFragmentDeselected];
+    
+    [self.editPlayFragmentControllerToBeSelected onEditPlayFragmentSelected];
+    self.editPlayFragmentControllerToBeSelected = nil;
 }
 
 - (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers {
     HFLogDebug(@"EditPlayController.willTransitionToControllers");
 
-    EditPlayFragmentController *epfc = (EditPlayFragmentController *)pendingViewControllers[0];
-    NSString *slideUuid = epfc.slideUuid;
-    self.pendingSlideIndex = [self.ssj getOrderIndexForSlide:slideUuid];
+    if (self.editPlayFragmentControllerToBeSelected) {
+        self.editPlayFragmentControllerToBeSelected = nil;
+    }
     
-    [epfc onEditPlayFragmentWillBeSelected];
+    self.editPlayFragmentControllerToBeSelected = (EditPlayFragmentController *)pendingViewControllers[0];
+    NSString *slideUuid = self.editPlayFragmentControllerToBeSelected.slideUuid;
+    self.pendingSlideIndex = [self.ssj getOrderIndexForSlide:slideUuid];
     
     HFLogDebug(@"EditPlayController.willTransitionToControllers: pendingSlideIndex=%d", self.pendingSlideIndex);
 }
