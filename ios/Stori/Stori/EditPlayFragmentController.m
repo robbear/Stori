@@ -32,7 +32,6 @@
 @property (nonatomic) BOOL isPlaying;
 @property (nonatomic) BOOL cancelAsyncPlay;
 @property (nonatomic) UIImagePickerController *imagePickerController;
-@property (strong, nonatomic) UITapGestureRecognizer *overlayTapRecognizer;
 @property (nonatomic) float currentZoomScale;
 - (CGRect)zoomRectForScale:(float)scale withCenter:(CGPoint)center;
 - (void)deleteSlideData;
@@ -62,7 +61,6 @@
 - (void)initiateReorder;
 - (void)asyncAutoPlay;
 - (void)imageTapDetected;
-- (void)overlayTapDetected;
 - (void)showNavAndStatusBar:(BOOL)show;
 - (void)centerScaledImageInScrollView:(UIScrollView *)scrollView;
 - (void)adjustScrollViewFrame;
@@ -94,10 +92,6 @@
     
     self.scrollView.delegate = self;
     self.scrollView.bouncesZoom = YES;
-    
-    self.overlayTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(overlayTapDetected)];
-    self.overlayView.userInteractionEnabled = YES;
-    [self.overlayView addGestureRecognizer:self.overlayTapRecognizer];
     
     [self.choosePictureLabel setTitle:NSLocalizedString(@"editplay_nopicture_text", nil) forState:UIControlStateNormal];
     
@@ -233,21 +227,16 @@
         return;
     }
     
-    [self showNavAndStatusBar:TRUE];
-    self.editPlayController.shouldDisplayOverlay = TRUE;
-    [self displayOverlay];
-}
-
-- (void)overlayTapDetected {
-    HFLogDebug(@"EditPlayFragmentController.overlayTapDetected");
-    
-    if (self.editPlayController.editPlayMode == editPlayModeEdit) {
-        return;
+    if (self.overlayView.isHidden) {
+        [self showNavAndStatusBar:TRUE];
+        self.editPlayController.shouldDisplayOverlay = TRUE;
+        [self displayOverlay];
     }
-
-    [self showNavAndStatusBar:FALSE];
-    self.editPlayController.shouldDisplayOverlay = FALSE;
-    [self displayOverlay];
+    else {
+        [self showNavAndStatusBar:FALSE];
+        self.editPlayController.shouldDisplayOverlay = FALSE;
+        [self displayOverlay];
+    }
 }
 
 - (IBAction)onSelectPhotoSecondaryButtonClicked:(id)sender {
