@@ -42,6 +42,7 @@ import com.stori.stori.SlideShareJSON;
 import com.stori.stori.StoriService;
 import com.stori.stori.R;
 import com.stori.stori.SlideJSON;
+import com.stori.stori.TouchImageView;
 import com.stori.stori.Utilities;
 
 import java.io.File;
@@ -65,7 +66,7 @@ public class EditPlayFragment extends Fragment implements
 
     private EditPlayActivity m_editPlayActivity;
     private String m_slideShareName;
-    private ImageSwitcher m_imageSwitcher;
+    private TouchImageView m_imageSwitcher;
     private ImageButton m_mainMenuControl;
     private ImageButton m_insertBeforeControl;
     private ImageButton m_insertAfterControl;
@@ -580,7 +581,7 @@ public class EditPlayFragment extends Fragment implements
             }
         });
 
-        m_imageSwitcher = (ImageSwitcher)view.findViewById(R.id.current_image);
+        m_imageSwitcher = (TouchImageView)view.findViewById(R.id.current_image);
         m_imageSwitcher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -635,7 +636,7 @@ public class EditPlayFragment extends Fragment implements
 
         super.onActivityCreated(savedInstanceState);
 
-        m_imageSwitcher.setFactory((ViewSwitcher.ViewFactory)m_editPlayActivity);
+        //m_imageSwitcher.setFactory((ViewSwitcher.ViewFactory)m_editPlayActivity);
 
         // Seed the ImageSwitcher with a black background in order to inflate it
         // to non-zero dimensions.
@@ -1216,6 +1217,7 @@ public class EditPlayFragment extends Fragment implements
             // Display the image only upon successful save
             m_imageFileName = fileNames[0];
             renderImage();
+            m_imageSwitcher.setZoom(1.0f);
         }
         else {
             // Clean up - remove the image file

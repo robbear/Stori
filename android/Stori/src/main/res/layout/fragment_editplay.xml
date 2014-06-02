@@ -7,7 +7,7 @@
     android:background="#000000"
     android:layout_centerHorizontal="true">
 
-    <ImageSwitcher
+    <com.stori.stori.TouchImageView
         android:id="@+id/current_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

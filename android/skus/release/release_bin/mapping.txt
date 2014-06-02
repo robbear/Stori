@@ -46419,7 +46419,158 @@ com.stori.stori.StoriService$StoriServiceBinder -> com.stori.stori.bq:
 com.stori.stori.StoriService$StoriServiceConnectionListener -> com.stori.stori.br:
     void onServiceConnected(com.stori.stori.StoriService) -> a
     void onServiceDisconnected() -> a_
-com.stori.stori.Utilities -> com.stori.stori.bs:
+com.stori.stori.TouchImageView -> com.stori.stori.TouchImageView:
+    float normalizedScale -> a
+    android.graphics.Matrix matrix -> b
+    android.graphics.Matrix prevMatrix -> c
+    com.stori.stori.TouchImageView$State state -> d
+    float minScale -> e
+    float maxScale -> f
+    float superMinScale -> g
+    float superMaxScale -> h
+    float[] m -> i
+    android.content.Context context -> j
+    com.stori.stori.TouchImageView$Fling fling -> k
+    android.widget.ImageView$ScaleType mScaleType -> l
+    boolean imageRenderedAtLeastOnce -> m
+    boolean onDrawReady -> n
+    com.stori.stori.TouchImageView$ZoomVariables delayedZoomVariables -> o
+    int viewWidth -> p
+    int viewHeight -> q
+    int prevViewWidth -> r
+    int prevViewHeight -> s
+    float matchViewWidth -> t
+    float matchViewHeight -> u
+    float prevMatchViewWidth -> v
+    float prevMatchViewHeight -> w
+    android.view.ScaleGestureDetector mScaleDetector -> x
+    android.view.GestureDetector mGestureDetector -> y
+    android.view.GestureDetector$OnDoubleTapListener doubleTapListener -> z
+    android.view.View$OnTouchListener userTouchListener -> A
+    com.stori.stori.TouchImageView$OnTouchImageViewListener touchImageViewListener -> B
+    void sharedConstructing(android.content.Context) -> a
+    void setOnTouchListener(android.view.View$OnTouchListener) -> setOnTouchListener
+    void setOnTouchImageViewListener(com.stori.stori.TouchImageView$OnTouchImageViewListener) -> setOnTouchImageViewListener
+    void setOnDoubleTapListener(android.view.GestureDetector$OnDoubleTapListener) -> setOnDoubleTapListener
+    void setImageResource(int) -> setImageResource
+    void setImageBitmap(android.graphics.Bitmap) -> setImageBitmap
+    void setImageDrawable(android.graphics.drawable.Drawable) -> setImageDrawable
+    void setImageURI(android.net.Uri) -> setImageURI
+    void setScaleType(android.widget.ImageView$ScaleType) -> setScaleType
+    android.widget.ImageView$ScaleType getScaleType() -> getScaleType
+    android.graphics.RectF getZoomedRect() -> getZoomedRect
+    void savePreviousImageValues() -> a
+    android.os.Parcelable onSaveInstanceState() -> onSaveInstanceState
+    void onRestoreInstanceState(android.os.Parcelable) -> onRestoreInstanceState
+    void onDraw(android.graphics.Canvas) -> onDraw
+    void onConfigurationChanged(android.content.res.Configuration) -> onConfigurationChanged
+    float getMaxZoom() -> getMaxZoom
+    void setMaxZoom(float) -> setMaxZoom
+    float getMinZoom() -> getMinZoom
+    float getCurrentZoom() -> getCurrentZoom
+    void setMinZoom(float) -> setMinZoom
+    void setZoom(float) -> setZoom
+    void setZoom(float,float,float,android.widget.ImageView$ScaleType) -> a
+    void setZoom(com.stori.stori.TouchImageView) -> setZoom
+    android.graphics.PointF getScrollPosition() -> getScrollPosition
+    void fixTrans() -> b
+    void fixScaleTrans() -> c
+    float getFixTrans(float,float,float) -> b
+    float getImageWidth() -> getImageWidth
+    float getImageHeight() -> getImageHeight
+    void onMeasure(int,int) -> onMeasure
+    void fitImageToView() -> d
+    int setViewSize(int,int,int) -> a
+    void translateMatrixAfterRotate(int,float,float,float,int,int,int) -> a
+    void setState(com.stori.stori.TouchImageView$State) -> setState
+    boolean canScrollHorizontally(int) -> canScrollHorizontally
+    void scaleImage(double,float,float,boolean) -> a
+    android.graphics.PointF transformCoordTouchToBitmap(float,float,boolean) -> a
+    android.view.GestureDetector$OnDoubleTapListener access$300(com.stori.stori.TouchImageView) -> a
+    com.stori.stori.TouchImageView$Fling access$400(com.stori.stori.TouchImageView) -> b
+    com.stori.stori.TouchImageView$Fling access$402(com.stori.stori.TouchImageView,com.stori.stori.TouchImageView$Fling) -> a
+    void access$500(com.stori.stori.TouchImageView,java.lang.Runnable) -> a
+    com.stori.stori.TouchImageView$State access$600(com.stori.stori.TouchImageView) -> c
+    float access$700(com.stori.stori.TouchImageView) -> d
+    float access$800(com.stori.stori.TouchImageView) -> e
+    float access$900(com.stori.stori.TouchImageView) -> f
+    android.view.ScaleGestureDetector access$1000(com.stori.stori.TouchImageView) -> g
+    android.view.GestureDetector access$1100(com.stori.stori.TouchImageView) -> h
+    void access$1200(com.stori.stori.TouchImageView,com.stori.stori.TouchImageView$State) -> a
+    int access$1300(com.stori.stori.TouchImageView) -> i
+    float access$1400(com.stori.stori.TouchImageView) -> j
+    float access$1500$67114e51(float,float,float) -> a
+    int access$1600(com.stori.stori.TouchImageView) -> k
+    float access$1700(com.stori.stori.TouchImageView) -> l
+    android.graphics.Matrix access$1800(com.stori.stori.TouchImageView) -> m
+    void access$1900(com.stori.stori.TouchImageView) -> n
+    android.view.View$OnTouchListener access$2000(com.stori.stori.TouchImageView) -> o
+    com.stori.stori.TouchImageView$OnTouchImageViewListener access$2100(com.stori.stori.TouchImageView) -> p
+    void access$2200(com.stori.stori.TouchImageView,double,float,float,boolean) -> a
+    android.graphics.PointF access$2300$3c4f37f6(com.stori.stori.TouchImageView,float,float) -> a
+    android.graphics.PointF access$2400(com.stori.stori.TouchImageView,float,float) -> b
+    void access$2500(com.stori.stori.TouchImageView) -> q
+    android.content.Context access$2600(com.stori.stori.TouchImageView) -> r
+    float[] access$2700(com.stori.stori.TouchImageView) -> s
+com.stori.stori.TouchImageView$1 -> com.stori.stori.bs:
+    int[] $SwitchMap$android$widget$ImageView$ScaleType -> a
+com.stori.stori.TouchImageView$CompatScroller -> com.stori.stori.bt:
+    android.widget.Scroller scroller -> a
+    android.widget.OverScroller overScroller -> b
+    boolean isPreGingerbread -> c
+    com.stori.stori.TouchImageView this$0 -> d
+com.stori.stori.TouchImageView$DoubleTapZoom -> com.stori.stori.bu:
+    long startTime -> b
+    float startZoom -> c
+    float targetZoom -> d
+    float bitmapX -> e
+    float bitmapY -> f
+    boolean stretchImageToSuper -> g
+    android.view.animation.AccelerateDecelerateInterpolator interpolator -> h
+    android.graphics.PointF startTouch -> i
+    android.graphics.PointF endTouch -> j
+    com.stori.stori.TouchImageView this$0 -> a
+    void run() -> run
+com.stori.stori.TouchImageView$Fling -> com.stori.stori.bv:
+    com.stori.stori.TouchImageView$CompatScroller scroller -> a
+    int currX -> b
+    int currY -> c
+    com.stori.stori.TouchImageView this$0 -> d
+    void cancelFling() -> a
+    void run() -> run
+com.stori.stori.TouchImageView$GestureListener -> com.stori.stori.bw:
+    com.stori.stori.TouchImageView this$0 -> a
+    boolean onSingleTapConfirmed(android.view.MotionEvent) -> onSingleTapConfirmed
+    void onLongPress(android.view.MotionEvent) -> onLongPress
+    boolean onFling(android.view.MotionEvent,android.view.MotionEvent,float,float) -> onFling
+    boolean onDoubleTap(android.view.MotionEvent) -> onDoubleTap
+    boolean onDoubleTapEvent(android.view.MotionEvent) -> onDoubleTapEvent
+com.stori.stori.TouchImageView$OnTouchImageViewListener -> com.stori.stori.bx:
+com.stori.stori.TouchImageView$PrivateOnTouchListener -> com.stori.stori.by:
+    android.graphics.PointF last -> b
+    com.stori.stori.TouchImageView this$0 -> a
+    boolean onTouch(android.view.View,android.view.MotionEvent) -> onTouch
+com.stori.stori.TouchImageView$ScaleListener -> com.stori.stori.bz:
+    com.stori.stori.TouchImageView this$0 -> a
+    boolean onScaleBegin(android.view.ScaleGestureDetector) -> onScaleBegin
+    boolean onScale(android.view.ScaleGestureDetector) -> onScale
+    void onScaleEnd(android.view.ScaleGestureDetector) -> onScaleEnd
+com.stori.stori.TouchImageView$State -> com.stori.stori.ca:
+    com.stori.stori.TouchImageView$State NONE -> a
+    com.stori.stori.TouchImageView$State DRAG -> b
+    com.stori.stori.TouchImageView$State ZOOM -> c
+    com.stori.stori.TouchImageView$State FLING -> d
+    com.stori.stori.TouchImageView$State ANIMATE_ZOOM -> e
+    com.stori.stori.TouchImageView$State[] $VALUES -> f
+    com.stori.stori.TouchImageView$State[] values() -> values
+    com.stori.stori.TouchImageView$State valueOf(java.lang.String) -> valueOf
+com.stori.stori.TouchImageView$ZoomVariables -> com.stori.stori.cb:
+    float scale -> a
+    float focusX -> b
+    float focusY -> c
+    android.widget.ImageView$ScaleType scaleType -> d
+    com.stori.stori.TouchImageView this$0 -> e
+com.stori.stori.Utilities -> com.stori.stori.cc:
     java.io.File createOrGetSlideShareDirectory(android.content.Context,java.lang.String) -> a
     void recursiveDelete(java.io.File) -> a
     void deleteSlideShareDirectory(android.content.Context,java.lang.String) -> b
@@ -46580,7 +46731,7 @@ com.stori.stori.cloudproviders.WIFIdentityProvider -> com.stori.stori.cloudprovi
 com.stori.stori.fragments.EditPlayFragment -> com.stori.stori.b.a:
     com.stori.stori.EditPlayActivity m_editPlayActivity -> P
     java.lang.String m_slideShareName -> Q
-    android.widget.ImageSwitcher m_imageSwitcher -> R
+    com.stori.stori.TouchImageView m_imageSwitcher -> R
     android.widget.ImageButton m_mainMenuControl -> S
     android.widget.ImageButton m_insertBeforeControl -> T
     android.widget.ImageButton m_insertAfterControl -> U
@@ -46773,7 +46924,7 @@ com.stori.stori.fragments.PlaySlidesFragment -> com.stori.stori.b.aj:
     com.stori.stori.PlaySlidesActivity m_playSlidesActivity -> P
     java.lang.String m_slideShareName -> Q
     java.lang.String m_slideUuid -> R
-    android.widget.ImageSwitcher m_imageSwitcher -> S
+    com.stori.stori.TouchImageView m_imageSwitcher -> S
     android.widget.ImageButton m_mainMenuControl -> T
     android.widget.ImageButton m_playstopControl -> U
     android.widget.ImageButton m_nextControl -> V

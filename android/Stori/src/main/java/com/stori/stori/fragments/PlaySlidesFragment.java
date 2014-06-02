@@ -34,6 +34,7 @@ import com.stori.stori.StoriService;
 import com.stori.stori.PlaySlidesActivity;
 import com.stori.stori.R;
 import com.stori.stori.SlideJSON;
+import com.stori.stori.TouchImageView;
 import com.stori.stori.Utilities;
 
 import java.io.File;
@@ -55,7 +56,7 @@ public class PlaySlidesFragment extends Fragment implements
     private PlaySlidesActivity m_playSlidesActivity;
     private String m_slideShareName;
     private String m_slideUuid;
-    private ImageSwitcher m_imageSwitcher;
+    private TouchImageView m_imageSwitcher;
     private ImageButton m_mainMenuControl;
     private ImageButton m_playstopControl;
     private ImageButton m_nextControl;
@@ -342,7 +343,7 @@ public class PlaySlidesFragment extends Fragment implements
             }
         });
 
-        m_imageSwitcher = (ImageSwitcher)view.findViewById(R.id.current_image);
+        m_imageSwitcher = (TouchImageView)view.findViewById(R.id.current_image);
         m_imageSwitcher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -363,7 +364,7 @@ public class PlaySlidesFragment extends Fragment implements
 
         super.onActivityCreated(savedInstanceState);
 
-        m_imageSwitcher.setFactory((ViewSwitcher.ViewFactory)m_playSlidesActivity);
+        //m_imageSwitcher.setFactory((ViewSwitcher.ViewFactory)m_playSlidesActivity);
 
         // Seed the ImageSwitcher with a black background in order to inflate it
         // to non-zero dimensions.
