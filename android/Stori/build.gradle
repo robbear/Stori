@@ -26,4 +26,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:18.0.0'
     compile 'com.google.android.gms:play-services:4.0.30'
     compile files('libs/aws-android-sdk-1.7.1.1.jar')
+    compile files('libs/volley.jar')
 }
