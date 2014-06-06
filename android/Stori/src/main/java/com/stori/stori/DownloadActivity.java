@@ -1,6 +1,5 @@
 package com.stori.stori;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -26,12 +25,19 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
 
 public class DownloadActivity extends FragmentActivity {
     public final static String TAG = "DownloadActivity";
+    public final static String REQUEST_TAG = "VolleyBinaryRequestTag";
 
+    private RequestQueue m_requestQueue;
     private ProgressDialog m_progressDialog;
     private DownloadTask m_downloadTask;
     private String m_slideShareName;
@@ -50,6 +56,7 @@ public class DownloadActivity extends FragmentActivity {
         if(D)Log.d(TAG, "DownloadActivity.onCreate");
 
         m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
+        m_requestQueue = Volley.newRequestQueue(this);
 
         // Lock the orientation down
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
@@ -146,7 +153,9 @@ public class DownloadActivity extends FragmentActivity {
 
             String jsonUrl = Config.baseAWSStorageUrl + m_userUuid + "/" + m_slideShareName + "/" + Config.slideShareJSONFilename;
 
+            /* NEVER
             m_downloadTask = new DownloadTask(this);
+            */
 
             m_progressDialog = new ProgressDialog(this);
             m_progressDialog.setMessage(getString(R.string.download_dialog_message));
@@ -157,11 +166,19 @@ public class DownloadActivity extends FragmentActivity {
                 @Override
                 public void onCancel(DialogInterface dialog) {
                     if(D)Log.d(TAG, "DownloadActivity.onCancel: progress dialog canceled");
+                    /* NEVER
                     m_downloadTask.cancel(true);
+                    */
                 }
             });
 
+            VolleyBinaryRequest binaryRequest = new VolleyBinaryRequest(jsonUrl, new ResponseListener(jsonUrl), new ErrorListener(jsonUrl));
+            binaryRequest.setTag(REQUEST_TAG);
+            m_requestQueue.add(binaryRequest);
+
+            /* NEVER
             m_downloadTask.execute(jsonUrl);
+            */
         }
         else {
             if(D)Log.d(TAG, "DownloadActivity.onCreate - not an ACTION_VIEW intent, so bailing");
@@ -450,12 +467,19 @@ public class DownloadActivity extends FragmentActivity {
         if(D)Log.d(TAG, "DownloadActivity.calculateDownloadStats");
 
         int count = m_ssj.getSlideCount();
+        m_urlsToDownload = new ArrayList<String>();
 
         for (int i = 0; i < count; i++) {
             SlideJSON sj = m_ssj.getSlide(i);
 
-            if (sj.getAudioUrlString() != null) m_numberOfResources++;
-            if (sj.getImageUrlString() != null) m_numberOfResources++;
+            if (sj.getAudioUrlString() != null) {
+                m_numberOfResources++;
+                m_urlsToDownload.add(sj.getAudioUrlString());
+            }
+            if (sj.getImageUrlString() != null) {
+                m_numberOfResources++;
+                m_urlsToDownload.add(sj.getImageUrlString());
+            }
         }
 
         m_currentResourceDownloadIndex = 0;
@@ -464,6 +488,8 @@ public class DownloadActivity extends FragmentActivity {
 
     private void handleDownloadError() {
         if(D)Log.d(TAG, "DownloadActivity.handleDownloadError");
+
+        m_requestQueue.cancelAll(REQUEST_TAG);
 
         if (m_slideShareName != null) {
             Utilities.deleteSlideShareDirectory(this, m_slideShareName);
@@ -485,5 +511,203 @@ public class DownloadActivity extends FragmentActivity {
 
         AlertDialog ad = adb.create();
         ad.show();
+    }
+
+
+    //
+    // VolleyBinaryRequest listeners
+    //
+
+    private class ResponseListener implements Response.Listener<byte[]> {
+        private String m_urlString;
+
+        public ResponseListener(String urlString) {
+            this.m_urlString = urlString;
+        }
+
+        @Override
+        public void onResponse(byte[] response) {
+            if(D)Log.d(TAG, String.format("DownloadActivity.onResponse - got %d bytes for %s", response == null ? 0 : response.length, this.m_urlString));
+
+            boolean success = saveBytesToFile(response);
+            if (!success) {
+                if(D)Log.d(TAG, String.format("DownloadActivity.onResponse - failed to save to file, bailing: %s", this.m_urlString));
+                handleDownloadError();
+                return;
+            }
+
+            if (m_ssj == null) {
+                m_ssj = SlideShareJSON.load(DownloadActivity.this, m_slideShareName, Config.slideShareJSONFilename);
+                if (m_ssj == null) {
+                    handleDownloadError();
+                    return;
+                }
+
+                try {
+                    calculateDownloadStats();
+
+                    for (int i = 0; i < m_urlsToDownload.size(); i++) {
+                        String url = m_urlsToDownload.get(i);
+
+                        VolleyBinaryRequest vbr = new VolleyBinaryRequest(url, new ResponseListener(url), new ErrorListener(url));
+                        vbr.setTag(REQUEST_TAG);
+                        m_requestQueue.add(vbr);
+                    }
+                }
+                catch (Exception e) {
+                    if(E)Log.e(TAG, "DownloadActivity.onResponse", e);
+                    e.printStackTrace();
+
+                    handleDownloadError();
+                }
+                catch (OutOfMemoryError e) {
+                    if(E)Log.e(TAG, "DownloadActivity.onResponse", e);
+                    e.printStackTrace();
+
+                    handleDownloadError();
+                }
+            }
+            else {
+                m_numberOfResources--;
+                if(D)Log.d(TAG, String.format("DownloadActivity.onResponse: remaining URLs to download: %d", m_numberOfResources));
+
+                if (m_numberOfResources <= 0) {
+                    if(D)Log.d(TAG, "DownloadActivity.onResponse - all downloads complete");
+
+                    if (m_downloadForEdit) {
+                        String oldSlideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(DownloadActivity.this), SSPreferences.DEFAULT_EDITPROJECTNAME(DownloadActivity.this));
+                        if (oldSlideShareName != null && !oldSlideShareName.equals(m_slideShareName)) {
+                            if(D)Log.d(TAG, String.format("DownloadActivity.onResponse: deleting old slideshare editplay directory for %s", oldSlideShareName));
+                            Utilities.deleteSlideShareDirectory(DownloadActivity.this, oldSlideShareName);
+                        }
+
+                        SharedPreferences.Editor edit = m_prefs.edit();
+                        edit.putString(SSPreferences.PREFS_EDITPROJECTNAME(DownloadActivity.this), m_slideShareName);
+                        edit.commit();
+
+                        // Update the version
+                        // Fixes issue #61
+                        try {
+                            int version = m_ssj.getVersion();
+                            m_ssj.setVersion(version + 1);
+                            m_ssj.save(DownloadActivity.this, m_slideShareName, Config.slideShareJSONFilename);
+                        }
+                        catch (Exception e) {
+                            if(E)Log.e(TAG, "DownloadActivity.onResponse", e);
+                            e.printStackTrace();
+                        }
+                        catch (OutOfMemoryError e) {
+                            if(E)Log.e(TAG, "DownloadActivity.onResponse", e);
+                            e.printStackTrace();
+                        }
+
+                        m_progressDialog.dismiss();
+                        setResult(RESULT_OK);
+                        finish();
+                        return;
+                    }
+                    else {
+                        String oldSlideShareName = m_prefs.getString(SSPreferences.PREFS_PLAYSLIDESNAME(DownloadActivity.this), SSPreferences.DEFAULT_PLAYSLIDESNAME(DownloadActivity.this));
+                        String currentEditSlideShareName = m_prefs.getString(SSPreferences.PREFS_EDITPROJECTNAME(DownloadActivity.this), SSPreferences.DEFAULT_EDITPROJECTNAME(DownloadActivity.this));
+
+                        // Need to test for the case where the current Edit slideShareName is the same as the old Play slideShareName.
+                        // This will occur when the user is editing "Foo" which has previously been published, then downloads Foo for play.
+                        // In this case, both Edit and Play slideshares are the same. If the user then downloads another Stori for play,
+                        // we do NOT want to delete the old Play directory, because this is the same directory being used for the current Edit.
+                        // See Issue #51
+
+                        // We also test for oldSlideShareName being the same as m_slideShareName. In this case we also don't want to delete
+                        // the old directory because it's the one we're currently using.
+
+                        if (oldSlideShareName != null && !oldSlideShareName.equals(m_slideShareName) && !oldSlideShareName.equals(currentEditSlideShareName)) {
+                            if(D)Log.d(TAG, String.format("DownloadActivity.onResponse: deleting old slideshare playslide directory for %s", oldSlideShareName));
+                            Utilities.deleteSlideShareDirectory(DownloadActivity.this, oldSlideShareName);
+                        }
+
+                        SharedPreferences.Editor edit = m_prefs.edit();
+                        edit.putString(SSPreferences.PREFS_PLAYSLIDESNAME(DownloadActivity.this), m_slideShareName);
+                        edit.commit();
+
+                        Intent intent = new Intent(DownloadActivity.this, PlaySlidesActivity.class);
+                        intent.putExtra(PlaySlidesActivity.EXTRA_FROMURL, true);
+                        intent.putExtra(PlaySlidesActivity.EXTRA_INTENTFROMSTORIAPP, m_intentFromStoriApp);
+                        DownloadActivity.this.startActivity(intent);
+
+                        m_progressDialog.dismiss();
+                        finish();
+                        return;
+                    }
+                }
+                else {
+                    m_progressDialog.setMessage(String.format(getString(R.string.download_dialog_message_format), m_currentResourceDownloadIndex + 1, m_urlsToDownload.size()));
+                    m_currentResourceDownloadIndex++;
+                }
+            }
+        }
+
+        private boolean saveBytesToFile(byte[] data) {
+            if(D)Log.d(TAG, String.format("DownloadActivity.saveBytesToFile for %s", this.m_urlString));
+
+            boolean success = false;
+
+            OutputStream output = null;
+
+            try {
+                URL url = new URL(this.m_urlString);
+
+                File slideShareDirectory = Utilities.createOrGetSlideShareDirectory(DownloadActivity.this, m_slideShareName);
+
+                if (!slideShareDirectory.exists()) {
+                    slideShareDirectory.mkdir();
+                }
+
+                String fileName = url.getFile();
+                fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+                if(D)Log.d(TAG, String.format("DownloadActivity.saveBytesToFile - creating output file for file name: %s", fileName));
+
+                File file = new File(slideShareDirectory, fileName);
+                if(D)Log.d(TAG, String.format("DownloadActivity.saveBytesToFile - creating output file %s", file.getAbsolutePath()));
+                file.createNewFile();
+
+                output = new FileOutputStream(file);
+                output.write(data, 0, data.length);
+
+                success = true;
+            }
+            catch (Exception e) {
+                if(E)Log.e(TAG, "DownloadActivity.saveBytesToFile", e);
+                e.printStackTrace();
+            }
+            catch (OutOfMemoryError e) {
+                if(E)Log.e(TAG, "DownloadActivity.DownloadTask.doInBackground", e);
+                e.printStackTrace();
+            }
+            finally {
+                try {
+                    if (output != null) {
+                        output.close();
+                    }
+                }
+                catch (IOException ignored) { }
+            }
+
+            return success;
+        }
+    }
+
+    private class ErrorListener implements Response.ErrorListener{
+        private String m_urlString;
+
+        public ErrorListener(String urlString) {
+            m_urlString = urlString;
+        }
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            if(D)Log.d(TAG, String.format("DownloadActivity.onErrorResponse = %s got error: %s", this.m_urlString, error.toString()));
+            m_progressDialog.dismiss();
+
+            handleDownloadError();
+        }
     }
 }

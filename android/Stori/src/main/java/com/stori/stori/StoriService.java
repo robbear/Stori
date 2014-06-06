@@ -16,16 +16,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
-
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
 
 public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTimerCallback {
     public static final String TAG = "StoriService";
 
-    private RequestQueue m_requestQueue;
     private MediaPlayer m_mediaPlayer;
     private PlaybackState m_playbackState = PlaybackState.Stopped;
     private String m_audioFileName = null;
@@ -37,8 +33,6 @@ public class StoriService extends Service implements AsyncTaskTimer.IAsyncTaskTi
     @Override
     public void onCreate() {
         if(D)Log.d(TAG, "StoriService.onCreate");
-
-        m_requestQueue = Volley.newRequestQueue(this);
     }
 
     @Override

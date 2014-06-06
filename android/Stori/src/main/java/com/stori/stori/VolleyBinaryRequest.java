@@ -1,5 +1,7 @@
 package com.stori.stori;
 
+import android.util.Log;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -8,13 +10,18 @@ import com.android.volley.Response;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 
+import static com.stori.stori.Config.D;
+import static com.stori.stori.Config.E;
+
 /**
  * A canned request for getting an image at a given URL and calling
  * back with a decoded Bitmap.
  */
 public class VolleyBinaryRequest extends Request<byte[]> {
+    public static final String TAG = "VolleyBinaryRequest";
+
     /** Socket timeout in milliseconds for binary requests */
-    private static final int BINARY_TIMEOUT_MS = 1000;
+    private static final int BINARY_TIMEOUT_MS = 10000;
 
     /** Default number of retries for binary requests */
     private static final int BINARY_MAX_RETRIES = 2;
@@ -36,6 +43,9 @@ public class VolleyBinaryRequest extends Request<byte[]> {
      */
     public VolleyBinaryRequest(String url, Response.Listener<byte[]> listener, Response.ErrorListener errorListener) {
         super(Method.GET, url, errorListener);
+
+        if(D)Log.d(TAG, "VolleyBinaryRequest constructor");
+
         setRetryPolicy(
                 new DefaultRetryPolicy(BINARY_TIMEOUT_MS, BINARY_MAX_RETRIES, BINARY_BACKOFF_MULT));
         mListener = listener;
@@ -43,11 +53,16 @@ public class VolleyBinaryRequest extends Request<byte[]> {
 
     @Override
     protected Response<byte[]> parseNetworkResponse(NetworkResponse response) {
+        if(D)Log.d(TAG, "VolleyBinaryRequest.parseNetworkResponse");
+
         // Serialize all decode on a global lock to reduce concurrent heap usage.
         synchronized (sDecodeLock) {
             try {
                 return doParse(response);
             } catch (OutOfMemoryError e) {
+                if(E)Log.e(TAG, "VolleyBinaryRequest.parseNetworkResponse", e);
+                e.printStackTrace();
+
                 VolleyLog.e("Caught OOM for %d byte image, url=%s", response.data.length, getUrl());
                 return Response.error(new ParseError(e));
             }
@@ -58,8 +73,11 @@ public class VolleyBinaryRequest extends Request<byte[]> {
      * The real guts of parseNetworkResponse. Broken out for readability.
      */
     private Response<byte[]> doParse(NetworkResponse response) {
+        if(D)Log.d(TAG, "VolleyBinaryRequest.doParse");
+
         byte[] data = response.data;
         if (data == null) {
+            if(D)Log.d(TAG, "VolleyBinaryRequest.doParse - returned data is null");
             return Response.error(new ParseError(response));
         }
         else {
@@ -69,29 +87,8 @@ public class VolleyBinaryRequest extends Request<byte[]> {
 
     @Override
     protected void deliverResponse(byte[] response) {
+        if(D)Log.d(TAG, "VolleyBinaryRequest.deliverResponse");
+
         mListener.onResponse(response);
-    }
-
-    /**
-     * Returns the largest power-of-two divisor for use in downscaling a bitmap
-     * that will not result in the scaling past the desired dimensions.
-     *
-     * @param actualWidth Actual width of the bitmap
-     * @param actualHeight Actual height of the bitmap
-     * @param desiredWidth Desired width of the bitmap
-     * @param desiredHeight Desired height of the bitmap
-     */
-    // Visible for testing.
-    static int findBestSampleSize(
-            int actualWidth, int actualHeight, int desiredWidth, int desiredHeight) {
-        double wr = (double) actualWidth / desiredWidth;
-        double hr = (double) actualHeight / desiredHeight;
-        double ratio = Math.min(wr, hr);
-        float n = 1.0f;
-        while ((n * 2) <= ratio) {
-            n *= 2;
-        }
-
-        return (int) n;
     }
 }
