@@ -92,6 +92,8 @@ public class Config
     }
     // End base cloud urls
 
+    public static final int downloadConnectionTimeoutMilliseconds = 30000;
+
     // Standard SlideShareJSON file name
     public static final String slideShareJSONFilename = "stori.json";
 

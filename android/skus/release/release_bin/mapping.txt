@@ -35440,6 +35440,259 @@ com.amazonaws.util.json.Jackson -> com.amazonaws.util.json.Jackson:
     com.fasterxml.jackson.databind.ObjectMapper getObjectMapper() -> getObjectMapper
     com.fasterxml.jackson.databind.ObjectWriter getWriter() -> getWriter
     com.fasterxml.jackson.databind.ObjectWriter getPrettywriter() -> getPrettywriter
+com.android.volley.AuthFailureError -> com.a.a.a:
+    android.content.Intent mResolutionIntent -> b
+    java.lang.String getMessage() -> getMessage
+com.android.volley.Cache -> com.a.a.b:
+    com.android.volley.Cache$Entry get(java.lang.String) -> a
+    void put(java.lang.String,com.android.volley.Cache$Entry) -> a
+    void initialize() -> a
+com.android.volley.Cache$Entry -> com.a.a.c:
+    byte[] data -> a
+    java.lang.String etag -> b
+    long serverDate -> c
+    long ttl -> d
+    long softTtl -> e
+    java.util.Map responseHeaders -> f
+com.android.volley.CacheDispatcher -> com.a.a.d:
+    boolean DEBUG -> a
+    java.util.concurrent.BlockingQueue mCacheQueue -> b
+    java.util.concurrent.BlockingQueue mNetworkQueue -> c
+    com.android.volley.Cache mCache -> d
+    com.android.volley.ResponseDelivery mDelivery -> e
+    boolean mQuit -> f
+    void quit() -> a
+    void run() -> run
+    java.util.concurrent.BlockingQueue access$000(com.android.volley.CacheDispatcher) -> a
+com.android.volley.CacheDispatcher$1 -> com.a.a.e:
+    com.android.volley.Request val$request -> a
+    com.android.volley.CacheDispatcher this$0 -> b
+    void run() -> run
+com.android.volley.DefaultRetryPolicy -> com.a.a.f:
+    int mCurrentTimeoutMs -> a
+    int mCurrentRetryCount -> b
+    int mMaxNumRetries -> c
+    float mBackoffMultiplier -> d
+    int getCurrentTimeout() -> a
+    int getCurrentRetryCount() -> b
+    void retry(com.android.volley.VolleyError) -> a
+com.android.volley.ExecutorDelivery -> com.a.a.g:
+    java.util.concurrent.Executor mResponsePoster -> a
+    void postResponse(com.android.volley.Request,com.android.volley.Response) -> a
+    void postResponse(com.android.volley.Request,com.android.volley.Response,java.lang.Runnable) -> a
+    void postError(com.android.volley.Request,com.android.volley.VolleyError) -> a
+com.android.volley.ExecutorDelivery$1 -> com.a.a.h:
+    android.os.Handler val$handler -> a
+    com.android.volley.ExecutorDelivery this$0 -> b
+    void execute(java.lang.Runnable) -> execute
+com.android.volley.ExecutorDelivery$ResponseDeliveryRunnable -> com.a.a.i:
+    com.android.volley.Request mRequest -> b
+    com.android.volley.Response mResponse -> c
+    java.lang.Runnable mRunnable -> d
+    com.android.volley.ExecutorDelivery this$0 -> a
+    void run() -> run
+com.android.volley.Network -> com.a.a.j:
+    com.android.volley.NetworkResponse performRequest(com.android.volley.Request) -> a
+com.android.volley.NetworkDispatcher -> com.a.a.k:
+    java.util.concurrent.BlockingQueue mQueue -> a
+    com.android.volley.Network mNetwork -> b
+    com.android.volley.Cache mCache -> c
+    com.android.volley.ResponseDelivery mDelivery -> d
+    boolean mQuit -> e
+    void quit() -> a
+    void run() -> run
+com.android.volley.NetworkError -> com.a.a.l:
+com.android.volley.NetworkResponse -> com.a.a.m:
+    int statusCode -> a
+    byte[] data -> b
+    java.util.Map headers -> c
+    boolean notModified -> d
+com.android.volley.NoConnectionError -> com.a.a.n:
+com.android.volley.ParseError -> com.a.a.o:
+com.android.volley.Request -> com.a.a.p:
+    com.android.volley.VolleyLog$MarkerLog mEventLog -> c
+    int mMethod -> d
+    java.lang.String mUrl -> a
+    int mDefaultTrafficStatsTag -> e
+    com.android.volley.Response$ErrorListener mErrorListener -> f
+    java.lang.Integer mSequence -> g
+    com.android.volley.RequestQueue mRequestQueue -> h
+    boolean mShouldCache -> i
+    boolean mCanceled -> j
+    boolean mResponseDelivered -> k
+    long mRequestBirthTime -> l
+    com.android.volley.RetryPolicy mRetryPolicy -> b
+    com.android.volley.Cache$Entry mCacheEntry -> m
+    java.lang.Object mTag -> n
+    int getMethod() -> a
+    com.android.volley.Request setTag(java.lang.Object) -> a
+    java.lang.Object getTag() -> b
+    int getTrafficStatsTag() -> c
+    void addMarker(java.lang.String) -> a
+    void finish(java.lang.String) -> b
+    com.android.volley.Request setRequestQueue(com.android.volley.RequestQueue) -> a
+    com.android.volley.Request setSequence(int) -> a
+    java.lang.String getUrl() -> d
+    java.lang.String getCacheKey() -> e
+    com.android.volley.Request setCacheEntry(com.android.volley.Cache$Entry) -> a
+    com.android.volley.Cache$Entry getCacheEntry() -> f
+    void cancel() -> g
+    boolean isCanceled() -> h
+    java.util.Map getHeaders() -> i
+    byte[] getPostBody() -> j
+    java.lang.String getBodyContentType() -> k
+    byte[] getBody() -> l
+    com.android.volley.Request setShouldCache$68b831cb() -> m
+    boolean shouldCache() -> n
+    int getTimeoutMs() -> o
+    com.android.volley.RetryPolicy getRetryPolicy() -> p
+    void markDelivered() -> q
+    boolean hasHadResponseDelivered() -> r
+    com.android.volley.Response parseNetworkResponse(com.android.volley.NetworkResponse) -> a
+    com.android.volley.VolleyError parseNetworkError(com.android.volley.VolleyError) -> a
+    void deliverResponse$5d527811() -> s
+    void deliverError$5104d703() -> t
+    java.lang.String toString() -> toString
+    int compareTo(java.lang.Object) -> compareTo
+    com.android.volley.VolleyLog$MarkerLog access$000(com.android.volley.Request) -> a
+com.android.volley.Request$1 -> com.a.a.q:
+    java.lang.String val$tag -> a
+    long val$threadId -> b
+    com.android.volley.Request this$0 -> c
+    void run() -> run
+com.android.volley.Request$Priority -> com.a.a.r:
+    com.android.volley.Request$Priority LOW -> a
+    com.android.volley.Request$Priority NORMAL -> b
+    com.android.volley.Request$Priority HIGH -> c
+    com.android.volley.Request$Priority IMMEDIATE -> d
+    com.android.volley.Request$Priority[] $VALUES -> e
+    com.android.volley.Request$Priority[] values() -> values
+    com.android.volley.Request$Priority valueOf(java.lang.String) -> valueOf
+com.android.volley.RequestQueue -> com.a.a.s:
+    java.util.concurrent.atomic.AtomicInteger mSequenceGenerator -> d
+    java.util.Map mWaitingRequests -> a
+    java.util.Set mCurrentRequests -> b
+    java.util.concurrent.PriorityBlockingQueue mCacheQueue -> c
+    java.util.concurrent.PriorityBlockingQueue mNetworkQueue -> e
+    com.android.volley.Cache mCache -> f
+    com.android.volley.Network mNetwork -> g
+    com.android.volley.ResponseDelivery mDelivery -> h
+    com.android.volley.NetworkDispatcher[] mDispatchers -> i
+    com.android.volley.CacheDispatcher mCacheDispatcher -> j
+    void start() -> a
+    com.android.volley.Request add(com.android.volley.Request) -> a
+com.android.volley.RequestQueue$1 -> com.a.a.t:
+    java.lang.Object val$tag -> a
+    com.android.volley.RequestQueue this$0 -> b
+    boolean apply(com.android.volley.Request) -> a
+com.android.volley.RequestQueue$RequestFilter -> com.a.a.u:
+    boolean apply(com.android.volley.Request) -> a
+com.android.volley.Response -> com.a.a.v:
+    java.lang.Object result -> a
+    com.android.volley.Cache$Entry cacheEntry -> b
+    com.android.volley.VolleyError error -> c
+    boolean intermediate -> d
+    com.android.volley.Response error(com.android.volley.VolleyError) -> a
+com.android.volley.Response$ErrorListener -> com.a.a.w:
+    void onErrorResponse$5104d703() -> a
+com.android.volley.Response$Listener -> com.a.a.x:
+    void onResponse$5d527811() -> a
+com.android.volley.ResponseDelivery -> com.a.a.y:
+    void postResponse(com.android.volley.Request,com.android.volley.Response) -> a
+    void postResponse(com.android.volley.Request,com.android.volley.Response,java.lang.Runnable) -> a
+    void postError(com.android.volley.Request,com.android.volley.VolleyError) -> a
+com.android.volley.RetryPolicy -> com.a.a.z:
+    int getCurrentTimeout() -> a
+    int getCurrentRetryCount() -> b
+    void retry(com.android.volley.VolleyError) -> a
+com.android.volley.ServerError -> com.a.a.aa:
+com.android.volley.TimeoutError -> com.a.a.ab:
+com.android.volley.VolleyError -> com.a.a.ac:
+    com.android.volley.NetworkResponse networkResponse -> a
+com.android.volley.VolleyLog -> com.a.a.ad:
+    java.lang.String TAG -> a
+    boolean DEBUG -> b
+    void v(java.lang.String,java.lang.Object[]) -> a
+    void d(java.lang.String,java.lang.Object[]) -> b
+    void e(java.lang.String,java.lang.Object[]) -> c
+    void e(java.lang.Throwable,java.lang.String,java.lang.Object[]) -> a
+    java.lang.String buildMessage(java.lang.String,java.lang.Object[]) -> d
+com.android.volley.VolleyLog$MarkerLog -> com.a.a.ae:
+    boolean ENABLED -> a
+    java.util.List mMarkers -> b
+    boolean mFinished -> c
+    void add(java.lang.String,long) -> a
+    void finish(java.lang.String) -> a
+    void finalize() -> finalize
+com.android.volley.VolleyLog$MarkerLog$Marker -> com.a.a.af:
+    java.lang.String name -> a
+    long thread -> b
+    long time -> c
+com.android.volley.toolbox.ByteArrayPool -> com.a.a.a.a:
+    java.util.List mBuffersByLastUse -> b
+    java.util.List mBuffersBySize -> c
+    int mCurrentSize -> d
+    int mSizeLimit -> e
+    java.util.Comparator BUF_COMPARATOR -> a
+    byte[] getBuf$255806f() -> a
+    void returnBuf(byte[]) -> a
+    void trim() -> b
+com.android.volley.toolbox.ByteArrayPool$1 -> com.a.a.a.b:
+    int compare(java.lang.Object,java.lang.Object) -> compare
+com.android.volley.toolbox.DiskBasedCache -> com.a.a.a.c:
+    java.util.Map mEntries -> a
+    long mTotalSize -> b
+    java.io.File mRootDirectory -> c
+    int mMaxCacheSizeInBytes -> d
+    com.android.volley.Cache$Entry get(java.lang.String) -> a
+    void initialize() -> a
+    void put(java.lang.String,com.android.volley.Cache$Entry) -> a
+    void remove(java.lang.String) -> b
+    java.lang.String getFilenameForKey(java.lang.String) -> c
+    java.io.File getFileForKey(java.lang.String) -> d
+    void putEntry(java.lang.String,com.android.volley.toolbox.DiskBasedCache$CacheHeader) -> a
+    byte[] streamToBytes(java.io.InputStream,int) -> a
+    int read(java.io.InputStream) -> e
+    void writeInt(java.io.OutputStream,int) -> a
+    int readInt(java.io.InputStream) -> a
+    void writeLong(java.io.OutputStream,long) -> a
+    long readLong(java.io.InputStream) -> b
+    void writeString(java.io.OutputStream,java.lang.String) -> a
+    java.lang.String readString(java.io.InputStream) -> c
+    java.util.Map readStringStringMap(java.io.InputStream) -> d
+com.android.volley.toolbox.DiskBasedCache$CacheHeader -> com.a.a.a.d:
+    long size -> a
+    java.lang.String key -> b
+    java.lang.String etag -> c
+    long serverDate -> d
+    long ttl -> e
+    long softTtl -> f
+    java.util.Map responseHeaders -> g
+    com.android.volley.toolbox.DiskBasedCache$CacheHeader readHeader(java.io.InputStream) -> a
+    boolean writeHeader(java.io.OutputStream) -> a
+com.android.volley.toolbox.DiskBasedCache$CountingInputStream -> com.a.a.a.e:
+    int bytesRead -> a
+    int read() -> read
+    int read(byte[],int,int) -> read
+    int access$100(com.android.volley.toolbox.DiskBasedCache$CountingInputStream) -> a
+com.android.volley.toolbox.HttpClientStack -> com.a.a.a.f:
+    org.apache.http.client.HttpClient mClient -> a
+    void addHeaders(org.apache.http.client.methods.HttpUriRequest,java.util.Map) -> a
+    org.apache.http.HttpResponse performRequest(com.android.volley.Request,java.util.Map) -> a
+com.android.volley.toolbox.HttpClientStack$HttpPatch -> com.a.a.a.g:
+    java.lang.String getMethod() -> getMethod
+com.android.volley.toolbox.HttpHeaderParser -> com.a.a.a.h:
+    com.android.volley.Cache$Entry parseCacheHeaders(com.android.volley.NetworkResponse) -> a
+    long parseDateAsEpoch(java.lang.String) -> a
+com.android.volley.toolbox.HttpStack -> com.a.a.a.i:
+    org.apache.http.HttpResponse performRequest(com.android.volley.Request,java.util.Map) -> a
+com.android.volley.toolbox.HurlStack -> com.a.a.a.j:
+    com.android.volley.toolbox.HurlStack$UrlRewriter mUrlRewriter -> a
+    javax.net.ssl.SSLSocketFactory mSslSocketFactory -> b
+    org.apache.http.HttpResponse performRequest(com.android.volley.Request,java.util.Map) -> a
+    org.apache.http.HttpEntity entityFromConnection(java.net.HttpURLConnection) -> a
+com.android.volley.toolbox.HurlStack$UrlRewriter -> com.a.a.a.k:
+    java.lang.String rewriteUrl$16915f7f() -> a
 com.fasterxml.jackson.annotation.JacksonAnnotation -> com.fasterxml.jackson.annotation.JacksonAnnotation:
 com.fasterxml.jackson.annotation.JacksonAnnotationsInside -> com.fasterxml.jackson.annotation.JacksonAnnotationsInside:
 com.fasterxml.jackson.annotation.JacksonInject -> com.fasterxml.jackson.annotation.JacksonInject:
@@ -45905,7 +46158,17 @@ com.stori.stori.AsyncTaskTimer$AsyncTaskTimerParams -> com.stori.stori.g:
     com.stori.stori.AsyncTaskTimer$IAsyncTaskTimerCallback m_callback -> e
 com.stori.stori.AsyncTaskTimer$IAsyncTaskTimerCallback -> com.stori.stori.h:
     void onAsyncTaskTimerComplete$1349ef() -> a
-com.stori.stori.CloudStore -> com.stori.stori.i:
+com.stori.stori.BasicStreamingNetwork -> com.stori.stori.i:
+    boolean DEBUG -> a
+    int SLOW_REQUEST_THRESHOLD_MS -> d
+    int DEFAULT_POOL_SIZE -> e
+    com.android.volley.toolbox.HttpStack mHttpStack -> b
+    com.android.volley.toolbox.ByteArrayPool mPool -> c
+    com.android.volley.NetworkResponse performRequest(com.android.volley.Request) -> a
+    void attemptRetryOnException(java.lang.String,com.android.volley.Request,com.android.volley.VolleyError) -> a
+    void entityToFile(org.apache.http.HttpEntity,com.stori.stori.VolleyBinaryRequest) -> a
+    java.util.Map convertHeaders(org.apache.http.Header[]) -> a
+com.stori.stori.CloudStore -> com.stori.stori.j:
     com.stori.stori.Config$CloudStorageProviders m_cloudProvider -> a
     android.content.Context m_context -> b
     java.lang.String m_slideShareName -> c
@@ -45916,11 +46179,11 @@ com.stori.stori.CloudStore -> com.stori.stori.i:
     void saveAsync() -> a
     java.util.ArrayList deleteStoriItemsAndReturnItems(java.util.ArrayList) -> a
     java.util.ArrayList readStoriItems() -> b
-com.stori.stori.CloudStore$1 -> com.stori.stori.j:
+com.stori.stori.CloudStore$1 -> com.stori.stori.k:
     int[] $SwitchMap$com$stori$stori$Config$CloudStorageProviders -> a
-com.stori.stori.CloudStore$ICloudStoreCallback -> com.stori.stori.k:
+com.stori.stori.CloudStore$ICloudStoreCallback -> com.stori.stori.l:
     void onCloudStoreSaveComplete(com.stori.stori.CloudStore$SaveErrors,com.stori.stori.SlideShareJSON) -> a
-com.stori.stori.CloudStore$SaveErrors -> com.stori.stori.l:
+com.stori.stori.CloudStore$SaveErrors -> com.stori.stori.m:
     com.stori.stori.CloudStore$SaveErrors Success -> a
     com.stori.stori.CloudStore$SaveErrors Error_LoadJSON -> b
     com.stori.stori.CloudStore$SaveErrors Error_UploadFile -> c
@@ -45929,25 +46192,25 @@ com.stori.stori.CloudStore$SaveErrors -> com.stori.stori.l:
     com.stori.stori.CloudStore$SaveErrors[] $VALUES -> f
     com.stori.stori.CloudStore$SaveErrors[] values() -> values
     com.stori.stori.CloudStore$SaveErrors valueOf(java.lang.String) -> valueOf
-com.stori.stori.CloudStore$SaveTask -> com.stori.stori.m:
+com.stori.stori.CloudStore$SaveTask -> com.stori.stori.n:
     com.stori.stori.CloudStore this$0 -> a
     com.stori.stori.CloudStore$SaveErrors doInBackground$19ed15af() -> a
     void onPostExecute(java.lang.Object) -> onPostExecute
     java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.stori.stori.Config -> com.stori.stori.n:
+com.stori.stori.Config -> com.stori.stori.o:
     com.stori.stori.Config$CloudStorageProviders CLOUD_STORAGE_PROVIDER -> a
     java.lang.String baseCloudUrl -> b
-com.stori.stori.Config$1 -> com.stori.stori.o:
+com.stori.stori.Config$1 -> com.stori.stori.p:
     int[] $SwitchMap$com$stori$stori$Config$CloudStorageProviders -> a
-com.stori.stori.Config$CloudStorageProviders -> com.stori.stori.p:
+com.stori.stori.Config$CloudStorageProviders -> com.stori.stori.q:
     com.stori.stori.Config$CloudStorageProviders Azure -> a
     com.stori.stori.Config$CloudStorageProviders AWS -> b
     com.stori.stori.Config$CloudStorageProviders[] $VALUES -> c
     com.stori.stori.Config$CloudStorageProviders[] values() -> values
     com.stori.stori.Config$CloudStorageProviders valueOf(java.lang.String) -> valueOf
 com.stori.stori.DownloadActivity -> com.stori.stori.DownloadActivity:
-    android.app.ProgressDialog m_progressDialog -> n
-    com.stori.stori.DownloadActivity$DownloadTask m_downloadTask -> o
+    com.android.volley.RequestQueue m_requestQueue -> n
+    android.app.ProgressDialog m_progressDialog -> o
     java.lang.String m_slideShareName -> p
     java.lang.String m_userUuid -> q
     com.stori.stori.SlideShareJSON m_ssj -> r
@@ -45958,37 +46221,35 @@ com.stori.stori.DownloadActivity -> com.stori.stori.DownloadActivity:
     boolean m_downloadForEdit -> w
     android.content.SharedPreferences m_prefs -> x
     void onCreate(android.os.Bundle) -> onCreate
-    com.stori.stori.DownloadActivity$DownloadTask access$000(com.stori.stori.DownloadActivity) -> a
-    java.lang.String access$100(com.stori.stori.DownloadActivity) -> b
-    android.app.ProgressDialog access$200(com.stori.stori.DownloadActivity) -> c
-    void access$300(com.stori.stori.DownloadActivity) -> d
-    com.stori.stori.SlideShareJSON access$400(com.stori.stori.DownloadActivity) -> e
-    com.stori.stori.SlideShareJSON access$402(com.stori.stori.DownloadActivity,com.stori.stori.SlideShareJSON) -> a
-    void access$500(com.stori.stori.DownloadActivity) -> f
-    java.util.ArrayList access$602(com.stori.stori.DownloadActivity,java.util.ArrayList) -> a
-    java.util.ArrayList access$600(com.stori.stori.DownloadActivity) -> g
-    boolean access$700(com.stori.stori.DownloadActivity) -> h
-    android.content.SharedPreferences access$800(com.stori.stori.DownloadActivity) -> i
-    boolean access$900(com.stori.stori.DownloadActivity) -> j
-    com.stori.stori.DownloadActivity$DownloadTask access$002(com.stori.stori.DownloadActivity,com.stori.stori.DownloadActivity$DownloadTask) -> a
-    int access$1000(com.stori.stori.DownloadActivity) -> k
-    int access$1100(com.stori.stori.DownloadActivity) -> l
-    int access$1008(com.stori.stori.DownloadActivity) -> m
-com.stori.stori.DownloadActivity$1 -> com.stori.stori.q:
+    android.app.ProgressDialog access$000(com.stori.stori.DownloadActivity) -> a
+    void access$100(com.stori.stori.DownloadActivity) -> b
+    com.stori.stori.SlideShareJSON access$200(com.stori.stori.DownloadActivity) -> c
+    com.stori.stori.SlideShareJSON access$202(com.stori.stori.DownloadActivity,com.stori.stori.SlideShareJSON) -> a
+    java.lang.String access$300(com.stori.stori.DownloadActivity) -> d
+    void access$400(com.stori.stori.DownloadActivity) -> e
+    java.util.ArrayList access$500(com.stori.stori.DownloadActivity) -> f
+    com.android.volley.RequestQueue access$600(com.stori.stori.DownloadActivity) -> g
+    int access$710(com.stori.stori.DownloadActivity) -> h
+    int access$700(com.stori.stori.DownloadActivity) -> i
+    boolean access$800(com.stori.stori.DownloadActivity) -> j
+    android.content.SharedPreferences access$900(com.stori.stori.DownloadActivity) -> k
+    boolean access$1000(com.stori.stori.DownloadActivity) -> l
+    int access$1108(com.stori.stori.DownloadActivity) -> m
+    int access$1100(com.stori.stori.DownloadActivity) -> n
+com.stori.stori.DownloadActivity$1 -> com.stori.stori.r:
     com.stori.stori.DownloadActivity this$0 -> a
     void onCancel(android.content.DialogInterface) -> onCancel
-com.stori.stori.DownloadActivity$2 -> com.stori.stori.r:
+com.stori.stori.DownloadActivity$2 -> com.stori.stori.s:
     com.stori.stori.DownloadActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.DownloadActivity$DownloadTask -> com.stori.stori.s:
-    android.content.Context m_context -> b
+com.stori.stori.DownloadActivity$ErrorListener -> com.stori.stori.t:
+    java.lang.String m_urlString -> b
     com.stori.stori.DownloadActivity this$0 -> a
-    java.lang.Boolean doInBackground(java.lang.String[]) -> a
-    void onPreExecute() -> onPreExecute
-    void onCancelled() -> onCancelled
-    void onProgressUpdate(java.lang.Object[]) -> onProgressUpdate
-    void onPostExecute(java.lang.Object) -> onPostExecute
-    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+    void onErrorResponse$5104d703() -> a
+com.stori.stori.DownloadActivity$ResponseListener -> com.stori.stori.u:
+    java.lang.String m_urlString -> b
+    com.stori.stori.DownloadActivity this$0 -> a
+    void onResponse$5d527811() -> a
 com.stori.stori.EditPlayActivity -> com.stori.stori.EditPlayActivity:
     int m_newSlideOrderValueForDialog -> p
     android.content.SharedPreferences m_prefs -> q
@@ -46076,74 +46337,74 @@ com.stori.stori.EditPlayActivity -> com.stori.stori.EditPlayActivity:
     java.lang.String access$1600(com.stori.stori.EditPlayActivity) -> m
     com.stori.stori.StoriService access$1402(com.stori.stori.EditPlayActivity,com.stori.stori.StoriService) -> a
     java.util.ArrayList access$1700(com.stori.stori.EditPlayActivity) -> n
-com.stori.stori.EditPlayActivity$1 -> com.stori.stori.t:
+com.stori.stori.EditPlayActivity$1 -> com.stori.stori.v:
     com.stori.stori.EditPlayActivity this$0 -> a
     void onPageSelected(int) -> a
-com.stori.stori.EditPlayActivity$10 -> com.stori.stori.u:
+com.stori.stori.EditPlayActivity$10 -> com.stori.stori.w:
     com.stori.stori.EditPlayActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.EditPlayActivity$11 -> com.stori.stori.v:
+com.stori.stori.EditPlayActivity$11 -> com.stori.stori.x:
     android.app.AlertDialog val$ad -> a
     com.stori.stori.EditPlayActivity this$0 -> b
     void onFocusChange(android.view.View,boolean) -> onFocusChange
-com.stori.stori.EditPlayActivity$12 -> com.stori.stori.w:
+com.stori.stori.EditPlayActivity$12 -> com.stori.stori.y:
     com.stori.stori.EditPlayActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.EditPlayActivity$13 -> com.stori.stori.x:
+com.stori.stori.EditPlayActivity$13 -> com.stori.stori.z:
     com.stori.stori.EditPlayActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.EditPlayActivity$14 -> com.stori.stori.y:
+com.stori.stori.EditPlayActivity$14 -> com.stori.stori.aa:
     com.stori.stori.EditPlayActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.EditPlayActivity$15 -> com.stori.stori.z:
+com.stori.stori.EditPlayActivity$15 -> com.stori.stori.ab:
     com.stori.stori.EditPlayActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.EditPlayActivity$16 -> com.stori.stori.aa:
+com.stori.stori.EditPlayActivity$16 -> com.stori.stori.ac:
     com.stori.stori.EditPlayActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.EditPlayActivity$17 -> com.stori.stori.ab:
+com.stori.stori.EditPlayActivity$17 -> com.stori.stori.ad:
     com.stori.stori.EditPlayActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.EditPlayActivity$18 -> com.stori.stori.ac:
+com.stori.stori.EditPlayActivity$18 -> com.stori.stori.ae:
     com.stori.stori.EditPlayActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.EditPlayActivity$19 -> com.stori.stori.ad:
+com.stori.stori.EditPlayActivity$19 -> com.stori.stori.af:
     com.stori.stori.EditPlayActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.EditPlayActivity$2 -> com.stori.stori.ae:
+com.stori.stori.EditPlayActivity$2 -> com.stori.stori.ag:
     com.stori.stori.EditPlayActivity this$0 -> a
     void onValueChange(android.widget.NumberPicker,int,int) -> onValueChange
-com.stori.stori.EditPlayActivity$20 -> com.stori.stori.af:
+com.stori.stori.EditPlayActivity$20 -> com.stori.stori.ah:
     com.stori.stori.EditPlayActivity this$0 -> a
     void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
     void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
-com.stori.stori.EditPlayActivity$3 -> com.stori.stori.ag:
+com.stori.stori.EditPlayActivity$3 -> com.stori.stori.ai:
     android.app.Dialog val$dialog -> a
     com.stori.stori.EditPlayActivity this$0 -> b
     void onClick(android.view.View) -> onClick
-com.stori.stori.EditPlayActivity$4 -> com.stori.stori.ah:
+com.stori.stori.EditPlayActivity$4 -> com.stori.stori.aj:
     android.app.Dialog val$dialog -> a
     com.stori.stori.EditPlayActivity this$0 -> b
     void onClick(android.view.View) -> onClick
-com.stori.stori.EditPlayActivity$5 -> com.stori.stori.ai:
+com.stori.stori.EditPlayActivity$5 -> com.stori.stori.ak:
     android.widget.EditText val$titleText -> a
     com.stori.stori.EditPlayActivity this$0 -> b
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.EditPlayActivity$6 -> com.stori.stori.aj:
+com.stori.stori.EditPlayActivity$6 -> com.stori.stori.al:
     com.stori.stori.EditPlayActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.EditPlayActivity$7 -> com.stori.stori.ak:
+com.stori.stori.EditPlayActivity$7 -> com.stori.stori.am:
     com.stori.stori.EditPlayActivity this$0 -> a
     void onCancel(android.content.DialogInterface) -> onCancel
-com.stori.stori.EditPlayActivity$8 -> com.stori.stori.al:
+com.stori.stori.EditPlayActivity$8 -> com.stori.stori.an:
     android.app.AlertDialog val$ad -> a
     com.stori.stori.EditPlayActivity this$0 -> b
     void onFocusChange(android.view.View,boolean) -> onFocusChange
-com.stori.stori.EditPlayActivity$9 -> com.stori.stori.am:
+com.stori.stori.EditPlayActivity$9 -> com.stori.stori.ao:
     android.widget.EditText val$titleText -> a
     com.stori.stori.EditPlayActivity this$0 -> b
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.EditPlayActivity$EditPlayMode -> com.stori.stori.an:
+com.stori.stori.EditPlayActivity$EditPlayMode -> com.stori.stori.ap:
     com.stori.stori.EditPlayActivity$EditPlayMode Edit -> a
     com.stori.stori.EditPlayActivity$EditPlayMode PlayEdit -> b
     com.stori.stori.EditPlayActivity$EditPlayMode Play -> c
@@ -46198,14 +46459,14 @@ com.stori.stori.PlaySlidesActivity -> com.stori.stori.PlaySlidesActivity:
     com.stori.stori.StoriService access$302(com.stori.stori.PlaySlidesActivity,com.stori.stori.StoriService) -> a
     java.util.ArrayList access$400(com.stori.stori.PlaySlidesActivity) -> c
     com.stori.stori.StoriService access$300(com.stori.stori.PlaySlidesActivity) -> d
-com.stori.stori.PlaySlidesActivity$1 -> com.stori.stori.ao:
+com.stori.stori.PlaySlidesActivity$1 -> com.stori.stori.aq:
     com.stori.stori.PlaySlidesActivity this$0 -> a
     void onPageSelected(int) -> a
-com.stori.stori.PlaySlidesActivity$2 -> com.stori.stori.ap:
+com.stori.stori.PlaySlidesActivity$2 -> com.stori.stori.ar:
     com.stori.stori.PlaySlidesActivity this$0 -> a
     void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
     void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
-com.stori.stori.SSPreferences -> com.stori.stori.aq:
+com.stori.stori.SSPreferences -> com.stori.stori.as:
     java.lang.String DEFAULT_EDITPROJECTNAME(android.content.Context) -> a
     java.lang.String DEFAULT_PLAYSLIDESNAME(android.content.Context) -> b
     boolean DEFAULT_PLAYSLIDESAUTOAUDIO(android.content.Context) -> c
@@ -46229,31 +46490,31 @@ com.stori.stori.SettingsActivity -> com.stori.stori.SettingsActivity:
     android.content.SharedPreferences access$000(com.stori.stori.SettingsActivity) -> a
     android.widget.CheckBox access$100(com.stori.stori.SettingsActivity) -> b
     void access$200(com.stori.stori.SettingsActivity) -> c
-com.stori.stori.SettingsActivity$1 -> com.stori.stori.ar:
+com.stori.stori.SettingsActivity$1 -> com.stori.stori.at:
     com.stori.stori.SettingsActivity this$0 -> a
     void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.stori.stori.SettingsActivity$2 -> com.stori.stori.as:
+com.stori.stori.SettingsActivity$2 -> com.stori.stori.au:
     com.stori.stori.SettingsActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.stori.stori.SettingsActivity$3 -> com.stori.stori.at:
+com.stori.stori.SettingsActivity$3 -> com.stori.stori.av:
     com.stori.stori.SettingsActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.stori.stori.SettingsActivity$4 -> com.stori.stori.au:
+com.stori.stori.SettingsActivity$4 -> com.stori.stori.aw:
     com.stori.stori.SettingsActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.stori.stori.SettingsActivity$5 -> com.stori.stori.av:
+com.stori.stori.SettingsActivity$5 -> com.stori.stori.ax:
     com.stori.stori.SettingsActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.SettingsActivity$6 -> com.stori.stori.aw:
+com.stori.stori.SettingsActivity$6 -> com.stori.stori.ay:
     com.stori.stori.SettingsActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.SlideJSON -> com.stori.stori.ax:
+com.stori.stori.SlideJSON -> com.stori.stori.az:
     java.lang.String getImageUrlString() -> a
     java.lang.String getImageFilename() -> b
     java.lang.String getAudioUrlString() -> c
     java.lang.String getAudioFilename() -> d
     java.lang.String getText() -> e
-com.stori.stori.SlideShareJSON -> com.stori.stori.ay:
+com.stori.stori.SlideShareJSON -> com.stori.stori.ba:
     android.content.Context m_context -> b
     com.stori.stori.SlideShareJSON$TransitionEffects[] TransitionEffectsValues -> a
     void setTitle(java.lang.String) -> a
@@ -46275,7 +46536,7 @@ com.stori.stori.SlideShareJSON -> com.stori.stori.ay:
     boolean save(android.content.Context,java.lang.String,java.lang.String) -> a
     com.stori.stori.SlideShareJSON load(android.content.Context,java.lang.String,java.lang.String) -> b
     java.lang.String getSlideShareTitle(android.content.Context,java.lang.String) -> a
-com.stori.stori.SlideShareJSON$TransitionEffects -> com.stori.stori.az:
+com.stori.stori.SlideShareJSON$TransitionEffects -> com.stori.stori.bb:
     com.stori.stori.SlideShareJSON$TransitionEffects None -> a
     com.stori.stori.SlideShareJSON$TransitionEffects[] $VALUES -> b
     com.stori.stori.SlideShareJSON$TransitionEffects[] values() -> values
@@ -46308,25 +46569,25 @@ com.stori.stori.StoriListActivity -> com.stori.stori.StoriListActivity:
     com.stori.stori.StoriService access$300(com.stori.stori.StoriListActivity) -> d
     com.stori.stori.adapters.StoriListAdapter access$400(com.stori.stori.StoriListActivity) -> e
     com.stori.stori.StoriService access$302(com.stori.stori.StoriListActivity,com.stori.stori.StoriService) -> a
-com.stori.stori.StoriListActivity$1 -> com.stori.stori.ba:
+com.stori.stori.StoriListActivity$1 -> com.stori.stori.bc:
     com.stori.stori.StoriListItem val$sliFinal -> a
     com.stori.stori.StoriListActivity this$0 -> b
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.StoriListActivity$2 -> com.stori.stori.bb:
+com.stori.stori.StoriListActivity$2 -> com.stori.stori.bd:
     com.stori.stori.StoriListActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.StoriListActivity$3 -> com.stori.stori.bc:
+com.stori.stori.StoriListActivity$3 -> com.stori.stori.be:
     java.util.ArrayList val$itemsFinal -> a
     com.stori.stori.StoriListActivity this$0 -> b
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.StoriListActivity$4 -> com.stori.stori.bd:
+com.stori.stori.StoriListActivity$4 -> com.stori.stori.bf:
     com.stori.stori.StoriListActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.stori.stori.StoriListActivity$5 -> com.stori.stori.be:
+com.stori.stori.StoriListActivity$5 -> com.stori.stori.bg:
     com.stori.stori.StoriListActivity this$0 -> a
     void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
     void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
-com.stori.stori.StoriListActivity$DeleteStoriItemsTask -> com.stori.stori.bf:
+com.stori.stori.StoriListActivity$DeleteStoriItemsTask -> com.stori.stori.bh:
     com.stori.stori.StoriListActivity this$0 -> a
     void onPostExecute(java.lang.Object) -> onPostExecute
     java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
@@ -46342,10 +46603,10 @@ com.stori.stori.StoriListItem -> com.stori.stori.StoriListItem:
     int getSlideCount() -> d
     void writeToParcel(android.os.Parcel,int) -> writeToParcel
     int describeContents() -> describeContents
-com.stori.stori.StoriListItem$1 -> com.stori.stori.bg:
+com.stori.stori.StoriListItem$1 -> com.stori.stori.bi:
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.stori.stori.StoriListItemComparator -> com.stori.stori.bh:
+com.stori.stori.StoriListItemComparator -> com.stori.stori.bj:
     int compare(java.lang.Object,java.lang.Object) -> compare
 com.stori.stori.StoriService -> com.stori.stori.StoriService:
     android.media.MediaPlayer m_mediaPlayer -> a
@@ -46385,38 +46646,38 @@ com.stori.stori.StoriService -> com.stori.stori.StoriService:
     java.util.ArrayList access$000(com.stori.stori.StoriService) -> a
     java.util.ArrayList access$002(com.stori.stori.StoriService,java.util.ArrayList) -> a
     void access$100(com.stori.stori.StoriService) -> b
-com.stori.stori.StoriService$1 -> com.stori.stori.bi:
+com.stori.stori.StoriService$1 -> com.stori.stori.bk:
     com.stori.stori.StoriService this$0 -> a
     void onCompletion(android.media.MediaPlayer) -> onCompletion
-com.stori.stori.StoriService$2 -> com.stori.stori.bj:
+com.stori.stori.StoriService$2 -> com.stori.stori.bl:
     int[] $SwitchMap$com$stori$stori$StoriService$PlaybackState -> a
-com.stori.stori.StoriService$PlaybackState -> com.stori.stori.bk:
+com.stori.stori.StoriService$PlaybackState -> com.stori.stori.bm:
     com.stori.stori.StoriService$PlaybackState Stopped -> a
     com.stori.stori.StoriService$PlaybackState Paused -> b
     com.stori.stori.StoriService$PlaybackState Playing -> c
     com.stori.stori.StoriService$PlaybackState[] $VALUES -> d
     com.stori.stori.StoriService$PlaybackState[] values() -> values
     com.stori.stori.StoriService$PlaybackState valueOf(java.lang.String) -> valueOf
-com.stori.stori.StoriService$PlaybackStateListener -> com.stori.stori.bl:
+com.stori.stori.StoriService$PlaybackStateListener -> com.stori.stori.bn:
     void onAudioStopped(java.lang.String) -> a
     void onAudioPaused(java.lang.String) -> b
     void onAudioPlaying(java.lang.String) -> c
-com.stori.stori.StoriService$ReadStoriItemsStateListener -> com.stori.stori.bm:
+com.stori.stori.StoriService$ReadStoriItemsStateListener -> com.stori.stori.bo:
     void onReadStoriItemsComplete(java.util.ArrayList) -> a
-com.stori.stori.StoriService$ReadStoriItemsTask -> com.stori.stori.bn:
+com.stori.stori.StoriService$ReadStoriItemsTask -> com.stori.stori.bp:
     com.stori.stori.StoriService this$0 -> a
     void onPostExecute(java.lang.Object) -> onPostExecute
     java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.stori.stori.StoriService$ReadStoriItemsTaskParams -> com.stori.stori.bo:
+com.stori.stori.StoriService$ReadStoriItemsTaskParams -> com.stori.stori.bq:
     android.content.Context m_context -> a
     java.lang.String m_userUuid -> b
     com.stori.stori.StoriService this$0 -> c
-com.stori.stori.StoriService$RecordingStateListener -> com.stori.stori.bp:
+com.stori.stori.StoriService$RecordingStateListener -> com.stori.stori.br:
     void onRecordingTimeLimit(boolean,java.lang.String) -> a
-com.stori.stori.StoriService$StoriServiceBinder -> com.stori.stori.bq:
+com.stori.stori.StoriService$StoriServiceBinder -> com.stori.stori.bs:
     com.stori.stori.StoriService this$0 -> a
     com.stori.stori.StoriService getService() -> a
-com.stori.stori.StoriService$StoriServiceConnectionListener -> com.stori.stori.br:
+com.stori.stori.StoriService$StoriServiceConnectionListener -> com.stori.stori.bt:
     void onServiceConnected(com.stori.stori.StoriService) -> a
     void onServiceDisconnected() -> a_
 com.stori.stori.TouchImageView -> com.stori.stori.TouchImageView:
@@ -46512,14 +46773,14 @@ com.stori.stori.TouchImageView -> com.stori.stori.TouchImageView:
     void access$2500(com.stori.stori.TouchImageView) -> q
     android.content.Context access$2600(com.stori.stori.TouchImageView) -> r
     float[] access$2700(com.stori.stori.TouchImageView) -> s
-com.stori.stori.TouchImageView$1 -> com.stori.stori.bs:
+com.stori.stori.TouchImageView$1 -> com.stori.stori.bu:
     int[] $SwitchMap$android$widget$ImageView$ScaleType -> a
-com.stori.stori.TouchImageView$CompatScroller -> com.stori.stori.bt:
+com.stori.stori.TouchImageView$CompatScroller -> com.stori.stori.bv:
     android.widget.Scroller scroller -> a
     android.widget.OverScroller overScroller -> b
     boolean isPreGingerbread -> c
     com.stori.stori.TouchImageView this$0 -> d
-com.stori.stori.TouchImageView$DoubleTapZoom -> com.stori.stori.bu:
+com.stori.stori.TouchImageView$DoubleTapZoom -> com.stori.stori.bw:
     long startTime -> b
     float startZoom -> c
     float targetZoom -> d
@@ -46531,31 +46792,31 @@ com.stori.stori.TouchImageView$DoubleTapZoom -> com.stori.stori.bu:
     android.graphics.PointF endTouch -> j
     com.stori.stori.TouchImageView this$0 -> a
     void run() -> run
-com.stori.stori.TouchImageView$Fling -> com.stori.stori.bv:
+com.stori.stori.TouchImageView$Fling -> com.stori.stori.bx:
     com.stori.stori.TouchImageView$CompatScroller scroller -> a
     int currX -> b
     int currY -> c
     com.stori.stori.TouchImageView this$0 -> d
     void cancelFling() -> a
     void run() -> run
-com.stori.stori.TouchImageView$GestureListener -> com.stori.stori.bw:
+com.stori.stori.TouchImageView$GestureListener -> com.stori.stori.by:
     com.stori.stori.TouchImageView this$0 -> a
     boolean onSingleTapConfirmed(android.view.MotionEvent) -> onSingleTapConfirmed
     void onLongPress(android.view.MotionEvent) -> onLongPress
     boolean onFling(android.view.MotionEvent,android.view.MotionEvent,float,float) -> onFling
     boolean onDoubleTap(android.view.MotionEvent) -> onDoubleTap
     boolean onDoubleTapEvent(android.view.MotionEvent) -> onDoubleTapEvent
-com.stori.stori.TouchImageView$OnTouchImageViewListener -> com.stori.stori.bx:
-com.stori.stori.TouchImageView$PrivateOnTouchListener -> com.stori.stori.by:
+com.stori.stori.TouchImageView$OnTouchImageViewListener -> com.stori.stori.bz:
+com.stori.stori.TouchImageView$PrivateOnTouchListener -> com.stori.stori.ca:
     android.graphics.PointF last -> b
     com.stori.stori.TouchImageView this$0 -> a
     boolean onTouch(android.view.View,android.view.MotionEvent) -> onTouch
-com.stori.stori.TouchImageView$ScaleListener -> com.stori.stori.bz:
+com.stori.stori.TouchImageView$ScaleListener -> com.stori.stori.cb:
     com.stori.stori.TouchImageView this$0 -> a
     boolean onScaleBegin(android.view.ScaleGestureDetector) -> onScaleBegin
     boolean onScale(android.view.ScaleGestureDetector) -> onScale
     void onScaleEnd(android.view.ScaleGestureDetector) -> onScaleEnd
-com.stori.stori.TouchImageView$State -> com.stori.stori.ca:
+com.stori.stori.TouchImageView$State -> com.stori.stori.cc:
     com.stori.stori.TouchImageView$State NONE -> a
     com.stori.stori.TouchImageView$State DRAG -> b
     com.stori.stori.TouchImageView$State ZOOM -> c
@@ -46564,13 +46825,13 @@ com.stori.stori.TouchImageView$State -> com.stori.stori.ca:
     com.stori.stori.TouchImageView$State[] $VALUES -> f
     com.stori.stori.TouchImageView$State[] values() -> values
     com.stori.stori.TouchImageView$State valueOf(java.lang.String) -> valueOf
-com.stori.stori.TouchImageView$ZoomVariables -> com.stori.stori.cb:
+com.stori.stori.TouchImageView$ZoomVariables -> com.stori.stori.cd:
     float scale -> a
     float focusX -> b
     float focusY -> c
     android.widget.ImageView$ScaleType scaleType -> d
     com.stori.stori.TouchImageView this$0 -> e
-com.stori.stori.Utilities -> com.stori.stori.cc:
+com.stori.stori.Utilities -> com.stori.stori.ce:
     java.io.File createOrGetSlideShareDirectory(android.content.Context,java.lang.String) -> a
     void recursiveDelete(java.io.File) -> a
     void deleteSlideShareDirectory(android.content.Context,java.lang.String) -> b
@@ -46593,6 +46854,15 @@ com.stori.stori.Utilities -> com.stori.stori.cc:
     void freezeActivityOrientation(android.app.Activity) -> a
     java.lang.String buildResourceUrlString(java.lang.String,java.lang.String,java.lang.String) -> a
     java.lang.String buildShowWebPageUrlString(java.lang.String,java.lang.String) -> a
+com.stori.stori.VolleyBinaryRequest -> com.stori.stori.cf:
+    com.android.volley.Response$Listener mListener -> c
+    java.io.File mOutputDirectory -> d
+    java.lang.Object sDecodeLock -> e
+    java.io.File getOutputDirectory() -> u
+    com.android.volley.Response parseNetworkResponse(com.android.volley.NetworkResponse) -> a
+    void deliverResponse$5d527811() -> s
+com.stori.stori.VolleyStream -> com.stori.stori.cg:
+    com.android.volley.RequestQueue newRequestQueue$2b0c7ccd(android.content.Context) -> a
 com.stori.stori.adapters.EditPlayPagerAdapter -> com.stori.stori.a.a:
     com.stori.stori.SlideShareJSON m_ssj -> b
     java.lang.String m_slideShareName -> c

@@ -14,17 +14,12 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 
 import static com.stori.stori.Config.D;
 import static com.stori.stori.Config.E;
@@ -36,6 +31,7 @@ public class DownloadActivity extends FragmentActivity {
     private RequestQueue m_requestQueue;
     private ProgressDialog m_progressDialog;
     private String m_slideShareName;
+    private File m_outputDirectory;
     private String m_userUuid;
     private SlideShareJSON m_ssj;
     private ArrayList<String> m_urlsToDownload;
@@ -51,7 +47,8 @@ public class DownloadActivity extends FragmentActivity {
         if(D)Log.d(TAG, "DownloadActivity.onCreate");
 
         m_prefs = getSharedPreferences(SSPreferences.PREFS(this), Context.MODE_PRIVATE);
-        m_requestQueue = Volley.newRequestQueue(this);
+
+        m_requestQueue = VolleyStream.newRequestQueue(this);
 
         // Lock the orientation down
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
@@ -163,8 +160,10 @@ public class DownloadActivity extends FragmentActivity {
             });
 
             m_progressDialog.show();
-            VolleyBinaryRequest binaryRequest = new VolleyBinaryRequest(jsonUrl, new ResponseListener(jsonUrl), new ErrorListener(jsonUrl));
+            File slideShareDirectory = Utilities.createOrGetSlideShareDirectory(this, m_slideShareName);
+            VolleyBinaryRequest binaryRequest = new VolleyBinaryRequest(jsonUrl, slideShareDirectory, new ResponseListener(jsonUrl), new ErrorListener(jsonUrl));
             binaryRequest.setTag(REQUEST_TAG);
+            binaryRequest.setShouldCache(false);
             m_requestQueue.add(binaryRequest);
         }
         else {
@@ -240,13 +239,6 @@ public class DownloadActivity extends FragmentActivity {
         public void onResponse(byte[] response) {
             if(D)Log.d(TAG, String.format("DownloadActivity.onResponse - got %d bytes for %s", response == null ? 0 : response.length, this.m_urlString));
 
-            boolean success = saveBytesToFile(response);
-            if (!success) {
-                if(D)Log.d(TAG, String.format("DownloadActivity.onResponse - failed to save to file, bailing: %s", this.m_urlString));
-                handleDownloadError();
-                return;
-            }
-
             if (m_ssj == null) {
                 m_ssj = SlideShareJSON.load(DownloadActivity.this, m_slideShareName, Config.slideShareJSONFilename);
                 if (m_ssj == null) {
@@ -264,8 +256,10 @@ public class DownloadActivity extends FragmentActivity {
                     for (int i = 0; i < m_urlsToDownload.size(); i++) {
                         String url = m_urlsToDownload.get(i);
 
-                        VolleyBinaryRequest vbr = new VolleyBinaryRequest(url, new ResponseListener(url), new ErrorListener(url));
+                        File slideShareDirectory = Utilities.createOrGetSlideShareDirectory(DownloadActivity.this, m_slideShareName);
+                        VolleyBinaryRequest vbr = new VolleyBinaryRequest(url, slideShareDirectory, new ResponseListener(url), new ErrorListener(url));
                         vbr.setTag(REQUEST_TAG);
+                        vbr.setShouldCache(false);
                         m_requestQueue.add(vbr);
                     }
                 }
@@ -357,12 +351,13 @@ public class DownloadActivity extends FragmentActivity {
                     }
                 }
                 else {
-                    m_progressDialog.setMessage(String.format(getString(R.string.download_dialog_message_format), m_currentResourceDownloadIndex + 1, m_urlsToDownload.size()));
                     m_currentResourceDownloadIndex++;
+                    m_progressDialog.setMessage(String.format(getString(R.string.download_dialog_message_format), m_currentResourceDownloadIndex + 1, m_urlsToDownload.size()));
                 }
             }
         }
 
+        /* NEVER - now done in VolleyStream/BasicStreamingNetwork
         private boolean saveBytesToFile(byte[] data) {
             if(D)Log.d(TAG, String.format("DownloadActivity.saveBytesToFile for %s", this.m_urlString));
 
@@ -411,6 +406,7 @@ public class DownloadActivity extends FragmentActivity {
 
             return success;
         }
+        */
     }
 
     private class ErrorListener implements Response.ErrorListener{
