@@ -74,6 +74,11 @@ NSString *const BASE_WEB_URL = @"http://stori-app.com/";
 NSString *const SLIDES_DIRECTORY_NAME = @"slides/";
 int const WEB_URL_SEGMENT_COUNT = 3;
 
+//
+// Audio file extension
+//
+NSString *const AUDIO_FILE_EXTENSION = @"3gp";
+
 
 @implementation Constants
 

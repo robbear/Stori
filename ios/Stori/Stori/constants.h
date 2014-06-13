@@ -76,6 +76,12 @@ extern NSString *const BASE_WEB_URL;
 extern NSString *const SLIDES_DIRECTORY_NAME;
 extern int const WEB_URL_SEGMENT_COUNT;
 
+//
+// Audio file extension
+//
+NSString *const AUDIO_FILE_EXTENSION;
+
+
 /**
  * The Amazon S3 Bucket in your account to use for this application.
  * This bucket should have been previously created.
@@ -169,5 +175,6 @@ extern int const WEB_URL_SEGMENT_COUNT;
 
 +(NSString *)baseAWSStorageURL;
 +(NSString *)baseWebSlidesUrl;
++(NSString *)audioFileExtension;
 
 @end

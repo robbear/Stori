@@ -274,7 +274,21 @@ NSString *_userUuid;
     S3PutObjectRequest *por = [[S3PutObjectRequest alloc] initWithKey:relPath inBucket:BUCKET_NAME];
     [por setCacheControl:@"If-None-Match"];
     [por setContentType:contentType];
-    [por setFilename:filePath];
+    
+    // Note: the iOS AWS S3 SDK will determine content-type from the file extension,
+    // regardless of our setting the contentType explicitly. We look for the file extension
+    // of 3gp and load the data into memory rather than using setFilename, only for audio files.
+    // Without doing so, S3 stores 3gp files with the mime-type of application/octet-stream
+    // which causes audio havoc on IE/Firefox.
+    
+    NSString *ext = [filePath pathExtension];
+    
+    if ([ext isEqualToString:AUDIO_FILE_EXTENSION]) {
+        [por setData:[NSData dataWithContentsOfFile:filePath]];
+    }
+    else {
+        [por setFilename:filePath];
+    }
     
     S3PutObjectResponse *response = [[_amazonClientManager s3] putObject:por];
     HFLogDebug(@"AWSS3Provider.uploadFile: response=%@", response);

@@ -597,7 +597,7 @@
 }
 
 - (NSString *)getNewAudioFileName {
-    return [NSString stringWithFormat:@"%@.3gp", [[NSUUID UUID] UUIDString]];
+    return [NSString stringWithFormat:@"%@.%@", [[NSUUID UUID] UUIDString], AUDIO_FILE_EXTENSION];
 }
 
 - (void)startPlaying {
