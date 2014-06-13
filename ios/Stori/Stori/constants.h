@@ -175,6 +175,5 @@ NSString *const AUDIO_FILE_EXTENSION;
 
 +(NSString *)baseAWSStorageURL;
 +(NSString *)baseWebSlidesUrl;
-+(NSString *)audioFileExtension;
 
 @end
