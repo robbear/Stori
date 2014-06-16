@@ -56,8 +56,6 @@
 
 @implementation EditPlayController
 
-bool _userNeedsAuthentication = TRUE;
-
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
@@ -206,12 +204,15 @@ bool _userNeedsAuthentication = TRUE;
         [self.selectPhotoButton setImage:[UIImage imageNamed:@"ic_selectimage.png"] forState:UIControlStateNormal];
     }
     
-    if (_userNeedsAuthentication && !self.disconnectInProgress) {
+    [AmazonClientManager sharedInstance].amazonClientManagerGoogleAccountDelegate = self;
+    self.userUuid = [AmazonSharedPreferences userName];
+    
+    if (self.userUuid == nil && !self.disconnectInProgress) {
         //
         // Remember: Use the shared instance versions of AmazonClientManager and
         // GPPSignIn for the user-interactive sign in flow. See also LoginViewController.
         //
-        [AmazonClientManager sharedInstance].amazonClientManagerGoogleAccountDelegate = self;
+        //[AmazonClientManager sharedInstance].amazonClientManagerGoogleAccountDelegate = self;
         if (![[AmazonClientManager sharedInstance] silentSharedGPlusLogin]) {
             HFLogDebug(@"EditPlayController.viewDidAppear: silentSharedGPlusLogin failed");
             [self initiateGoogleSignIn:FALSE];
@@ -225,6 +226,9 @@ bool _userNeedsAuthentication = TRUE;
         self.downloadSlideShareName = nil;
         
         [self download:self.downloadIsForEdit withUserUuid:userUuid withName:slideShareName];
+    }
+    else if (!self.disconnectInProgress) {
+        [self googleSignInComplete:TRUE withError:nil];
     }
 }
 
@@ -686,13 +690,12 @@ bool _userNeedsAuthentication = TRUE;
 - (void)googleSignInComplete:(BOOL)success withError:(NSError *)error {
     HFLogDebug(@"EditPlayController.googleSignInComplete: success=%d, error=%@", success, error == nil ? @"nil" : error.description);
     
-    _userNeedsAuthentication = !success;
     if (success) {
         self.disconnectInProgress = FALSE;
     }
     
-    if (_userNeedsAuthentication) {
-        HFLogDebug(@"EditPlayController.googleSignInComplete - _userNeedsAuthentication is still TRUE, so that means login UI is needed");
+    if (!success) {
+        HFLogDebug(@"EditPlayController.googleSignInComplete - sign in failed, so that means login UI is needed");
         
         [self initiateGoogleSignIn:(error != nil)];
     }

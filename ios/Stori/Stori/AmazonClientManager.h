@@ -23,6 +23,7 @@
 @interface AmazonClientManager:NSObject<GPPSignInDelegate> {}
 @property (nonatomic, strong) id<AmazonClientManagerGoogleAccountDelegate> amazonClientManagerGoogleAccountDelegate;
 @property (strong, nonatomic) GPPSignIn *signIn;
+@property (nonatomic) BOOL isInDisconnect;
 
 - (void)reloadGSession;
 - (void)initGPlusLogin;

@@ -33,6 +33,7 @@ static GTMOAuth2Authentication  *_auth;
     dispatch_once(&onceToken, ^{
         HFLogDebug(@"AmazonClientManager.sharedInstance - allocating sharedInstance");
         sharedInstance = [[AmazonClientManager alloc] init];
+        sharedInstance.isInDisconnect = FALSE;
     });
     
     HFLogDebug(@"AmazonClientManager.sharedInstance - returning sharedInstance");
@@ -163,11 +164,24 @@ static GTMOAuth2Authentication  *_auth;
         
         [self initClients];
         
+        if (self.isInDisconnect) {
+            self.isInDisconnect = FALSE;
+            [[GPPSignIn sharedInstance] disconnect];
+            return;
+        }
+        
         if ([self.amazonClientManagerGoogleAccountDelegate respondsToSelector:@selector(googleSignInComplete:withError:)]) {
             [self.amazonClientManagerGoogleAccountDelegate googleSignInComplete:TRUE withError:nil];
         }
     }
     else {
+        if (self.isInDisconnect) {
+            self.isInDisconnect = FALSE;
+            NSError *error = [[NSError alloc] initWithDomain:@"stori" code:-1 userInfo:@{@"description": @"Unable to disconnect due to failure to connect with Google"}];
+            [self didDisconnectWithError:error];
+            return;
+        }
+
         if ([self.amazonClientManagerGoogleAccountDelegate respondsToSelector:@selector(googleSignInComplete:withError:)]) {
             NSError *error = [[NSError alloc] initWithDomain:@"stori" code:-1 userInfo:@{@"description": @"Unable to assume role. Please check logs for error"}];
             [self.amazonClientManagerGoogleAccountDelegate googleSignInComplete:FALSE withError:error];
@@ -177,8 +191,13 @@ static GTMOAuth2Authentication  *_auth;
 
 - (void)disconnectFromSharedGoogle {
     HFLogDebug(@"AmazonClientManager.disconnectFromSharedGoogle");
-    
-    [[GPPSignIn sharedInstance] disconnect];
+
+    // Set isInDisconnect to TRUE, then call login, handling the call
+    // to disconnect as a special case in the conneciton completion. Note
+    // that we need to ensure we're signed in for the disconnect call to
+    // complete.
+    self.isInDisconnect = TRUE;
+    [self silentSharedGPlusLogin];
 }
 
 - (void)didDisconnectWithError:(NSError *)error {
