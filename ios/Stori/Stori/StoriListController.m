@@ -306,8 +306,8 @@ long long _expectedBytes;
 // AWSS3ProviderDelegate methods
 //
 
-- (void)getStoriItemsComplete:(NSArray *)arrayItems {
-    HFLogDebug(@"StoriListController.getStoriItemsComplete");
+- (void)getStoriItemsComplete:(NSArray *)arrayItems withError:(NSError *)error {
+    HFLogDebug(@"StoriListController.getStoriItemsComplete: error=%@", error);
     
     [self updateWithNewStoriItemList:arrayItems];
     
@@ -316,12 +316,12 @@ long long _expectedBytes;
     self.awsS3Provider = nil;
 }
 
-- (void)deleteVirtualDirectoryComplete {
-    HFLogDebug(@"StoriListController.deleteVirtualDirectoryComplete");
+- (void)deleteVirtualDirectoryComplete:(NSError *)error {
+    HFLogDebug(@"StoriListController.deleteVirtualDirectoryComplete: error=%@", error);
 }
 
-- (void)deleteStoriItemsAndReturnItemsComplete:(NSArray *)arrayItems {
-    HFLogDebug(@"StoriListController.deleteStoriItemsAndReturnItemsComplete");
+- (void)deleteStoriItemsAndReturnItemsComplete:(NSArray *)arrayItems withError:(NSError *)error {
+    HFLogDebug(@"StoriListController.deleteStoriItemsAndReturnItemsComplete: error=%@", error);
     
     [self updateWithNewStoriItemList:arrayItems];
 
@@ -330,7 +330,7 @@ long long _expectedBytes;
     self.awsS3Provider = nil;
 }
 
-- (void)uploadComplete:(BOOL)success {
+- (void)uploadComplete:(NSError *)error {
 }
 
 @end

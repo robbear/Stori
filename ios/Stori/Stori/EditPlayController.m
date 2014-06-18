@@ -745,8 +745,13 @@
     }
 }
 
-- (void)getStoriItemsComplete:(NSArray *)arrayItems {
+- (void)getStoriItemsComplete:(NSArray *)arrayItems withError:(NSError *)error {
     HFLogDebug(@"EditPlayController.getStoriItemsComplete - found %d S3 objects", [arrayItems count]);
+    
+    if (error) {
+        [self uploadComplete:error];
+        return;
+    }
     
     BOOL isEditOfPublished = FALSE;
     if (arrayItems) {
@@ -785,20 +790,20 @@
     [self.awsS3Provider uploadAsync:self.slideShareName];
 }
 
-- (void)deleteVirtualDirectoryComplete {
-    HFLogDebug(@"EditPlayController.deleteVirtualDirectoryComplete");
+- (void)deleteVirtualDirectoryComplete:(NSError *)error {
+    HFLogDebug(@"EditPlayController.deleteVirtualDirectoryComplete: error=%@", error);
 
     self.awsS3Provider = nil;
 }
 
-- (void)deleteStoriItemsAndReturnItemsComplete:(NSArray *)arrayItems {
-    HFLogDebug(@"EditPlayController.deleteStoriItemsAndReturnItemsComplete");
+- (void)deleteStoriItemsAndReturnItemsComplete:(NSArray *)arrayItems withError:(NSError *)error {
+    HFLogDebug(@"EditPlayController.deleteStoriItemsAndReturnItemsComplete: error=%@", error);
 
     self.awsS3Provider = nil;
 }
 
-- (void)uploadComplete:(BOOL)success {
-    HFLogDebug(@"EditPlayController.uploadComplete: success=%d", success);
+- (void)uploadComplete:(NSError *)error {
+    HFLogDebug(@"EditPlayController.uploadComplete: error=%@", error);
     
     self.awsS3Provider = nil;
 
@@ -806,7 +811,7 @@
     self.progressHUD = nil;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    if (success) {
+    if (error == nil) {
         int curVersion = [self.ssj getVersion];
         [self.ssj setVersion:curVersion + 1];
         [self.ssj saveToFolder:self.slideShareName withFileName:SLIDESHARE_JSON_FILENAME];
@@ -822,8 +827,7 @@
         [dialog show];
     }
     else {
-        // BUGBUG - need failure message
-        NSString *message = [NSString stringWithFormat:NSLocalizedString(@"editplay_upload_dialog_failure_message_format", nil), "Failed"];
+        NSString *message = NSLocalizedString(@"editplay_upload_dialog_failure_message", nil);
         UIAlertView *dialog = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"editplay_upload_dialog_failure_title", nil)
                                                          message:message
                                                         delegate:self
@@ -1053,6 +1057,12 @@
         self.progressHUD.mode = MBProgressHUDModeIndeterminate;
         [self.progressHUD show:TRUE];
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+        
+        //
+        // Publish begins first with a call to getStoriItemsAsync in order to
+        // check the count of published Storis, in order to prevent exceeding the max.
+        // In the completion callback, we call upload.
+        //
         
         self.awsS3Provider = [[AWSS3Provider alloc] init];
         [self.awsS3Provider initializeProvider:[AmazonSharedPreferences userName] withDelegate:self];

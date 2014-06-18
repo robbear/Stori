@@ -28,9 +28,9 @@ typedef void (^AWSS3ProviderBlockType)(void);
 
 @protocol AWSS3ProviderDelegate <NSObject>
 
-- (void)getStoriItemsComplete:(NSArray *)arrayItems;
-- (void)deleteVirtualDirectoryComplete;
-- (void)deleteStoriItemsAndReturnItemsComplete:(NSArray *)arrayItems;
-- (void)uploadComplete:(BOOL)success;
+- (void)getStoriItemsComplete:(NSArray *)arrayItems withError:(NSError *)error;
+- (void)deleteVirtualDirectoryComplete:(NSError *)error;
+- (void)deleteStoriItemsAndReturnItemsComplete:(NSArray *)arrayItems withError:(NSError *)error;
+- (void)uploadComplete:(NSError *)error;
 
 @end

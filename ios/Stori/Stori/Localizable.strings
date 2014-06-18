@@ -36,7 +36,7 @@
 "editplay_upload_dialog_complete_title" = "Upload complete";
 "editplay_upload_dialog_complete_message" = "Do you want to share this Stori?";
 "editplay_upload_dialog_failure_title" = "Upload unsuccessful";
-"editplay_upload_dialog_failure_message_format" = "Upload failed: %1$@";
+"editplay_upload_dialog_failure_message" = "Failed to upload the Stori";
 "google_play_market_link" = "https://play.google.com/store/apps/details?id=com.stori.stori";
 "login_dialog_title" = "Welcome!";
 "login_dialog_message" = "Stori requires a Google account. Continue by signing in with Google. If you do not have a Google account, you will have an opportunity to create one.";

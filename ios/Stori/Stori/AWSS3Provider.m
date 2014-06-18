@@ -13,10 +13,10 @@
 
 @interface AWSS3Provider()
 + (NSString *)getStringSegmentFromManifestUrlString:(NSString *)urlString withSegment:(NSString *)segment;
-+ (NSArray *)getStoriItemsHelper:(NSString *)userUuid;
-+ (void)deleteVirtualDirectoryHelper:(NSString *)userUuid withFolder:(NSString *)directoryName;
-+ (void)uploadFile:(NSString *)userUuid withFolder:(NSString *)folder withFileName:(NSString *)fileName withContentType:(NSString *)contentType;
-+ (void)uploadDirectoryEntry:(NSString *)userUuid withFolder:(NSString *)slideShareName withTitle:(NSString *)title withCount:(int)count;
++ (NSArray *)getStoriItemsHelper:(NSString *)userUuid withError:(NSError **)error;
++ (void)deleteVirtualDirectoryHelper:(NSString *)userUuid withFolder:(NSString *)directoryName withError:(NSError **)error;
++ (void)uploadFile:(NSString *)userUuid withFolder:(NSString *)folder withFileName:(NSString *)fileName withContentType:(NSString *)contentType withError:(NSError **)error;
++ (void)uploadDirectoryEntry:(NSString *)userUuid withFolder:(NSString *)slideShareName withTitle:(NSString *)title withCount:(int)count withError:(NSError **)error;
 @end
 
 AmazonClientManager *_amazonClientManager;
@@ -62,9 +62,11 @@ NSString *_userUuid;
     self.awsS3ProviderDelegate = delgate;
 }
 
-+ (NSArray *)getStoriItemsHelper:(NSString *)userUuid {
++ (NSArray *)getStoriItemsHelper:(NSString *)userUuid withError:(NSError *__autoreleasing *)error {
     HFLogDebug(@"AWSS3Provider.getStoriItemsHelper");
     
+    *error = nil;
+
     NSMutableArray *objects = nil;
     S3ListObjectsRequest *request = [[S3ListObjectsRequest alloc] initWithName:BUCKET_NAME];
     request.prefix = [NSString stringWithFormat:@"%@/%@", userUuid, DIRECTORY_ENTRY_SEGMENT_STRING];
@@ -78,6 +80,11 @@ NSString *_userUuid;
         }
         else {
             [objects removeAllObjects];
+        }
+        
+        if (!response) {
+            *error = [[NSError alloc] initWithDomain:@"stori" code:-1 userInfo:@{@"description": @"Failed call to listObjects"}];
+            return objects;
         }
         
         for (S3ObjectSummary *objectSummary in results.objectSummaries) {
@@ -101,6 +108,7 @@ NSString *_userUuid;
     }
     @catch (AmazonClientException *exception) {
         HFLogDebug(@"AWSS3Provider.getStoriItemsHelper: exception = %@", exception);
+        *error = [[NSError alloc] initWithDomain:@"stori" code:-1 userInfo:@{@"description": [NSString stringWithFormat:@"Exception: %@", exception.message]}];
     }
     
     return objects;
@@ -118,11 +126,12 @@ NSString *_userUuid;
             S3ListObjectsRequest *request = [[S3ListObjectsRequest alloc] initWithName:BUCKET_NAME];
             request.prefix = [NSString stringWithFormat:@"%@/%@", userUuid, DIRECTORY_ENTRY_SEGMENT_STRING];
             
-            objects = [AWSS3Provider getStoriItemsHelper:userUuid];
+            NSError *error;
+            objects = [AWSS3Provider getStoriItemsHelper:userUuid withError:&error];
            
             dispatch_async(dispatch_get_main_queue(), ^(void){
-                if ([awsS3ProviderDelegate respondsToSelector:@selector(getStoriItemsComplete:)]) {
-                    [awsS3ProviderDelegate getStoriItemsComplete:objects];
+                if ([awsS3ProviderDelegate respondsToSelector:@selector(getStoriItemsComplete:withError:)]) {
+                    [awsS3ProviderDelegate getStoriItemsComplete:objects withError:error];
                 }
             });
         });
@@ -153,8 +162,10 @@ NSString *_userUuid;
     return [partial substringWithRange:range];
 }
 
-+ (void)deleteVirtualDirectoryHelper:(NSString *)userUuid withFolder:(NSString *)directoryName {
++ (void)deleteVirtualDirectoryHelper:(NSString *)userUuid withFolder:(NSString *)directoryName withError:(NSError *__autoreleasing *)error {
     HFLogDebug(@"AWSS3Provider.deleteVirtualDirectoryHelper: userUuid=%@, directoryName=%@", userUuid, directoryName);
+    
+    *error = nil;
     
     @try {
         NSString *prefix = [NSString stringWithFormat:@"%@/%@", userUuid, directoryName];
@@ -164,6 +175,11 @@ NSString *_userUuid;
         
         S3ListObjectsResponse *response = [[_amazonClientManager s3] listObjects:request];
         S3ListObjectsResult *results = response.listObjectsResult;
+        
+        if (!response) {
+            *error = [[NSError alloc] initWithDomain:@"stori" code:-1 userInfo:@{@"description": @"Failed call to listObjects"}];
+            return;
+        }
         
         for (S3ObjectSummary *summary in results.objectSummaries) {
             [[_amazonClientManager s3] deleteObjectWithKey:summary.key withBucket:BUCKET_NAME];
@@ -190,6 +206,7 @@ NSString *_userUuid;
     }
     @catch (AmazonClientException *exception) {
         HFLogDebug(@"AWSS3Provider.deleteVirtualDirectoryHelper: exception = %@", exception);
+        *error = [[NSError alloc] initWithDomain:@"stori" code:-1 userInfo:@{@"description": [NSString stringWithFormat:@"Exception: %@", exception.message]}];
     }
 }
 
@@ -201,11 +218,12 @@ NSString *_userUuid;
     
     [self setAwsS3ProviderBlock:^{
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-            [AWSS3Provider deleteVirtualDirectoryHelper:userUuid withFolder:directoryName];
+            NSError *error;
+            [AWSS3Provider deleteVirtualDirectoryHelper:userUuid withFolder:directoryName withError:&error];
             
             dispatch_async(dispatch_get_main_queue(), ^(void){
-                if ([awsS3ProviderDelegate respondsToSelector:@selector(deleteVirtualDirectoryComplete)]) {
-                    [awsS3ProviderDelegate deleteVirtualDirectoryComplete];
+                if ([awsS3ProviderDelegate respondsToSelector:@selector(deleteVirtualDirectoryComplete:)]) {
+                    [awsS3ProviderDelegate deleteVirtualDirectoryComplete:error];
                 }
             });
         });
@@ -222,17 +240,23 @@ NSString *_userUuid;
     
     [self setAwsS3ProviderBlock:^{
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-            NSArray *returnedObjects;
+            NSArray *returnedObjects = nil;
             
+            NSError *error;
             for (StoriListItem *sli in arrayItems) {
-                [AWSS3Provider deleteVirtualDirectoryHelper:userUuid withFolder:sli.slideShareName];
+                [AWSS3Provider deleteVirtualDirectoryHelper:userUuid withFolder:sli.slideShareName withError:&error];
+                if (error) {
+                    break;
+                }
             }
             
-            returnedObjects = [AWSS3Provider getStoriItemsHelper:userUuid];
+            if (!error) {
+                returnedObjects = [AWSS3Provider getStoriItemsHelper:userUuid withError:&error];
+            }
             
             dispatch_async(dispatch_get_main_queue(), ^(void){
-                if ([awsS3ProviderDelegate respondsToSelector:@selector(deleteStoriItemsAndReturnItemsComplete:)]) {
-                    [awsS3ProviderDelegate deleteStoriItemsAndReturnItemsComplete:returnedObjects];
+                if ([awsS3ProviderDelegate respondsToSelector:@selector(deleteStoriItemsAndReturnItemsComplete:withError:)]) {
+                    [awsS3ProviderDelegate deleteStoriItemsAndReturnItemsComplete:returnedObjects withError:error];
                 }
             });
         });
@@ -241,11 +265,10 @@ NSString *_userUuid;
     [self silentLogin];
 }
 
-//
-// BUGBUG - Not yet tested
-//
-+ (void)uploadDirectoryEntry:(NSString *)userUuid withFolder:(NSString *)folder withTitle:(NSString *)title withCount:(int)count {
++ (void)uploadDirectoryEntry:(NSString *)userUuid withFolder:(NSString *)folder withTitle:(NSString *)title withCount:(int)count withError:(NSError *__autoreleasing *)error {
     HFLogDebug(@"AWSS3Provider.uploadDirectoryEntry");
+    
+    *error = nil;
 
     NSString *encodedTitle = [title urlEncode];
     NSString *relPath = [NSString stringWithFormat:@"%@/%@%@/%@%@/%@%d", userUuid, DIRECTORY_ENTRY_SEGMENT_STRING, folder, TITLE_SEGMENT_STRING, encodedTitle, SLIDE_COUNT_SEGMENT_STRING, count];
@@ -261,11 +284,16 @@ NSString *_userUuid;
     [por setData:data];
     
     S3PutObjectResponse *response = [[_amazonClientManager s3] putObject:por];
+    if (response == nil) {
+        *error = [[NSError alloc] initWithDomain:@"stori" code:-1 userInfo:@{@"description": @"Call to putObject failed"}];
+    }
     HFLogDebug(@"AWSS3Provider.uploadDirectoryEntry: response=%@", response);
 }
 
-+ (void)uploadFile:(NSString *)userUuid withFolder:(NSString *)folder withFileName:(NSString *)fileName withContentType:(NSString *)contentType {
++ (void)uploadFile:(NSString *)userUuid withFolder:(NSString *)folder withFileName:(NSString *)fileName withContentType:(NSString *)contentType withError:(NSError *__autoreleasing *)error {
     HFLogDebug(@"AWSS3Provider.uploadFile: userUuid=%@, folder=%@, fileName=%@, contentType=%@", userUuid, folder, fileName, contentType);
+    
+    *error = nil;
 
     NSString *relPath = [NSString stringWithFormat:@"%@/%@/%@", userUuid, folder, fileName];
     NSURL *fileURL = [STOUtilities getAbsoluteFilePathWithFolder:folder withFileName:fileName];
@@ -291,6 +319,9 @@ NSString *_userUuid;
     }
     
     S3PutObjectResponse *response = [[_amazonClientManager s3] putObject:por];
+    if (response == nil) {
+        *error = [[NSError alloc] initWithDomain:@"stori" code:-1 userInfo:@{@"description": @"Call to putObject failed"}];
+    }
     HFLogDebug(@"AWSS3Provider.uploadFile: response=%@", response);
 }
 
@@ -302,8 +333,9 @@ NSString *_userUuid;
     
     [self setAwsS3ProviderBlock:^{
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-            BOOL success = FALSE;
             SlideShareJSON *ssj = [SlideShareJSON loadFromFolder:folder withFileName:SLIDESHARE_JSON_FILENAME];
+            
+            NSError *error = nil;
             
             if (ssj) {
                 NSArray *imageFileNames = [ssj getImageFileNames];
@@ -311,29 +343,43 @@ NSString *_userUuid;
                 NSString *title = [ssj getTitle];
                 int count = [ssj getSlideCount];
                 
-                [AWSS3Provider deleteVirtualDirectoryHelper:userUuid withFolder:folder];
+                [AWSS3Provider deleteVirtualDirectoryHelper:userUuid withFolder:folder withError:&error];
 
-                @try {
-                    for (NSString *fileName in imageFileNames) {
-                        [AWSS3Provider uploadFile:userUuid withFolder:folder withFileName:fileName withContentType:@"image/jpeg"];
+                if (!error) {
+                    @try {
+                        for (NSString *fileName in imageFileNames) {
+                            [AWSS3Provider uploadFile:userUuid withFolder:folder withFileName:fileName withContentType:@"image/jpeg" withError:&error];
+                            if (error) {
+                                break;
+                            }
+                        }
+                        if (!error) {
+                            for (NSString *fileName in audioFileNames) {
+                                [AWSS3Provider uploadFile:userUuid withFolder:folder withFileName:fileName withContentType:@"audio/mp4" withError:&error];
+                                if (error) {
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if (!error) {
+                            [AWSS3Provider uploadFile:userUuid withFolder:folder withFileName:SLIDESHARE_JSON_FILENAME withContentType:@"application/json" withError:&error];
+                            
+                            if (!error) {
+                                [AWSS3Provider uploadDirectoryEntry:userUuid withFolder:folder withTitle:title withCount:count withError:&error];
+                            }
+                        }
                     }
-                    for (NSString *fileName in audioFileNames) {
-                        [AWSS3Provider uploadFile:userUuid withFolder:folder withFileName:fileName withContentType:@"audio/mp4"];
+                    @catch (AmazonClientException *exception) {
+                        HFLogDebug(@"AWSS3Provider.uploadFilesAsync: exception = %@", exception);
+                        error = [[NSError alloc] initWithDomain:@"stori" code:-1 userInfo:@{@"description": [NSString stringWithFormat:@"Exception: %@", exception.message]}];
                     }
-                    
-                    [AWSS3Provider uploadFile:userUuid withFolder:folder withFileName:SLIDESHARE_JSON_FILENAME withContentType:@"application/json"];
-                    [AWSS3Provider uploadDirectoryEntry:userUuid withFolder:folder withTitle:title withCount:count];
-                    
-                    success = TRUE;
-                }
-                @catch (AmazonClientException *exception) {
-                    HFLogDebug(@"AWSS3Provider.uploadFilesAsync: exception = %@", exception);
                 }
             }
             
             dispatch_async(dispatch_get_main_queue(), ^(void){
                 if ([awsS3ProviderDelegate respondsToSelector:@selector(uploadComplete:)]) {
-                    [awsS3ProviderDelegate uploadComplete:success];
+                    [awsS3ProviderDelegate uploadComplete:error];
                 }
             });
         });
