@@ -197,6 +197,7 @@
     
     if (self.editPlayMode != editPlayModeEdit) {
         HFLogDebug(@"EditPlayController.viewDidAppear - in editPlayModePreview - skipping authentication");
+        [self.editPlayImageView setHidden:YES];
         [self initializePageView];
         return;
     }
