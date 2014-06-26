@@ -1,0 +1,6 @@
+server.js.logs
+!bin
+.project
+.idea
+version.txt
+node_modules
