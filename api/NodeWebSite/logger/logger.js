@@ -24,6 +24,10 @@ var _bunyanLogger = bunyan.createLogger({
             type: 'rotating-file',
             period: '1d',
             count: 10
+        },
+        {
+            stream: process.stdout,
+            level: 'trace'
         }
     ],
     serializers: {
@@ -35,11 +39,11 @@ var _bunyanLogger = bunyan.createLogger({
 
 exports.useLogging = function(useLogging) {
     _useLogging = useLogging;
-}
+};
 
 exports.bunyanLogger = function () {
-    return _bunyanLogger;
-}
+    return _useLogging ? _bunyanLogger : _stubLogger;
+};
 
 function reqSerializer(req) {
     if (!req || !req.connection)

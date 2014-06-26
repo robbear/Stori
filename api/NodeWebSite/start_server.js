@@ -15,7 +15,8 @@ exports.StartServer = function(startserver_callback, dbconnected_callback) {
         pinger = require('./utilities/pinger'),
         config = require('./config/config.js');
 
-    app.use(bodyParser());
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({extended: true}));
 
     var router = express.Router();
     router.get('/', function(req, res) {
@@ -157,13 +158,14 @@ exports.StartServer = function(startserver_callback, dbconnected_callback) {
     //
     // Start the servers on the appropriate ports
     //
-    httpServer.listen(process.env.PORT || config.httpPort , function() {
-        logger.bunyanLogger().info('%s%s listening at %s in %s mode', config.TAG, httpServer.name, httpServer.url, config.environment);
+    var port = process.env.PORT || config.httpPort;
+    httpServer.listen(port, function() {
+        logger.bunyanLogger().info('%s listening at port %s in %s mode', config.TAG, port, config.environment);
         logger.bunyanLogger().info("Using node.js %s", process.version);
 
         if (config.usesHttps) {
             https_server.listen(config.httpsPort, function() {
-                logger.bunyanLogger().info('%s%s listening at %s', config.TAG, httpsServer.name, httpsServer.url);
+                logger.bunyanLogger().info('%s listening at port %s', config.TAG,  port);
 
                 if (startserver_callback) {
                     startserver_callback();
