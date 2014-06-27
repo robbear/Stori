@@ -11,6 +11,13 @@ exports.StartServer = function(startserver_callback, dbconnected_callback) {
         pinger = require('./utilities/pinger'),
         config = require('./config/config.js');
 
+    //
+    // Controllers
+    //
+    var defaultController = require('./controllers/default');
+    var testController = require('./controllers/test');
+
+
     var port = +process.env.PORT || +config.httpPort;
 
     /* SOON
@@ -74,7 +81,8 @@ exports.StartServer = function(startserver_callback, dbconnected_callback) {
     connectWithRetry();
 
     var routes = [
-        { path: '/api', method: 'GET', config: { handler: function(req, reply) {reply({message: 'Welcome to Stori API'})}}}
+        { path: config.apiRoot, method: 'GET', config: defaultController.config },
+        { path: config.apiRoot + '/test', method: 'GET', config: testController.config }
     ];
 
     httpServer.route(routes);

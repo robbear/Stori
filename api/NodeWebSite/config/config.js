@@ -12,7 +12,7 @@ var _databaseName = 'stori';
 var _usesHttps = false;
 var _TAG = "STORI_API: ";
 var _pingerTimeoutSeconds = 45;
-var _usePinger = true;
+var _usePinger = false;
 
 if ('development' === _env) {
     _modelsPath = '../../../models/';
@@ -47,6 +47,7 @@ exports.databaseOptions = {
     }
 };
 
+exports.apiRoot = '/api';
 exports.httpPort = 1338;
 exports.httpsPort = 443;
 exports.usesHttps = _usesHttps;
