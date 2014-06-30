@@ -1,0 +1,5 @@
+!bin
+.project
+.idea
+version.txt
+node_modules
